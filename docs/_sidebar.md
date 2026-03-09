@@ -1,4 +1,4 @@
-* <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="#/">首页</a>
+* <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="#/newbie/README">使用教程</a>
 * Daily Papers
   * 2017-06-12
