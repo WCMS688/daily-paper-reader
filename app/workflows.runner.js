@@ -489,29 +489,28 @@ window.DPRWorkflowRunner = (function () {
 
     try {
       // 检查是否有正在运行中的同名工作流（防止误触重复触发）
-      const activeStatuses = ['queued', 'in_progress', 'waiting'];
-      for (const checkStatus of activeStatuses) {
-        const checkUrl = `https://api.github.com/repos/${owner}/${repo}/actions/workflows/${encodeURIComponent(
-          workflowFile,
-        )}/runs?status=${checkStatus}&per_page=1`;
-        // eslint-disable-next-line no-await-in-loop
-        const checkRes = await ghFetch(token, checkUrl);
-        if (checkRes.ok) {
-          // eslint-disable-next-line no-await-in-loop
-          const checkData = await checkRes.json();
-          const runs = Array.isArray(checkData.workflow_runs) ? checkData.workflow_runs : [];
-          if (runs.length > 0) {
-            const r = runs[0];
-            const runUrl = `https://github.com/${owner}/${repo}/actions/runs/${r.id}`;
-            setStatus(
-              `已有正在运行的工作流（#${r.run_number || r.id}，状态：${r.status}），请等待完成后再触发。`,
-              '#c00',
-            );
-            runsEl.innerHTML =
-              `<div style="color:#c00;">同一时间只允许运行一个该工作流实例，请等待当前运行结束。</div>` +
-              `<div style="margin-top:8px;"><a class="arxiv-tool-btn" style="padding:6px 10px; text-decoration:none;" target="_blank" href="${runUrl}">查看当前运行</a></div>`;
-            return;
-          }
+      const activeStatuses = new Set(['queued', 'in_progress', 'waiting']);
+      const statusZhMap = { queued: '排队中', in_progress: '运行中', waiting: '等待中' };
+      const checkUrl = `https://api.github.com/repos/${owner}/${repo}/actions/workflows/${encodeURIComponent(
+        workflowFile,
+      )}/runs?per_page=5`;
+      const checkRes = await ghFetch(token, checkUrl);
+      if (checkRes.ok) {
+        const checkData = await checkRes.json();
+        const runs = Array.isArray(checkData.workflow_runs) ? checkData.workflow_runs : [];
+        const activeRuns = runs.filter((r) => activeStatuses.has(r.status));
+        if (activeRuns.length > 0) {
+          const r = activeRuns[0];
+          const runUrl = `https://github.com/${owner}/${repo}/actions/runs/${r.id}`;
+          const statusText = statusZhMap[r.status] || r.status;
+          setStatus(
+            `已有正在运行的工作流（#${r.run_number || r.id}，状态：${statusText}），请等待完成后再触发。`,
+            '#c00',
+          );
+          runsEl.innerHTML =
+            `<div style="color:#c00;">同一时间只允许运行一个该工作流实例，请等待当前运行结束。</div>` +
+            `<div style="margin-top:8px;"><a class="arxiv-tool-btn" style="padding:6px 10px; text-decoration:none;" target="_blank" href="${runUrl}">查看当前运行</a></div>`;
+          return;
         }
       }
 
