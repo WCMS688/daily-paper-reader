@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.09999v1/fig-001.webp",
+      "caption": "Fig. 2: Visualization of additional features and ground-truth IR-drop map for the RISCY design from the N14 technology dataset. From left to right: (a) Cell Density, (b) RUDY Short, (c) Global Routing Vertical Overflow, and (d) IR-drop Ground Truth.",
+      "page": 6,
+      "index": 1,
+      "width": 694,
+      "height": 203
+    },
+    {
+      "url": "assets/figures/arxiv/2604.09999v1/fig-002.webp",
+      "caption": "Fig. 5: Qualitative IR-drop generation on CircuitNet-N14: (a) noise xT , (b) conditioning features (3-channels shown), (c) generated IR-drop x̂0, (d) ground truth.",
+      "page": 14,
+      "index": 2,
+      "width": 700,
+      "height": 198
+    },
+    {
+      "url": "assets/figures/arxiv/2604.09999v1/fig-003.webp",
+      "caption": "Fig. 4: Qualitative IR-drop generation on CircuitNet-N28: (a) noise xT , (b) conditioning features (3-channels shown), (c) generated IR-drop x̂0, (d) ground truth.",
+      "page": 13,
+      "index": 3,
+      "width": 673,
+      "height": 190
+    },
+    {
+      "url": "assets/figures/arxiv/2604.09999v1/fig-004.webp",
+      "caption": "Fig. 3: Graph construction: (a) Gate level netlist and graph construction attributes, (b) Instance (GCell) placement information, each instance is placed on grid (cx, cy), annotated with its bounding-box coordinates (l, b, r, t), and pin count p, (c) Constructed graph representation with node feature vector xv = [cx, cy, l, b, r, t, p].",
+      "page": 8,
+      "index": 4,
+      "width": 672,
+      "height": 277
+    },
+    {
+      "url": "assets/figures/arxiv/2604.09999v1/fig-005.webp",
+      "caption": "Fig. 1: Overview of the proposed framework. (a) Geometric features creation from DEF/LEF files and power reports, (b) Topological features creation, and (c) A diffusion-based UNet predicts the noise ϵ, conditioned on features via AdaGN+FiLM and on graph tokens via gated cross-attention, (d) Generated IR drop map.",
+      "page": 4,
+      "index": 5,
+      "width": 706,
+      "height": 272
+    },
+    {
+      "url": "assets/figures/arxiv/2604.09999v1/fig-006.webp",
+      "caption": "Fig. B.3: Cross-attention injection at the bottleneck. Topology tokens T serve as keys and values while spatial features serve as queries. The gate tanh(αℓ), initialized to zero, controls the contribution of the topology signal.",
+      "page": 20,
+      "index": 6,
+      "width": 567,
+      "height": 221
+    }
+  ]
+}

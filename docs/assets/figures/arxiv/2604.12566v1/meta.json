@@ -1,0 +1,30 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.12566v1/fig-001.webp",
+      "caption": "Figure 1: Configuration for (a). Layer 0 and (b). Layer 1 of the optimized 3D routing, (c). all-planar routing and (d). all-planar routing with minimal rectilinear crossings [6]. (e). Histograms comparing crossing distributions for (a)–(d) from top to bottom, with color bar representing the crossing count. (f). Predicted crossing statistics versus nodes per side.",
+      "page": 2,
+      "index": 1,
+      "width": 1009,
+      "height": 621
+    },
+    {
+      "url": "assets/figures/arxiv/2604.12566v1/fig-002.webp",
+      "caption": "Figure 2: (a). Layout of the optimized 3D routing scheme for the dual-layer SiN photonic interposer containing 12 nodes. Layer 0 waveguides are colored blue, and Layer 1 waveguides are colored red. (b). Picture of the fabricated chip and (c). zoomed-in view of the central crossing region. (d). Schematic of fabrication process flow. SEM images of the key structures including (e). intralayer crossing, (f). SiN waveguide and (g). cross-sectional view of the interlayer taper.",
+      "page": 3,
+      "index": 2,
+      "width": 986,
+      "height": 518
+    },
+    {
+      "url": "assets/figures/arxiv/2604.12566v1/fig-003.webp",
+      "caption": "Figure 3: (a-d). C-band loss cutback measurements for: (a). intralayer crossing, (b). interlayer crossing, (c). waveguide propagation loss, (d). interlayer taper. (e). Network graph of the measured on-chip ICL distribution. (f–h). On-chip ICL heatmaps with mean and standard deviation for: (f). measured results, (g). predicted 3D interconnects with measured crossing loss and (h). predicted all-planar interconnects with measured crossing loss. Color bar represents on-chip ICL in dB and all losses are normalized by subtracting losses from edge couplers and external fiber paths.",
+      "page": 4,
+      "index": 3,
+      "width": 1001,
+      "height": 655
+    }
+  ]
+}

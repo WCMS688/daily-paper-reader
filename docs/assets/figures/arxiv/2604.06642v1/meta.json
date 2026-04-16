@@ -1,0 +1,38 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.06642v1/fig-001.webp",
+      "caption": "Fig. 5. (a) and (f) Recovered Global-SNR versus (𝐸𝑅𝑖 , 𝐸𝑅𝑜) of IQ modulator without or with DPD and offset correction, respectively. (b) and (g) CSPR versus (𝐸𝑅𝑖 , 𝐸𝑅𝑜) of IQ modulator without or with DPD and offset correction, respectively. (c)/(d) and (h)/(i) Constellations of 𝐸𝑜𝑢𝑡 and the recovered signal 𝑆1 without or with DPD and offset correction, respectively, when (𝐸𝑅𝑖 , 𝐸𝑅𝑜)= (7 dB, 25 dB). (e) Spectrum of 𝐸𝑜𝑢𝑡 when (𝐸𝑅𝑖 , 𝐸𝑅𝑜)= (7 dB, 25 dB). (j) Optimal offset correction factor (𝛼) with maximum Global-SNR versus (𝐸𝑅𝑖 , 𝐸𝑅𝑜) of IQ modulator.",
+      "page": 6,
+      "index": 1,
+      "width": 752,
+      "height": 655
+    },
+    {
+      "url": "assets/figures/arxiv/2604.06642v1/fig-002.webp",
+      "caption": "Fig. 6. (a) Global-SNR versus phase deviation ∆𝜃(°) for different AWGN noise with the SNRs of 30 dB, 26 dB and 22 dB, respectively, under (𝐸𝑅𝑖 , 𝐸𝑅𝑜)= (7 dB, 25 dB) of IQ modulator. (b) Global-SNR as a function of branch-dependent phase deviations of ∆𝜃1 and ∆𝜃2 in upper and bottom branches of receiver under the conditions of AWGN SNR=26 dB and (𝐸𝑅𝑖 , 𝐸𝑅𝑜)= (7 dB, 25 dB).",
+      "page": 7,
+      "index": 2,
+      "width": 770,
+      "height": 261
+    },
+    {
+      "url": "assets/figures/arxiv/2604.06642v1/fig-003.webp",
+      "caption": "Fig. 7. (a) BER of signals of 𝑆1 and 𝑆2versus ROP for fiber length of 100 km when (𝐸𝑅𝑖 , 𝐸𝑅𝑜)= (7 dB, 25 dB) and AWGN SNR=26 dB. (b)/(c) Constellations of insets (i) and (ii) for the proposed and coherent system, respectively, with (𝐸𝑅𝑖 , 𝐸𝑅𝑜)= (7 dB, 25 dB) and ROP = -1 dBm.",
+      "page": 7,
+      "index": 3,
+      "width": 788,
+      "height": 192
+    },
+    {
+      "url": "assets/figures/arxiv/2604.06642v1/fig-004.webp",
+      "caption": "Fig. 3. (a) Simulation setup without electric amplifier, and with the (b) Tx-DSP and (c) Rx-DSP, respectively. (d) Frequency response measured from experimental setup. DSC: digital subcarrier.",
+      "page": 5,
+      "index": 4,
+      "width": 788,
+      "height": 447
+    }
+  ]
+}

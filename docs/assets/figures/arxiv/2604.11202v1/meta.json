@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.11202v1/fig-001.webp",
+      "caption": "Table 6: Performance comparison of ML architectures on small windows. MAPE is computed for total capacitance.",
+      "page": 6,
+      "index": 1,
+      "width": 504,
+      "height": 409
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11202v1/fig-002.webp",
+      "caption": "Figure 2: CapBench dataset generation flow and toolchain.",
+      "page": 3,
+      "index": 2,
+      "width": 446,
+      "height": 354
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11202v1/fig-003.webp",
+      "caption": "Table 3: RWCap runtime per window.",
+      "page": 4,
+      "index": 3,
+      "width": 452,
+      "height": 302
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11202v1/fig-004.webp",
+      "caption": "Table 2: Window size and count.",
+      "page": 4,
+      "index": 4,
+      "width": 500,
+      "height": 269
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11202v1/fig-005.webp",
+      "caption": "Figure 3: Window placement on a 2×2 grid.",
+      "page": 4,
+      "index": 5,
+      "width": 404,
+      "height": 306
+    }
+  ]
+}

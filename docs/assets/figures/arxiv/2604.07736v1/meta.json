@@ -1,0 +1,62 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.07736v1/fig-001.webp",
+      "caption": "Fig. 9. The matching solution predicted by the proposed DRL-based method. (a) Partial predicted versus true values for optimal capacitances C∗ s and C∗ p . (b) ECDF of relative errors for the capacitances C∗ s and C∗ p .",
+      "page": 11,
+      "index": 1,
+      "width": 524,
+      "height": 252
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07736v1/fig-002.webp",
+      "caption": "Fig. 8. ECDF of the tuned reflection coefficient for the DRL-based impedance tuning agent and baseline methods. (a) Full-range view comparing all methods. (b) Zoomed-in view for |Γin| ∈ [0, 0.1].",
+      "page": 10,
+      "index": 2,
+      "width": 526,
+      "height": 242
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07736v1/fig-003.webp",
+      "caption": "Fig. 7. Training dynamics of the impedance tuning agent. (a) Cumulative reward per episode. (b) Final reflection coefficient magnitude |Γin| per episode, with the dashed red line indicating the -40 dB threshold.",
+      "page": 10,
+      "index": 3,
+      "width": 516,
+      "height": 255
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07736v1/fig-004.webp",
+      "caption": "TABLE II HYPERPARAMETER SETTINGS FOR THE MATCHING METHODS SAPSO, AD-ADAM AND GA",
+      "page": 10,
+      "index": 4,
+      "width": 434,
+      "height": 289
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07736v1/fig-005.webp",
+      "caption": "Fig. 13. Frequency-domain performance of the RL agent with ϵtest = 0.3 across the test set. (a) Mean ± SD of reflection coefficient |Γin|. (b) Mean ± SD of the tuning steps required for impedance matching.",
+      "page": 13,
+      "index": 5,
+      "width": 516,
+      "height": 261
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07736v1/fig-006.webp",
+      "caption": "Fig. 10. Frequency-domain performance of the RL agent on test set. (a) Mean ± SD of relection coefficient |Γin|, with the dashed line denoting the target threshold. (b) Mean ± SD of the tuning steps required for impedance matching.",
+      "page": 12,
+      "index": 6,
+      "width": 516,
+      "height": 250
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07736v1/fig-007.webp",
+      "caption": "TABLE I EXPERIMENTAL PARAMETERS OF THE DDQN-BASED ADAPTIVE IMPEDANCE TUNING METHOD",
+      "page": 9,
+      "index": 7,
+      "width": 416,
+      "height": 467
+    }
+  ]
+}

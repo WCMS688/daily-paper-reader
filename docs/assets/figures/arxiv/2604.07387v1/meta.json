@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.07387v1/fig-001.webp",
+      "caption": "Fig. 3. Excerpt from the LLM-generated compute_sizing() function for 2SMC-P at 180 nm, Round 0. Each device dimension traces to a specific performance constraint through explicit analytical equations. The complete function (~200 lines) is executed unmodified.",
+      "page": 6,
+      "index": 1,
+      "width": 504,
+      "height": 923
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07387v1/fig-002.webp",
+      "caption": "TABLE III CONVERGENCE RESULTS",
+      "page": 7,
+      "index": 2,
+      "width": 1052,
+      "height": 341
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07387v1/fig-003.webp",
+      "caption": "TABLE IV STRUCTURAL CORRECTNESS VERIFICATION – LLM-DERIVED EQUATIONS FOR 2SMC-N (40 NM)",
+      "page": 10,
+      "index": 3,
+      "width": 1052,
+      "height": 358
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07387v1/fig-004.webp",
+      "caption": "TABLE I COMPARISON WITH EXISTING METHODS",
+      "page": 3,
+      "index": 4,
+      "width": 1072,
+      "height": 546
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07387v1/fig-005.webp",
+      "caption": "Fig. 5. Convergence trajectories of OTAs. The left and right columns correspond to 40 nm and 180 nm, respectively, while the rows show Av, GBW, PM, SR+, and SR-. Dashed lines indicate target specifications.",
+      "page": 8,
+      "index": 5,
+      "width": 485,
+      "height": 870
+    }
+  ]
+}

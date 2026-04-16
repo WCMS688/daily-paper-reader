@@ -1,0 +1,2912 @@
+Title: Dynamic Modeling of Data-Center Power Delivery for Power System Resonance Analysis
+
+URL Source: https://arxiv.org/pdf/2604.06624v1
+
+Published Time: Thu, 09 Apr 2026 00:26:35 GMT
+
+Number of Pages: 16
+
+Markdown Content:
+> SUBMITTED TO IEEE TRANSACTIONS ON POWER SYSTEMS 1
+
+# Dynamic Modeling of Data-Center Power Delivery for Power System Resonance Analysis 
+
+Xingyu Zhao, Student Member, IEEE, and Junbo Zhao, Senior Member, IEEE 
+
+Abstract —The rapid proliferation of data centers is reshap-ing modern power system dynamics. Unlike legacy industrial loads, data centers have power-electronic interfaces whose multi-timescale dynamics can interact strongly with the grid, inducing oscillatory behavior. However, analytical models that are grid-integratable for revealing the underlying resonance mechanisms remain largely unexplored. To fill this research gap, this paper derives an explicit, component-informed dynamic model of data-center power-delivery chains, which preserves component-level fidelity and captures inter-stage control interactions. This model is formulated as a time-invariant representation in the positive-sequence domain, enabling seamless integration with the phasor (or RMS) domain power-system dynamic models. The analytical derivation reveals how realistic server-load fluctuations at specific frequencies can excite coupled control modes, thereby inducing oscillation amplification and propagation in power grids with het-erogeneous dynamic resources, including synchronous machines and grid-forming/following inverters. Case studies on test systems with some realistic data center data demonstrate the effectiveness of the proposed solutions. 
+
+Index Terms —Data center, power-delivery chain, power system dynamics, oscillations, server-load fluctuations. 
+
+I. I NTRODUCTION 
+
+The rapid expansion of AI- and cloud-enabled data cen-ters induces a significant demand growth, with global data-center consumption projected to rise sharply through 2030 [1]. Unlike conventional industrial loads, data centers are interfaced through cascaded power-electronic stages whose multi-timescale physical dynamics and control interaction re-duce small-signal damping of local modes, and thus elevate resonance risk. Meanwhile, AI-driven, fast power fluctuations can act as sustained forcing inputs that excite these modes and lead to forced oscillations [2]. These risks and the need for mitigation are increasingly emphasized in industry guidance for emerging large loads [3]. However, today’s data-center interconnection studies often rely on either generic load model that obscures component-level root causes, or a detailed black-box electromagnetic-transient (EMT) model that provides lim-ited transparency for mechanism interpretation and efficient damping design. Therefore, an explicit, component-informed model is needed to capture the critical multi-stage couplings and enable direct mechanism tracing via modal analysis. 
+
+A. Literature Review 1) Data-Center-Induced Oscillation: The resonance oscil-lation risk introduced by grid-connected data centers has also 
+
+This work is partially supported by the U.S. National Science Foundation under grant 2442160. X. Zhao and J. Zhao are with Thayer School of Engineering at Dartmouth College, Hanover, NH 06269, USA. (e-mails: xingyu.zhao.th@dartmouth.edu, junbo.zhao@dartmouth.edu) 
+
+drawn growing community attention. In [4], a ∼14.7–14.8 Hz oscillation event emerging from a real data center is observed, offering rare field evidence that data-center/grid interactions can manifest as grid-visible oscillatory phenomena. However, the underlying oscillatory mechanism remains unclear to the community. In [2], AI-workload power swings are modeled as sustained forcing disturbances that can excite weakly damped modes and thereby induce forced oscillations. The potential of AI load fluctuations to amplify both local and inter-area os-cillation modes in large-scale systems is further shown in [5]. Complementary to these system-level studies, an impedance-based stability framework is proposed in [6, 7] motivated by real data-center resonance incidents. These works reveal the intrinsic resonance risk arising from the converter-dominated power distribution system. However, a unified understanding of how intrinsic resonances propagate through the data-center power-delivery chain and produce grid-coupled oscillatory phenomena is still missing. 
+
+2) Data-Center Dynamic Modeling: In recent years, there has been growing community interest in developing dynamic models of data centers for transmission system interconnection and stability studies. In [8], a transmission-oriented data-center load model is proposed to study transient stability and fault-ride behavior. However, the propagation of grid-side power disturbances to the IT load is captured by a high-level aggregated representation, so the multi-stage interactions between individual converters and the grid are unmodeled. [9] develops a utility-interconnected data-center dynamic model that couples server power/heat with detailed cooling and air-handling system dynamics. However, the converter-dominated electrical dynamics remain largely simplified. Recently, EMT models that capture detailed power-electronic converters have been developed in [10, 11]. However, those waveform-domain models are not readily amenable to model-based small-signal analysis that relies on time-invariant, positive-sequence repre-sentations. Up to now, an explicit differential-algebraic model with component-level fidelity that can be seamlessly integrated into classical positive-sequence power-system oscillation anal-ysis remains largely unexplored. 
+
+B. Contributions 
+
+To fill these research gaps, this paper develops a component-informed model of the data-center power-delivery chain that can be integrated with the bulk power system for dynamic stability analysis. The major contributions of this paper are:  
+
+> •
+
+Component-Informed Modeling: We derive a composite dynamic model covering the full online power flow path,  
+
+> arXiv:2604.06624v1 [eess.SY] 8 Apr 2026 SUBMITTED TO IEEE TRANSACTIONS ON POWER SYSTEMS 2~
+> =
+
+~
+
+=
+
+> Active Front-End
+> Rectifier
+> =
+> =
+> Battery DC-DC Converter
+> DC-Link
+> Capacitor
+> Voltage Source Inverter
+
+~ = 
+
+> ==
+> Power Supply Unit
+> Downstream DC-DC Converter and Racked CPUs/GPUs
+> Utility
+
+~ =  
+
+> ==Downstream DC-DC Converter and Racked CPUs/GPUs
+
+~ =    
+
+> ==Downstream DC-DC Converter and Racked CPUs/GPUs
+> phase 𝑏𝑏
+> Uninterruptible Powe Supply (Online Mode)
+> Power Supply Unit
+> Power Supply Unit
+> Fig. 1. The modern data-center power-delivery system operating in online (double-conversion) mode
+
+preserving key device physics and control structure while being suitable for power-system studies.  
+
+> •
+
+Grid Integration: We propose a time-invariant reduced model in the positive-sequence domain, which maintains good accuracy compared with the full-order three-phase model while enabling seamless integration into standard phasor-domain simulation as well as small-signal stability analysis workflows.  
+
+> •
+
+Oscillation Analysis: We examine how real-world server-load perturbations (especially those driven by AI train-ing workload) can excite weakly-damped coupled-control modes along the data-center power path, amplifying oscillations and injecting them into power grids with heterogeneous dynamics (e.g., synchronous machines and inverter-based resources). The remainder of this paper is organized as follows. Sec-tion II derives the dynamic model of the data-center power-delivery chain under the online operating mode. Section III presents the oscillation-analysis framework, including modal analysis, participation factors, and a power-oscillation ampli-fication metric. Section IV reports case studies to illustrate intrinsic and grid-coupled oscillation mechanisms. Section V concludes the paper and discusses future work. II. M ATHEMATICAL MODELING 
+
+Fig. 1 illustrates a typical data-center power-delivery system that operates in the online (double-conversion) mode of an uninterruptible power supply (UPS). Utility power is processed by an active front-end (AFE) rectifier, buffered by a DC-link capacitor, and converted by a voltage-source inverter (VSI) to a regulated three-phase AC bus that feeds an array of single-phase rack-level power supply units (PSUs). Each PSU supplies downstream DC–DC converters and aggregated CPU/GPU loads. A battery storage system (BSS) interfaced by a DC–DC converter, is connected to the DC link and remains in standby (float-charge) mode during normal operation. It is emphasized that our mathematical modeling focuses on the online operating mode . Bypass operation and mode-transfer transients, typically associated with protection or maintenance and following a different power path, are outside the scope of this study. Battery-only operation is also not considered, as it corresponds to islanded conditions without grid connection. In this section, we will start our derivations with detailed component-level differential-algebraic equations (DAEs) and merge them to a high-fidelity dynamic model of the complete data-center power-delivery chains. 
+
+A. Active Front-End Rectifier 
+
+Fig. 2 illustrates the circuit and control architecture of a three-phase PWM AFE rectifier. The PCC voltage is processed by a phase-locked loop (PLL) to provide the synchronization angle and frequency for synchronous-frame control. An outer DC-link voltage PI loop regulates the DC-link voltage and generates the active current reference, while the reactive current reference is set to zero to enforce unity power factor. An inner dq -axis current PI loop with standard cross-coupling decoupling terms generates the converter voltage command, which is applied through PWM to shape the AC-side current and transfer power to the DC side. Neglecting switching ripple, the AFE DAEs are given in (1). 
+
+Differential Equations 
+
+1
+
+ωb
+
+dθpll 
+
+dt = ωpll − ωs, (1a) 
+
+dϵ
+
+dt = vpll  
+
+> q
+
+, (1b) 
+
+1
+
+ωlp 
+
+dvpll 
+
+> q
+
+dt = e⊤ 
+
+> 2
+
+vpcc  
+
+> dq
+
+− vpll  
+
+> q
+
+, (1c) 
+
+ℓafe 
+
+ωb
+
+diafe 
+
+> dq
+
+dt = vpcc  
+
+> dq
+
+− vups dc mdq − rafe iafe  
+
+> dq
+
++ ωpll ℓafe J i afe  
+
+> dq
+
+, (1d) 
+
+dξafe dc 
+
+dt = vups,ref dc − vups dc , (1e) 
+
+dγafe 
+
+> dq
+
+dt = iafe  
+
+> dq
+
+− iafe 
+
+> dq, ref
+
+. (1f) 
+
+Algebraic Equations 
+
+ωpll = ωs + kpll  
+
+> p
+
+vpll  
+
+> q
+
++ kpll  
+
+> i
+
+ϵ, (1g) 
+
+vpcc  
+
+> dq
+
+= R(θpll ) vpcc  
+
+> ri
+
+, (1h) 
+
+ipcc  
+
+> ri
+
+= R(θpll )⊤iafe  
+
+> dq
+
+, (1i) SUBMITTED TO IEEE TRANSACTIONS ON POWER SYSTEMS 3~
+
+=        
+
+> PWM Rectifier
+> PWM
+> 𝑚𝑚 𝑑𝑑 ,𝑚𝑚 𝑞𝑞 Current Controller
+> Phase-Locked Loop
+> 𝑟𝑟 afe
+> 𝜃𝜃 pll ,𝜔𝜔 pll
+> ℓafe
+> 𝒗𝒗 𝑟𝑟𝑟𝑟 pcc 𝒊𝒊 𝑟𝑟𝑟𝑟 afe
+> DC Voltage Controller
+> 𝑣𝑣 dc ups 𝒊𝒊 𝑑𝑑 𝑞𝑞 ,ref afe
+> 𝑖𝑖 𝑑𝑑 𝑐𝑐 ,𝑟𝑟 𝑖𝑖
+
+Fig. 2. The control and circuit diagram of a three-phase PWM AFE rectifier 
+
+iafe 
+
+dq, ref =
+
+"
+
+kdc,afe 
+
+p
+
+
+
+vups,ref dc − vups dc 
+
+
+
++ kdc,afe 
+
+i ξafe dc 
+
+0
+
+#
+
+, (1j) 
+
+vafe 
+
+dq, ref = kc,afe 
+
+p
+
+ iafe 
+
+dq − iafe 
+
+dq, ref 
+
++kc,afe 
+
+i γafe 
+
+dq +ωpll ℓafe J i afe 
+
+dq ,
+
+(1k) 
+
+mdq = 1
+
+vups dc 
+
+vafe 
+
+dq, ref . (1l) 
+
+Definition of Symbols 
+
+• Vector notation convention: xdq ≜[xd xq ]⊤ and xri ≜
+
+[xr xi]⊤ are quantities in the dq frame established by the PLL and the stationary ri frame defined in the grid reference, respectively. 
+
+• Operators and mappings: 
+
+e2 ≜0 1⊤ , J ≜
+
+0 −11 0
+
+
+
+, R(θ)≜
+
+ cos θ sin θ
+
+−sin θ cos θ
+
+
+
+.
+
+• Parameters: ωb is the base angular frequency and ωs is the synchronous reference frequency; ωlp is the PLL low-pass filter bandwidth; kpll 
+
+p and kpll 
+
+i are the PLL gains; ℓafe 
+
+and rafe are the AFE AC-side inductance and resistance; 
+
+vups,ref dc is the DC-link voltage reference; (kdc,afe 
+
+p ,k dc,afe 
+
+i )
+
+are the DC-voltage-loop gains; and (kc,afe 
+
+p ,k c,afe 
+
+i ) are the current-loop gains. 
+
+• Variables: θpll is the PLL angle, ωpll is the PLL frequency estimate, vpll 
+
+q is the filtered q-axis PCC voltage, and ϵ
+
+is the PLL integrator state; vpcc 
+
+ri and vpcc 
+
+dq are the PCC voltage vectors in the ri and dq frames, ipcc 
+
+ri is the PCC current vector in the ri frame, and iafe 
+
+dq is the AFE AC-side current vector in the dq frame; vups dc is the DC-link voltage; 
+
+ξafe dc is the DC-voltage-loop integrator state; γafe 
+
+dq is the current-loop integrator-state vector; iafe 
+
+dq, ref is the current-reference vector; vafe 
+
+dq, ref is the converter voltage-command vector; and mdq is the modulation-index vector. 
+
+B. Voltage Source Inverter 
+
+Fig. 3 shows the circuit and control architecture of the PWM VSI. The inverter converts the DC-link voltage to a regulated AC output and interfaces with the AC bus through an RL 
+
+filter branch and a shunt capacitor. The VSI adopts its own synchronous frame with fixed frequency ωvsi =ωs, and reg-ulates the capacitor voltage to a direct-axis-aligned reference (with zero quadrature-axis reference). An outer voltage PI loop generates the converter-side inductor current reference, and an inner current PI loop with standard rotational decoupling generates the converter voltage command (modulation com-mand) for PWM. Neglecting switching ripple, the VSI DAEs are given in (2). ~
+
+=         
+
+> PWM Rectifier
+> PWM
+> 𝑚𝑚 𝑑𝑑 ,𝑚𝑚 𝑞𝑞 Current Controller
+> Phase-Locked Loop
+> 𝑟𝑟 afe
+> 𝜃𝜃 pll ,𝜔𝜔 pll
+> ℓafe
+> 𝒗𝒗 𝑟𝑟𝑟𝑟 pcc 𝒊𝒊 𝑟𝑟𝑟𝑟 afe
+> DC Voltage Controller
+> 𝑣𝑣 dc ups 𝒊𝒊 𝑑𝑑 𝑞𝑞 ,ref afe
+> 𝑖𝑖 𝑑𝑑 𝑐𝑐 ,in
+
+=
+
+~      
+
+> PWM Inverter
+> 𝑖𝑖 𝑑𝑑 𝑐𝑐 ,out
+> PWM
+> 𝑟𝑟 vsi ℓvsi
+> 𝒗𝒗𝑢𝑢𝑢𝑢 vsi 𝒊𝒊 𝑢𝑢𝑢𝑢 cv
+> 𝒊𝒊 𝑢𝑢𝑢𝑢 vsi
+> Current Controller
+> Voltage Controller
+> 𝑚𝑚 𝑢𝑢 ,𝑚𝑚 𝑢𝑢
+> 𝑐𝑐 vsi
+> 𝒊𝒊 𝑢𝑢𝑢𝑢 ,ref vsi
+
+Fig. 3. The control and circuit diagram of a three-phase PWM VSI 
+
+Differential Equations 
+
+ℓvsi 
+
+ωb
+
+dicv 
+
+uv 
+
+dt = vups dc muv − vvsi 
+
+uv − rvsi icv 
+
+uv + ωvsi ℓvsi J i cv 
+
+uv , (2a) 
+
+cvsi 
+
+ωb
+
+dvvsi 
+
+uv 
+
+dt = icv 
+
+uv − ivsi 
+
+uv + ωvsi cvsi J v vsi 
+
+uv , (2b) 
+
+dξvsi 
+
+uv 
+
+dt = vvsi 
+
+uv, ref − vvsi 
+
+uv , (2c) 
+
+dγvsi 
+
+uv 
+
+dt = icv 
+
+uv, ref − icv 
+
+uv . (2d) 
+
+Algebraic Equations 
+
+ωvsi = ωs, (2e) 
+
+vvsi 
+
+uv, ref =
+
+vvsi 
+
+u, ref 
+
+0
+
+
+
+, (2f) 
+
+icv 
+
+uv, ref = kv,vsi 
+
+p
+
+ vvsi 
+
+uv, ref − vvsi 
+
+uv 
+
+ + kv,vsi 
+
+i ξvsi 
+
+uv − ωvsi cvsi J v vsi 
+
+uv ,
+
+(2g) 
+
+vcv 
+
+uv, ref = kc,vsi 
+
+p
+
+ icv 
+
+uv, ref − icv 
+
+uv 
+
+ + kc,vsi 
+
+i γvsi 
+
+uv − ωvsi ℓvsi J i cv 
+
+uv ,
+
+(2h) 
+
+muv = 1
+
+vups dc 
+
+vcv 
+
+uv, ref . (2i) 
+
+Definition of Symbols 
+
+• Vector notation convention: xuv ≜[xu xv ]⊤ denotes an quantity in the uv frame established by the VSI. 
+
+• Parameters: ℓvsi and rvsi are the VSI filter inductance and resistance; cvsi is the shunt capacitance; vvsi 
+
+u, ref is the u-axis voltage reference with vvsi 
+
+v, ref ≡0; (kv,vsi 
+
+p ,k v,vsi 
+
+i ) are the outer voltage-loop gains; and (kc,vsi 
+
+p ,k c,vsi 
+
+i ) are the inner current-loop gains. 
+
+• Variables: ωvsi is the VSI synchronous speed (set to 
+
+ωs here); icv 
+
+uv is the converter-side (inductor) current vector, vvsi 
+
+uv is the filter-capacitor voltage vector, and ivsi 
+
+uv 
+
+is the VSI output current vector; ξvsi 
+
+uv and γvsi 
+
+uv are the integrator-state vectors of the outer voltage loop and inner current loop; vvsi 
+
+uv, ref is the voltage-reference vector, icv 
+
+uv, ref 
+
+is the current-reference vector, vcv 
+
+uv, ref is the converter voltage-command vector, and muv is the modulation-index vector. 
+
+C. DC-Link Capacitor 
+
+The AFE rectifier and VSI are coupled through a shared DC bus with a capacitor. The DC-link voltage dynamics are governed by the current imbalance between the DC current injected by the AFE and the DC current drawn by the VSI. Neglecting switching ripple, the DC-link DAE model is given in (3). SUBMITTED TO IEEE TRANSACTIONS ON POWER SYSTEMS 4Diode Rectifier               
+
+> 𝑟𝑟 psu ℓpsu 𝑖𝑖 ∅vsi
+> 𝑣𝑣 ∅vsi
+> Voltage Controller
+> Current Controller
+> PWM 𝑣𝑣 ∅psu
+> 𝑖𝑖 ∅rec 𝑔𝑔 eq ,∅
+> 𝑣𝑣 ∅rec
+> 𝑖𝑖 ∅rec ,ref
+> 𝑑𝑑∅
+> 𝑐𝑐 psu
+> 𝑖𝑖 ∅psu
+> ℓeq
+> Voltage Controller
+> Current Controller
+> PWM
+> 𝑐𝑐 eq 𝑔𝑔 load
+> 𝑖𝑖 ∅psu
+> 𝑑𝑑 eq
+> 𝑣𝑣 ∅psu
+> 𝑖𝑖 eq
+> 𝑖𝑖 eq ,ref
+> 𝑣𝑣 eq
+
+Fig. 4. The control and circuit diagram of a single-phase PSU 
+
+Differential Equation 
+
+cdc 
+
+ωb
+
+dvups dc 
+
+dt = idc,in − idc,out . (3a) 
+
+Algebraic Equations 
+
+idc,in = m⊤ 
+
+> dq
+
+iafe  
+
+> dq
+
+, (3b) 
+
+idc,out = m⊤ 
+
+> uv
+
+icv  
+
+> uv
+
+. (3c) 
+
+Definition of Symbols  
+
+> •
+
+Parameters: cdc is the DC-link capacitance.  
+
+> •
+
+Variables: idc,in and idc,out are the DC-link capacitor input and output currents, respectively. 
+
+D. Array of Power Supply Units 
+
+The PSU-array model is derived by modeling a single-phase PSU and stacking three identical phase models. Fig. 4 shows a typical single-phase PSU, modeled as a rectifier–boost PFC stage connecting the upstream AC bus and the downstream DC port. The PSU is assumed to operate in continuous-conduction mode. It employs a cascaded control structure: an outer voltage PI loop regulates the PSU DC-port voltage and generates an equivalent conductance command, which is multiplied by the rectified input-voltage to form the input-current reference (thus enforcing PFC-like resistive input behavior); an inner current PI loop tracks this current reference and outputs the PWM duty-ratio command. While stacking three phase models provides a transparent component-level description, it is not convenient for oscillation analysis because the composite system is represented in mixed coordinates: the VSI is naturally modeled in the synchronous 
+
+uv frame, whereas the PSU array is in the phase domain. Coupling the two through Clarke/Park transforms introduces explicit time dependence via the VSI angle θvsi =ωbωvsi t,which makes the composite model time-periodic even in steady operation. In addition, single-phase PFC conversion in-herently produces a 2ω ripple on each PSU DC-side capacitor voltage, causing small phase-to-phase mismatches. To obtain a time-invariant dynamic equivalent suitable for oscillation analysis, we adopt the following assumptions:  
+
+> •
+
+Balanced three-phase operation: data-center distribution is typically phase-interleaved and capacity-balanced, so the aggregated PSU array seen from the VSI AC bus is predominantly positive-sequence; residual unbalance is treated as a small perturbation and neglected.  
+
+> •
+
+Negligible DC-side 2ω ripple: while a single-phase PFC stage introduces 2ω power pulsation, the ripple is buffered by DC-side capacitance and is further smoothed by the 𝒊𝒊 𝑑𝑑 𝑞𝑞 ,ref afe               
+
+> 𝑟𝑟 vsi ℓvsi
+> 𝒗𝒗𝑢𝑢𝑢𝑢 vsi 𝒊𝒊 𝑢𝑢𝑢𝑢 cv
+> 𝒊𝒊 𝑢𝑢𝑢𝑢 vsi
+> Current Controller
+> Voltage Controller
+> 𝑚𝑚 𝑢𝑢
+> 𝑐𝑐 vsi
+> 𝒊𝒊 𝑢𝑢𝑢𝑢 ,ref vsi
+> Voltage Controller
+> Current Controller
+> 𝑖𝑖 ∅rec 𝑔𝑔 eq ,∅
+> 𝑣𝑣 ∅rec
+> 𝑖𝑖 ∅rec ,ref
+> 𝑑𝑑∅
+> ℓeq
+> Voltage Controller
+> Current Controller
+> PWM
+> 𝑐𝑐 eq 𝑔𝑔 load
+> 𝑖𝑖 ∅psu
+> 𝑑𝑑 eq
+> 𝑣𝑣 ∅psu
+> 𝑖𝑖 eq
+> 𝑖𝑖 eq ,ref
+> 𝑣𝑣 eq
+
+Fig. 5. The control and circuit diagram of per-phase downstream DC–DC converter and load equivalent 
+
+aggregation of many downstream converters and loads, making it small relative to the nominal DC voltage.  
+
+> •
+
+Quasi-steady-state inner-current loop: the inner current loop of boost-PFC is typically in the kHz range, while the outer voltage loop is much slower (typically a few–tens of Hz and often well below 2ω), which justifies a quasi-steady-state (QSS) approximation for model-order reduc-tion without materially affecting low-frequency modes. Under these assumptions, the three-phase PSU-array DC ports are aggregated into a common DC-side model, and the AC-side dynamics are expressed directly in the VSI-synchronous 
+
+uv frame, yielding the simplified DAEs in (4). The detailed derivation is provided in S1-A of the Supplementary Material. 
+
+Differential Equations 
+
+cpsu 
+
+ωb
+
+dvpsu 
+
+dt =
+
+
+
+geq − rpsu g2
+
+> eq
+
+
+
+vvsi 
+
+> uv
+> 22
+
+3vpsu − ipsu , (4a) 
+
+dξpsu 
+
+dt = vpsu,ref − vpsu . (4b) 
+
+Algebraic Equations 
+
+geq = kv,psu 
+
+> p
+
+ vpsu,ref − vpsu  + kv,psu  
+
+> i
+
+ξpsu , (4c) 
+
+ivsi  
+
+> uv
+
+= geq vvsi  
+
+> uv
+
+. (4d) 
+
+Definition of Symbols  
+
+> •
+
+Operators and mappings: ∥x∥2 denotes vector l2 norm  
+
+> •
+
+Parameters: cpsu is the (per-phase) PSU DC-port capac-itance; rpsu is the (per-phase) equivalent series resistance capturing the PSU conduction loss; (kv,psu  
+
+> p
+
+,k v,psu  
+
+> i
+
+) are the gains of the PSU outer voltage PI controller; and vpsu,ref 
+
+is the PSU DC-port voltage reference.  
+
+> •
+
+Variables: vpsu is the aggregated PSU DC-port voltage (i.e., common DC component); ξpsu is the integrator state of the PSU outer voltage loop; geq is the scalar equivalent input conductance commanded by the PSU voltage loop; and ipsu is the aggregated DC current drawn from the PSU DC port to the downstream DC–DC converter and load equivalent. 
+
+E. Downstream DC–DC Converter and Load Equivalent 
+
+Fig. 5 shows a per-phase equivalent of the downstream data-center power stage, which aggregates the fast-switching DC– DC conversion chain (e.g., isolated DC–DC converters and voltage-regulation modules) and the IT load into a single buck-converter equivalent with cascaded voltage–current control. The outer voltage loop regulates the load-side DC voltage to a prescribed reference, while the inner current loop shapes the converter input current drawn from the upstream PSU DC link. SUBMITTED TO IEEE TRANSACTIONS ON POWER SYSTEMS 5
+
+The aggregated load conductance is parameterized by the total load power at the regulated voltage level, so that the equivalent captures the dominant low-frequency power/voltage dynamics seen by the upstream AC/DC interface without resolving the switching details of numerous parallel converters and loads. As in the PSU model, a clear time-scale separation between the outer voltage loop and the faster inner current loop moti-vates a QSS approximation for the inner loop. The resulting reduced-order DAEs are given in (5). The detailed derivation is provided in S1-B of the Supplementary Material. 
+
+Differential Equations 
+
+ceq 
+
+ωb
+
+dveq 
+
+dt = ieq − gload veq , (5a) 
+
+dξeq 
+
+dt = veq,ref − veq . (5b) 
+
+Algebraic Equations 
+
+gload = pload 
+
+3 ( veq,ref )2 , (5c) 
+
+ieq = kv,eq 
+
+> p
+
+ veq,ref  
+
+> o
+
+− veq 
+
+> o
+
+ + kv,eq  
+
+> i
+
+ξeq , (5d) 
+
+ipsu = veq 
+
+vpsu ieq . (5e) 
+
+Definition of Symbols  
+
+> •
+
+Parameters: ceq is the equivalent output capacitance of the aggregated downstream DC–DC/load stage; veq,ref is the regulated load-side voltage reference; pload is the total three-phase load power; and gload is the per-phase equiv-alent load conductance defined by pload at the regulated voltage level.  
+
+> •
+
+Variables: veq is the aggregated load-side (regulated) DC voltage; ξeq is the integrator state of the outer voltage loop; ieq is the commanded load-side current generated by the voltage loop (under the inner current-loop QSS approximation). III. P OWER -S YSTEM OSCILLATION ANALYSIS 
+
+Based on the component-level model derived in Section II, the complete data-center power-delivery chain can be repre-sented as a nonlinear DAE system with input. When jointly formulated with the grid-side DAEs (e.g., transmission lines and generators), the overall interconnected system admits a closed, time-invariant representation. This section develops a small-signal oscillation analysis framework for the composite model under the online operating mode, with a focus on how control-loop interactions across the AFE, DC link, VSI, PSU array, downstream DC–DC converter, and load stages produce lightly damped modes. The framework also clarifies how load-side power variations propagate upstream into the grid side and excite these modes, leading to oscillation amplification. 
+
+A. Composite DAE Model 
+
+The DAE model of the complete grid-connected data-center power-delivery chain is represented in the composite form 
+
+dx
+
+dt =f (x,y,w ;p), (6a) 
+
+0=g(x,y,w ;p). (6b) where x contains all differential states appearing in (1)–(5), together with the differential states of the grid-side dynamic components, and y collects the corresponding algebraic vari-ables. The scalar w denotes an exogenous input/disturbance (e.g., load-power variation), and p collects the model param-eters. 
+
+B. Small-Signal Modeling 
+
+When the overall system operates at a steady state, denoted by (x0,y0) under a given exogenous input/disturbance w0 and parameter set p, we enforce 
+
+dx
+
+dt =0.
+
+Substituting (x0,y0,w 0) into (6) yields the equilibrium equa-tions 
+
+0=f (x0,y0,w 0;p), (7a) 
+
+0=g(x0,y0,w 0;p). (7b) The solution of (7) defines the operating point for the subse-quent small-signal oscillation analysis. Define small perturba-tions around the operating point as ∆x≜x−x0, ∆y≜y−y0,and ∆w≜w−w0. Linearizing (6) around (x0,y0,w 0) gives the following small-signal DAE model 
+
+d∆ x
+
+dt =fx ∆x+fy ∆y+fw ∆w, (8a) 
+
+0=gx ∆x+gy ∆y+gw ∆w, (8b) where the Jacobians are evaluated at the operating point, i.e., 
+
+fx ≜ ∂f /∂ x|0, fy ≜ ∂f /∂ y|0, fw ≜ ∂f /∂w |0, gx ≜ ∂g/∂ x|0,
+
+gy ≜ ∂g/∂ y|0, and gw ≜ ∂g/∂w |0. Assuming gy is nonsingu-lar in a neighborhood of the operating point, the algebraic perturbation can be eliminated as 
+
+∆y=−g−1 
+
+> y
+
+gx ∆x−g−1 
+
+> y
+
+gw ∆w. 
+
+Substituting ∆y into (8) yields the reduced small-signal state-space model 
+
+d∆ x
+
+dt =A∆x+b∆w. (9) where A≜fx −fy g−1 
+
+> y
+
+gx, and b≜fw −fy g−1 
+
+> y
+
+gw.
+
+C. Modal Analysis and Participation Factors 
+
+Based on the reduced small-signal model (9), the oscillatory behavior of the interconnected system is characterized by the eigenstructure of the state matrix A. Let λk denote the kth 
+
+eigenvalue of A, with the associated left and right eigenvectors 
+
+lk and rk satisfying 
+
+l⊤ 
+
+> k
+
+A=λkl⊤ 
+
+> k
+
+, Ar k =λkrk. (10) The left and right eigenvectors are normalized such that 
+
+l⊤ 
+
+> k
+
+rk =1 . (11) To quantify the contribution of each state to a given mode, the participation factor of the ith state in the kth mode is defined as 
+
+ρik ≜ℜ{ lk,i ri,k }, (12) where lk,i and ri,k are the ith entries of lk and rk, respectively, and ℜ{·} denotes the real-part operator. The participation factors in (12) are used to rank the dominant state variables of each critical mode (ordered by |ρik |), thereby providing an interpretable way to trace each weakly damped mode to its root cause across the data-center power-delivery chain and the grid-side network. SUBMITTED TO IEEE TRANSACTIONS ON POWER SYSTEMS 6
+
+D. Power Oscillation Amplification Analysis 
+
+To quantify how server-load fluctuations induced by time-varying computing demand propagate through the data-center power-delivery chain, we introduce a new metric named power oscillation amplification (POA) factor, which is defined as the gain of the transfer function from the server-load disturbance 
+
+∆pload ≜pload −pload ,0 to the PCC active-power ripple ∆ppcc ≜
+
+ppcc −ppcc ,0. We choose ppcc as the output variable: 
+
+z≜ppcc =h(x,y)= 
+
+
+
+vpcc 
+
+> dq
+
+⊤
+
+ipcc  
+
+> dq
+
+. (13) Linearizing (13) around the operating point gives 
+
+∆z=hx ∆x+hy ∆y, (14) where hx ≜ ∂h/∂ x|0 and hy ≜ ∂h/∂ y|0. Similar to (9), elim-inating the algebraic perturbation ∆y yields 
+
+∆ppcc =∆ z=c∆x, (15) where c≜hx −hy g−1 
+
+> y
+
+gx. Based on (9) and (15), the small-signal transfer function from the load disturbance ∆pload (i.e., 
+
+∆w) to the PCC active-power response is: 
+
+Gpcc ←load (s)≜ ∆ppcc (s)∆pload (s) =c(sI −A)−1b. (16) Accordingly, the POA factor is defined as 
+
+POA( ω)≜|Gpcc ←load (jω )|. (17) Here, a large POA( ω) at frequency ω=ωpeak indicates a strong amplification of load-side power oscillations as they propagate to the grid. Since POA( ω)= |Gpcc ←load (jω )| depends on both 
+
+A and the coupling terms (b,c), it reflects both intrinsic modal properties and input–output coupling. To further quantify the contribution of each mode to the POA, we introduce the modal residue of the kth mode as 
+
+Rk ≜(cr k)( l⊤ 
+
+> k
+
+b), (18) Using the partial-fraction expansion of (jω I −A)−1, the POA can be decomposed into modal components as 
+
+POA( ω)= 
+
+> n
+
+X
+
+> k=1
+
+Rk
+
+jω −λk
+
+. (19) Thereby, |Rk| is used to indicate the overall excitability and observability of each mode in the POA channel. Note that some modes with eigenvalues close to the imaginary axis may neither be excited by server-load fluctuations nor observed from the grid variables. Such modes therefore contribute little to the observed oscillation phenomena. IV. N UMERICAL RESULTS 
+
+In this section, two case studies are presented. The first case considers a single data-center system connected to an infinite bus and is used to validate the proposed model, investigate the intrinsic power-oscillation amplification mechanisms within the data-center power-delivery chain, and simulate the PCC power profile driven by real-world GPU-cluster workload. The second case connects the data-center model to a modified 3-machine 9-bus system, in which the three generation units are modeled by a synchronous generator, a grid-forming converter, and a grid-following converter, respectively. This case is used to examine how load-side power variations interact with grid-side electromechanical transients, together with the coupling among heterogeneous power-electronic devices. 
+
+A. Single Data Center Infinite Bus (SDCIB) System 1) Parameter Setting: In this case, the grid is represented by an ideal infinite-bus voltage source behind an equivalent series impedance, and the data-center power-supply model derived in Section II is connected at the PCC. The network-side variables are expressed in the grid’s stationary ri frame, and the infinite-bus voltage is aligned with the r axis, i.e., 
+
+v∞ 
+
+> ri
+
+=[ V∞ 0] ⊤, where V∞ is the infinite-bus voltage magnitude. The PCC voltage is given by 
+
+vpcc  
+
+> ri
+
+=v∞ 
+
+> ri
+
+−
+
+R∞ −X∞
+
+X∞ R∞
+
+
+
+iafe  
+
+> ri
+
+, (20) The algebraic equation (20) provides the grid-side closure for the proposed model (1)–(5) in the SDCIB case and couples the infinite-bus network to the AFE through vpcc  
+
+> ri
+
+and iafe  
+
+> ri
+
+.The default SDCIB parameters are listed in Table I. PI controller gains are are obtained from a bandwidth-based tuning rule with target bandwidth fbw and damping ratio ζ. We refer S2 of the Supplementary Material for details. 
+
+2) Model Validation: To verify the QSS and common DC-side approximations used to derive (4) and (5) from the three-phase full-order models (S1) and (S3) (see the Supplementary Material), the proposed model is compared with the full-order model using time-domain simulations of a step change in 
+
+pload from 0.5 p.u. to 0.6 p.u. Both models follows parameter setup in Table I, and the full-order model has extra parameters (see Table. S1 in the Supplementary Material) regarding the reduced current-loop controllers. The comparative results in the SDCIB case are shown in Fig.6. The 2ω DC-side voltage ripple of PSU arrays is shown in Fig. 6(c), indicating that the common-DC approximation accurately captures the ag-gregated dynamic behavior of the three phases. This 2ω ripple is not observed in the VSI AC-bus power pvsi in Fig. 6(b), because it cancels out when summed over the three phases. A small 6 ω ripple is shown in Fig. 6(b), which is caused by the                                                                                                                               
+
+> TABLE I DEFAULT PARAMETER SETUP FOR THE SDCIB C ASE
+> Symbol Value Description
+> ωb2π×60 rad/s Base angular frequency
+> ωs1.0p.u. Grid synchronous speed
+> ωlp 2π×100 rad/s Low-pass filter cutoff frequency
+> V∞1.0p.u. Infinite-bus voltage magnitude
+> R∞,X∞0.02 ,0.19 p.u. Grid impedance
+> rafe ,ℓafe 0.003 ,0.05 p.u.AFE filter impedance
+> cdc 2.0p.u. UPS DC-link capacitance
+> kpll
+> p,kpll
+> i0.471 ,41 .89 PLL ( fbw =20 Hz , ζ =0 .707 )
+> kdc,afe
+> p,kdc,afe
+> i0.333 ,5.236 AFE DC-PI ( fbw =5 Hz , ζ =1 .0)
+> kc,afe
+> p,kc,afe
+> i0.233 ,209 .4AFE current-PI ( fbw =200 Hz ,ζ =0 .707 )
+> rvsi ,ℓvsi 0.003 ,0.05 p.u.VSI filter impedance
+> cvsi 0.2p.u. VSI filter capacitance
+> vups,ref dc 1.0p.u. UPS DC-link voltage reference
+> vvsi
+> u, ref 1.0p.u. VSI AC-voltage reference
+> kv,vsi
+> p,kv,vsi
+> i0.667 ,209 .4VSI voltage-PI ( fbw =100 Hz , ζ =1 .0)
+> kc,vsi
+> p,kc,vsi
+> i0.664 ,837 .8VSI current-PI ( fbw =400 Hz , ζ =1 .0)
+> cpsu 2.0p.u. PSU DC-port capacitance
+> rpsu 0.005 p.u. PSU equivalent resistance
+> vpsu,ref 1.0p.u. PSU DC-voltage reference
+> kv,psu
+> p,kv,psu
+> i0.667 ,20 .94 PSU voltage-PI ( fbw =10 Hz , ζ =1 .0)
+> ceq 0.2p.u. Equivalent load-side capacitance
+> veq,ref 0.5p.u. Load-side voltage reference
+> kv,eq
+> p,kv,eq
+> i0.667 ,209 .4Load-side DC-PI ( fbw =100 Hz , ζ =1 .0)
+> pload 0.5p.u. Server load demand SUBMITTED TO IEEE TRANSACTIONS ON POWER SYSTEMS 7Time(s)
+> 11.1 1.2 1.3 1.4 1.5
+> ppcc (p.u.)
+> 0.45
+> 0.5
+> 0.55
+> 0.6
+> 0.65
+> 0.7
+> FullModel(abc)
+> ReducedModel(uv)
+
+(a) Time (s)          
+
+> 11.1 1.2 1.3 1.4 1.5
+> pvsi (p.u.)
+> 0.45
+> 0.5
+> 0.55
+> 0.6
+> 0.65
+> 0.7
+> FullModel(abc)
+> ReducedModel(uv)
+
+(b) Time (s)            
+
+> 11.05 1.1 1.15 1.2
+> vpsu (p.u.)
+> 0
+> 0.5
+> 1
+> 1.5
+> PhaseA(abc)
+> PhaseB(abc)
+> PhaseC(abc)
+> Aggregated(uv)
+
+(c) Fig. 6. Comparison between the full-order three-phase model and the reduced model under a step change in pload from 0.5 p.u. to 0.6 p.u.: (a) PCC active power, (b) VSI AC-bus active power, and (c) PSU DC-side voltage. <(6)           
+
+> -3000 -2500 -2000 -1500 -1000 -500 0500
+> =(6)
+> -6000
+> -4000
+> -2000
+> 0
+> 2000
+> 4000
+> 6000
+> 14
+> 15
+> 16
+> 17
+> 18
+> 19
+> 20
+> 21
+> <(6)
+> -400 -300 -200 -100 0
+> =(6)
+> -500
+> 0
+> 500
+> 1
+> 2
+> 3
+> 4
+> 5
+> 6
+> 789
+> 10
+> 11
+> 12
+> 13
+> 10!4
+> 10!3
+> 10!2
+> 10!1
+> 100
+> 101
+> 102
+> 103
+> jRk j
+
+Fig. 7. Eigenvalue map and mode residues of the SDCIB case 
+
+tracking lag of the current controller around the zero-crossing points. Since this ripple is propagated and filtered through the DC-link capacitor of UPS, the PCC power responses of the two models are nearly identical as shown in Fig. 6(a). 
+
+3) Load-Driven Oscillation Analysis: The eigenvalue map with the corresponding (absolute) mode residues |Rk| of the SDCIB case with default parameters is demonstrated in Fig. 7. Applying participation-factor analysis, we identify the most influential state variables and their associated control loops contributing to each mode. Table II reveals a clear attribution of modal dynamics across the data-center power-delivery chain, especially:  
+
+> •
+
+Modes 1–2 are governed by the PSU voltage-loop states 
+
+(vpsu , ξ psu ) together with the VSI voltage-loop integrator 
+
+ξvsi  
+
+> u
+
+, showing a coupled PSU–VSI voltage-loop resonance  
+
+> •
+
+Modes 3–4 are governed by the UPS DC-link voltage vups dc 
+
+and the AFE DC-voltage-loop integrator ξafe dc , reflecting an AFE–DC-link interaction. 
+
+TABLE II PARTICIPATION FACTORS OF ALL MODES IN THE SDCIB C ASE 
+
+Mode(s) λ=σ±jω f =ω/ (2 π) Top states Participation 
+
+1/2 −19 .7±j 38 .6 6.15 Hz vpsu , ξ psu , ξ vsi  
+
+> u
+
+0.462, 0.360, 0.174 3/4 −30 .6±j 5.36 0.852 Hz vups dc , ξ afe dc , γ afe  
+
+> d
+
+0.500, 0.496, 0.003 5/6 −105 ±j 107 16.97 Hz θpll , ϵ pll , v pll  
+
+> q
+
+0.452, 0.372, 0.127 7 −112 – ξvsi  
+
+> u
+
+, v psu , ξ psu 0.566, 0.238, 0.093 8 −168 – ξeq , v eq 0.933, 0.067 9/10 −240 ±j 9.99 1.59 Hz ξvsi  
+
+> v
+
+, γ vsi  
+
+> v
+
+, v vsi  
+
+> v
+
+0.496, 0.385, 0.115 11/12 −325 ±j 470 74.78 Hz γafe  
+
+> d
+
+, γ afe  
+
+> q
+
+, v pll  
+
+> q
+
+0.315, 0.311, 0.097 13 −360 – γvsi  
+
+> u
+
+, ξ vsi  
+
+> u
+
+, v psu 0.530, 0.239, 0.088 14 −541 – vpll  
+
+> q
+
+, γ afe  
+
+> d
+
+, θ pll 0.640, 0.115, 0.103 15/16 −1507 ±j 1956 311 Hz iafe  
+
+> d
+
+, i afe  
+
+> q
+
+, γ afe  
+
+> q
+
+0.393, 0.389, 0.101 17 −2345 – veq , ξ eq 0.933, 0.067 18/19 −2613 ±j 4297 684 Hz icv  
+
+> u
+
+, i cv  
+
+> v
+
+, v vsi  
+
+> v
+
+0.255, 0.254, 0.188 20/21 −2883 ±j 4672 744 Hz icv  
+
+> u
+
+, i cv  
+
+> v
+
+, v vsi  
+
+> v
+
+0.242, 0.242, 0.205  
+
+> •
+
+Modes 5–6 are governed by the PLL states (θpll , ϵ pll , v pll  
+
+> q
+
+),suggesting possible resonance caused by PLL. The remaining modes are mainly shaped by faster inner-loop control and filter dynamics (e.g., AFE and VSI current-loop integrators and filter states), and therefore are less likely to drive the low-frequency resonance. The POA factor is shown in Fig. 8.(a). It is observed that POA curve reaches maximum at fpeak =5 .54 Hz. This peak is consistent with the mode residues shown in Fig. 7 as well as the modal and participation results in Table II. Specifically, the POA peak frequency lies in the vicinity of the lightly damped conjugate pair Modes 1–2 (with f =6 .15 Hz) with large mode residue. This indicates that the POA peak is primarily driven by this PSU–VSI coupled voltage-regulation mode. Note that the POA peak frequency does not need to coincide exactly with the modal frequency because it can be shifted by the superposition of nearby modes. We also observe that the POA factor exhibits a low-pass characteristic. This is because the high-frequency oscillatory modes are either weakly excited by load variations or barely observable at the grid, which is consistent with the small modal residues of high-frequency modes shown in Fig. 7. A visualization of the POA phenomenon is given in Fig. 8.(b) using time-domain simulation. The figure shows the power deviations from the equilibrium point under sinusoidal load perturbations with amplitude 0.05 p.u. The dashed lines mark the excitation turn-on time ton and the frequency switching instants tA and tB . The excitation frequencies are chosen based on the POA result: the injected sinusoid uses piecewise-constant frequencies 0.5fpeak for t∈[ton ,t A), 1.0fpeak for 
+
+t∈[tA,t B ), and 2.0fpeak for t≥tB . The results are consistent with Fig. 8.(a) as the PCC power fluctuation is noticeably amplified when the excitation frequency is fpeak , while the response is less pronounced away from the peak frequency. 
+
+4) Sensitivity Analysis: Since real-world data centers may operate under varying load levels and control parameters, it SUBMITTED TO IEEE TRANSACTIONS ON POWER SYSTEMS 810 -1 10 0 10 1 10 2 10 3 10 4 
+
+> Frequency(Hz)
+> 0
+> 0.5
+> 1
+> 1.5
+> 2
+> POA
+
+(a) Time (s)                     
+
+> 00.5 11.5 22.5 3
+> "P (p.u.)
+> -0.15
+> -0.1
+> -0.05
+> 0
+> 0.05
+> 0.1
+> 0.15
+> tontAtBf=0:5fpeakf=1:0fpeakf=2:0fpeak
+> "pload
+> "ppcc
+
+(b) Fig. 8. (a) POA factor as a function of frequency, with a peak at 5.54 Hz. (b) Time-domain POA simulation under sinusoidal server-load variations. <(6)   
+
+> -150 -100 -50 0
+> =(6)
+> -150
+> -100
+> -50
+> 0
+> 50
+> 100
+> 150
+> 50
+> 60
+> 70
+> 80
+> 90
+> 100
+> fbw (Hz)
+
+(a) <(6)    
+
+> -150 -100 -50 0
+> =(6)
+> -150
+> -100
+> -50
+> 0
+> 50
+> 100
+> 150
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1
+> pload (pu)
+
+(b) <(6)    
+
+> -150 -100 -50 0
+> =(6)
+> -150
+> -100
+> -50
+> 0
+> 50
+> 100
+> 150
+> 2
+> 3
+> 4
+> 5
+> 6
+> 7
+> 8
+> SCR
+
+(c) 10 -1 10 0 10 1 10 2 10 3 10 4                   
+
+> Frequency(Hz)
+> 0
+> 1
+> 2
+> 3
+> 4
+> 5
+> 6
+> 7
+> POA
+> fbw=50Hz
+> fbw=60Hz
+> fbw=70Hz
+> fbw=80Hz
+> fbw=90Hz
+> fbw=100Hz
+
+(d) 10 -1 10 0 10 1 10 2 10 3 10 4                    
+
+> Frequency(Hz)
+> 0
+> 1
+> 2
+> 3
+> 4
+> POA
+> pload=0:1pu
+> pload=0:3pu
+> pload=0:5pu
+> pload=0:7pu
+> pload=0:9pu
+> pload=1:1pu
+
+(e) 10 -1 10 0 10 1 10 2 10 3 10 4  
+
+> Frequency(Hz)
+> 0
+> 0.5
+> 1
+> 1.5
+> 2
+> POA
+> SCR=8.0
+> SCR=5.0
+> SCR=3.0
+> SCR=2.0
+> SCR=1.5
+
+(f) Fig. 9. Top-6 eigenvalue trajectories (top row) and corresponding POA curves (bottom row) under varying system conditions: (a),(d) VSI voltage-controller bandwidth; (b),(e) load level; and (c),(f) short-circuit ratio (SCR). 
+
+is important to understand how oscillatory dynamics change with respect to setpoint and parameter shifts. In this work, we investigate the following root causes of oscillations by tracking the trajectories of the dominant oscillatory modes and the corresponding POA curves: 
+
+• VSI voltage-loop bandwidth: According to Table II, the coupling of VSI-PSU voltage-loop controllers is the main cause of dominant oscillatory modes 1–2. By successively varying the bandwidth of the VSI voltage-loop controller, the trajectories of the top-6 oscillatory modes with highest mode residue are shown in Fig. 9.a. Accordingly, the POA curves under changing fbw are shown in Fig. 9.d. Once the voltage-loop bandwidth separation of VSI and PSU is lost (i.e. the bandwidth fbw of VSI voltage-loop decreases), both loops act on the same dynamics at the same time. This creates a delayed “over-correction” cycle, which reduces damping, amplifies resonance and can even lead to unstable modes. 
+
+• Load level: As the load level pload is gradually increased from 0.2 to 1.0 p.u., modes 1–2 move quickly toward the imaginary axis as shown in the Fig. 9.(b), which leads to reduced damping and thereby results in a noticeably larger peak in the POA curves as shown in the Fig. 9.(e). Given that the PSU and VSI voltage loops are coupled through the AC-bus current, increasing the load raises the steady-state current, thereby strengthening the coupling effects. 
+
+• Grid strength: Under the per-unit system, the short-circuit ratio (SCR) is defined as SCR=1 /|Z∞|=pR2
+
+∞ +X2
+
+∞.The SCR is a commonly-used indicator of grid strength. When reducing the SCR (i.e., reducing grid strength) with a fixed R∞–X∞ ratio in the Table I, the eigenvalues of mode 3-6 move towards the imaginary axis as shown in the Fig. 9.(c). However, as shown in Fig. 9.(f), the POA curves remain almost unchanged, primarily because high-residue modes 1–2 are weakly sensitive to the SCR, whereas hightly-sensitive modes 5–6 have relatively low mode residues. 
+
+5) Time-domain Simulation under Realistic GPU load: 
+
+To study how AI training load profiles propagate through the power stages of a data center, a realistic GPU-cluster workload trace with 100-ms resolution from the MIT Supercloud dataset [12], which is further processed in [13], is used as the scaled server-load profile pload (t). The time-domain results in Fig. 10.(a) show that the server-side AI-training load fluctuation is transmitted through the data-center power-delivery stages to the PCC. Although the PCC power generally follows the load-power variation, more pronounced oscillatory peaks are observed at the PCC in the later stage ( t∈[50 ,100] s), indi-cating that the conversion chain can amplify certain dynamic components rather than merely smoothing them. This is further confirmed by the FFT results in Fig. 10(b), where the dominant spectral components (in the range of 1–2 Hz) of ppcc closely match those of pload . However, larger amplitudes are observed SUBMITTED TO IEEE TRANSACTIONS ON POWER SYSTEMS 9Time (s)                              
+
+> 010 20 30 40 50 60 70 80 90
+> Power (p.u.)
+> 0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1
+> pload
+> ppcc
+> (a) Frequency(Hz)
+> 12345678910
+> Amplitude (p.u.)
+> 0
+> 0.02
+> 0.04
+> 0.06
+> 0.08
+> pload
+> ppcc(b) Fig. 10. Realistic GPU-induced PCC power profile: (a) time-domain simulation. (b) single-sided frequency spectrum from FFT for t∈[50 ,100] s. Voltage Controller
+> 𝑣𝑣 ∅psu
+> 𝑔𝑔 eq ,∅
+> ef
+> 𝑐𝑐 psu
+> 𝑖𝑖 ∅psu
+> Voltage Controller
+> 𝑔𝑔 load
+> 𝑣𝑣 eq
+> ~
+> =
+> ~
+> =
+> Data Center
+> 1
+> 23
+> 4
+> 56
+> 789
+> Grid-Forming Inverter
+> Grid-Following Inverter
+> Synchronous
+> Machine
+> G1
+> G2 G3
+> Fig. 11. Modified 3-machine 9-bus system.
+
+at several frequencies, with the POA factor in Fig. 8(a) exceed-ing unity, (particularly in the vicinity of fpeak =5 .54 Hz). This indicates the frequency-selective propagation and amplification of workload-induced power oscillations. 
+
+B. Modified 3-Machine 9-Bus System 
+
+To validate the grid-integration capability of the proposed model and to investigate the dynamic coupling between the data center and external grids, especially inverter-based re-sources, a modified 3-machine 9-bus system is established, as shown in Fig. 11. In this system, G1 is represented by a synchronous machine (SM) using a fourth-order generator model (i.e., a two-axis transient model) equipped with an IEEE DC1A exciter and a TGOV1 turbine governor (see the detailed 9th-order formulation in (S4) of the Supplementary Material). G2 is represented by a grid-forming inverter (GFM) model (see the detailed 13th-order formulation in (S5) of the Supplementary Material), and G3 is represented by a grid-following inverter (GFL) model (see the detailed 15th-order formulation in (S6) of the Supplementary Material). Their parameters are summarized in Table S2 of the Supplementary Material. A data center represented by (1)–(5) using parameter setting in Table.I is linked to Bus 8 with unity power factor. 
+
+1) Load-Driven Oscillation Analysis: The eigenvalue map of the modified 3-machine 9-bus system is shown in Fig. 12. Each marker indicates modal composition based on the par-ticipation of the SM, GFM, and GFL states, represented by blue, red, and green sectors, respectively. The influence of the data-center dynamics is highlighted by the black outer ring, whose thickness reflects the participation of the data-center states. From the zoomed-in view, three frequency ranges can be observed. For the dominant slow modes closest to the origin, the markers cluster near the real axis and show mixed participation from the SM, GFM, and GFL states, whereas the black outer rings are generally weak or absent, indicating that the data-center states have only limited participation in these modes. Therefore, the modes closest to the stability boundary are governed primarily by the grid-side electromechanical and inverter-control dynamics. As the oscillation frequency in-creases within the zoomed-in range, the markers exhibit more visible black outer rings, indicating stronger coupling with the data-center power-delivery dynamics. In this range, the modal composition also shifts toward stronger GFM/GFL participa-tion and comparatively weaker SM contribution. Overall, the dominant modal structure is mainly determined by the SM, GFM, and GFL dynamics, while the data-center subsystem primarily modifies existing modes rather than introducing new poorly damped oscillatory modes. The POA factor analysis is shown in Fig. 13. Based on the state-space model of the inter-connected system, the POA framework previously developed for the single-machine case is extended to a multi-machine, multi-port setting to quantify oscillation transfer from the server load to the SM, GFM, GFL, and data-center ports. The results reveal a pronounced amplification band around 2–6 Hz, where load-induced oscillations are significantly amplified by the coupled grid–converter dynamics. The SM port shows the strongest response in the low-frequency range, indicating excitation of electromechanical modes, while the GFM and GFL ports become more responsive at intermediate frequen-cies due to inverter-control dynamics. In contrast, the data-center port exhibits a broader amplification profile, indicating that the data-center power-delivery chain acts as the primary disturbance source. For frequencies above approximately 20 Hz, the amplification rapidly decreases, showing that high-frequency workload fluctuations are effectively filtered by the converter stages. 
+
+2) Time-domain Simulation under Realistic GPU load: 
+
+The same GPU-cluster workload trace shown in Fig. 10 is adopted in this case to investigate how the grid-side generation units, i.e., the SM, GFM, and GFL, respond to server-load oscillations. The time-domain simulation results corresponding to the last 10 s of the workload trace in Fig. 10. (a) are shown in Fig. 14. From Fig. 14, all grid-side generation units exhibit oscillatory active-power responses to the server-load varia-tions, indicating that the workload-induced power fluctuations are transmitted through the data-center power-delivery stages SUBMITTED TO IEEE TRANSACTIONS ON POWER SYSTEMS 10 <(6)             
+
+> -3000 -2500 -2000 -1500 -1000 -500 0500
+> =(6)
+> -5000
+> 0
+> 5000
+> SM
+> GFM
+> GFL
+> DataCenter
+> <(6)
+> -500 -400 -300 -200 -100 0
+> =(6)
+> -500
+> 0
+> 500
+
+Fig. 12. Eigenvalue map with coupling visualization of the modified 3-machine 9-bus system 10 -1 10 0 10 1 10 2 10 3
+
+> Frequency (Hz)
+> 0
+> 0.5
+> 1
+> 1.5
+> 2
+> 2.5
+> POA
+> SM
+> GFM
+> GFL
+> Data Center
+
+Fig. 13. POA from server load to SM, GFM, GFL, and data center port Time (s)     
+
+> 0510 15 20
+> PCC Active Power (p.u.)
+> 0
+> 0.5
+> 1
+> 1.5
+> SM
+> GFM
+> GFL
+> Data Center
+> Server Load
+
+Fig. 14. Realistic GPU-induced PCC active power of the multi-machine case 
+
+into the external grid. Among the three generation units, the GFL exhibits the largest oscillation amplitude, while the SM and GFM responses are comparatively smaller. This suggests that the GFL is more sensitive to the workload-driven power oscillations in this case. V. C ONCLUSIONS 
+
+This paper derived a component-informed dynamic model of the data-center power-delivery chain for power-system oscillation studies. The proposed model preserves the key converter dynamics and control interactions while providing a time-invariant positive-sequence representation suitable for phasor-domain simulation and small-signal analysis. The re-sults on the SMIB case showed that intrinsic oscillatory modes exist within the data-center power path, among which the coupled VSI–PSU voltage-control mode is the main source of load-driven oscillation amplification. The proposed POA framework further revealed how server-load fluctuations are selectively amplified and propagated to the PCC. Case stud-ies on the modified 3-machine 9-bus system showed that workload-induced power fluctuations can also propagate into external grids and interact with SM, GFM and GFL. Overall, the proposed framework provides a transparent tool for un-derstanding and mitigating oscillation risks of grid-connected data centers. The results also provide practical insights for grid integration of large data centers. In particular, the inter-nal power-delivery chain should be explicitly considered in interconnection studies rather than being represented as a static load. Coordinated controller bandwidth design across the data-center converters is also important to avoid poorly damped resonance modes. Moreover, AI workload fluctuations may act as sustained disturbances capable of exciting grid oscillations, especially in converter-dominated systems. Future research will scale the proposed framework to multi-data-center systems and integrate high-fidelity workload mod-els. Key areas of exploration include coordinated oscillation-mitigation strategies and the interaction between AI scheduling and grid stability. Furthermore, we will account for transmis-sion line dynamics to evaluate their impact on the eigenvalue characteristics. REFERENCES [1] IEA, Energy and AI . Paris, France, Apr. 2025. [2] G. Valverde, G. Pierrou, J. Krajacic, and G. Hug, “Forced oscillations in power systems induced by AI workloads in data centers,” TechRxiv, Oct. 2025. [3] NERC, Reliability Guideline: Risk Mitigation for Emerging Large Loads , May 2026. [4] C. Mishra, L. Vanfretti, J. Delaree Jr., T. J. Purcell, and K. D. Jones, “Understanding the inception of 14.7 Hz oscillations emerging from a data center,” Sustainable Energy, Grids and Networks , vol. 43, Art. no. 101735, Sep. 2025. [5] M.-S. Ko and H. Zhu, “Wide-area power system oscillations from large-scale AI workloads,” arXiv preprint arXiv:2508.16457, 2025. [6] J. Sun, M. Xu, M. Cespedes, and M. Kauffman, “Data center power system stability—Part I: Power supply impedance modeling,” CSEE J. Power Energy Syst. , vol. 8, no. 2, pp. 403–419, Mar. 2022. [7] J. Sun, M. Mihret, M. Cespedes, D. Wong, and M. Kauffman, “Data center power system stability—Part II: System modeling and analysis,” 
+
+CSEE J. Power Energy Syst. , vol. 8, no. 2, pp. 420–438, Mar. 2022. [8] A. Jim´ enez-Ruiz and F. Milano, “Data center model for transient stability analysis of power systems,” arXiv preprint , arXiv:2505.16575, May 2025. [9] P. P. Gyang, P. Chakraborty, L. G. Meegahapola, and X. Yu, “Dynamic modeling of a data center for power system stability studies,” IEEE Trans. Power Syst. , 2025. [10] J. Sun, S. Wang, J. Wang, and L. M. Tolbert, “Dynamic model and converter-based emulator of a data center power distribution system,” 
+
+IEEE Trans. Power Electron. , vol. 37, no. 7, pp. 8420–8432, Jul. 2022. [11] B. A. Ross and J. D. Follum, Electromagnetic Transient Modeling of Large Data Centers for Grid-Level Studies (Alpha Release) . Richland, WA, USA: Pacific Northwest National Laboratory, Rep. PNNL-38817, Dec. 2025. [12] MIT AI Accelerator, “MIT Supercloud Dataset,” [Online]. Available: https://github.com/MIT-AI-Accelerator/MIT-Supercloud-Dataset [13] C. Aghadinuno, S. Ahmed, M. Alamaniotis, B. Wang, and N. Gatsis, “Investigation of AI Data Center Load Impact on Power System Fre-quency Using Real-World Datasets,” in Proc. 18th Annual IEEE Green Technologies Conference (GreenTech) , Boulder, CO, USA, 2026. SUBMITTED TO IEEE TRANSACTIONS ON POWER SYSTEMS 1
+
+## Supplementary Material for “Dynamic Modeling of Data-Center Power Delivery for Power System Resonance Analysis” 
+
+S1. D ERIVATION OF POSITIVE -S EQUENCE DYNAMIC EQUIVALENT 
+
+A. PSU Array 
+
+The single-phase PSU control block in Fig. 4 is first written in DAE form and then stacked across three phases in the abc 
+
+frame, yielding the PSU-array model in (S1). 
+
+Differential Equations 
+
+ℓpsu 
+
+ωb
+
+direc 
+
+> abc
+
+dt = vrec  
+
+> abc
+
+−  1 − dabc 
+
+ ⊙ vpsu  
+
+> abc
+
+− rpsu irec 
+
+> abc
+
+, (S1a) 
+
+cpsu 
+
+ωb
+
+dvpsu 
+
+> abc
+
+dt =  1 − dabc 
+
+ ⊙ irec  
+
+> abc
+
+− ipsu 
+
+> abc
+
+, (S1b) 
+
+dξpsu 
+
+> abc
+
+dt = vref psu 1 − vpsu 
+
+> abc
+
+, (S1c) 
+
+dγpsu 
+
+> abc
+
+dt = irec,ref  
+
+> abc
+
+− irec 
+
+> abc
+
+. (S1d) 
+
+Algebraic Equations 
+
+geq ,abc = kv,psu 
+
+> p
+
+ vref psu 1 − vpsu 
+
+> abc
+
+ + kv,psu  
+
+> i
+
+ξpsu 
+
+> abc
+
+, (S1e) 
+
+irec,ref  
+
+> abc
+
+= geq ,abc ⊙ vrec 
+
+> abc
+
+, (S1f) 
+
+dabc = kc,psu 
+
+> p
+
+ irec,ref  
+
+> abc
+
+− irec 
+
+> abc
+
+ + kc,psu  
+
+> i
+
+γpsu 
+
+> abc
+
+, (S1g) 
+
+0 ≤ dϕ ≤ 1, ϕ ∈ { a, b, c }. (S1h) 
+
+Additional Symbols: For arbitrary three-phase quantity, xabc ≜[xa xb xc]⊤; ⊙ and ⊘ denote element-wise multiplication and division, respectively. In (S1), γpsu  
+
+> abc
+
+is the inner-loop integrator state, irec,ref  
+
+> abc
+
+is the rectifier-current reference, and dabc is the duty-ratio command. ℓpsu is the per-phase PFC inductance, and (kc,psu  
+
+> p
+
+,k c,psu  
+
+> i
+
+) are the inner current-loop PI gains. Assuming a clear time-scale separation between the outer voltage and inner current loop, we apply a QSS approximation to the inner loop by enforcing irec,ref  
+
+> abc
+
+=irec  
+
+> abc
+
+and direc 
+
+> abc
+
+/dt≈0. Eliminating irec,ref  
+
+> abc
+
+, γpsu 
+
+> abc
+
+, and dabc gives: 
+
+Differential Equations 
+
+cpsu 
+
+ωb
+
+dvpsu 
+
+> abc
+
+dt =
+
+
+
+vrec  
+
+> abc
+
+⊙ irec  
+
+> abc
+
+− rpsu irec  
+
+> abc
+
+⊙ irec 
+
+> abc
+
+
+
+⊘ vpsu  
+
+> abc
+
+− ipsu 
+
+> abc
+
+, (S2a) 
+
+dξpsu 
+
+> abc
+
+dt = vref psu 1 − vpsu 
+
+> abc
+
+. (S2b) 
+
+Algebraic Equations 
+
+geq ,abc = kv,psu 
+
+> p
+
+ vref psu 1 − vpsu 
+
+> abc
+
+ + kv,psu  
+
+> i
+
+ξpsu 
+
+> abc
+
+, (S2c) 
+
+irec  
+
+> abc
+
+= geq ,abc ⊙ vrec 
+
+> abc
+
+. (S2d) To rewrite the reduced model on the AC side (VSI side), introduce the phase-wise sign vector 
+
+sabc ≜sgn  vvsi 
+
+> a
+
+ sgn  vvsi 
+
+> b
+
+ sgn  vvsi 
+
+> c
+
+ ⊤ ,
+
+where sgn( ·)∈{− 1,0,1} is the scalar sign function. This sign mapping captures the diode-bridge conduction polarity, keeping rectified-side variables positive. Using vvsi  
+
+> abc
+
+=sabc ⊙vrec  
+
+> abc
+
+and ivsi  
+
+> abc
+
+=sabc ⊙irec 
+
+> abc
+
+, together with sabc ⊙sabc =1 (away from zero crossings), the capacitor dynamics become 
+
+cpsu 
+
+ωb
+
+dvpsu 
+
+> abc
+
+dt =
+
+
+
+vvsi  
+
+> abc
+
+⊙ivsi  
+
+> abc
+
+−rpsu ivsi  
+
+> abc
+
+⊙ivsi 
+
+> abc
+
+
+
+⊘vpsu  
+
+> abc
+
+−ipsu 
+
+> abc
+
+,
+
+and the conductance-form current relation is preserved: 
+
+ivsi  
+
+> abc
+
+=geq ,abc ⊙vvsi 
+
+> abc
+
+.
+
+Next, under the common-DC approximation (neglecting the DC-side 2ω ripple and phase variations), we have vpsu  
+
+> abc
+
+≈vpsu 1,
+
+ξpsu  
+
+> abc
+
+≈ξpsu 1, and geq ,abc ≈geq 1, yielding 
+
+geq =kv,psu 
+
+> p
+
+ vref psu −vpsu +kv,psu  
+
+> i
+
+ξpsu , ivsi  
+
+> abc
+
+=geq vvsi 
+
+> abc
+
+.
+
+Summing the three phase-capacitor equations gives the aggregated DC-port dynamics: 
+
+cpsu 
+
+ωb
+
+dvpsu 
+
+dt = 13vpsu 1⊤ vvsi  
+
+> abc
+
+⊙ivsi  
+
+> abc
+
+−rpsu ivsi  
+
+> abc
+
+⊙ivsi 
+
+> abc
+
+−ipsu 
+
+= 13vpsu 
+
+ vvsi 
+
+> abc
+
+⊤ ivsi  
+
+> abc
+
+−rpsu ∥ivsi 
+
+> abc
+
+∥22
+
+
+
+−ipsu .SUBMITTED TO IEEE TRANSACTIONS ON POWER SYSTEMS 2
+
+Finally, we express the AC-side variables in the uv frame via the power-invariant Clarke/Park transformation with angle θvsi .Under the balanced three-phase assumption, we obtained ivsi  
+
+> uv
+
+=geq vvsi  
+
+> uv
+
+, such that 
+
+ vvsi 
+
+> abc
+
+⊤ ivsi  
+
+> abc
+
+=geq ∥vvsi  
+
+> uv
+
+∥22, ∥ivsi 
+
+> abc
+
+∥22 =g2 
+
+> eq
+
+∥vvsi  
+
+> uv
+
+∥22.
+
+Hence,  vvsi 
+
+> abc
+
+⊤ ivsi  
+
+> abc
+
+−rpsu ∥ivsi 
+
+> abc
+
+∥22
+
+
+
+=
+
+
+
+geq −rpsu g2
+
+> eq
+
+
+
+∥vvsi  
+
+> uv
+
+∥22.
+
+Substituting the above relations into the aggregated DC-port dynamics yields the compact common-DC PSU-array model in (4). 
+
+B. Downstream DC–DC Converter and Load 
+
+The downstream DC–DC/load equivalent in Fig. 5 is first written in the DAE form (S3). 
+
+Differential Equations 
+
+ℓeq 
+
+ωb
+
+dieq 
+
+dt = deq vpsu − veq  
+
+> o
+
+, (S3a) 
+
+ceq 
+
+ωb
+
+dveq 
+
+> o
+
+dt = ieq − gload veq  
+
+> o
+
+, (S3b) 
+
+dξeq 
+
+dt = veq,ref  
+
+> o
+
+− veq  
+
+> o
+
+, (S3c) 
+
+dγeq 
+
+dt = ieq,ref − ieq . (S3d) 
+
+Algebraic Equations 
+
+gload = pload 
+
+3
+
+
+
+veq,ref 
+
+> o
+
+2 , (S3e) 
+
+ieq,ref = kv,eq 
+
+> p
+
+ veq,ref  
+
+> o
+
+− veq 
+
+> o
+
+ + kv,eq  
+
+> i
+
+ξeq , (S3f) 
+
+deq = kc,eq 
+
+> p
+
+ ieq,ref − ieq  + kc,eq  
+
+> i
+
+γeq , (S3g) 
+
+ipsu = deq ieq , (S3h) 
+
+0 ≤ deq ≤ 1. (S3i) 
+
+Additional Symbols: ℓeq are the equivalent inductance of the downstream DC–DC stage; (kc,eq  
+
+> p
+
+,k c,eq  
+
+> i
+
+) are the inner current-loop PI gains; ieq,ref is the current reference generated by the outer voltage loop; deq is the duty-ratio command; γeq is the inner-loop integrator state; ipsu is the input current drawn from the upstream PSU DC port; and vpsu is the PSU DC-port voltage. Under the common-DC approximation (i.e., neglecting the 2ω ripple on the PSU DC port), ipsu ≈ipsu  
+
+> ϕ
+
+and vpsu ≈vpsu  
+
+> ϕ
+
+. Assuming a clear time-scale separation between the outer voltage loop and the inner current loop, a QSS approximation is applied to the inner current loop by enforcing ieq =ieq,ref and dieq /dt≈0. This eliminates the inner-loop variables (ieq,ref ,γ eq ,d eq ) and yields the reduced DAE model in (5). 
+
+C. Extra Parameter Setup of The Full-Order Model                              
+
+> TABLE S1 EXTRA DEFAULT PARAMETER SETUP FOR THE FULL -O RDER MODEL
+> Symbol Value Description
+> ℓpsu 0.05 p.u. PSU AC-side inductance
+> kc,psu
+> p,kc,psu
+> i1.6617 ,5236 PSU current-PI ( fbw =1000 Hz , ζ =1 .0)
+> ℓeq 0.05 p.u. DC-DC load inductance
+> kc,eq
+> p,kc,eq
+> i1.6617 ,5236 DC-DC load current-PI ( fbw =1000 Hz , ζ =1 .0)
+
+S2. B ANDWIDTH -B ASED PI C ONTROLLER TUNING RULE 
+
+The PI controller gains in Table I are obtained from a bandwidth-based tuning rule with target bandwidth fbw and damping ratio ζ, by matching each local PI-controlled loop to the standard second-order form s2 +2 ζω ns+ω2
+
+> n
+
+, where ωn =2 πf bw . The tuning rules are:  
+
+> •
+
+Voltage loops: kp =2 ζω nC/ω b and ki =ω2
+
+> n
+
+C/ω b, where C is the effective capacitance.  
+
+> •
+
+Current loops: kp =2 ζω nL/ω b −R and ki =ω2
+
+> n
+
+L/ω b, where L and R are the loop inductance and resistance.  
+
+> •
+
+PLL: kp =2 ζω n/ω b and ki =ω2
+
+> n
+
+/ω b.This tuning strategy enforces the intended time-scale separation among cascaded loops (i.e., inner current loops are tuned faster than outer voltage loops) and provides a consistent and reproducible way to set all PI gains. SUBMITTED TO IEEE TRANSACTIONS ON POWER SYSTEMS 3
+
+S3. T HE MODIFIED WSCC 3-M ACHINE 9-B US SYSTEM 
+
+A. Mathematical Formulation 1) Synchronous Machine with Exciter and Governor: Differential Eqs. 
+
+1
+
+ωb
+
+dδ
+
+dt =ω−ωs (S4a) 
+
+2H dω
+
+dt =τm −τe −D(ω−ωs) (S4b) 
+
+T ′
+
+> d0
+
+de′
+
+> q
+
+dt =−e′ 
+
+> q
+
+−(xd −x′
+
+> d
+
+)id +ef d (S4c) 
+
+T ′
+
+> q0
+
+de′
+
+> d
+
+dt =−e′ 
+
+> d
+
++( xq −x′ 
+
+> q
+
+)iq (S4d) 
+
+Te
+
+def d 
+
+dt =− ke +se(ef d )ef d +vr (S4e) 
+
+Tf
+
+dvf
+
+dt =−vf + kf
+
+Te
+
+vr − kf
+
+Te
+
+ ke +se(ef d )ef d (S4f) 
+
+Ta
+
+dvr
+
+dt =−vr +ka(vref −vf −vt) (S4g) 
+
+Tsv 
+
+dpsv 
+
+dt =−psv +pref − 1
+
+r (ω−ωs) (S4h) 
+
+Tch 
+
+dτm
+
+dt =−τm +psv (S4i) 
+
+Algebraic Eqs. 
+
+se(ef d )= ae exp( beef d ) (S4j) 
+
+vgen  
+
+> dq
+
+=T(δ)vgen  
+
+> ri
+
+(S4k) 
+
+id = e′ 
+
+> q
+
+−vq
+
+x′
+
+> d
+
+(S4l) 
+
+iq = vd −e′
+
+> d
+
+x′
+
+> q
+
+(S4m) 
+
+igen  
+
+> ri
+
+=T(δ)⊤idq (S4n) 
+
+τe =vdid +vq iq (S4o) 
+
+vt =
+
+q
+
+v2 
+
+> d
+
++v2 
+
+> q
+
+(S4p) 
+
+2) Grid-Forming Inverter: Differential Eqs. 
+
+1
+
+ωb
+
+dθgfm oc 
+
+dt =ωgfm oc −ωs (S5a) 
+
+1
+
+ωgfm 
+
+> z
+
+dpoc ,gfm 
+
+dt =pf,gfm −poc ,gfm (S5b) 
+
+1
+
+ωgfm 
+
+> f
+
+dqoc ,gfm 
+
+dt =qf,gfm −qoc ,gfm (S5c) 
+
+dξgfm 
+
+dt =vgfm vi −vgfm f (S5d) 
+
+dγgfm 
+
+dt =igfm ref −igfm cv (S5e) 
+
+ℓgfm 
+
+> f
+
+ωb
+
+digfm cv 
+
+dt =vgfm cv −vgfm f −rgfm  
+
+> f
+
+igfm cv −ωgfm oc ℓgfm  
+
+> f
+
+Ji gfm cv (S5f) 
+
+cgfm 
+
+> f
+
+ωb
+
+dvgfm f
+
+dt =igfm cv −igfm g −ωgfm oc cgfm  
+
+> f
+
+Jv gfm f (S5g) 
+
+ℓgfm 
+
+> g
+
+ωb
+
+digfm g
+
+dt =vgfm f −vgfm pcc −rgfm  
+
+> g
+
+igfm g −ωgfm oc ℓgfm  
+
+> g
+
+Ji gfm g (S5h) 
+
+Algebraic Eqs. 
+
+pf,gfm =( vgfm f )⊤igfm g (S5i) SUBMITTED TO IEEE TRANSACTIONS ON POWER SYSTEMS 4
+
+qf,gfm =( vgfm f )⊤J i gfm g (S5j) 
+
+ωgfm oc =ωref ,gfm +kgfm 
+
+p
+
+ pref ,gfm −poc ,gfm  (S5k) 
+
+voc ,gfm =vref ,gfm +kgfm 
+
+q
+
+ qref ,gfm −qoc ,gfm  (S5l) 
+
+vgfm vi =voc ,gfm e2 −rgfm 
+
+v igfm g −ωgfm oc ℓgfm 
+
+v Ji gfm g (S5m) 
+
+igfm ref =kv, gfm 
+
+p
+
+ vgfm vi −vgfm f
+
++kv, gfm 
+
+i ξgfm +ωgfm oc cgfm 
+
+f Jv gfm f (S5n) 
+
+vgfm cv =kc, gfm 
+
+p
+
+ igfm ref −igfm cv 
+
++kc, gfm 
+
+i γgfm −ωgfm oc ℓgfm 
+
+f Ji gfm cv (S5o) 
+
+vgfm pcc =R θgfm oc 
+
+vpcc 
+
+ri (S5p) 
+
+ig,gfm 
+
+ri =R θgfm oc 
+
+⊤ igfm g (S5q) 
+
+3) Grid-Following Inverter: Differential Eqs. 
+
+1
+
+ωb
+
+dθgfl pll 
+
+dt =ωgfl pll −ωs (S6a) 
+
+1
+
+ωgfl lp 
+
+dvgfl 
+
+q, pll 
+
+dt =vf,gfl 
+
+q −vgfl 
+
+q, pll (S6b) 
+
+dϵgfl 
+
+dt =vgfl 
+
+q, pll (S6c) 
+
+dσgfl 
+
+p
+
+dt =pref ,gfl −pm (S6d) 
+
+1
+
+ωgfl 
+
+z
+
+dpm
+
+dt =( vgfl f )⊤igfl g −pm (S6e) 
+
+dσgfl 
+
+q
+
+dt =qref ,gfl −qm (S6f) 
+
+1
+
+ωgfl 
+
+f
+
+dqm
+
+dt =( vgfl f )⊤J i gfl g −qm (S6g) 
+
+dγgfl 
+
+dt =igfl ref −igfl cv (S6h) 
+
+ℓgfl 
+
+f
+
+ωb
+
+digfl cv 
+
+dt =vgfl cv −vgfl f −rgfl 
+
+f igfl cv −ωgfl pll ℓgfl 
+
+f Ji gfl cv (S6i) 
+
+cgfl 
+
+f
+
+ωb
+
+dvgfl f
+
+dt =igfl cv −igfl g −ωgfl pll cgfl 
+
+f Jv gfl f (S6j) 
+
+ℓgfl 
+
+g
+
+ωb
+
+digfl g
+
+dt =vgfl f −vgfl pcc −rgfl 
+
+g igfl g −ωgfl pll ℓgfl 
+
+g Ji gfl g (S6k) 
+
+Algebraic Eqs. 
+
+ωgfl pll =1+ kpll ,gfl 
+
+p vgfl 
+
+q, pll +kpll ,gfl 
+
+i ϵgfl (S6l) 
+
+vgfl pcc =R
+
+
+
+θgfl pll 
+
+
+
+vpcc 
+
+ri (S6m) 
+
+igfl ref =
+
+"kq, gfl 
+
+p
+
+ qref ,gfl −qm
+
++kq, gfl 
+
+i σgfl 
+
+q
+
+kp, gfl 
+
+p
+
+ pref ,gfl −pm
+
++kp, gfl 
+
+i σgfl 
+
+p
+
+#
+
+(S6n) 
+
+vgfl cv =kc, gfl 
+
+p
+
+ igfl ref −igfl cv 
+
++kc, gfl 
+
+i γgfl −ωgfl pll ℓgfl 
+
+f Ji gfl cv (S6o) 
+
+ig,gfl 
+
+ri =R
+
+
+
+θgfl pll 
+
+⊤
+
+igfl g (S6p) 
+
+B. Parameter Setup 
+
+TABLE S2: Parameters of the Modified 3-Machine 9-Bus System 
+
+Symbol Value Description 
+
+Synchronous Machine, Exciter, and Governor 
+
+ωb 2πf b rad /s Base angular frequency Continued on next page SUBMITTED TO IEEE TRANSACTIONS ON POWER SYSTEMS 5
+
+TABLE S2 – continued from previous page 
+
+Symbol Value Description 
+
+ωs 1.0 p .u. Synchronous speed 
+
+H 3.0 s Inertia constant 
+
+D 0.0 p .u. Damping coefficient 
+
+xd 0.1460 p .u. d-axis synchronous reactance 
+
+xq 0.0969 p .u. q-axis synchronous reactance 
+
+x′ 
+
+> d
+
+0.0608 p .u. d-axis transient reactance 
+
+x′ 
+
+> q
+
+0.0969 p .u. q-axis transient reactance 
+
+T ′ 
+
+> d0
+
+8.96 s Open-circuit d-axis transient time constant 
+
+T ′ 
+
+> q0
+
+0.31 s Open-circuit q-axis transient time constant 
+
+ka 5.0 AVR gain 
+
+Ta 0.2 s AVR time constant 
+
+ke 1.0 Exciter coefficient 
+
+Te 0.314 s Exciter time constant 
+
+kf 0.063 Exciter washout gain 
+
+Tf 0.35 s Exciter washout time constant 
+
+ae 0.0039 Exciter saturation coefficient 
+
+be 1.555 Exciter saturation coefficient 
+
+r 0.15 Governor droop coefficient 
+
+Tsv 0.1 s Governor servo time constant 
+
+Tch 0.5 s Turbine time constant 
+
+Grid-Forming Inverter 
+
+ωb 2πf b rad /s Base angular frequency 
+
+ωs 1.0 p .u. System synchronous frequency 
+
+ℓgfm  
+
+> f
+
+0.08 p .u. Converter-side filter inductance 
+
+rgfm  
+
+> f
+
+0.003 p .u. Converter-side filter resistance 
+
+cgfm  
+
+> f
+
+0.074 p .u. Filter capacitance 
+
+ℓgfm  
+
+> g
+
+0.2 p .u. Grid-side inductance 
+
+rgfm  
+
+> g
+
+0.01 p .u. Grid-side resistance 
+
+kgfm  
+
+> p
+
+0.02 Active-power droop coefficient 
+
+ωgfm  
+
+> z
+
+20 .0 rad /s Active-power filter bandwidth 
+
+kgfm  
+
+> q
+
+0.05 Reactive-power droop coefficient 
+
+ωgfm  
+
+> f
+
+50 .0 rad /s Reactive-power filter bandwidth 
+
+rgfm  
+
+> v
+
+0.0 p .u. Virtual resistance 
+
+ℓgfm  
+
+> v
+
+0.2 p .u. Virtual inductance 
+
+kv, gfm  
+
+> p
+
+0.3947 Voltage-loop proportional gain 
+
+kv, gfm  
+
+> i
+
+49 .5953 Voltage-loop integral gain 
+
+kc, gfm  
+
+> p
+
+0.3771 Current-loop proportional gain 
+
+kc, gfm  
+
+> i
+
+335 .1032 Current-loop integral gain 
+
+ωgfm  
+
+> cv
+
+2π×80 rad /s Voltage-loop bandwidth 
+
+ωgfm  
+
+> ci
+
+2π×200 rad /s Current-loop bandwidth 
+
+Grid-Following Inverter 
+
+ωb 2πf b rad /s Base angular frequency 
+
+ωs 1.0 p .u. System synchronous frequency 
+
+ℓgfl  
+
+> f
+
+0.08 p .u. Converter-side filter inductance 
+
+rgfl  
+
+> f
+
+0.003 p .u. Converter-side filter resistance 
+
+cgfl  
+
+> f
+
+0.074 p .u. Filter capacitance 
+
+ℓgfl  
+
+> g
+
+0.1 p .u. Grid-side inductance 
+
+rgfl  
+
+> g
+
+0.01 p .u. Grid-side resistance 
+
+kpll ,gfl  
+
+> p
+
+0.05 PLL proportional gain Continued on next page SUBMITTED TO IEEE TRANSACTIONS ON POWER SYSTEMS 6
+
+TABLE S2 – continued from previous page 
+
+Symbol Value Description 
+
+kpll ,gfl  
+
+> i
+
+1.42 PLL integral gain 
+
+ωgfl lp 376 .99 rad /s PLL low-pass filter cutoff frequency 
+
+kp, gfl  
+
+> p
+
+0.01 Active-power loop proportional gain 
+
+kp, gfl  
+
+> i
+
+0.12 Active-power loop integral gain 
+
+kq, gfl  
+
+> p
+
+0.01 Reactive-power loop proportional gain 
+
+kq, gfl  
+
+> i
+
+0.12 Reactive-power loop integral gain 
+
+ωgfl  
+
+> z
+
+41 .47 rad /s Active-power measurement filter bandwidth 
+
+ωgfl  
+
+> f
+
+41 .47 rad /s Reactive-power measurement filter bandwidth 
+
+kc, gfl  
+
+> p
+
+0.15 Current-loop proportional gain 
+
+kc, gfl  
+
+> i
+
+0.267 Current-loop integral gain

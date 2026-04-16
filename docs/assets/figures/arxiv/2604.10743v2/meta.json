@@ -1,0 +1,38 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.10743v2/fig-001.webp",
+      "caption": "TABLE III: Performance comparison of EMSpice 3 across benchmark designs. A TTF entry of > 5.0 × 107 s indicates that the 10% IR-drop failure threshold was not reached within the simulated time window. The Krylov metric error is measured on TTF when failure occurs, and on the final IR drop otherwise.",
+      "page": 11,
+      "index": 1,
+      "width": 854,
+      "height": 190
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10743v2/fig-002.webp",
+      "caption": "Fig. 10: Temperature maps, stress distributions, and IR drop maps for the ARM Cortex-A logic core under two thermal scenarios",
+      "page": 11,
+      "index": 2,
+      "width": 864,
+      "height": 1070
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10743v2/fig-003.webp",
+      "caption": "Fig. 5: Steady-state stress distribution for the RISC-V core (Case 1, baseline external temperature map at 353 K average) computed without void nucleation. Stress accumulates unbounded throughout the simulation, revealing the segments most susceptible to EM degradation prior to any saturation effect.",
+      "page": 8,
+      "index": 3,
+      "width": 420,
+      "height": 329
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10743v2/fig-004.webp",
+      "caption": "Fig. 9: Power grid structure of the ARM Cortex-A logic core (three metal layers M1, M8, M9 shown together with VIA connections)",
+      "page": 9,
+      "index": 4,
+      "width": 420,
+      "height": 410
+    }
+  ]
+}

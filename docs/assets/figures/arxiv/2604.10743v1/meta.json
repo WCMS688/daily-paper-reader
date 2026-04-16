@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.10743v1/fig-001.webp",
+      "caption": "Fig. 3: Mid-tree void nucleation in the Dual-Port RAM design. Left: stress profile along tree (25-100) over outer timesteps from 2.5 × 106 s to 5.0 × 107 s, showing the evolution from a near-zero state to a strong compressive gradient as degradation accumulates. Right: stress history at junction node 220, where the abrupt transition from about 3.3× 108 Pa tensile stress to about −3.4× 108 Pa compressive stress marks void nucleation; the subsequent saturation confirms that the Robin boundary condition enforces flux decoupling at the interior node without dynamic tree splitting.",
+      "page": 6,
+      "index": 1,
+      "width": 527,
+      "height": 239
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10743v1/fig-002.webp",
+      "caption": "Fig. 7: Power grid structure of the ARM Cortex-A logic core (three metal layers M1, M8, M9 shown together with VIA connections)",
+      "page": 11,
+      "index": 2,
+      "width": 527,
+      "height": 511
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10743v1/fig-003.webp",
+      "caption": "Fig. 6: Temperature maps, stress distributions, and IR drop maps for the RISC-V core under two thermal scenarios",
+      "page": 10,
+      "index": 3,
+      "width": 910,
+      "height": 1146
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10743v1/fig-004.webp",
+      "caption": "Fig. 4: RISC-V core: finished physical layout (left) and extracted power grid structure showing four metal layers (M1, M2, M7, M8) with VIA connections (right).",
+      "page": 8,
+      "index": 4,
+      "width": 514,
+      "height": 269
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10743v1/fig-005.webp",
+      "caption": "TABLE III: Performance comparison of EMSpice 3 across benchmark designs. A TTF entry of > 5.0 × 107 s indicates that the 10% IR-drop failure threshold was not reached within the simulated time window. The Krylov metric error is measured on TTF when failure occurs, and on the final IR drop otherwise.",
+      "page": 12,
+      "index": 5,
+      "width": 1038,
+      "height": 192
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10743v1/fig-006.webp",
+      "caption": "Fig. 8: Temperature maps, stress distributions, and IR drop maps for the ARM Cortex-A logic core under two thermal scenarios",
+      "page": 12,
+      "index": 6,
+      "width": 910,
+      "height": 1127
+    }
+  ]
+}

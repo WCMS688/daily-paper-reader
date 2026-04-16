@@ -1,0 +1,78 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.06624v1/fig-001.webp",
+      "caption": "TABLE I DEFAULT PARAMETER SETUP FOR THE SDCIB CASE",
+      "page": 6,
+      "index": 1,
+      "width": 504,
+      "height": 523
+    },
+    {
+      "url": "assets/figures/arxiv/2604.06624v1/fig-002.webp",
+      "caption": "Fig. 1. The modern data-center power-delivery system operating in online (double-conversion) mode",
+      "page": 2,
+      "index": 2,
+      "width": 932,
+      "height": 297
+    },
+    {
+      "url": "assets/figures/arxiv/2604.06624v1/fig-003.webp",
+      "caption": "Fig. 6. Comparison between the full-order three-phase model and the reduced model under a step change in pload from 0.5 p.u. to 0.6 p.u.: (a) PCC active power, (b) VSI AC-bus active power, and (c) PSU DC-side voltage.",
+      "page": 7,
+      "index": 3,
+      "width": 1032,
+      "height": 185
+    },
+    {
+      "url": "assets/figures/arxiv/2604.06624v1/fig-004.webp",
+      "caption": "Fig. 7. Eigenvalue map and mode residues of the SDCIB case",
+      "page": 7,
+      "index": 4,
+      "width": 1035,
+      "height": 192
+    },
+    {
+      "url": "assets/figures/arxiv/2604.06624v1/fig-005.webp",
+      "caption": "TABLE II PARTICIPATION FACTORS OF ALL MODES IN THE SDCIB CASE",
+      "page": 7,
+      "index": 5,
+      "width": 529,
+      "height": 338
+    },
+    {
+      "url": "assets/figures/arxiv/2604.06624v1/fig-006.webp",
+      "caption": "Fig. 12. Eigenvalue map with coupling visualization of the modified 3-machine 9-bus system",
+      "page": 10,
+      "index": 6,
+      "width": 977,
+      "height": 189
+    },
+    {
+      "url": "assets/figures/arxiv/2604.06624v1/fig-007.webp",
+      "caption": "Fig. 3. The control and circuit diagram of a three-phase PWM VSI",
+      "page": 3,
+      "index": 7,
+      "width": 977,
+      "height": 198
+    },
+    {
+      "url": "assets/figures/arxiv/2604.06624v1/fig-008.webp",
+      "caption": "Fig. 8. (a) POA factor as a function of frequency, with a peak at 5.54 Hz. (b) Time-domain POA simulation under sinusoidal server-load variations.",
+      "page": 8,
+      "index": 8,
+      "width": 997,
+      "height": 190
+    },
+    {
+      "url": "assets/figures/arxiv/2604.06624v1/fig-009.webp",
+      "caption": "Fig. 9. Top-6 eigenvalue trajectories (top row) and corresponding POA curves (bottom row) under varying system conditions: (a),(d) VSI voltage-controller bandwidth; (b),(e) load level; and (c),(f) short-circuit ratio (SCR).",
+      "page": 8,
+      "index": 9,
+      "width": 1042,
+      "height": 400
+    }
+  ]
+}

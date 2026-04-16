@@ -1,0 +1,735 @@
+Title: GIF: A Conditional Multimodal Generative Framework for IR Drop Imaging in Chip Layouts
+
+URL Source: https://arxiv.org/pdf/2604.09999v1
+
+Published Time: Tue, 14 Apr 2026 00:24:46 GMT
+
+Number of Pages: 24
+
+Markdown Content:
+# GIF: A Conditional Multimodal Generative Framework for IR Drop Imaging in Chip Layouts 
+
+Kiran Thorat 1, Nicole Meng 2, Mostafa Karami 1, Caiwen Ding 3, Yingjie Lao 2,and Zhijie Jerry Shi 1 
+
+> 1
+
+University of Connecticut, USA 
+
+{kiran_gautam.thorat, mostafa.karami, zhijie.shi}@uconn.edu  
+
+> 2
+
+Tufts University, USA 
+
+{ziyi.meng, Yingjie.Lao}@tufts.edu  
+
+> 3
+
+University of Minnesota Twin Cities, USA 
+
+dingc@umn.edu 
+
+Abstract. IR drop analysis is essential in physical chip design to en-sure the power integrity of on-chip power delivery networks. Traditional Electronic Design Automation (EDA) tools have become slow and expen-sive as transistor density scales. Recent works have introduced machine learning (ML)-based methods that formulate IR drop analysis as an im-age prediction problem. These existing ML approaches fail to capture both local and long-range dependencies and ignore crucial geometrical and topological information from physical layouts and logical connectiv-ity. To address these limitations, we propose GIF, a Generative IR drop 
+
+Framework that uses both geometrical and topological information to generate IR drop images. GIF fuses image and graph features to guide a conditional diffusion process, producing high-quality IR drop images. For instance, On the CircuitNet-N28 dataset, GIF achieves 0.78 SSIM, 0.95 Pearson correlation, 21.77 PSNR, and 0.026 NMAE, outperforming prior methods. These results demonstrate that our framework, using dif-fusion based multimodal conditioning, reliably generates high quality IR drop images. This shows that IR drop analysis can effectively leverage recent advances in generative modeling when geometric layout features and logical circuit topology are jointly modeled. By combining geometry aware spatial features with logical graph representations, GIF enables IR drop analysis to benefit from recent advances in generative modeling for structured image generation. 
+
+## 1 Introduction 
+
+As semiconductor technology nodes continue to shrink and on-chip transistor density increases, the resulting growth in layout complexity makes IR-drop sim-ulation increasingly computationally expensive [2,13,29]. ML-based IR-drop pre-diction methods have therefore been explored as a promising solution. Most ex-isting approaches rely on convolutional neural networks (CNNs) or graph neural networks (GNNs) [4, 7, 10, 26]. For example, PDNNet [29] uses a GNN–CNN ar-chitecture in which the power delivery network (PDN) is modeled as a graph                    
+
+> arXiv:2604.09999v1 [cs.CV] 11 Apr 2026 2K. Thorat et al.
+> Table 1: Comparison of IR-drop learning approaches.
+> Method Layout Power Maps Geometry-aware Layout Features Logical Topology Generative Modeling
+> PowerNet [27] ✓✗✗✗
+> MAVIREC [5] ✓✗✗✗
+> PDNNet [29] ✓✗✓✗
+> Ours (GIF) ✓✓✓✓
+
+and localized spatial features (e.g., internal power) are extracted using a CNN. However, the limited receptive field of CNNs hampers their ability to capture the global spatial dependencies present in modern chip layouts [30]. Existing ML based approaches typically model either spatial layout features or circuit connectivity, but rarely integrate both sources of information in a unified repre-sentation. GNN–CNN hybrids such as PDNNet incorporate PDN structure and power features, but do not model richer topological information such as logical connectivity between cells and nets. Existing image-based approaches, including PowerNet [27] and MAVIREC [5], treat IR-drop prediction as a spatial regression problem and focus primarily on power-related maps, while omitting additional geometric features (e.g., cell-density and placement-derived spatial indicators) that correlate with local current demand and local variations in IR-drop. As a result, existing methods struggle to jointly capture (i) fine-grained geomet-ric variation across the layout and (ii) long-range dependencies induced by the logical structure of the design. Our key insight is that IR-drop patterns are inherently multimodal : they depend simultaneously on local geometric context (e.g., spatial distribution of power) and global topological dependencies (e.g., logical connectivity that in-fluences correlated current demand). Rather than directly regressing IR-drop values from limited features, we view IR-drop prediction as a conditional gen-erative problem. By learning a generative model conditioned on both geometric features and a graph representation of the design, the model can capture the underlying distribution of IR-drop maps that are consistent with both the lay-out geometry and the logical structure. To address these limitations, we propose GIF, a diffusion-based generative framework that fuses geometric information and topological information for conditional IR-drop map generation. On the ge-ometric side, we construct a multi-channel image representation that augments conventional power maps with additional spatial features that better charac-terize variability across the layout. On the topological side, we build a graph from the logical netlist, encode it using a GNN, and compress the resulting node embeddings into a fixed set of graph tokens that summarize global logical structure. A diffusion U-Net is then conditioned on both modalities: geometric features modulate the network via feature-wise conditioning. This allows GIF to effectively integrate local detail with long-range dependencies during IR-drop generation. Table 1 summarizes key differences between existing IR-drop predic-tion approaches and GIF. Our key contributions are summarized below: Abbreviated paper title 3
+
+1. Multimodal generative formulation for IR-drop analysis. We formu-late IR-drop prediction as a conditional generation of IR-drop maps that jointly models geometric layout structure and logical circuit connectivity. This formulation enables learning IR-drop maps consistent with both local spatial features and global circuit dependencies. 2. Geometry-enhanced spatial features. Beyond conventional power maps, we incorporate additional spatial features derived from placement, enabling the model to account for geometric variations that influence IR-drop behav-ior. This produces a improved dataset with richer spatial representation with additional structural cues that improve IR-drop modeling. 3. Topology-aware logical graph modeling. We construct a netlist-level graph that encodes logical connectivity between cells and nets, and obtain a fixed set of graph tokens using a GNN encoder and token-pooling scheme to capture global structural dependencies. 4. Multimodal fusion of physical-design features for IR-drop genera-tion. We design a diffusion-based IR-drop generator in which geometric fea-tures provide spatial conditioning and logical graph tokens are injected via gated cross-attention, allowing the denoising network to incorporate circuit-level context throughout the generative process. Our proposed framework, GIF, achieves 0.786 SSIM, 0.9536 Pearson correlation, 21.77 PSNR, and 0.0266 NMAE, outperforming all existing methods across these metrics. PowerNet [27] reports 0.56 SSIM, 0.77 correlation, 11.60 PSNR, and 0.149 NMAE; MAVIREC [5] reports 0.68 SSIM, 0.91 correlation, 18.27 PSNR, and 0.039 NMAE; and PDNNet [29] reports 0.72 SSIM, 0.92 correlation, 19.35 PSNR, and 0.028 NMAE. To the best of our knowledge, GIF is the first diffusion-based framework for IR-drop map generation that jointly conditions on geometric layout features and logical graph topology. 
+
+## 2 Background and Related Work 
+
+CNN-based IR-drop models. CNN-based learning IR-drop prediction is typ-ically formulated as an image-to-image regression problem. Additional back-ground on chip design flow and IR-drop analysis is provided in the supplementary material A. PowerNet [27] employs a U-Net to map layout features to IR-drop images, MAVIREC [5] improves hotspot localization, and PDNNet [29] inte-grates CNN-GNN spatial modeling. These models rely solely on image features and struggle to capture long-range dependencies in power-delivery networks. 
+
+GNN-based chip-design models. GNNs are widely applied in physical-design tasks to represent logical connectivity and structural relationships [22, 28]. De-spite their relevance to global PDN behavior, existing IR-drop models do not incorporate topological information from the netlist. While GNNs capture netlist structure effectively, most existing approaches apply them to node-level voltage estimation or global PDN analysis rather than generating full-resolution IR-drop maps. 4 K. Thorat et al. Feature          
+
+> Builder:
+> Topological
+> Gate Level
+> Netlist:
+> Netlist attributes: Pin,
+> Net, Node
+> Instance Placement
+> Info stem
+> 256²
+> Ex: power_i , cell
+> density
+> GCN(2 -layer)
+> Graph tokens (K ×D)
+> ResBlock
+> ResBlock
+> ResBlock
+> ResBlock
+> ResBlock
+> ResBlock
+> down
+> 128²
+> down
+> 64²
+> mid
+> 64²
+> up
+> 128²
+> up
+> 256²
+> ε head (3 ×3 conv)
+> time embedding t
+> Graph tokens via
+> cross -attention
+> DDPM reverse (T steps)
+> Noisy
+> label
+> 1×256 ×
+> 256
+> Generated IR drop
+> map
+> Conditions
+> UNet via
+> feature) Model (Conditioned UNet )
+> ResBlock conditioned via
+> (AdaGN+FiLM )
+> (a)
+> (b) (c)
+> Feature
+> Builder:
+> Geometrical
+> Feature Image:
+> 34 Channel Cadence
+> Innovus : def file
+> PDK 28nm and
+> 14nm : lef file
+> Power and
+> Timing Reports
+> Evaluation
+> Metrics: SSIM,
+> PSNR, Pearson
+> (d)
+
+Fig. 1: Overview of the proposed framework. (a) Geometric features creation from DEF/LEF files and power reports, (b) Topological features creation, and (c) Adiffusion-based UNet predicts the noise ϵ, conditioned on features via AdaGN+FiLM and on graph tokens via gated cross-attention, (d) Generated IR drop map. 
+
+Transformers and generative models. Transformers capture global spatial interactions [6,16], and layout-specific variants such as Lay-Net [30] demonstrate advantages for chip layout for congestion prediction. Generative models includ-ing VAEs [14], denoising diffusion models [11], and latent diffusion [19] have achieved best performance in image synthesis. However, prior IR-drop work re-mains deterministic and does not exploit generative modeling or multimodal conditioning. This work introduces the first generative formulation for IR-drop, filling a gap in prior methods. 
+
+2.1 Problem Formulation 
+
+Given a placed digital design, let Xp ∈ RH×W ×Cp denote the set of physical layout features, including power-map features and geometry-aware quantities such as cell density, RUDY, and overflow. Let G = ( V, E) denote the topology-aware graph constructed from the netlist, where each node v ∈ V represents a cell instance and edges e ∈ E represent logical connectivity. We define the mapping 
+
+fθ : ( Xp, G) → Y, (1) where Y ∈ RH×W is the IR-drop map. In the generative formulation, we instead model the conditional distribution 
+
+pθ (Y | Xp, G) , (2) and generate samples of Y by drawing from this distribution. The problem is therefore to estimate the conditional distribution pθ (Y | Xp, G) and generate IR-drop maps that match the ground-truth distribution. Abbreviated paper title 5
+
+## 3 Framework 
+
+Figure 1 provides an overview of the proposed framework GIF. On the left side of the figure, two feature-builder modules generate the conditioning inputs. The upper block (Figure 1 (a)) processes def/lef files, PDK information, and power/timing reports to form a multi-channel geometry-aware feature image (maps). The lower block (Figure 1 (b)) uses the gate-level netlist together with pin, net, node attributes and instance information to form topology (logical connection) aware feature. As shown in the figure, this block applies a lightweight two-layer GCN followed by a top-k selection step, producing a fixed-size set of graph tokens that represent logical connectivity. The diffusion U-Net appears on the right half of Figure 1 (c). The noisy IR-drop label enters the first ResBlock, and the sequence of ResBlocks corresponds directly to the stack shown in dark (UNet) block. Geometry-aware maps condition every ResBlock through AdaGN and FiLM layers, as indicated by the conditioning arrows. Graph tokens are injected through gated cross-attention blocks placed at the bottleneck and early decoder positions, as marked in Figure 1. A sinusoidal time embedding is added to each block. The final 3 ×3 convolutional head produces the noise estimate, and the DDPM reverse process generates the IR-drop map shown in Figure 1 (d). The next subsections describe the geometry-aware feature maps, the topology-aware graph construction, and the multimodal conditioning mechanism in details. 
+
+3.1 Construction of geometry-aware feature maps 
+
+IR drop analysis is a simulation of voltage drop under the combined effect of parasitic and current flow through the on-chip power delivery network (PDN) [31]. It involves large system of equations of the form [15], 
+
+G v = i,  (3) where G is the transconductance matrix, v is the voltage at the pin, and i is the current flowing through the PDN. The modeling of IR drop using the system of equations is expensive and slow. To address these challenges most ML-based IR drop prediction methods use the tile based power maps (feature images) [5]. Based on these IR drop feature images, ML based modes predict the IR drop. These feature images are created based on the power reports and timing window reports. Power reports contains instance level Internal power ( pi), Switching power ( ps), Leakage power ( pl), Toggle rate ( rtogg ). For each layout tile, instance-level internal power ( pi), switching power ( ps), leakage power ( pl), and toggle rate ( rtogg ) are aggregated to form several nor-malized channels: 
+
+pi ∝ pi, ps ∝ ps, (4) 
+
+psca ∝ (ps + pi) · rtogg + pl, (5) 
+
+pall ∝ ps + pi + pl. (6) 6 K. Thorat et al. (a) (b) (c) (d)      
+
+> Fig. 2: Visualization of additional features and ground-truth IR-drop map for the RISCY design from the N14 technology dataset. From left to right: (a) Cell Density ,(b) RUDY Short , (c) Global Routing Vertical Overflow , and (d) IR-drop Ground Truth .
+
+Timing window reports contains possible switching time domain of the in-stance in a clock period from a static timing analysis for each pin. The clock period is decomposed evenly into 20 parts, and the cell contributes to time-decomposed power map ( pt) only in the parts that it is switching. 
+
+pt[k] ∝ psca , k = 0 , . . . , 19 . (7) These yield a 24 -channel feature image per layout region ( 4 static power com-ponents and 20 temporal components). While power map based feature images capture current magnitude, they fail to encode structural locality and spatial context governing current paths and PDN resistance modulation. Regions with similar power intensity can exhibit substantially different IR-drop behavior depending on routing congestion, macro blockage, and pin clustering. Consequently, methods [5, 29] relying solely on power maps struggle to differentiate regions with similar power magnitudes but different spatial connectivity or routing stress. 
+
+Additional layout-aware features. As described in the IR-drop analysis (Eq. 3), the voltage drop at each tile depends jointly on the local current demand and the effective resistance of the PDN paths. To better represent these spatial dependencies (geometric information), we add ten additional layout-aware IR-drop features (summarized in Table 2). These features encode geometrical and routing factors that modulate either the effective current density Ieff (x, y ) or the path resistance Reff (x, y ).The Ieff (x, y ) current flowing through PDN network is given by: 
+
+Ieff (x, y ) = P (x, y )
+
+Vdd 
+
++ α1R(x, y ) + α2Rpin (x, y )+ α3D(x, y ) + α4M (x, y ),
+
+(8) where P (x, y ) is the total aggregated power in tile (x, y ) from power maps; 
+
+R(x, y ) is the RUDY (Rectangular Uniform wire Density); Rpin (x, y ) is the pin-RUDY map capturing pin-driven routing density; D(x, y ) is the cell-density map representing standard-cell counts per tile; M (x, y ) is the macro-region indicator Abbreviated paper title 7
+
+Table 2: Layout-aware feature groups fused with power maps and their contribution to the current proxy Ieff and the resistance proxy Reff .
+
+Feature Group Channels Ieff Reff 
+
+Cell density Cden (x, y ) ✓ ✗
+
+Macro region M(x, y ) ✓ ✗
+
+RUDY-based demand RUDY , RUDY pin ✓ ✗
+
+RUDY-based demand RUDY long , RUDY short ✓ ✗
+
+Routing overflow OeGR  
+
+> H
+
+, OeGR  
+
+> V
+
+✗ ✓
+
+Routing overflow OGR  
+
+> H
+
+, OGR  
+
+> V
+
+✗ ✓
+
+identifying tiles occupied by macros; and αi ≥ 0 are scaling coefficients that weight the contribution of each geometric feature. 
+
+Reff (x, y ) = R0(x, y )
+
+h
+
+1 + β1OeGR  
+
+> H
+
+(x, y ) + β2OeGR  
+
+> V
+
+(x, y )+ β3OGR  
+
+> H
+
+(x, y ) + β4OGR  
+
+> V
+
+(x, y )
+
+i
+
+,
+
+(9) where R0(x, y ) is the nominal PDN resistance in tile (x, y ); OeGR  
+
+> H
+
+(x, y ) and 
+
+OeGR  
+
+> V
+
+(x, y ) denote early-global-routing (eGR) horizontal and vertical overflow maps; OGR  
+
+> H
+
+(x, y ) and OGR  
+
+> V
+
+(x, y ) denote global-routing (GR) horizontal and ver-tical overflow maps; and βj ≥ 0 are coefficients that modulate the influence of directional routing congestion on the effective resistance. Together, these rela-tions form a physically consistent approximation: 
+
+Vdrop (x, y ) ≈ Reff (x, y ) Ieff (x, y ). (10) This enables the feature image to capture both local and long-range spatial dependencies. Including these ten layout-aware features yields a 256 × 256 × 34 
+
+feature tensor feature image, significantly enhancing the generative diffusion process by embedding physical-design structure and routability priors into the learned IR-drop representation. The Figure 2 shows additional feature visualiza-tion (three shown) for a RISCY design. Three features are cell density, RUDY short, and GR vertical overflow. 
+
+3.2 Graph Creation Based on Topological Information 
+
+To incorporate logical connectivity into IR-drop generation, we construct a graph for each design using the flattened gate-level netlist and instance placement data provided in CircuitNet [2,13]. Each design is represented as G = ( V, E, X), where 
+
+V is the set of instances, E encodes connectivity through nets, and X contains physical design node features. Pins that share the same net index belong to the same net; pins that share the same node index belong to the same instance. For example, in Figure 3(a), pins P1 and P3 both have net index 1, so they belong to net n1 , which connects NAND_1 and INV_1 . By traversing the pin attributes, we identify all nets and the set of instances connected through each net. 8 K. Thorat et al. a  
+
+> b
+> c
+> d
+> I
+> P1
+> P2
+> P4
+> n1
+> P3
+> Nand_1
+> Nand_2
+> Inv_1 ou t
+> Pin Attributes: pin names, corresponding net
+> index, node index .
+> Ex. [[I,P1,P3,P4], [0,1,1,2],[0,0,1,1]]
+> Net attributes: Net names
+> Ex. [[a, n1, out]]
+> Node attributes: Node names,
+> corresponding standard cell name
+> Ex. [[Nand_1, Inv_1],[NAND, INV]]
+> Gate level netlist
+
+0
+
+1
+
+2
+
+t r
+
+b
+
+l
+
+p                
+
+> Cx
+> Cy
+> l: left
+> b: bottom
+> r:right
+> t : top
+> Cx , Cy: Instance
+> Co-odinates
+> p: average pin count
+> Instance placement information
+> 0
+> 2
+> 1
+> Node features (x v)=
+> [Cx , Cy, l, b, r, t, p ]
+> Constructed graph
+> Edge construction ( Aij )=
+> !1,if nodes iand jshare net ,
+> 0,otherwise
+> (a) (b) (c)
+
+Fig. 3: Graph construction: (a) Gate level netlist and graph construction attributes, (b) Instance (GCell) placement information, each instance is placed on grid (cx, c y ),annotated with its bounding-box coordinates (l, b, r, t ), and pin count p, (c) Constructed graph representation with node feature vector xv = [ cx, c y , l, b, r, t, p ].
+
+Two instances are connected by an edge if they appear together on at least one net: 
+
+Aij =
+
+(
+
+1, if instances i and j share a net ,
+
+0, otherwise . (11) The example in Figure 3(a) shows how the three attribute arrays describe the circuit. The pin-attribute array lists the pin names together with their net indices and node indices (e.g., I, P1 , P3 , P4 belong to nets {0,1,1,2} and nodes {0,0,1,1}). The net-attribute array simply maps each net index to its net name (e.g., net 0 corresponds to a, net 1 to n1 , and net 2 to out ). The node-attribute array maps each node index to an instance and its standard-cell type (e.g., node 0 is NAND_1 of type NAND , and node 1 is INV_1 of type INV ). Together, these three arrays fully specify which pins belong to each net and which pins belong to each instance, allowing the logical connectivity to be reconstructed directly from the attributes. Placement information is provided as bounding-box coordinates for each instance in GCell units (Figure 3(b)). For each node v, we construct the feature vector 
+
+xv = [ cx, c y , l, b, r, t, p ], (12) where (cx, c y ) is the instance center, (l, b, r, t ) are the bounding-box coordinates, and p is the pin count. The final constructed graph is shown in Figure 3(c). Each node encodes geometric layout properties, and each edge reflects logical connectivity derived from the netlist. All graphs are stored in PyTorch Geometric format, enabling efficient integration into our multimodal generative framework. Abbreviated paper title 9
+
+3.3 Image–Graph Fusion for Multimodal Conditioning of Diffusion Model 
+
+Figure 1 (c) illustrates how GIF fuses geometric layout features and logical netlist topology inside a diffusion model tailored to IR-drop generation. A detailed illustration of the fusion mechanism is provided in the supplementary material (Image Graph Fusion Mechanism). Although diffusion models and UNet-based conditional parameterizations are widely used in vision [11, 19], their standard conditioning interfaces do not reflect the mixed local–global dependencies that govern IR-drop behavior. Our approach is not to introduce a new generative mechanism, but to construct a conditioning pathway that matches the physical factors underlying IR-drop: localized current demand shaped by geometry, and long-range correlations shaped by netlist topology. Let Y ∈ RH×W denote a ground truth IR-drop field. Following the imple-mentation, we normalize IR-drop values into the range [−1, 1] via eY = 2 Y − 1.At diffusion step t, the model observes a noisy version 
+
+eYt = √¯αt eY + √1 − ¯αt ε, ε ∼ N (0 , IH×W ),
+
+which reflects a physically plausible IR-drop field perturbed by uncertainty in local current demand. The diffusion model learns to predict the noise component 
+
+ε conditioned on both geometric layout features and netlist topology. Each tile is represented by a multi-channel geometric feature map X ∈
+
+RC×H×W encoding power maps and additional features from layout. Because IR-drop varies sharply with these local factors, X provides spatial conditioning throughout the UNet. Consistent with FiLM-style feature modulation [18] and adaptive normalization techniques such as AdaIN/AdaGN [12], each intermedi-ate UNet feature map F (ℓ) ∈ RCℓ×Hℓ×Wℓ is modulated by a pair of learned affine transforms depending on the downsampled layout features Xℓ and the timestep embedding:  bF (ℓ) = γ(ℓ)(Xℓ, t ) ⊙ F (ℓ) + β(ℓ)(Xℓ, t ).
+
+This matches the implementation, where time- and geometry-conditioned scales and shifts are produced by small MLPs and applied multiplicatively and additively inside each ResBlock. This mechanism encourages the diffusion model to encode fine-grained IR-drop structure tied to spatial variations in current demand. To incorporate topology information, the netlist graph G = ( V, E ) is processed by a lightweight GCN encoder, 
+
+H = ϕgcn (G) ∈ RN ×D ,
+
+following standard message-passing formulations. Because designs vary widely in size, we compress the node embeddings H into a fixed set of K topology tokens 
+
+T = ρ(H) ∈ RK×D ,
+
+using a permutation-invariant pooling operator (degree-aware or mean pooling). These tokens summarize global logical structure at tile granularity without in-troducing design-size–dependent computational cost. 10 K. Thorat et al. 
+
+To allow global topology to influence IR-drop generation, the tokens T are injected into the UNet through cross-attention layers inspired by multimodal conditioning in latent diffusion [19]. At a low-resolution layer ℓ corresponding to the spatial scale where IR-drop exhibits large spatial smoothness and global coupling. We treat the spatial features as queries and the topology tokens as keys and values: 
+
+∆F (ℓ) = softmax Q(ℓ)K⊤
+
+pDq
+
+!
+
+V, 
+
+where Q(ℓ) is derived from bF (ℓ) and K, V are linear projections of T . This matches the implementation: the feature map is flattened into (HℓWℓ) queries, projected into multi-head format, and fused with token-derived values. The topology-aware update is incorporated using a learnable scalar gate αℓ initialized to zero, exactly as implemented: 
+
+F (ℓ) 
+
+> fused
+
+= bF (ℓ) + tanh( αℓ) reshape 
+
+
+
+∆F (ℓ)
+
+.
+
+This guarantees that the model initially behaves as a purely geometry con-ditioned denoiser and progressively learns to incorporate topology only if it im-proves IR-drop generation. The use of gated cross-attention is not intended as a new attention mechanism; it is a domain-specific choice motivated by how global logical connectivity influences low-frequency IR-drop structure. During sampling, the reverse diffusion process uses this fused UNet at every timestep, conditioned jointly on the geometric map X and the topology tokens T . This design aligns the generative model with the underlying mechanisms of IR-drop formation, enabling GIF to generate IR-drop maps consistent with both spatial layout and logical circuit structure. 
+
+## 4 Evaluation 
+
+Experimental Setup. All experiments use Ubuntu 22.04 with an AMD EPYC 7763 CPU (64 cores, 128 threads) and four NVIDIA RTX A6000 GPUs (48 GB memory each, CUDA 12.6, driver 560.35.05). 
+
+Model and Training Parameters. We adopt a U-Net-based [20] denoising backbone with T =1000 diffusion steps. We use AdamW ( β1=0 .9, β2=0 .999 ) with learning rate 2 × 10 −4 and no weight decay. An auxiliary reconstruction loss (L1 on ˆx0) with weight 0.1 is applied only for diffusion steps t < 150 . Exponential moving average (EMA) weights with decay 0.999 are used for evaluation. 
+
+4.1 Datasets 
+
+We evaluate our framework on the CircuitNet-N28 and CircuitNet-N14 datasets [2, 13]. Our formulation operates on spatial layout representations and is therefore applicable across technology nodes. Evaluating on both 28 nm and 14 nm tech-nology designs allows us to assess the ability of the model to generalize across Abbreviated paper title 11                                             
+
+> Table 3: Design-wise split of the CircuitNet-N28 dataset.
+> Design Split Samples
+> RISCY-a Train 2,003 RISCY-b Train 1,858 RISCY-FPU-a Train 1,969 zero-riscy-a Train 2,042 RISCY-FPU-b Val 1,248
+> zero-riscy-b Test 1,122 Total 10,242 Table 4: Design-wise split of the CircuitNet-N14 dataset.
+> Design Split Samples
+> Nvidia-small Train 85 RISCY Train 3,162 RISCY-FPU Train 3,456 Vortex-large Train 61 openc910-1 Train 96 Nvidia-large Train 32 Vortex-small Val 96
+> zero-riscy Test 3,456 Total 10,444
+
+different fabrication technologies and layout characteristics. Additional dataset details are provided in the supplementary material (Dataset Details). 
+
+CircuitNet-N28. CircuitNet-N28 contains physical design features and IR-drop maps generated from six open-source RISC-V designs fabricated in 28 nm technology. We adopt a design-wise split with four designs for training, one for validation, and one for testing to prevent cross-design leakage (Table 3). 
+
+CircuitNet-N14. CircuitNet-N14 includes a broader set of designs such as RISC-V processors, NVIDIA GPUs, and ML accelerators fabricated in 14 nm technology. Compared to N28, these layouts exhibit greater variation in floor-plan organization, utilization, aspect ratios, and power delivery configurations. We again apply a design-wise split, using six designs for training, Vortex-small for validation, and zero-riscy for testing (Table 4). 
+
+4.2 Evaluation Metrics 
+
+We assess generated IR-drop maps by comparing them against ground truth IR drop maps using metrics commonly adopted in prior IR-drop modeling work [5, 27, 29]. PSNR measures per-pixel distortion, while SSIM reflects similarity in local spatial structure and contrast [8,23]. MAE and RMSE quantify the average and large-magnitude differences between generated and reference IR-drop val-ues. Pearson and Spearman correlations evaluate how well the generated maps preserve the overall IR-drop distribution and the relative severity ordering across layout regions. Together, these metrics characterize pixel-wise accuracy, struc-tural similarity, and global trend consistency of the generated IR-drop maps. Further discussion of these metrics in the context of IR-drop analysis is pro-vided in the supplementary material (Evaluation Metrics). 
+
+4.3 IR-drop Map Generation Evaluation 
+
+We evaluate GIF on the CircuitNet-N28 dataset using PSNR, SSIM, MAE, RMSE, Pearson, and Spearman metrics (Table 5). These metrics measure pixel 12 K. Thorat et al. 
+
+Table 5: Quantitative generation results on the CircuitNet-N28 [2, 13] dataset.                                                        
+
+> Conditioning ControlNet PSNR ↑SSIM ↑MAE ↓RMSE ↓Pearson ↑Spearman ↑
+> 24-ch images ✗19.218 0.699 0.0378 0.1103 0.9069 0.4949 34-ch images ✗19.542 0.739 0.0352 0.1063 0.9118 0.4973 24-ch images ✓19.255 0.711 0.0374 0.1098 0.9065 0.4865 34-ch images ✓19.583 0.766 0.0345 0.1058 0.9127 0.5033 34-ch + graph (K=32, topk) ✗19.519 0.611 0.0383 0.1066 0.9130 0.5107 34-ch + graph (K=32, topk) ✓19.307 0.762 0.0363 0.1091 0.9064 0.4976 34-ch + graph (K=64, mean) ✓18.935 0.785 0.0405 0.1141 0.9215 0.5139
+
+accuracy and structural consistency. Adding the geometric feature representa-tion (24 to 34 channels) increases PSNR from 19.218 to 19.542 and SSIM from 0.699 to 0.739. Adding ControlNet further increases PSNR to 19.583 and SSIM to 0.766, and also lowers MAE and RMSE. Adding topological information through graph-conditioned cross-attention provides additional gains. The K = 32 top-
+
+k configuration (without ControlNet) increases Pearson correlation to 0.9130 while keeping PSNR at a similar level. The K = 64 mean-pooled configuration with ControlNet achieves the highest SSIM (0.785) and the highest correlations (Pearson 0.9215, Spearman 0.5139), with a small decrease in PSNR to 18.935. Overall, the image-only configuration with ControlNet gives the highest pixel accuracy, while the graph-conditioned configurations give higher structural con-sistency and higher correlation with the true IR-drop maps. 
+
+Comparison with Existing Methods. For fair comparison, we follow the same evaluation protocol and metrics used in prior work. All experiments use the CircuitNet-N28 dataset under the design split defined by PDNNet. Four de-signs ( RISCY-a , RISCY-b , RISCY-FPU-a , RISCY-FPU-b ) are used for train-ing, and two unseen designs ( zero-riscy-a , zero-riscy-b ) are used for testing. The model uses the AdamW optimizer with a learning rate of 8×10 −4, EMA decay of 0.999, and a cosine learning-rate schedule. The diffusion process uses 1000 cosine-scheduled steps. GIF uses a conditional diffusion model with 34-channel layout-aware inputs, graph tokens extracted from the netlist, and cross-attention for joint conditioning. Table 6 reports the results. Baseline results for PowerNet [27], MAVIREC [5], and PDNNet [29] are taken from their published performance on the same dataset. GIF achieves the lowest NMAE (0.0266) and increases PSNR, SSIM, and Pearson correlation to 21.77 dB, 0.786, and 0.9536, respectively. Overall, GIF reaches higher pixel accuracy and higher structural consistency than prior methods across all evaluation metrics. 
+
+Qualitative Visualization. To complement the quantitative evaluation, we provide a representative CircuitNet-N28 test instance generated by our best graph-conditioned model (34-channel geometric features with K=64 mean-pooled graph tokens and ControlNet); see Figure 4. From left to right, the figure shows the initial Gaussian noise xT , a three-channel composite of selected conditioning features, the generated IR-drop map ˆx0, and the ground-truth IR-drop map. Because the conditioning tensor has 34 channels, we display only three represen-tative feature maps as an RGB composite to provide a compact visualization; Abbreviated paper title 13                                 
+
+> Table 6: Comparison with SOTA methods on CircuitNet-N28
+> Method NMAE ↓PSNR ↑SSIM ↑Pear ↑
+> PowerNet [27] 0.149 11.60 0.56 0.77 MAVIREC [5] 0.039 18.27 0.68 0.91 PDNNet [29] 0.028 19.35 0.72 0.92
+> Ours (GIF) 0.026 21.77 0.78 0.95 (a) (b) (c) (d)
+> Fig. 4: Qualitative IR-drop generation on CircuitNet-N28: (a) noise xT, (b) condition-ing features (3-channels shown), (c) generated IR-drop ˆx0, (d) ground truth.
+
+showing all channels is not visually interpretable. For the sample design zero-riscy (zero-riscy-b-3-c2-u0.85-m1-p6-f1), the model outputs a PSNR of 19.625, an SSIM of 0.811, an MAE of 0.0333, an RMSE of 0.1044, a Pearson correla-tion of 0.9320, and a Spearman correlation of 0.5039. These values align with the aggregate results in Table 5. In the visualization, the generated IR-drop map follows the overall magnitude and spatial distribution of the ground truth, including the primary high-drop regions and surrounding local variations. 
+
+IR-drop Map Generation Evaluation on CircuitNet-N14. Table 7 sum-marizes the results on CircuitNet-N14. To the best of our knowledge, GIF is the first work to report IR-drop results on CircuitNet-N14, establishing initial base-lines for future methods. GIF shows strong generation ability, with Pearson corre-lation up to 0.9106 and Spearman correlation up to 0.8284. These values indicate that the model follows the overall IR-drop trends across the layout, even under the higher variability of the N14 dataset. The model trained with a classifier-free dropout of 0.1 gives the best overall performance. It achieves the highest correla-tions (Pearson 0.9106, Spearman 0.8284), the lowest MAE (0.0667) and RMSE (0.1797), and the highest PSNR (14.987) and SSIM (0.558). Other configura-tions, including the graph-conditioned variants, show lower PSNR and SSIM. Further analysis of the CircuitNet-N14 dataset and graph availability is pro-vided in the supplementary material E. This behavior is expected because the N14 dataset contains larger variation in design styles and an imbalanced sample distribution, which makes pixel-based metrics more difficult to optimize. Overall, GIF maintains high correlation accuracy across both N28 and N14, indicating that the framework generalizes across different technology nodes. 14 K. Thorat et al. 
+
+Table 7: Quantitative results on the CircuitNet-N14 dataset.                                  
+
+> Model PSNR ↑SSIM ↑MAE ↓RMSE ↓Pearson ↑Spearman ↑
+> 34-ch + ControlNet (no CFG) 14.156 0.513 0.0795 0.1996 0.8903 0.8133 34-ch + ControlNet (cfg-drop 0.1, no CFG at test) 14.987 0.558 0.0667 0.1797 0.9106 0.8284
+> 34-ch + Graph (K=32, top-k) + ControlNet (no CFG) 14.143 0.4947 0.0797 0.1995 0.8892 0.8103 34-ch + Graph (K=32, top-k) + ControlNet (finetuned, no CFG) 14.455 0.5025 0.0758 0.1918 0.8974 0.8149 (a) (b) (c) (d)
+
+Fig. 5: Qualitative IR-drop generation on CircuitNet-N14: (a) noise xT , (b) condition-ing features (3-channels shown), (c) generated IR-drop ˆx0, (d) ground truth. 
+
+Qualitative Visualization on CircuitNet-N14. To complement the quanti-tative evaluation, we provide a representative N14 test instance generated by our image-only model (34-channel conditioning with ControlNet and a classifier-free dropout rate of 0.1); see Figure 5. As in the N28 visualization, the figure shows the initial Gaussian noise xT , a three-channel composite of selected conditioning features, the generated IR-drop map ˆx0, and the ground-truth IR-drop map. For the shown zero-riscy sample, the model yields a PSNR of 16.818, an SSIM of 0.518, an MAE of 0.0593, an RMSE of 0.1442, a Pearson correlation of 0.9243, and a Spearman correlation of 0.8922. These values are consistent with the over-all N14 trends, where correlation metrics remain strong despite the larger design variability and the reduced spatial regularity of 14 nm layouts. Visually, the gen-erated IR-drop map tracks the primary magnitude and spatial patterns of the ground truth, including prominent high-drop regions and surrounding gradients. 
+
+## 5 Conclusion 
+
+We introduced GIF, a conditional diffusion framework for IR-drop map gener-ation that uses geometrical features and topological information as joint condi-tioning signals. By combining geometric features, a netlist-level graph encoded into graph features using multimodal fusion on a diffusion U-Net. GIF cap-tures both local IR-drop variation and long-range dependencies. The framework achieves strong accuracy on CircuitNet-N28 and stable correlation on the ex-tended CircuitNet-N14 setup, showing that diffusion models can effectively inte-grate image and graph-based conditioning for IR-drop analysis. This formulation provides a scalable alternative to traditional IR-drop workflows and opens oppor-tunities for future work in multi-scale conditioning, dynamic power information, Abbreviated paper title 15 
+
+and cross-technology generalization. In addition to these gains, GIF establishes a unified generative formulation for IR-drop, which has not been explored in prior work. By enabling IR-drop maps to be synthesized rather than directly regressed, the framework offers a foundation for future benchmarking and for building richer frameworks around generative modeling. 
+
+## References 
+
+1. Borkar, S.: Design challenges of technology scaling. IEEE micro 19 (4), 23–29 (2002) 2. Chai, Z., Zhao, Y., Liu, W., Lin, Y., Wang, R., Huang, R.: Circuitnet: An open-source dataset for machine learning in vlsi cad applications with improved domain-specific evaluation metric and learning strategies. IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems 42 (12), 5034–5047 (2023) 3. Chen, H.H., Ling, D.D.: Power supply noise analysis methodology for deep-submicron vlsi chip design. In: Proceedings of the 34th annual Design Automation Conference. pp. 638–643 (1997) 4. Chhabria, V.A., Kahng, A.B., Kim, M., Mallappa, U., Sapatnekar, S.S., Xu, B.: Template-based pdn synthesis in floorplan and placement using classifier and cnn techniques. In: 2020 25th Asia and South Pacific Design Automation Conference (ASP-DAC). pp. 44–49 (2020). https://doi.org/10.1109/ASP-DAC47756.2020. 9045303 
+
+5. Chhabria, V.A., Zhang, Y., Ren, H., Keller, B., Khailany, B., Sapatnekar, S.S.: Mavirec: Ml-aided vectored ir-drop estimation and classification. In: 2021 Design, Automation & Test in Europe Conference & Exhibition (DATE). pp. 1825–1828. IEEE (2021) 6. Dosovitskiy, A.: An image is worth 16x16 words: Transformers for image recogni-tion at scale. arXiv preprint arXiv:2010.11929 (2020) 7. Fang, Y.C., Lin, H.Y., Sui, M.Y., Li, C.M., Fang, E.J.W.: Machine-learning-based dynamic ir drop prediction for eco. In: 2018 IEEE/ACM International Conference on Computer-Aided Design (ICCAD). pp. 1–7. IEEE (2018) 8. Fardo, F.A., Conforto, V.H., De Oliveira, F.C., Rodrigues, P.S.: A formal evalua-tion of psnr as quality measurement parameter for image segmentation algorithms. arXiv preprint arXiv:1605.07116 (2016) 9. Fatima, B., Chandel, R.: Analysis of ir drop for robust power grid of semiconductor chip design: a review. In: ITM web of conferences. vol. 54, p. 04001. EDP Sciences (2023) 10. Ho, C.T., Kahng, A.B.: Incpird: Fast learning-based prediction of incremental ir drop. In: 2019 IEEE/ACM International Conference on Computer-Aided Design (ICCAD). pp. 1–8. IEEE (2019) 11. Ho, J., Jain, A., Abbeel, P.: Denoising diffusion probabilistic models. Advances in neural information processing systems 33 , 6840–6851 (2020) 12. Huang, X., Belongie, S.: Arbitrary style transfer in real-time with adaptive instance normalization. In: Proceedings of the IEEE international conference on computer vision. pp. 1501–1510 (2017) 13. Jiang, X., Chai, Z., Zhao, Y., Lin, Y., Wang, R., Huang, R., et al.: Circuitnet 2.0: An advanced dataset for promoting machine learning innovations in realistic chip design environment. In: The Twelfth International Conference on Learning Representations (2024) 16 K. Thorat et al. 14. Kingma, D.P., Welling, M.: Auto-encoding variational bayes. arXiv preprint arXiv:1312.6114 (2013) 15. Köse, S., Friedman, E.G.: Fast algorithms for ir voltage drop analysis exploiting locality. In: Proceedings of the 48th Design Automation Conference. pp. 996–1001 (2011) 16. Liu, Z., Lin, Y., Cao, Y., Hu, H., Wei, Y., Zhang, Z., Lin, S., Guo, B.: Swin transformer: Hierarchical vision transformer using shifted windows. In: Proceedings of the IEEE/CVF international conference on computer vision. pp. 10012–10022 (2021) 17. Nassif, S.R.: Modeling and analysis of manufacturing variations. In: Proceedings of the IEEE 2001 Custom Integrated Circuits Conference (Cat. No. 01CH37169). pp. 223–228. IEEE (2001) 18. Perez, E., Strub, F., De Vries, H., Dumoulin, V., Courville, A.: Film: Visual rea-soning with a general conditioning layer. In: Proceedings of the AAAI conference on artificial intelligence. vol. 32 (2018) 19. Rombach, R., Blattmann, A., Lorenz, D., Esser, P., Ommer, B.: High-resolution image synthesis with latent diffusion models. In: Proceedings of the IEEE/CVF conference on computer vision and pattern recognition. pp. 10684–10695 (2022) 20. Ronneberger, O., Fischer, P., Brox, T.: U-net: Convolutional networks for biomed-ical image segmentation (2015), https://arxiv.org/abs/1505.04597 
+
+21. Sherwani, N.: Algorithms for VLSI Physical Design Automation. Springer (1995) 22. Thorat, K., Peng, H., Luo, Y., Xie, X., Huang, S., Hasan, A., Zhao, J., Li, Y., Wu, N., Shi, Z., et al.: Groot: Graph edge re-growth and partitioning for the verification of large designs in logic synthesis 23. Wang, Z., Bovik, A., Sheikh, H., Simoncelli, E.: Image quality assessment: from error visibility to structural similarity. IEEE Transactions on Image Processing 
+
+13 (4), 600–612 (2004). https://doi.org/10.1109/TIP.2003.819861 
+
+24. Wolf, W.: Modern VLSI Design: Systems on Silicon. Pearson (2008) 25. Xie, Z., Li, H., Xu, X., Hu, J., Chen, Y.: Fast ir drop estimation with machine learning. In: 2020 IEEE/ACM International Conference on Computer-Aided De-sign (ICCAD). pp. 1–8. IEEE (2020) 26. Xie, Z., Ren, H., Khailany, B., Sheng, Y., Santosh, S., Hu, J., Chen, Y.: Power-net: Transferable dynamic ir drop estimation via maximum convolutional neural network. In: 2020 25th Asia and South Pacific Design Automation Conference (ASP-DAC). pp. 13–18 (2020). https://doi.org/10.1109/ASP-DAC47756.2020. 9045574 
+
+27. Xie, Z., Ren, H., Khailany, B., Sheng, Y., Santosh, S., Hu, J., Chen, Y.: Powernet: Transferable dynamic ir drop estimation via maximum convolutional neural net-work. In: 2020 25th Asia and South Pacific Design Automation Conference (ASP-DAC). p. 13–18. IEEE (Jan 2020). https://doi.org/10.1109/asp-dac47756. 2020.9045574 , http://dx.doi.org/10.1109/ASP-DAC47756.2020.9045574 
+
+28. Yang, S., Yang, Z., Li, D., Zhang, Y., Zhang, Z., Song, G., Hao, J.: Versatile multi-stage graph neural network for circuit representation. Advances in Neural Information Processing Systems 35 , 20313–20324 (2022) 29. Zhao, Y., Chai, Z., Jiang, X., Lin, Y., Wang, R., Huang, R.: Pdnnet: Pdn-aware gnn-cnn heterogeneous network for dynamic ir drop prediction (2024), https: //arxiv.org/abs/2403.18569 
+
+30. Zheng, S., Zou, L., Xu, P., Liu, S., Yu, B., Wong, M.: Lay-net: Grafting netlist knowledge on layout-based congestion prediction. In: 2023 IEEE/ACM Interna-tional Conference on Computer Aided Design (ICCAD). pp. 1–9. IEEE (2023) Abbreviated paper title 17 31. Zhong, Y., Wong, M.D.: Fast algorithms for ir drop analysis in large power grid. In: ICCAD-2005. IEEE/ACM International Conference on Computer-Aided Design, 2005. pp. 351–357. IEEE (2005) Abbreviated paper title 1
+
+# Supplementary Material 
+
+## GIF: A Conditional Multimodal Generative Framework for IR Drop Imaging in Chip Layouts 
+
+## A Background: Modern Chip Design Flow and IR-Drop 
+
+Figure A.1 shows modern chip design follows a standard sequence of stages in-cluding system specification, architecture, RTL, logic synthesis, physical design, and sign-off. Early stages establish the architecture and generate the logic, while physical design resolves the geometric and electrical constraints that govern on-chip behavior [21,24]. This stage determines where cells are placed, how wires are routed, and how the power-delivery network (PDN) distributes supply voltage across increasingly resistive metal layers. As technology scales, wire resistance rises sharply and switching demand grows, making stable power delivery a cen-tral limitation in advanced designs [1,9]. As illustrated in Figure A.1, these stages collectively shape the final layout and its power-distribution characteristics. IR-drop is the reduction in supply voltage caused by current flowing through the resistive PDN. Although conceptually simple, its consequences are severe: small voltage reductions produce measurable delay shifts, alter noise margins, and destabilize logic under high activity [3, 17]. IR-drop interacts with clock uncertainty and process variation, amplifying timing sensitivity in deeply scaled nodes. As a result, IR-drop has become a dominant factor in design closure, often determining whether a layout can meet its timing targets after routing [25]. When violations are detected late typically during Static IR-Drop Analysis in the post-route stage they trigger engineering change order (ECO) loops that require re-routing, PDN reinforcement, or placement adjustments, all of which propagate through timing and congestion, significantly increasing turnaround time. Reliable IR-drop generation is therefore essential to reduce costly iterations and guide early design choices. Fast, accurate generation of IR-drop maps en-ables designers to identify weak PDN regions, anticipate voltage-loss patterns, and evaluate design modifications without repeatedly invoking expensive sign-off tools. By exposing critical hotspots earlier in the flow, generative models help stabilize timing behavior and improve the likelihood that the final layout converges without disruptive late-stage modifications. 
+
+## B Image Graph Fusion Mechanism 
+
+Figure B.2 shows the internal structure of the ResBlock applied at every level of the denoising UNet. The input feature map F (ℓ) passes through two 3×3
+
+convolution, GroupNorm, SiLU in sequences. The timestep conditioning (γt, β t),produced by a sinusoidal embedding followed by a two-layer MLP, is applied as a scale and shift after the first GroupNorm. The geometry conditioning (γ(ℓ) 
+
+> X
+
+, β (ℓ) 
+
+> X
+
+),2 K. Thorat et al. Floor planning    
+
+> Power Planning (PDN
+> Generation)
+> Placement
+> Static IR -Drop Analysis
+> (Post -Route)
+> System
+> specifications
+> Architectural
+> Design
+> Logic
+> Synthesis
+> Physical
+> Design
+> Fabrication
+> Analysis &
+> Verification
+> Post -Route Optimization
+> (ECO)
+> Early IR -Drop Estimation
+> Packaging IR -Drop Re -Analysis (ECO)
+> Clock Tree Synthesis (CTS)
+> Routing
+> Module arch
+> Input in [8]
+> ...
+> endmodul e
+> a
+> b
+> c
+> d
+> Nand_1
+> Nand_2
+> out
+> Inv_1
+> DRC LVS STA
+
+Fig. A.1: Modern chip design flow including physical design (orange) and IR-drop analysis (black). 
+
+produced by a convolutional MLP applied to the downsampled layout features 
+
+Xℓ, is applied after the second GroupNorm. A skip connection (identity or 1×1
+
+convolution) is added to the output: 
+
+bF (ℓ) = γ(ℓ)(Xℓ, t ) ⊙ F (ℓ) + β(ℓ)(Xℓ, t ).(γ_ t, β_ t) (γ_ X, β_ X) 
+
+Group 
+
+Norm SiLU 
+
+Conv 
+
+(3,3) 
+
+Group 
+
+Norm SiLU 
+
+t Xl
+
+Sinusoidal emb + 2-layer MLP Conv -MLP 
+
+Conv 
+
+(3,3) 
+
+scale & shift 
+
+F̂ 
+
+(modulated 
+
+feature 
+
+map) 
+
+Ỹ_t skip (identity / 1 ×1 conv) 
+
+Fig. B.2: ResBlock with FiLM conditioning. Timestep embedding and geometric lay-out features Xℓ produce affine scale shift pairs applied sequentially after each Group-Norm. 
+
+Figure B.3 shows the cross-attention injection at the bottleneck ( 64 ×64 , 256 channels). The feature map bF (ℓ) is flattened to (B, H ℓWℓ, C ), passed through LayerNorm, and projected to queries Q(ℓ). The topology tokens T ∈ RK×D are passed through a separate LayerNorm and projected to keys K and values V .Abbreviated paper title 3
+
+Scaled dot-product attention with 4 heads produces: 
+
+∆F (ℓ) = softmax Q(ℓ)K⊤
+
+pDq
+
+!
+
+V. 
+
+The output is projected and reshaped to (B, C, H ℓ, W ℓ), then added via a scalar gate αℓ initialized to zero: 
+
+F (ℓ) 
+
+> fused
+
+= bF (ℓ) + tanh( αℓ) reshape 
+
+
+
+∆F (ℓ)
+
+.F̂ ⁽ˡ⁾ (B, C, H, W) 
+
+> Flatten + permute
+> (B, 4096, 256)
+> Layer Norm
+> K proj  V proj
+> Layer Norm
+> Q proj
+> SDPA
+> 4 heads
+> ΔF= softmax
+> (QK ᵀ/√ Dq)V
+> out  proj
+> +
+> tanh( α) · Δ F
+> F_fused  = F̂ ⁽ˡ⁾ + tanh( αℓ ) · Δ F⁽ˡ⁾
+> F̂ ⁽ˡ⁾
+> T (B, K, D)
+> topology tokens
+> residual add
+> [reshape]
+> (B, 256, 64, 64)
+
+Fig. B.3: Cross-attention injection at the bottleneck. Topology tokens T serve as keys and values while spatial features serve as queries. The gate tanh( αℓ), initialized to zero, controls the contribution of the topology signal. 
+
+## C Dataset Details 
+
+CircuitNet-N28 CircuitNet-N28 provides tile-based physical design features and IR-drop maps generated from six RTL designs. Each layout is discretized into a regular grid of approximately 300 ×300 tiles, where each tile corresponds to a 2.25 μm × 2.25 μm region of the physical layout (chip area ∼ 450 μm × 450 μm). This yields spatial feature maps that directly encode routing demand, placement density, switching activity, and power-related signals. We use all 10,242 samples from CircuitNet-N28 and follow the official design-wise split: four designs for training, one for validation, and one for testing. All feature and IR-drop maps are resized to 256 × 256 and normalized before training. 
+
+CircuitNet-N14 CircuitNet-N14 contains full-chip IR-drop maps and physi-cal design features extracted from eight RTL designs. Compared to N28, the N14 layouts exhibit larger variation in floorplan styles, utilization, aspect ratio, and power delivery configurations. Each layout is represented by a spatial grid of comparable resolution (on the order of 300 × 300 tiles), covering the entire chip image at a uniform sampling density. We use all 10,444 available samples and adopt the design-wise split provided by CircuitNet: six designs for training, Vortex-small for validation, and zero-riscy for testing. 4 K. Thorat et al. 
+
+## D Evaluation Metrics 
+
+IR-drop analysis in physical design has one practical goal: identify where voltage drops are large enough to cause timing failures or functional errors, so that the power delivery network can be strengthened before tapeout. The metrics we report are chosen to reflect this goal directly. Let Y ∈ RH×W denote the ground-truth IR-drop map and bY ∈ RH×W the generated map, both normalized to [0 , 1] 
+
+relative to the supply voltage. We flatten both into vectors y, ˆy ∈ RN , N = HW .
+
+Pixel-level accuracy. MAE measures the average per-pixel voltage error across the layout: 
+
+MAE = 1
+
+N
+
+> N
+
+X
+
+> i=1
+
+ˆyi − yi . (D.1) Because IR-drop values are normalized to [0 , 1] relative to the supply voltage, MAE is directly interpretable: an MAE of 0.026 means the model is on average 2.6% of the supply voltage away from the ground truth at each layout location. RMSE places higher weight on large errors: 
+
+RMSE = 
+
+vuut 1
+
+N
+
+> N
+
+X
+
+> i=1
+
+(ˆ yi − yi)2. (D.2) In IR-drop analysis, large errors matter disproportionately because an underes-timated hotspot that crosses the timing margin threshold is a functional failure. RMSE is therefore a more safety-relevant measure than MAE alone. PSNR is included for consistency with the CircuitNet benchmark protocol [5,29] and does not carry additional physical interpretation beyond its relationship to MSE. 
+
+Spatial structure fidelity. SSIM evaluates local luminance, contrast, and structural agreement across windowed regions of the layout [23]: 
+
+SSIM( Y, bY) = (2 μy μˆy + C1)(2 σy ˆy + C2)(μ2 
+
+> y
+
++ μ2ˆy + C1)( σ2 
+
+> y
+
++ σ2ˆy + C2) , (D.3) computed with an 11 ×11 Gaussian window [8]. IR-drop maps are not arbi-trary images. The spatial gradients in the voltage map reflect how current flows through the resistive power mesh from supply rails to standard cells. A generated map that places hotspots in the right locations but produces abrupt or noisy volt-age transitions would be physically incorrect, because real current flow through a resistive network produces smooth, continuous gradients. SSIM captures exactly this: a model that smears or sharpens voltage gradients incorrectly will score low on SSIM even if per-pixel errors are small. This makes SSIM a meaningful proxy for physical plausibility of the generated IR-drop map, beyond what MAE and RMSE can capture. Figure D.4 (left) shows SSIM improving monotonically as each component of GIF is added. 
+
+Hotspot severity consistency. Pearson correlation measures whether the gen-erated map reproduces the global IR-drop profile of the layout, that is, whether Abbreviated paper title 5
+
+regions of elevated voltage drop in the ground truth are also predicted as high by the model: 
+
+Pearson = 
+
+PNi=1 (ˆ yi − ¯ˆy)( yi − ¯y)
+
+qPNi=1 (ˆ yi − ¯ˆy)2
+
+qPNi=1 (yi − ¯y)2
+
+. (D.4) Spearman correlation measures whether the model correctly orders layout re-gions from least to most critical, independent of absolute voltage values: 
+
+Spearman = Pearson(rank(ˆ y), rank( y)) . (D.5) This distinction matters in practice. A PDN engineer does not inspect every pixel of an IR-drop map. The standard workflow is to identify the worst hotspot regions, ranked by severity, and decide where to add power stripes or decoupling capacitors. A model with high Pearson but low Spearman reproduces the overall voltage distribution but fails to rank individual hotspot regions correctly, which is a practically important failure mode. Reporting both metrics together gives a complete picture of whether the generated map is reliable for this decision process. Neither Pearson nor Spearman is reported by prior IR-drop prediction work [5, 29]; we include both because they directly reflect the engineering use case that motivates IR-drop analysis. Figure D.4 (right) shows Spearman across ablation steps. 
+
+Evaluation protocol. All metrics are computed on a single generated sample per test layout. In IR-drop analysis, the ground truth is produced by a single deterministic simulation from a commercial EDA tool given a fixed layout and power map. There is no distribution of ground truths. The task is to predict what that simulation would produce, and a single generated sample is the appropriate unit of comparison. This is the same protocol used by all prior discriminative methods [5, 29], and it is the correct protocol for this task regardless of whether the model is generative or deterministic. GIF requires 1000 denoising steps per sample, so generating multiple samples per layout for the full test set is also computationally prohibitive. 
+
+## E Additional Analysis on CircuitNet-N14 Generation 
+
+First IR-Drop Results on CircuitNet-N14. To the best of our knowledge, GIF provides the first reported IR-drop results of any kind on CircuitNet-N14. Although the dataset includes IR-drop ground truth, no prior prediction (CNN, GNN, or hybrid), or generative (diffusion-based) method has published evalua-tion results on CircuitNet-N14 dataset. Thus, the values presented in the main paper represent the initial quantitative baselines for IR-drop map generation at 14 nm. These results demonstrate that the diffusion backbone maintains strong correlation behavior even under the much higher variability of N14 physical lay-outs. 6 K. Thorat et al. Vanilla     
+
+> (24ch)
+> +34ch +CN (34ch+G+CN)
+> 0.68
+> 0.70
+> 0.72
+> 0.74
+> 0.76
+> 0.78
+> 0.80
+> SSIM
+> 0.699
+> 0.739
+> 0.766
+> 0.785
+> Pixel-level fidelity
+> Vanilla
+> Incremental
+> Vanilla
+> (24ch)
+> +34ch +CN (34ch+G+CN)
+> 0.495
+> 0.500
+> 0.505
+> 0.510
+> 0.515
+> Spearman
+> 0.4949
+> 0.4973
+> 0.5033
+> 0.5139
+> Global IR-drop consistency
+> Vanilla
+> (ours)
+
+Fig. D.4: SSIM and Spearman correlation across incremental model configurations on CircuitNet-N28. Left : SSIM improves as each component is added, reflecting improved spatial structure of the generated IR-drop map. Right : Spearman correlation across the same steps, showing improved hotspot severity ordering with each added component. 
+
+Graph Availability in CircuitNet-N14. As described in the supplementary implementation details, graphs for N14 are constructed using the same proce-dure as for N28. However, CircuitNet-N14 contains a large number of placement snapshots whose instance bounding boxes are all zero. These samples cannot produce meaningful geometric node features and must be skipped during graph construction. This behavior arises from irregularities in the dataset metadata and is not specific to our framework. Table E.1 reports the number of valid graphs extracted for each design family. Several families (e.g., Vortex-small ) yield no usable graphs, while others pro-duce only a limited number. Since the full N14 feature/label set contains 10,444 IR-drop samples, many conditioning instances necessarily receive no graph to-kens. This imbalance explains why graph-conditioned variants offer limited ben-efit or slight degradation on N14, in contrast to N28 where graph metadata are complete and consistently available. 
+
+Table E.1: Number of valid graphs constructed for CircuitNet-N14 (from the official metadata). Designs with all-zero placements produce no usable graphs. 
+
+Design Family Valid Graphs Total Placements 
+
+RISCY 3373 3456 RISCY-FPU 3456 3456 Vortex-large 62 74 Vortex-small 0 96 nvdia-large 54 68 nvdia-small 88 93 openc910-1 96 96 zero-riscy 3456 3456 
+
+Total 10585 10795 Abbreviated paper title 7
+
+GIF establishes the first IR-drop benchmarks on CircuitNet-N14 and main-tains strong correlation consistency despite the dataset’s higher layout variabil-ity. The reduced benefit of graph conditioning on N14 is driven by incomplete and inconsistent metadata, not by limitations of the fusion design. Where graph features are reliably available (e.g., N28), graph conditioning consistently im-proves performance.
