@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-04-16 <!--dpr-date:20260416-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202604/16/2604.12079v1-robust-reasoning-and-learning-with-brain-inspired-representations-under-hardware-induced-nonlinearities" data-sidebar-item="{&quot;title&quot;: &quot;Robust Reasoning and Learning with Brain-Inspired Representations under Hardware-Induced Nonlinearities&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2604.12079v1-robust-reasoning-and-learning-with-brain-inspired-representations-under-hardware-induced-nonlinearities&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;针对半导体器件变异性的机器学习硬件感知优化&quot;}">Robust Reasoning and Learning with Brain-Inspired Representations under Hardware-Induced Nonlinearities</a>
   * 2026-04-07 ~ 2026-04-16 <!--dpr-date:20260407-20260416-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/20260407-20260416/2604.09999v1-gif-a-conditional-multimodal-generative-framework-for-ir-drop-imaging-in-chip-layouts" data-sidebar-item="{&quot;title&quot;: &quot;GIF: A Conditional Multimodal Generative Framework for IR Drop Imaging in Chip Layouts&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2604.09999v1-gif-a-conditional-multimodal-generative-framework-for-ir-drop-imaging-in-chip-layouts&quot;, &quot;score&quot;: &quot;9.5&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;用于芯片布局中IR压降成像和电源完整性分析的机器学习方法&quot;}">GIF: A Conditional Multimodal Generative Framework for IR Drop Imaging in Chip Layouts</a>

@@ -1,0 +1,56 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-16T20:21:29.371766+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.12079v1",
+      "source": "arxiv",
+      "title": "Robust Reasoning and Learning with Brain-Inspired Representations under Hardware-Induced Nonlinearities",
+      "abstract": "Traditional machine learning depends on high-precision arithmetic and near-ideal hardware assumptions, which is increasingly challenged by variability in aggressively scaled semiconductor devices. Compute-in-memory (CIM) architectures alleviate data-movement bottlenecks and improve energy efficiency yet introduce nonlinear distortions and reliability concerns. We address these issues with a hardware-aware optimization framework based on Hyperdimensional Computing (HDC), systematically compensating for non-ideal similarity computations in CIM. Our approach formulates encoding as an optimization problem, minimizing the Frobenius norm between an ideal kernel and its hardware-constrained counterpart, and employs a joint optimization strategy for end-to-end calibration of hypervector representations. Experimental results demonstrate that our method when applied to QuantHD achieves 84\\% accuracy under severe hardware-induced perturbations, a 48\\% increase over naive QuantHD under the same conditions. Additionally, our optimization is vital for graph-based HDC reliant on precise variable-binding for interpretable reasoning. Our framework preserves the accuracy of RelHD on the Cora dataset, achieving a 5.4$\\times$ accuracy improvement over naive RelHD under nonlinear environments. By preserving HDC's robustness and symbolic properties, our solution enables scalable, energy-efficient intelligent systems capable of classification and reasoning on emerging CIM hardware.",
+      "authors": [
+        "William Youngwoo Chung",
+        "Hamza Errahmouni Barkam",
+        "Tamoghno Das",
+        "Mohsen Imani"
+      ],
+      "primary_category": "cs.ET",
+      "categories": [
+        "cs.ET",
+        "cs.LG"
+      ],
+      "published": "2026-04-13T21:35:53+00:00",
+      "link": "https://arxiv.org/pdf/2604.12079v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "hardware-aware optimization for machine learning under semiconductor variability",
+      "llm_evidence_cn": "针对半导体器件变异性的机器学习硬件感知优化",
+      "llm_evidence": "针对半导体器件变异性的机器学习硬件感知优化",
+      "canonical_evidence": "针对半导体器件变异性的机器学习硬件感知优化",
+      "llm_tldr_en": "Develops a hardware-aware optimization framework to mitigate nonlinear distortions in compute-in-memory architectures.",
+      "llm_tldr_cn": "开发了一种硬件感知优化框架，以减轻存算一体架构中的非线性失真。",
+      "llm_tldr": "开发了一种硬件感知优化框架，以减轻存算一体架构中的非线性失真。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning applications for signal and power integrity analysis",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

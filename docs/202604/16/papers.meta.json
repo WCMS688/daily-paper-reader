@@ -1,0 +1,24 @@
+{
+  "label": "2026-04-16",
+  "date": "2026-04-16",
+  "generated_at": "2026-04-16T20:22:08",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202604/16/2604.12079v1-robust-reasoning-and-learning-with-brain-inspired-representations-under-hardware-induced-nonlinearities",
+      "section": "quick",
+      "title_en": "Robust Reasoning and Learning with Brain-Inspired Representations under Hardware-Induced Nonlinearities",
+      "authors": "William Youngwoo Chung, Hamza Errahmouni Barkam, Tamoghno Das, Mohsen Imani",
+      "date": "2026-04-13",
+      "pdf": "https://arxiv.org/pdf/2604.12079v1",
+      "score": "6.0",
+      "evidence": "针对半导体器件变异性的机器学习硬件感知优化",
+      "tldr": "针对存算一体（CIM）硬件中非线性失真导致的计算不可靠问题，本文提出一种基于超维计算（HDC）的硬件感知优化框架。通过将编码建模为最小化理想核与硬件约束核之间差异的优化问题，并结合端到端联合优化策略，显著提升了系统在硬件扰动下的鲁棒性。该方法在保持HDC符号推理特性的同时，实现了高效的分类与推理，为在新型硬件上构建能效高且稳健的智能系统提供了方案。",
+      "tags": "query:si-pi",
+      "abstract_en": "Traditional machine learning depends on high-precision arithmetic and near-ideal hardware assumptions, which is increasingly challenged by variability in aggressively scaled semiconductor devices. Compute-in-memory (CIM) architectures alleviate data-movement bottlenecks and improve energy efficiency yet introduce nonlinear distortions and reliability concerns. We address these issues with a hardware-aware optimization framework based on Hyperdimensional Computing (HDC), systematically compensating for non-ideal similarity computations in CIM. Our approach formulates encoding as an optimization problem, minimizing the Frobenius norm between an ideal kernel and its hardware-constrained counterpart, and employs a joint optimization strategy for end-to-end calibration of hypervector representations. Experimental results demonstrate that our method when applied to QuantHD achieves 84\\% accuracy under severe hardware-induced perturbations, a 48\\% increase over naive QuantHD under the same conditions. Additionally, our optimization is vital for graph-based HDC reliant on precise variable-binding for interpretable reasoning. Our framework preserves the accuracy of RelHD on the Cora dataset, achieving a 5.4$\\times$ accuracy improvement over naive RelHD under nonlinear environments. By preserving HDC's robustness and symbolic properties, our solution enables scalable, energy-efficient intelligent systems capable of classification and reasoning on emerging CIM hardware.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

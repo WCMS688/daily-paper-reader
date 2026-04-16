@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.12079v1/fig-001.webp",
+      "caption": "Figure 4: GrapHD-based Graph reconstruction under hardware nonlinearity and noise. We see that a (B) GrapHD under hardware-induced nonlinearity fails to reconstruct the true graph as it is not able to classify edges between nodes properly. (C) Our optimization allows GrapHD to work even under nonlinearity.",
+      "page": 6,
+      "index": 1,
+      "width": 736,
+      "height": 180
+    },
+    {
+      "url": "assets/figures/arxiv/2604.12079v1/fig-002.webp",
+      "caption": "Figure 1: High-level overview of how our optimization framework bridges brain-inspired hyperdimensional computing and next-generation computing-in-memory architectures. Our optimization framework ensures that core hyperdimensional operations (binding, bundling, and associative search) remain robust despite the nonlinearity inherent to emerging semiconductor devices. This approach supports both classification and graph-based reasoning, laying the foundation for energy-efficient AI reasoning systems.",
+      "page": 2,
+      "index": 2,
+      "width": 445,
+      "height": 340
+    },
+    {
+      "url": "assets/figures/arxiv/2604.12079v1/fig-003.webp",
+      "caption": "Figure 6: Similarity distributions between nodes for (A) GrapHD (B) GrapHD under Nonlinearity (C) Optimized GrapHDunder Nonlinearity. Our optimization gives GrapHD a similar distribution even under hardware constraints while (B) has an extremely narrow distribution centered around 1.",
+      "page": 7,
+      "index": 3,
+      "width": 502,
+      "height": 278
+    },
+    {
+      "url": "assets/figures/arxiv/2604.12079v1/fig-004.webp",
+      "caption": "Figure 2: Hardware-aware HDC using our joint-optimization framework. The system optimizes encoding under nonlinear constraints from CiM hardware, ensuring robust associative search and reasoning through kernel optimization.",
+      "page": 5,
+      "index": 4,
+      "width": 829,
+      "height": 313
+    },
+    {
+      "url": "assets/figures/arxiv/2604.12079v1/fig-005.webp",
+      "caption": "Figure 3: (a) are the kernel shapes under only nonlinear associative searchwhile (b) are the kernel heatmaps under both nonlinear encoding and associative search process. (A) represents the original desired kernel (B) shows HDC kernel approximation (C) is the similarity-optimized HDC approximation (D) is our proposed joint optimization kernel approximation.",
+      "page": 5,
+      "index": 5,
+      "width": 1049,
+      "height": 187
+    }
+  ]
+}
