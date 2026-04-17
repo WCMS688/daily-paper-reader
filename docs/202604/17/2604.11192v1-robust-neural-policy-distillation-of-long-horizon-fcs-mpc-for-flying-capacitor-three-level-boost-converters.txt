@@ -1,0 +1,1204 @@
+Title: Robust Neural Policy Distillation of Long-Horizon FCS-MPC for Flying-Capacitor Three-Level Boost Converters
+
+URL Source: https://arxiv.org/pdf/2604.11192v1
+
+Published Time: Tue, 14 Apr 2026 02:28:09 GMT
+
+Number of Pages: 14
+
+Markdown Content:
+> 1
+
+# Robust Neural Policy Distillation of Long-Horizon FCS-MPC for Flying-Capacitor Three-Level Boost Converters 
+
+Jinjian Sheng, Kazumune Hashimoto, Shuang Zhao, Mahdieh S. Sadabadi 
+
+Abstract —Long-horizon finite-control-set model predictive control (FCS-MPC) can improve transient regulation and flying-capacitor balancing in flying-capacitor three-level boost convert-ers (FC-TLBCs). However, searching over switching sequences becomes computationally expensive at high switching frequencies. We train a feedforward neural network to imitate an N -step FCS-MPC expert computed with beam search. To improve robustness, expert trajectories are generated under randomized input voltage, load resistance, and component parameters, and a disagreement-based DAgger variant is used to relabel on-policy states where the student and expert disagree. In sim-ulation, the learned policy maintains stable voltage regulation and capacitor balancing under nominal conditions, operating-point changes, and perturbations of several physical parameters. We demonstrate the effectiveness of our approach by reducing the computational burden. We also demonstrate transfer to an NPC-type three-level buck converter, where initializing from the FC-TLBC network improves sample efficiency compared with training from scratch. 
+
+Index Terms —Flying Capacitor Three-Level Boost Converter, Model Predictive Control, Neural Policy, Domain Randomization 
+
+I. I NTRODUCTION 
+
+# FLYING-capacitor multilevel converters are attractive be-cause the flying-capacitor branch enables multilevel switching operation, reduces device voltage stress, and in-troduces additional control freedom for capacitor-voltage bal-ancing [1], [2]. These benefits, however, come with strongly coupled and mode-dependent dynamics among the inductor current, flying-capacitor voltage, and output voltage. As a result, achieving fast and robust closed-loop control remains difficult, especially under input-voltage sags and load varia-tions. Earlier work on switched and multilevel power-converter control has explored direct control strategies, weighting-factor design, and predictive-control formulations for multi-variable objectives [1], [3]–[5]. For flying-capacitor topolo-gies, capacitor-voltage balancing must be maintained simul-taneously with output regulation and current shaping, which increases both the control complexity and the sensitivity to modeling errors and parameter mismatch [2], [6]. Longer prediction horizons can improve transient behavior and steady-
+
+Jinjian Sheng and Kazumune Hashimoto are with The University of Osaka. Shuang Zhao is with Hefei University of Technology. Mahdieh S. Sadabadi is with The University of Manchester. Corresponding author: Kazumune Hashimoto (hashimoto@eei.eng.osaka-u.ac.jp). 
+
+state performance, but the associated search complexity grows rapidly with horizon length [7], [8]. Therefore, finite-control-set model predictive control (FCS-MPC) is a promising framework for FC-TLBCs because it evaluates admissible switching actions directly in the switch-ing domain and can explicitly encode current tracking and flying-capacitor balancing in a common cost function [2], [4], [5], [9]. Its main practical limitation is computational: as the prediction horizon increases, the online search over switching sequences becomes prohibitively expensive for high switching frequencies and resource-constrained digital platforms. To reduce this burden, neural-network approximations of MPC/FCS-MPC have been investigated for several power-electronic systems, including inverters, flying-capacitor mul-tilevel converters, DC–DC converters, and FPGA-oriented implementations [10]–[16]. These studies show that learned policies can greatly reduce inference latency. However, many are trained mainly around nominal operating conditions or evaluated under a limited set of disturbance cases. As a result, robustness to simultaneous variations in input voltage, load, and passive-component values is still not fully characterized. Moreover, pure behavior cloning is vulnerable to covariate shift: once the learned policy deviates from the expert, the closed-loop state distribution can move into regions that are rare or absent in the offline demonstrations [17]. This paper addresses these limitations by distilling a long-horizon FCS-MPC expert for an FC-TLBC into a compact feedforward neural policy. The expert is implemented as an N -step beam-search FCS-MPC controller, and its demonstrations are generated under domain randomization over operating conditions and passive-component values [18]. To mitigate on-policy distribution shift, we further apply a disagreement-based DAgger procedure that evaluates the expert on learner-visited states and retains only disagreement states for aggrega-tion [17]. In this way, the proposed framework combines long-horizon expert supervision, robustness-oriented data genera-tion, and selective on-policy relabeling within a single MPC-to-neural distillation pipeline. The main contributions of this paper are as follows:  
+
+> •
+
+We develop an N -step beam-search FCS-MPC expert for FC-TLBC inner-loop control and distill it into a four-class feedforward neural switching policy.  
+
+> •
+
+We propose a robust data-generation and imitation-learning pipeline that combines domain randomization over operating points and passive components with selec-tive on-policy relabeling via disagreement-based DAgger.  
+
+> arXiv:2604.11192v1 [math.OC] 13 Apr 2026 2
+> •
+
+We present scenario-based simulation results showing stable regulation, current tracking, and flying-capacitor balancing under nominal conditions, operating-point vari-ations, and perturbations in L, Cf , and C, while substan-tially reducing the online decision time relative to the expert on the same evaluation CPU.  
+
+> •
+
+We demonstrate transfer to an NPC-type three-level buck converter, where initialization from the FC-TLBC pol-icy improves sample efficiency relative to training from scratch. 
+
+Related work. 
+
+Predictive Control for Switched and Multilevel Converters. 
+
+For switched and multilevel converters, predictive control is attractive because it operates directly in the switching domain and can handle current tracking, voltage regulation, and capacitor balancing within a unified optimization frame-work [3]–[5], [19]. In the broader control-systems literature, implementation-oriented predictive and hybrid-control studies have also been reported for step-down, buck/boost, full-bridge, and boost DC–DC converters [20]–[23]. For flying-capacitor and related multilevel topologies, prior studies have shown that predictive formulations are particularly useful when internal capacitor-voltage balancing must be coordinated with external regulation objectives [1], [2], [24]. Compared with shorter-horizon or simplified predictive strategies, longer-horizon for-mulations can improve transient behavior and steady-state quality, but the online combinatorial search grows rapidly with the horizon length and the number of admissible switching actions [7]–[9]. 
+
+Learning-Based Approximations of MPC/FCS-MPC. To reduce the online computational burden, neural-network ap-proximations of MPC/FCS-MPC have been investigated for inverter systems with output filters, flying-capacitor multilevel converters, rectifiers, and DC–DC converters [10]–[12], [14], [15], [25]. Compared with solving the predictive optimization problem at every sampling instant, these learned surrogates offer much lower inference latency and are therefore attractive for fast digital implementation. This line of work is also consistent with the long-standing emphasis on computational tractability and sampled-data implementation in predictive control of converter systems [8], [20], [26]. Hardware-oriented studies have also been reported for converter families such as CHB topologies and for long-horizon data-driven control pipelines [13], [16]. However, many existing studies focus mainly on nominal-condition training or evaluate robustness only under a limited set of disturbances. 
+
+Imitation Learning Under Distribution Shift and Robust-ness. Pure behavior cloning from offline expert trajectories is simple and effective, but compared with on-policy aggre-gation methods it is more vulnerable to covariate shift: once the learned controller deviates from the expert, the closed-loop trajectory may move into state regions that are weakly represented in the training data [17]. Domain randomization addresses a complementary issue by broadening the training distribution over operating conditions and parameter values, thereby improving generalization to unseen scenarios [18]. In related predictive-control work, practical issues such as  
+
+> Fig. 1. FC-TLBC Topology
+
+sampled-data behavior, parameter variation, and performance adaptation have also been emphasized in converter applica-tions [6], [26]–[28]. Nevertheless, their integration with long-horizon FCS-MPC distillation remains limited. 
+
+Positioning of This Work. Compared with prior studies that typically emphasize either fast neural approximation or limited robustness evaluation, and compared with implementation-oriented predictive-control studies that do not consider neural distillation, the present work combines four elements in a sin-gle framework: a long-horizon beam-search FCS-MPC expert, domain-randomized expert data over both operating conditions and passive-component values, selective on-policy relabeling via disagreement-based DAgger, and scenario-based validation on an FC-TLBC under input-voltage, load, and parameter perturbations. This combination is intended to preserve the benefits of long-horizon predictive control while reducing online computational cost and improving robustness to closed-loop distribution shift. II. P ROBLEM FORMULATION AND CONVERTER MODEL 
+
+A. Problem Setup and Feasible Switching Modes 
+
+We consider inner-loop control of the flying-capacitor three-level boost converter (FC-TLBC) shown in Fig. 1. The overall closed-loop objective is to regulate the output voltage vo to a prescribed reference v⋆o while maintaining the flying-capacitor voltage as: 
+
+V ⋆Cf = v⋆o
+
+2 . (1) Following a cascaded design, an outer voltage controller generates the inductor-current reference iref , and the inner-loop controller selects one admissible switching mode at each sampling instant. The converter state and measurable exogenous input are defined as 
+
+x(t) = 
+
+
+
+iL(t)
+
+vCf (t)
+
+vo(t)
+
+ , w(t) = 
+
+Vin (t)
+
+io(t)
+
+
+
+. (2) where iL is the inductor current, vCf is the flying-capacitor voltage, vo is the output voltage, Vin is the input voltage, 3                
+
+> TABLE I VIABLE SWITCHING COMBINATIONS FOR FC-TLBC
+> SB\SAPONPPP OP NP
+> OPO OO NO
+> NPN ON NN
+
+and io is the output current. Notice here that w(t) is not a control input; it is a measurable exogenous input used by the prediction model. The inner-loop manipulated variable is the admissible switching mode selected at each sampling instant, which will be described below. To describe the switching behavior, we use a symbolic mode encoding m = ( SA, S B ), where SA ∈ { P, O, N} denotes the inductor terminal-voltage level and SB ∈ {P, O, N}
+
+denotes the charging direction of the flying capacitor. This is a functional encoding of the converter mode rather than a direct listing of binary gate signals. In particular, SA = P ,
+
+O, and N correspond to positive, intermediate, and negative inductor terminal-voltage levels, respectively, while SB = P ,
+
+O, and N denote forward charging, no net charge transfer, and reverse charging of the flying capacitor. Although the symbolic grid {P, O, N}2 contains nine com-binations, topological constraints and Kirchhoff’s voltage law reduce the admissible set to four feasible modes: 
+
+U = {OP , PO , NO , ON }. (3) These feasible combinations are summarized in Table I. 
+
+B. Mode-Dependent Prediction Model 
+
+For each feasible mode m ∈ U , the FC-TLBC is repre-sented by a mode-dependent affine state-space model. Using the state vector in (2) and the measurable exogenous input 
+
+w = [ Vin , i o]⊤, we write 
+
+˙x(t) = Amx(t) + Bw (t). (4) The measured output current io is used directly as an ex-ogenous input, so the predictive model does not require an explicit load parameter. Equivalently, one may estimate 
+
+Rk ≈ vo,k /i o,k when needed, but the rollout below only requires io.We parameterize the four feasible modes using coefficients 
+
+{a(m) 
+
+> vo
+
+, a (m) 
+
+> Cf
+
+, α (m), β (m)} such that 
+
+˙iL = 1
+
+L
+
+
+
+Vin − a(m) 
+
+> vo
+
+vo − a(m) 
+
+> Cf
+
+vCf 
+
+
+
+, (5) 
+
+˙vCf = β(m)
+
+Cf
+
+iL, (6) 
+
+˙vo = 1
+
+C
+
+
+
+α(m)iL − io
+
+
+
+. (7)                         
+
+> TABLE II MODE COEFFICIENTS FOR OP/PO/NO/ON U SED IN (5)–(7) Mode ma(m)
+> vo a(m)
+> Cf α(m)β(m)
+> NO 0000PO 1010OP 0111ON 1-1 1-1
+
+Therefore, we have 
+
+Am =
+
+
+
+0 − a(m)
+
+> Cf
+
+L − a(m)
+
+> vo
+
+Lβ(m)
+
+Cf
+
+0 0
+
+α(m)
+
+C 0 0
+
+
+
+,
+
+B =
+
+
+
+1
+
+L 00 00 − 1
+
+C
+
+ .
+
+(8) The corresponding mode coefficients are listed in Table II. Using forward Euler discretization with sampling period Ts,(4) yields the discrete-time prediction model 
+
+xk+1 = Ad,m xk + Bdwk,
+
+Ad,m = I + TsAm, Bd = TsB, (9) which is used by the FCS-MPC expert during finite-horizon rollout. 
+
+C. Control Objective and Constraints 
+
+The control objective is defined in a cascaded manner. At the closed-loop level, the converter should regulate the output voltage vo to the reference v⋆o while maintaining the flying-capacitor voltage around 
+
+V ⋆Cf = v⋆o
+
+2 .
+
+To achieve this, the outer voltage controller converts the output-voltage regulation task into an inductor-current refer-ence iref . The inner-loop switching controller then selects one admissible mode mk ∈ U at each sampling instant so as to (i) make iL track iref , (ii) keep vCf close to V ⋆Cf , and (iii) satisfy the hard current limit. Thus, vo is regulated indirectly through the outer loop, whereas the inner loop acts directly on the switching mode. III. P ROPOSED MPC-TO -N EURAL DISTILLATION 
+
+FRAMEWORK 
+
+A. Overview of the Proposed Framework 
+
+The proposed workflow consists of four stages: (i) construct a long-horizon FCS-MPC expert based on the prediction model in Section II; (ii) generate expert demonstrations un-der randomized operating conditions and parameter values; (iii) train a compact feedforward neural policy to imitate the expert’s switching decision; and (iv) refine the policy 4
+
+with selective on-policy relabeling using disagreement-based DAgger. The goal is to retain the closed-loop behavior of long-horizon predictive control while reducing the online decision cost to that of a simple classifier. 
+
+B. N-Step Beam-Search FCS-MPC Expert 
+
+At each sampling instant, the expert receives the measured information vector 
+
+zk =
+
+
+
+iL,k 
+
+vCf,k 
+
+vo,k 
+
+iref ,k 
+
+Vin ,k 
+
+io,k 
+
+
+
+, (10) which contains the plant state, the outer-loop current reference, and the measurable exogenous quantities required by the prediction model. The expert then evaluates a candidate mode sequence 
+
+mk:k+N −1 = {mk, m k+1 , . . . , m k+N −1},mk+j ∈ U , j = 0 , . . . , N − 1. (11) by rolling out the mode-dependent model in (9). The associ-ated finite-horizon cost is 
+
+J(mk:k+N −1) = 
+
+> N
+
+X
+
+> n=1
+
+h
+
+λI
+
+ iL,k +n − iref ,k +n
+
+2
+
++ λCf 
+
+ vCf,k +n − V ⋆Cf 
+
+2i
+
+, (12) where λI , λCf are the weight parameters. The optimal se-quence is defined as 
+
+m⋆k:k+N −1 = arg min  
+
+> mk:k+N−1
+
+J(mk:k+N −1), (13) and the expert applies only the first element in receding-horizon fashion: 
+
+πMPC (zk) = m⋆k. (14) A naive exhaustive search would enumerate all length-
+
+N mode sequences in UN , which requires |U| N complete-sequence evaluations at each sampling instant. For the FC-TLBC considered here, |U| = 4 , so exhaustive search already involves 4N candidate sequences (e.g., 1024 when N = 5 ). To reduce this burden, we employ beam search, which grows the search tree stage by stage rather than enumerating all complete sequences. At depth ℓ, each retained partial sequence 
+
+mk:k+ℓ−1 is expanded by all admissible next modes in U, the cumulative cost of the resulting children is updated, and only the K partial sequences with the lowest cumulative cost are kept for the next expansion. After the tree reaches depth N ,the complete sequence with the smallest cost is selected, and only its first mode is applied in receding-horizon fashion. The number of candidate expansions is therefore on the order of 
+
+K|U| N , which is much smaller than |U| N when K ≪ |U| N −1.The price paid for this reduction is approximate optimality, since a branch discarded at an intermediate depth cannot be recovered later. Nevertheless, beam search preserves multi-step look-ahead while keeping the online computation manageable. 
+
+C. Domain-Randomized Expert Dataset Construction 
+
+To improve robustness to operating-point shifts and pa-rameter mismatch, expert demonstrations are collected under randomized environments rather than under a single nominal condition. For each sampled environment, the expert policy 
+
+πMPC in (14) is executed in closed loop, and the resulting state–mode pairs are recorded. We consider two sources of variability. The first is operating-condition variability, represented by changes in in-put voltage and load. The second is parameter variability, represented by perturbations in the passive components L, Cf ,and C. The perturbed components are modeled as 
+
+L′ = (1 + δL)L, C′ 
+
+> f
+
+= (1 + δCf )Cf ,C′ = (1 + δC )C, 
+
+(15) where δL, δCf , and δC are sampled from prescribed bounded distributions. Likewise, the operating conditions are generated by sampling the input voltage and load from predefined distri-butions. The exact numerical ranges used in the experiments are specified in Section IV-A. Each dataset sample consists of the measured feature vector in (10) and its expert label: 
+
+ zk, π MPC (zk), (16) where πMPC (zk) ∈ U. Although load conditions are ran-domized during data generation, the student policy does not require direct access to the load parameter. Instead, it uses the measurable output current io, which makes the learned controller deployable without load-parameter identification. The offline dataset is assembled from three subsets: anominal subset for basic steady-state and transient behavior, an operating-point-randomized subset for broader coverage of input-voltage and load variations, and a parameter-randomized subset for robustness to passive-component mismatch. Denot-ing these subsets by Dnom , Dop , and Dpar , respectively, the combined dataset is 
+
+DDR = Dnom ∪ D op ∪ D par . (17) 
+
+D. Neural Policy and Supervised Distillation 
+
+The student policy πANN is a compact feedforward classifier that maps the six-dimensional feature vector zk in (10) to one of the four admissible switching modes in U. The policy definition used in the distillation process is summarized in Table III. Let ˆy ∈ R4 denote the output class-probability vector. A representative simple feedforward policy can be written as 
+
+ˆy = softmax( W3 σ(W2 σ(W1z + b1) + b2) + b3) , (18) where σ(·) is the activation function. The corresponding switching decision is denoted by πANN (zk) ∈ U . The student is trained by minimizing the class-weighted cross-entropy loss 
+
+L(θ) = −
+
+> 4
+
+X
+
+> c=1
+
+αc yc log ˆ yc, (19) 5               
+
+> TABLE III NEURAL POLICY DEFINITION USED IN DISTILLATION
+> Item Setting
+> Network type Feedforward fully connected classifier Input features (iL, v Cf , v o, i ref , V in , i o)
+> Output 4 admissible switching modes Output layer Softmax classifier Loss function Class-weighted cross-entropy Domain randomization Vin , R, L, C f, C
+> On-policy correction Disagreement-based DAgger relabeling
+
+where y is the one-hot expert label and αc is inversely proportional to the class frequency of class c.Training on DDR alone corresponds to standard behavior cloning. While domain randomization broadens coverage over operating conditions and parameter values, it does not guar-antee coverage of the state distribution actually visited by the learned policy during closed-loop execution. This motivates the on-policy refinement step described next. 
+
+E. Disagreement-Based DAgger Refinement 
+
+Behavior cloning on the offline dataset DDR provides an initial student policy, but it remains vulnerable to covariate shift. Once the learned controller deviates from the expert, the closed-loop trajectory may move into state regions that are weakly represented in the offline demonstrations, and the resulting errors can accumulate over time. To mitigate this effect, we adopt DAgger [17]. In standard DAgger, the current learner is rolled out in closed loop, the expert is evaluated on the learner-visited states, and those on-policy states are aggregated into the training set for iterative retraining. In this paper, we use a disagreement-filtered variant of DAgger. The iterative structure is the same as in standard DAgger, but instead of aggregating all learner-visited states, we retain only those states on which the student and expert choose different switching modes. This focuses refinement on weakly cloned or failure-prone regions of the state space while keeping the additional dataset compact. Let π(i)ANN denote the student policy at DAgger iteration i,and initialize the aggregated dataset as 
+
+D(0) aug = DDR . (20) During rollout of π(i)ANN , we evaluate the expert on the learner-visited states and define the mismatch set as 
+
+D(i)mist =
+
+n zk, π MPC (zk) π(i)ANN (zk)̸ = πMPC (zk)
+
+o
+
+.
+
+(21) The aggregated dataset is then updated by 
+
+D(i+1) aug = D(i)aug ∪ D (i)mist , (22) and the student is fine-tuned on D(i+1) aug . Repeating this proce-dure reduces on-policy distribution mismatch and improves robustness when the learner induces state trajectories that differ from those in the original offline dataset. Algorithm 1 summarizes one refinement cycle. Starting from the offline-trained student, each iteration performs closed-loop rollouts with the current student policy, evaluates 
+
+Algorithm 1 Disagreement-Based DAgger Refinement  
+
+> 1:
+
+Input: offline dataset DDR , expert πMPC  
+
+> 2:
+
+Input: initial student π(0) ANN , number of iterations I 
+
+> 3:
+
+D(0) aug ← D DR  
+
+> 4:
+
+for i = 0 , 1, . . . , I − 1 do  
+
+> 5:
+
+D(i)mist ← ∅  
+
+> 6:
+
+for each closed-loop rollout episode do  
+
+> 7:
+
+Initialize the converter state  
+
+> 8:
+
+for each time step in the rollout horizon do  
+
+> 9:
+
+Observe zk from the learner-induced trajectory  
+
+> 10:
+
+Compute π(i)ANN (zk) and πMPC (zk) 
+
+> 11:
+
+if π(i)ANN (zk)̸ = πMPC (zk) then  
+
+> 12:
+
+Add  zk, π MPC (zk) to D(i)mist  
+
+> 13:
+
+end if  
+
+> 14:
+
+Apply π(i)ANN (zk) to the closed loop  
+
+> 15:
+
+end for  
+
+> 16:
+
+end for  
+
+> 17:
+
+D(i+1) aug ← D (i)aug ∪ D (i)mist  
+
+> 18:
+
+Fine-tune the student on D(i+1) aug to obtain π(i+1) ANN  
+
+> 19:
+
+end for  
+
+> 20:
+
+Output: refined student policy π(I)ANN 
+
+the expert at the visited states, stores only disagreement states, augments the aggregated dataset, and fine-tunes the student on the updated dataset. Relative to standard DAgger, the key difference is therefore the filtering rule before aggregation: only disagreement samples are retained. IV. S IMULATION SETUP AND VALIDATION 
+
+A. Experimental Setup and Common Settings 
+
+To evaluate the proposed framework, expert-data generation, policy distillation, and network training are conducted offline in Python/PyTorch on an Apple M3 Max CPU. The trained ANN controller is then deployed in a Simulink model of the FC-TLBC for closed-loop validation, and the same CPU is used for the runtime comparison reported in Section IV-B1. The nominal converter parameters, expert-controller con-figuration, and ANN training settings used in the main FC-TLBC experiments are summarized in Tables V, VI, and VII, respectively. The evaluation is organized into the four modules summa-rized in Table IV. Basic experiments compare the distilled ANN policy against the N -step FCS-MPC expert under Sce-narios S1–S3. Ablation removes DR or Disagreement-Based DAgger to isolate their effects under fixed test trajectories. Sensitivity sweeps the DR range and the Disagreement-Based DAgger mismatch-sample budget to assess training robustness. Finally, transfer learning evaluates whether features learned on FC-TLBC accelerate training and improve closed-loop behavior on an NPC-type three-level buck converter (Buck-3L). 
+
+a) ANN architecture and training details.: The student policy is implemented as a fully connected feedforward clas-sifier with six input features (see (10)), one hidden layer of 128 units, and a four-class softmax output corresponding to the four admissible switching modes. The hidden layer 6                                       
+
+> TABLE IV OVERVIEW OF EXPERIMENTAL MODULES AND THEIR ROLES
+> Module Main Purpose Basic Experiments Compare ANN vs. MPC in S1–S3 Ablation Study Quantify roles of DR, Disagreement-Based DAgger, and expert supervision Sensitivity Robustness to DR range and Disagreement-Based DAgger budget Transfer Learning Cross-topology generalization (Buck-3L) TABLE V NOMINAL PARAMETERS OF THE FC-TLBC AND CONTROL -U PDATE
+> SETTINGS
+> Item Value
+> Input voltage (nominal) Vin 120 V
+> Output reference v⋆o180 V
+> Inductor L1 mH
+> Flying capacitor Cf50 μF
+> Output capacitor C125 μF
+> Load resistance (nominal) R36 Ω
+> Flying-capacitor reference V⋆Cf v⋆o/2 = 90 V
+> Control-update period Ts20 μs
+> TABLE VI CONFIGURATION OF THE N-S TEP BEAM -S EARCH FCS-MPC E XPERT
+
+Item Value 
+
+Action set size |U| 4Prediction horizon N 5Beam width K 15 Current tracking weight λI 1.0 Flying-capacitor voltage weight λCf 0.007 
+
+uses the ReLU activation function. The base offline training is run for 260 epochs, followed by 280 epochs of fine-tuning after disagreement-based DAgger aggregation. Unless otherwise stated, all reported FC-TLBC results use this same architecture and hyperparameter setting. In the numerical experiments, the three dataset subsets introduced in Section III-C are instantiated as Scenarios S1– S3. Scenario S1 uses representative nominal step responses to capture baseline transient and steady-state behavior. Sce-nario S2 broadens the operating conditions by sampling 
+
+Vin ∼ U (80 , 140) V ,R ∼ U (10 , 100) Ω , (23) while Scenario S3 further introduces passive-component per-turbations according to (15) with independent perturbations 
+
+δL, δ Cf , δ C ∼ U (−ρ, ρ ), (24) where ρ ∈ (0 , 1) denotes the relative randomization intensity. In this experiments, we use ρ = 0 .3.Algorithm 2 summarizes the data-generation, offline train-ing, on-policy refinement, and evaluation workflow for Sce-narios S1–S3. 
+
+B. Comparative Experiments (Scenarios 1–3) 
+
+Table VIII shows a consistent pattern across the three scenarios. Detailed metric definitions are given in Appendix A.     
+
+> TABLE VII ANN A RCHITECTURE AND TRAINING HYPERPARAMETERS USED IN THE
+> BASIC EXPERIMENTS
+
+Item Value Input dimension 6Hidden layers 1Hidden units per hidden layer 128 Output classes 4Activation function ReLU Output layer Softmax Optimizer Adam Learning rate 1 × 10 −4
+
+Batch size 2048 Weight decay None Offline-training epochs 260 DAgger fine-tuning epochs 280 Numerical precision float32 
+
+Algorithm 2 Experimental Pipeline for FC-TLBC (Scenarios S1–S3)  
+
+> 1:
+
+Set the random seed and simulation parameters  
+
+> 2:
+
+Initialize the N -step beam-search FCS-MPC expert  
+
+> 3:
+
+for scenario s ∈ { S1, S 2, S 3} do  
+
+> 4:
+
+Simulate the FC-TLBC under scenario-specific Vin (t),
+
+R(t), and parameter settings  
+
+> 5:
+
+Collect expert-labeled pairs  zk, u MPC ,k 
+
+ to form Ds 
+
+> 6:
+
+end for  
+
+> 7:
+
+Construct DDR = DS1 ∪ D S2 ∪ D S3 
+
+> 8:
+
+Train the ANN on DDR using weighted cross-entropy  
+
+> 9:
+
+Refine the ANN with disagreement-based DAgger to obtain the final policy  
+
+> 10:
+
+for scenario s ∈ { S1, S 2, S 3} do  
+
+> 11:
+
+Run closed-loop simulations with the MPC expert and the ANN policy  
+
+> 12:
+
+Compute tracking, transient, energy, penalty, and switching metrics  
+
+> 13:
+
+Compare the controllers under the same scenario  
+
+> 14:
+
+end for 
+
+1) Scenario 1: Nominal Operating Condition: Scenario 1 considers nominal Vin and load conditions with representa-tive step disturbances. As shown in Fig. 2, the closed-loop responses of the distilled ANN and the beam-search FCS-MPC expert are visually close. Quantitatively, Table VIII shows that the ANN reduces MSE vo from 14.13 to 6.22 and MSE iL
+
+from 0.206 to 0.096, while preserving zero inductor-current violations. The ANN also lowers Overshoot vCf from 8.16 V to 4.65 V. The main trade-off is the output-voltage transient, where Overshoot vo increases from 8.93 V to 33.39 V. Overall, 7
+
+TABLE VIII CONSOLIDATED CLOSED -LOOP RESULTS FOR THE FC-TLBC UNDER 
+
+SCENARIOS 1–3. S CENARIO 3 REPORTS THE ANN ONLY , SINCE THIS CASE IS USED PRIMARILY FOR ROBUSTNESS VALIDATION UNDER PLANT MISMATCH .DETAILED METRIC DEFINITIONS ARE GIVEN IN APPENDIX A. Scenario 1 Scenario 2 Scenario 3 Metric MPC ANN MPC ANN ANN Decision time ( μs) 342.26 18.30 342.26 18.30 18.30 Runtime (s) 17.46 1.42 16.80 1.45 1.42 
+
+MSE vCf 1.803 1.664 0.952 0.962 5.170 
+
+MSE vo 14.13 6.22 10.81 4.03 33.94 
+
+MSE iL 0.206 0.096 0.175 0.076 0.259 
+
+Overshoot vCf (V) 8.16 4.65 3.70 3.90 26.95 
+
+Overshoot vo (V) 8.93 33.39 0.69 25.49 48.28 
+
+NiL,viol 0 0 0 0 0
+
+Penalty over 0 0.0002 0 0.0001 0.0004 
+
+Penalty sag 0.0007 0.0001 0.0006 0.0001 0.0011 Energy- and switching-related quantities are omitted from the main-text table for brevity and may be retained in the Appendix if desired. 
+
+Fig. 2. Closed-loop responses in Scenario 1 under nominal operating conditions, with input-voltage steps at 0.2 s and 0.3 s and a load-resistance step at 0.4 s. From top to bottom: output voltage vo, flying-capacitor voltage 
+
+vCf , inductor current iL, and switching signal SA. The distilled ANN closely matches the beam-search FCS-MPC expert. 
+
+Scenario 1 shows that the distilled policy reproduces the nominal closed-loop behavior of the long-horizon expert, with output-voltage overshoot as the main penalty. 
+
+2) Scenario 2: Randomized Input Voltage and Load: 
+
+Scenario 2 evaluates generalization under randomized step changes in Vin and load within the domain-randomization ranges. As shown in Fig. 3, the ANN remains stable across all operating intervals and continues to follow the expert closely at the waveform level. Table VIII shows that the ANN reduces MSE vo from 10.81 to 4.03 and MSE iL from 0.175 to 0.076, while again maintaining zero inductor-current violations. The main discrepancy remains the transient output-voltage behavior, where Overshoot vo increases from 0.69 V to 25.49 V. Thus, under operating-point randomization, the 
+
+Fig. 3. Closed-loop responses in Scenario 2 under randomized operating-point changes in input voltage and load resistance. From top to bottom: output voltage vo, flying-capacitor voltage vCf , inductor current iL, and switching signal SA. The ANN policy remains stable and closely follows the FCS-MPC expert across varying operating conditions. 
+
+proposed policy preserves stable regulation and good current tracking, with output-voltage overshoot remaining the main trade-off. 
+
+3) Scenario 3: Parameter Perturbations and Operating-Point Jumps: Scenario 3 further extends Scenario 2 by intro-ducing passive-component perturbations in (L, C f , C ) in addi-tion to randomized Vin and R, making it the most demanding robustness case. As shown in Fig. 4, the ANN still maintains stable closed-loop operation despite the combined operating-point shifts and plant mismatch. Table VIII shows that the errors increase relative to Scenarios 1 and 2, with MSE vo =33 .94 , MSE vCf = 5 .170 , and Overshoot vo = 48 .28 V . Nev-ertheless, all responses remain bounded, capacitor balancing is preserved, and no inductor-current violation occurs. These 8                              
+
+> Fig. 4. Representative ANN closed-loop responses in Scenario 3 under simul-taneous operating-point randomization and passive-component perturbations in L,Cf, and C. From top to bottom: output voltage vo, flying-capacitor voltage vCf , inductor current iL, and switching signal SA. Stable regulation and capacitor balancing are preserved despite parametric mismatch. TABLE IX OBJECTIVE -FIDELITY METRICS UNDER THE SAME MPC COST (12) Scenario / Controller Jsum Jmean
+> S1: MPC 1.0908 ×10 40.2182 S1: ANN (DAgger) 5.3952 ×10 30.1079 S2: MPC 9.0884 ×10 30.1818 S2: ANN (DAgger) 4.1618 ×10 30.0832
+
+results support the robustness of the proposed training pipeline beyond nominal modeling assumptions. 
+
+4) Training Summary, Inference Speed, and Objective Fi-delity: The ANN policy is trained using 203 ,998 MPC-labeled state–mode pairs generated under domain randomization and then refined by aggregating an additional 50 ,000 mismatch states collected with Disagreement-Based DAgger. After re-finement, the classifier reaches a validation accuracy of 0.9174 
+
+and a test accuracy of 0.9196 .To quantify the computational savings, we measure per-step decision time for the N -step beam-search FCS-MPC expert and for the ANN policy on the same evaluation CPU. The ANN requires 18 .30 μs per decision, whereas the expert requires 342 .26 μs, corresponding to an 18 .7× speedup. Relative to the nominal control-update period of 20 μs, the prototype ANN latency is slightly smaller. Since this timing is measured for a PyTorch prototype on the specific platform (Apple M3 Max CPU), it should be interpreted as a software-level runtime indicator rather than as a definitive guarantee of embedded real-time deployment. Nevertheless, the result confirms a substantial reduction in online decision cost. To assess how closely the distilled policy reproduces the MPC objective, we compute the accumulated MPC stage cost (12) a posteriori along the realized closed-loop trajectories and report the accumulated cost Jsum and its per-step average 
+
+Jmean for Scenarios 1 and 2. Table IX shows that the ANN                                                                          
+
+> TABLE X ABLATION CONFIGURATIONS AND ENABLED COMPONENTS
+> Config Expert Labels DR DAgger FULL ✓✓✓
+> NO DAGGER ✓✓×
+> NO DR ✓×✓
+> NO EXPERT ×N/A N/A TABLE XI REPRESENTATIVE ABLATION RESULTS UNDER SCENARIOS 1–3 ( LOWER IS BETTER FOR ALL METRICS SHOWN )
+> Scenario Metric FULL NO DAGGER NO DR NO EXPERT S1 MSE vo 13.9237 14.0757 14.1253 15666.8631
+> MSE iL0.2118 0.2885 0.2669 2461.4469
+> Overshoot vo 7.0795 7.6754 7.2936 738.6373
+> NiL,viol 0001939 S2 MSE vo 13.2922 13.9687 13.1520 219519.8731
+> MSE iL0.1954 1.0585 0.5263 12721.0718
+> Overshoot vo 10.6224 12.4090 15.6412 720.7855
+> NiL,viol 00040333 S3 MSE vo 8.5146 8.6940 16.0551 380609.4699
+> MSE iL0.2935 0.2815 23.0244 18813.3168
+> Overshoot vo 5.3896 5.9888 10.9562 877.9873
+> NiL,viol 00042861
+
+yields a lower realized accumulated cost than the beam-search expert in both Scenarios 1 and 2. We interpret this result cau-tiously. The expert is only an approximate solver because beam search with width K = 15 may prune switching sequences that would have achieved lower cumulative cost over the full horizon. In addition, disagreement-based DAgger retrains the student on learner-visited mismatch states, which can improve on-policy behavior in regions that were weakly represented in the original offline dataset. The ANN may also generate smoother switching sequences than the stepwise approximate expert. At the same time, the ANN still exhibits substantially larger output-voltage overshoot than the expert, so the lower realized cost should not be interpreted as uniformly better closed-loop control. 
+
+C. Ablation Study 
+
+Here, we report representative ablation results. To isolate the individual contributions of expert supervision, DR, and Disagreement-Based DAgger, we compare the four train-ing configurations listed in Table X. In particular, NO DR removes only the randomized offline data while retaining the same DAgger refinement, so that the effect of DR can be separated from the effect of on-policy correction. All configurations share the same ANN architecture, optimizer, 
+
+20 μs control-update period, and training schedule, and the Scenario 2 and Scenario 3 test trajectories are fixed across all configurations. Rather than imposing a strict total ordering across all sce-narios and metrics, Table XI supports three robust conclusions. First, expert supervision is indispensable. Second, DR is the main source of robustness beyond nominal conditions. Third, 9
+
+Disagreement-Based DAgger provides additional gains mainly in on-policy current-tracking and transient behavior. The importance of expert supervision is most clearly seen from the NO EXPERT configuration. This setting fails to produce a viable closed-loop policy in all three scenarios, with errors increasing by orders of magnitude and thousands of current-limit violations. For example, MSE vo rises to 
+
+15666 .8631 , 219519 .8731 , and 380609 .4699 in Scenarios 1, 2, and 3, respectively. These results confirm that MPC-derived expert labels are essential for learning a stabilizing switching policy under the present network architecture and training setup. The role of DR becomes clear by comparing FULL and NO DR. Under nominal conditions (Scenario 1), the three expert-supervised configurations remain close to one an-other, indicating that nominal-data training is sufficient when the training and test distributions are well matched. Under operating-point randomization (Scenario 2), NO DR remains stable, but its current-tracking and transient metrics degrade relative to FULL. Although NO DR attains a slightly smaller 
+
+MSE vo than FULL in Scenario 2, it exhibits worse MSE iL
+
+and larger output-voltage overshoot. The effect of DR becomes much more pronounced in Scenario 3, where operating-point variation is combined with passive-component perturbations: relative to FULL, NO DR increases MSE iL from 0.2935 to 23.0244, MSE vo from 8.5146 to 16.0551, and Overshoot vo
+
+from 5.3896 to 10.9562. These results indicate that DR is the primary mechanism enabling robustness to joint operating-point shifts and parameter mismatch. The contribution of Disagreement-Based DAgger is isolated by comparing FULL with NO DAGGER. In Scenario 1, the two are close, although FULL still improves MSE iL and slightly reduces output-voltage overshoot. The clearest gains appear in Scenario 2, where FULL reduces MSE iL from 1.0585 to 0.1954 and Overshoot vo from 12.4090 to 10.6224. In Scenario 3, the difference is more nuanced: NO DAGGER slightly improves MSE iL , but FULL achieves lower MSE vo
+
+and lower output-voltage overshoot. This suggests that under the strongest perturbations, DAgger mainly improves transient quality and suppresses extreme on-policy deviations, even when some average-error metrics are already comparable. Overall, the ablation study shows that all expert-supervised models perform similarly under nominal conditions, DR is the dominant factor that preserves robustness under random-ized operating conditions and parameter perturbations, and Disagreement-Based DAgger yields additional benefits once the learner visits states that are weakly represented in the original offline dataset. Sensitivity experiments examining the DAgger mismatch-sample budget and DR intensity are reported in Appendix B. 
+
+D. Transfer Learning Experiments 
+
+A natural question is whether the neural features learned for one converter topology can be reused for a related but distinct topology, thereby reducing the data and training effort required for the new target system. The FC-TLBC and the NPC-type three-level buck converter (Buck-3L) share several structural  
+
+> Fig. 5. Topology of NPC-Buck Converter
+
+Algorithm 3 Transfer-Learning Evaluation Protocol  
+
+> 1:
+
+Stage 1: Source pre-training on FC-TLBC  
+
+> 2:
+
+Generate the FC-TLBC expert dataset DFC  
+
+> 3:
+
+Train a source ANN policy πθsrc on DFC  
+
+> 4:
+
+Evaluate source-domain accuracy to confirm convergence  
+
+> 5:
+
+Stage 2: Buck-3L training from scratch  
+
+> 6:
+
+Generate the Buck-3L expert dataset DBuck  
+
+> 7:
+
+Initialize πθscratch with random weights  
+
+> 8:
+
+Train πθscratch on DBuck  
+
+> 9:
+
+Evaluate closed-loop metrics under the Buck-3L test sce-narios  
+
+> 10:
+
+Stage 3: Buck-3L transfer learning  
+
+> 11:
+
+Initialize πθtrans from πθsrc  
+
+> 12:
+
+Re-initialize only the output layer for the Buck-3L action set  
+
+> 13:
+
+Fine-tune πθtrans on DBuck  
+
+> 14:
+
+Compare MPC, Scratch, and Transfer under the same Buck-3L scenarios properties that make cross-topology transfer plausible. First, both are three-level converter topologies whose switching be-havior can be described by the same number of discrete modes 
+
+(|U| = 4) . Second, the state vectors in both cases consist of an inductor current, an internal capacitor voltage, and an output voltage, so the six-dimensional input feature space zk
+
+defined in (10) has the same physical interpretation. Third, the control objectives—current tracking and internal capacitor-voltage balancing subject to mode-feasibility constraints— are analogous, differing mainly in the sign conventions and mode-coefficient values of the state-space matrices. These commonalities suggest that the hidden-layer weights trained on FC-TLBC data already encode useful nonlinear decision boundaries that are transferable to Buck-3L with only output-layer adaptation. To evaluate this hypothesis, we follow the protocol in Algorithm 3, which separates source pre-training on FC-TLBC, target training from scratch on Buck-3L, and transfer initialization/fine-tuning on the same Buck-3L target dataset. 10  
+
+> Fig. 6. Closed-loop comparison in Transfer Learning Scenario 1 for the NPC-type three-level buck converter under a moderate load step. From top to bottom: input voltage, output voltage, inductor current, and load resistance. The transferred policy closely follows the Buck-3L MPC reference and improves over training from scratch.
+
+We consider three controllers: 1) MPC: FCS-MPC tailored for Buck-3L and used as the reference controller. 2) Scratch: Buck-3L controller trained from random ini-tialization using 4053 MPC-labeled samples and 40 epochs. 3) Transfer: Initialize the Buck-3L network with hidden-layer weights from an FC-TLBC source model trained specifically for this transfer experiment on 8203 source samples for 60 epochs; re-initialize only the output layer; then fine-tune on the same 4053 Buck samples for 40 epochs. For this transfer-learning study, the FC-TLBC source model described above achieves a test accuracy of about 0.86 on its source-domain split. On Buck-3L, the Scratch model reaches a test accuracy of 0.80–0.83, while the Transfer model reaches approximately 0.94, indicating that the source-domain features improve action classification with the same amount of target data. Closed-loop performance is evaluated under two step-load scenarios S1 and S2, with reference voltage v⋆o = 80 V, input voltage around 120 V, and load resistance stepping from 20 Ω 
+
+to 10 Ω : 
+
+> •
+
+In S1 (moderate disturbance), MPC and Transfer re-sponses almost overlap, with peak overshoot ≈ 0.2 V(0.22% ), while Scratch exhibits noticeable oscillation and larger MSE vo (7.74 vs. 3.95 for MPC and 3.71 for Transfer).  
+
+> •
+
+In S2 (strong disturbance), Scratch yields severe over-voltage (up to about 120 V, 88 .9% overshoot) and slow recovery, with MSE vo = 336 .9. Transfer maintains 
+
+MSE vo = 3 .01 and overshoot ≈ 3.24 V ( 4.05% ), close to MPC’s MSE vo = 2 .33 .Average efficiency Eff avg and average output power 
+
+Pout ,avg are similar across MPC, Scratch, and Transfer, in-dicating that improved tracking does not come at the cost of energy efficiency. These results confirm that:           
+
+> Fig. 7. Closed-loop comparison in Transfer Learning Scenario 2 for the NPC-type three-level buck converter under a larger disturbance. From top to bottom: input voltage, output voltage, inductor current, and load resistance. The transferred policy remains close to the MPC reference, whereas the scratch-trained policy exhibits larger overshoot and slower recovery. TABLE XII CONTROLLERS COMPARED IN TRANSFER LEARNING EXPERIMENTS
+> Controller Description MPC FCS-MPC expert tailored for Buck-3L Scratch Buck-3L ANN trained from random initialization Transfer Buck-3L ANN initialized from FC-TLBC source model
+> •
+
+features learned on FC-TLBC are reusable on Buck-3L,  
+
+> •
+
+transfer learning improves Buck-3L performance with the same data budget, and  
+
+> •
+
+cross-topology generalization is feasible within the pro-posed MPC-to-ANN framework. V. C ONCLUSION 
+
+This paper presented a practical MPC-to-neural distillation framework for FC-TLBCs, where a compact feedforward switching policy is learned from a long-horizon beam-search FCS-MPC expert. By combining domain-randomized expert demonstrations with disagreement-based DAgger refinement, the proposed method reduces the online computational burden while improving robustness to operating-point variation and passive-component mismatch. Simulation results showed that the distilled controller pre-serves stable output-voltage regulation and flying-capacitor balancing under nominal conditions, randomized operating points, and parameter perturbations. On the evaluation CPU, the per-decision computation time was reduced. The main limitation may be that the ANN exhibits larger output-voltage overshoot than the MPC expert in Scenarios 1 and 2. The ablation study further showed that expert supervision is essen-tial, domain randomization is the main driver of robustness, and disagreement-based DAgger yields additional gains in on-policy transient and current-tracking behavior. The transfer-learning results suggest that representations learned on FC-TLBC can be reused for a related three-level buck topology, improving data efficiency relative to training from scratch. Future work will focus on embedded and experimental validation and on extending the training pipeline 11 
+
+to account for nonideal effects such as dead time, switching losses, and measurement noise. Overall, the results indicate that neural distillation is a practical route for bringing long-horizon predictive control closer to real-time use in multilevel power converters. REFERENCES [1] F. Defa¨ y, A.-M. Llor, and M. Fadel, “Direct control strategy for a four-level three-phase flying-capacitor inverter,” IEEE Transactions on Industrial Electronics , vol. 57, no. 7, pp. 2240–2248, 2010. [2] T. J. Vyncke, S. Thielemans, and J. A. Melkebeek, “Finite-set model-based predictive control for flying-capacitor converters: Cost function design and efficient FPGA implementation,” IEEE Transactions on Industrial Informatics , vol. 9, no. 2, pp. 1113–1121, 2012. [3] P. Cortes, S. Kouro, B. La Rocca, R. Vargas, J. Rodriguez, J. I. Leon, S. Vazquez, and L. G. Franquelo, “Guidelines for weighting factors design in model predictive control of power converters and drives,” in 
+
+2009 IEEE International Conference on Industrial Technology , pp. 1–7, 2009. [4] J. Rodriguez, M. P. Kazmierkowski, J. R. Espinoza, P. Zanchetta, H. Abu-Rub, H. A. Young, and C. A. Rojas, “State of the art of finite control set model predictive control in power electronics,” IEEE Transactions on Industrial Informatics , vol. 9, no. 2, pp. 1003–1016, 2012. [5] S. Vazquez, J. Rodriguez, M. Rivera, L. G. Franquelo, and M. No-rambuena, “Model predictive control for power converters and drives: Advances and trends,” IEEE Transactions on Industrial Electronics ,vol. 64, no. 2, pp. 935–947, 2016. [6] C. Mart´ ın, M. Berm´ udez, F. Barrero, M. R. Arahal, X. Kestelyn, and M. J. Dur´ an, “Sensitivity of predictive controllers to parameter variation in five-phase induction motor drives,” Control Engineering Practice ,vol. 68, pp. 23–31, 2017. [7] T. Geyer and D. E. Quevedo, “Performance of multistep finite control set model predictive control for power electronics,” IEEE Transactions on Power Electronics , vol. 30, no. 3, pp. 1633–1644, 2015. [8] R. Keusch, H.-A. Loeliger, and T. Geyer, “Long-horizon direct model predictive control for power converters with state constraints,” IEEE Transactions on Control Systems Technology , vol. 32, no. 2, pp. 340– 350, 2024. [9] R. P. Aguilera, P. Lezana, and D. E. Quevedo, “Finite-control-set model predictive control with improved steady-state performance,” IEEE Transactions on Industrial Informatics , vol. 9, no. 2, pp. 658–667, 2012. [10] I. S. Mohamed, S. Rovetta, T. D. Do, T. Dragiˇ cevi´ c, and A. A. Z. Diab, “A neural-network-based model predictive control of three-phase inverter with an output LC filter,” IEEE Access , vol. 7, pp. 124737– 124749, 2019. [11] A. Bakeer, I. S. Mohamed, P. B. Malidarreh, I. Hattabi, and L. Liu, “An artificial neural network-based model predictive control for three-phase flying-capacitor multilevel inverter,” IEEE Access , vol. 10, pp. 70305– 70316, 2022. [12] D. Wang, Z. J. Shen, X. Yin, S. Tang, X. Liu, C. Zhang, J. Wang, J. Rodriguez, and M. Norambuena, “Model predictive control using artificial neural network for power converters,” IEEE Transactions on Industrial Electronics , vol. 69, no. 4, pp. 3689–3699, 2022. [13] F. Simonetti, A. D’Innocenzo, and C. Cecati, “Neural network model-predictive control for CHB converters with FPGA implementation,” 
+
+IEEE Transactions on Industrial Informatics , vol. 19, no. 9, pp. 9691– 9702, 2023. [14] M. Novak and T. Dragiˇ cevi´ c, “Supervised imitation learning of finite-set model predictive control systems for power electronics,” IEEE Transactions on Industrial Electronics , vol. 68, no. 2, pp. 1717–1723, 2021. [15] Y. Xiang, H. S.-H. Chung, and H. Lin, “Light implementation scheme of ANN-based explicit model-predictive control for DC–DC power converters,” IEEE Transactions on Industrial Informatics , vol. 20, no. 3, pp. 4065–4078, 2024. [16] N. Li, H. Yu, S. Finney, and P. D. Judge, “Long-horizon FCS-MPC-trained 1-d convolution neural networks for FPGA-based power-electronic converter control with a Si/SiC hybrid converter case study,” 
+
+IEEE Transactions on Industrial Electronics , vol. 72, no. 9, pp. 9486– 9496, 2025. [17] S. Ross, G. Gordon, and D. Bagnell, “A reduction of imitation learning and structured prediction to no-regret online learning,” in Proceedings of the Fourteenth International Conference on Artificial Intelligence and Statistics , vol. 15 of Proceedings of Machine Learning Research ,pp. 627–635, 2011. [18] J. Tobin, R. Fong, A. Ray, J. Schneider, W. Zaremba, and P. Abbeel, “Domain randomization for transferring deep neural networks from sim-ulation to the real world,” in 2017 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) , pp. 23–30, 2017. [19] S. Kouro, P. Cort´ es, R. Vargas, U. Ammann, and J. Rodr´ ıguez, “Model predictive control—a simple and powerful method to control power converters,” IEEE Transactions on Industrial Electronics , vol. 56, no. 6, pp. 1826–1838, 2008. [20] T. Geyer, G. Papafotiou, and M. Morari, “Hybrid model predictive control of the step-down dc–dc converter,” IEEE Transactions on Control Systems Technology , vol. 16, no. 6, pp. 1112–1124, 2008. [21] S. Mari´ ethoz, S. Alm´ er, M. Bˆ aja, G. Beccuti, D. Patino, A. Wernrud, J. Buisson, H. Cormerais, T. Geyer, H. Fujioka, U. Jonsson, C.-Y. Kao, M. Morari, G. Papafotiou, A. Rantzer, and P. Riedinger, “Comparison of hybrid control techniques for buck and boost dc–dc converters,” IEEE Transactions on Control Systems Technology , vol. 18, no. 5, pp. 1126– 1145, 2010. [22] Y. Xie, R. Ghaemi, J. Sun, and J. S. Freudenberg, “Model predictive control for a full bridge dc/dc converter,” IEEE Transactions on Control Systems Technology , vol. 20, no. 1, pp. 164–172, 2012. [23] S.-K. Kim, C. R. Park, J.-S. Kim, and Y. I. Lee, “A stabilizing model predictive controller for voltage regulation of a dc/dc boost converter,” 
+
+IEEE Transactions on Control Systems Technology , vol. 22, no. 5, pp. 2016–2023, 2014. [24] J. Scoltock, T. Geyer, and U. K. Madawala, “Model predictive direct power control for grid-connected NPC converters,” IEEE Transactions on Industrial Electronics , vol. 62, no. 9, pp. 5319–5328, 2015. [25] L. Liu, T. Shi, D. Wang, N. Gu, and Z. Peng, “Finite-set model predictive control for PWM rectifiers based on data-driven neural network predic-tor,” in 2024 IEEE International Symposium on Circuits and Systems (ISCAS) , pp. 1–5, 2024. [26] S. Alm´ er, S. Mari´ ethoz, and M. Morari, “Sampled data model predictive control of a voltage source inverter for reduced harmonic distortion,” 
+
+IEEE Transactions on Control Systems Technology , vol. 21, no. 5, pp. 1907–1915, 2013. [27] M. Novak, U. M. Nyman, T. Dragicevic, and F. Blaabjerg, “Statistical performance verification of fcs-MPC applied to three level neutral point clamped converter,” in 2018 20th European Conference on Power Electronics and Applications (EPE’18 ECCE Europe) , 2018. [28] Y. Yang, S.-C. Tan, and S. Y. R. Hui, “Adaptive reference model pre-dictive control with improved performance for voltage-source inverters,” 
+
+IEEE Transactions on Control Systems Technology , vol. 26, no. 2, pp. 724–731, 2018. [29] M. Nauman and A. Hasan, “Efficient implicit model-predictive control of a three-phase inverter with an output LC filter,” IEEE Transactions on Power Electronics , vol. 31, no. 9, pp. 6075–6078, 2016. [30] L. Guo, N. Jin, C. Gan, L. Xu, and Q. Wang, “An improved model predictive control strategy to reduce common-mode voltage for two-level voltage source inverters considering dead-time effects,” IEEE Transactions on Industrial Electronics , vol. 66, no. 5, pp. 3561–3572, 2018. [31] H.-Y. Lee, J.-l. Lee, S.-O. Kwon, and S.-W. Lee, “Performance estima-tion of induction motor using artificial neural network,” in 2018 25th International Conference on Systems, Signals and Image Processing (IWSSIP) , pp. 1–3, IEEE, 2018. [32] P. Cort´ es, G. Ortiz, J. I. Yuz, J. Rodr´ ıguez, S. Vazquez, and L. G. Franquelo, “Model predictive control of an inverter with output LC filter for UPS applications,” IEEE Transactions on Industrial Electronics ,vol. 56, no. 6, pp. 1875–1883, 2009. [33] S. Kwak and J.-C. Park, “Switching strategy based on model predictive control of VSI to obtain high efficiency and balanced loss distribution,” 
+
+IEEE Transactions on Power Electronics , vol. 29, no. 9, pp. 4551–4567, 2013. [34] S. Kwak, U.-C. Moon, and J.-C. Park, “Predictive-control-based direct power control with an adaptive parameter identification technique for improved AFE performance,” IEEE Transactions on Power Electronics ,vol. 29, no. 11, pp. 6178–6187, 2014. [35] B. Karanayil and M. F. Rahman, “Artificial neural network applications in power electronics and electrical drives,” in Power electronics hand-book , pp. 1139–1154, Elsevier, 2011. [36] H. S. Khan, I. S. Mohamed, K. Kauhaniemi, and L. Liu, “Artificial neural network-based voltage control of dc–dc converter for dc microgrid 12 
+
+applications,” in 2021 6th IEEE Workshop on the Electronic Grid (eGRID) , pp. 1–6, IEEE, 2021. [37] A. Bakeer, M. Alhasheem, and S. Peyghami, “Efficient fixed-switching modulated finite control set-model predictive control based on artificial neural networks,” Applied Sciences , vol. 12, no. 6, p. 3134, 2022. [38] S. A. Zaid, I. S. Mohamed, A. Bakeer, L. Liu, H. Albalawi, M. E. Tawfiq, and A. M. Kassem, “From MPC-based to end-to-end (E2E) learning-based control policy for grid-tied 3l-NPC transformerless inverter,” IEEE Access , vol. 10, pp. 57309–57326, 2022. [39] I. S. Mohamed, S. A. Zaid, M. F. Abu-Elyazeed, and H. M. Elsayed, “Implementation of model predictive control for three-phase inverter with output LC filter on eZdsp f28335 kit using HIL simulation,” 
+
+International Journal of Modelling, Identification and Control , vol. 25, no. 4, pp. 301–312, 2016. [40] J. Rodriguez, J. Pontt, C. A. Silva, P. Correa, P. Lezana, P. Cort´ es, and U. Ammann, “Predictive current control of a voltage source inverter,” 
+
+IEEE Transactions on Industrial Electronics , vol. 54, no. 1, pp. 495–503, 2007. [41] C. Xia, T. Liu, T. Shi, and Z. Song, “A simplified finite-control-set model-predictive control for power converters,” IEEE Transactions on Industrial Informatics , vol. 10, no. 2, pp. 991–1002, 2013. [42] X. Liu, L. Qiu, Y. Fang, Z. Peng, and D. Wang, “Finite-level-state model predictive control for sensorless three-phase four-arm modular multilevel converter,” IEEE Transactions on Power Electronics , vol. 35, no. 5, pp. 4462–4466, 2019. [43] Z. Zhang, C. M. Hackl, and R. Kennel, “Computationally efficient DMPC for three-level NPC back-to-back converters in wind turbine systems with PMSG,” IEEE Transactions on Power Electronics , vol. 32, no. 10, pp. 8018–8034, 2016. [44] S. Lucia, D. Navarro, B. Karg, H. Sarnago, and O. Lucia, “Deep learning-based model predictive control for resonant power converters,” 
+
+IEEE Transactions on Industrial Informatics , vol. 17, no. 1, pp. 409– 420, 2020. [45] S. Wang, T. Dragicevic, Y. Gao, and R. Teodorescu, “Neural network based model predictive controllers for modular multilevel converters,” 
+
+IEEE Transactions on Energy Conversion , vol. 36, no. 2, pp. 1562–1571, 2020. [46] J. Chen, Y. Chen, L. Tong, L. Peng, and Y. Kang, “A backpropaga-tion neural network-based explicit model predictive control for dc–dc converters with high switching frequency,” IEEE Journal of Emerging and Selected Topics in Power Electronics , vol. 8, no. 3, pp. 2124–2142, 2020. [47] T. Dragiˇ cevi´ c, “Model predictive control of power converters for robust and fast operation of AC microgrids,” IEEE Transactions on Power Electronics , vol. 33, no. 7, pp. 6304–6317, 2017. [48] B. K. Bose, “Neural network applications in power electronics and motor drives—an introduction and perspective,” IEEE Transactions on Industrial Electronics , vol. 54, no. 1, pp. 14–33, 2007. [49] D. Wang, X. Yin, S. Tang, C. Zhang, Z. J. Shen, J. Wang, and Z. Shuai, “A deep neural network based predictive control strategy for high frequency multilevel converters,” in 2018 IEEE Energy Conversion Congress and Exposition (ECCE) , pp. 2988–2992, IEEE, 2018. [50] J. A. Solsona, S. G. Jorge, and C. A. Busada, “Nonlinear control of a buck converter which feeds a constant power load,” IEEE Transactions on Power Electronics , vol. 30, no. 12, pp. 7193–7201, 2015. [51] V. Mnih, K. Kavukcuoglu, D. Silver, A. A. Rusu, J. Veness, M. G. Bellemare, A. Graves, M. Riedmiller, A. K. Fidjeland, G. Ostrovski, 
+
+et al. , “Human-level control through deep reinforcement learning,” 
+
+Nature , vol. 518, no. 7540, pp. 529–533, 2015. [52] J. Leitner, S. Harding, M. Frank, A. F¨ orster, and J. Schmidhuber, “Artificial neural networks for spatial perception: Towards visual ob-ject localisation in humanoid robots,” in The 2013 International Joint Conference on Neural Networks (IJCNN) , pp. 1–7, IEEE, 2013. [53] M. Novak and F. Blaabjerg, “Supervised imitation learning of fs-MPC algorithm for multilevel converters,” in 2021 23rd European Conference on Power Electronics and Applications (EPE’21 ECCE Europe) , 2021. [54] S. Zhao, F. Blaabjerg, and H. Wang, “An overview of artificial intelli-gence applications for power electronics,” IEEE Transactions on Power Electronics , vol. 36, no. 4, pp. 4633–4658, 2021. [55] B. Majmunovi´ c, T. Dragiˇ cevi´ c, and F. Blaabjerg, “Multi objective modu-lated model predictive control of stand-alone voltage source converters,” 
+
+IEEE Journal of Emerging and Selected Topics in Power Electronics ,vol. 8, no. 3, pp. 2559–2571, 2020. [56] J. Rodriguez, C. Garcia, A. Mora, F. Flores-Bahamonde, P. Acuna, M. Novak, Y. Zhang, L. Tarisciotti, S. A. Davari, Z. Zhang, F. Wang, M. Norambuena, T. Dragicevic, F. Blaabjerg, T. Geyer, R. Kennel, D. A. Khaburi, M. Abdelrahem, Z. Zhang, N. Mijatovic, and R. P. Aguilera, “Latest advances of model predictive control in electrical drives—part i: Basic concepts and advanced strategies,” IEEE Transactions on Power Electronics , vol. 37, no. 4, pp. 3927–3942, 2022. 
+
+APPENDIX AMETRICS USED IN THE EXPERIMENTS 
+
+All trajectory-based metrics are evaluated over a closed-loop rollout of Nsim samples with control-update period Ts.We define 
+
+Ttotal = Nsim Ts,
+
+and let tk denote the physical time associated with sample k.The voltage references are 
+
+Vref = v⋆o , VCf, ref = v⋆o
+
+2 ,
+
+and iref ,k is generated by the outer voltage controller. The reported tracking and transient metrics are defined as follows: 
+
+MSE vo = 1
+
+Nsim 
+
+> Nsim
+
+X
+
+> k=1
+
+ vo,k − Vref 
+
+2, (25) 
+
+MSE vCf = 1
+
+Nsim 
+
+> Nsim
+
+X
+
+> k=1
+
+ vCf,k − VCf, ref 
+
+2, (26) 
+
+MSE iL = 1
+
+Nsim 
+
+> Nsim
+
+X
+
+> k=1
+
+ iL,k − iref ,k 
+
+2. (27) We also report the signed final-sample steady-state error: 
+
+SSE vo = vo,N sim − Vref , (28) 
+
+SSE vCf = vCf,N sim − VCf, ref . (29) The peak overshoot and its percentage form are defined by 
+
+Overshoot vo = max 
+
+> 1≤k≤Nsim
+
+vo,k − Vref , (30) 
+
+Overshoot vCf = max 
+
+> 1≤k≤Nsim
+
+vCf,k − VCf, ref , (31) and 
+
+Mp,v o (%) = 100 Overshoot vo
+
+Vref 
+
+, (32) 
+
+Mp,v Cf (%) = 100 Overshoot vCf 
+
+VCf, ref 
+
+. (33) The settling times are computed using a ±2% band: 
+
+Tset ,v o = max {tk | vo,k /∈ [0 .98 Vref , 1.02 Vref ]} ,Tset ,v Cf = max {tk | vCf,k /∈ [0 .98 VCf, ref , 1.02 VCf, ref ]} .
+
+For the multi-step scenarios considered here, Tset ,v o and 
+
+Tset ,v Cf should therefore be interpreted as the last-exit time from the ±2% band over the entire rollout. The steady-state ripple is evaluated as the standard deviation after t ≥ 0.4 s :
+
+Ripple vo = std( { vo,k | tk ≥ 0.4 s }) ,
+
+Ripple vCf = std( { vCf,k | tk ≥ 0.4 s }) .13 
+
+The over-voltage and sag penalties are defined as 
+
+Penalty over = Ts
+
+Vref 
+
+Nsim X
+
+k=1 
+
+max( vo,k − 1.05 Vref , 0) , (34) 
+
+Penalty sag = Ts
+
+Vref 
+
+Nsim X
+
+k=1 
+
+max(0 .95 Vref − vo,k , 0) . (35) The inductor-current violation count is 
+
+NiL,viol =
+
+Nsim X
+
+k=1 
+
+1(iL,k /∈ I safe ) , (36) where Isafe denotes the hard current-limit interval used in the controller design and simulator. The switching statistics are defined by 
+
+sk = [ SA,k , S B,k ], (37) 
+
+SwitchCount = 
+
+Nsim X
+
+k=2 
+
+1(sk̸ = sk−1) , (38) 
+
+SwitchFreq = SwitchCount 
+
+Ttotal 
+
+, (39) 
+
+NSA =
+
+Nsim X
+
+k=2 
+
+1(SA,k ̸ = SA,k −1) , (40) 
+
+NSB =
+
+Nsim X
+
+k=2 
+
+1(SB,k ̸ = SB,k −1) , (41) 
+
+Ntrans ,total = NSA + NSB . (42) If the energy-related quantities are retained, they are com-puted as 
+
+Ein = TsNsim X
+
+k=1 
+
+Vin ,k iL,k , (43) 
+
+Eout = TsNsim X
+
+k=1 
+
+vo,k io,k , (44) 
+
+Pout ,avg = Eout 
+
+Ttotal 
+
+, (45) 
+
+Eff avg = Eout 
+
+Ein 
+
+. (46) APPENDIX BSENSITIVITY EXPERIMENTS 
+
+This appendix evaluates how sensitive the proposed learning pipeline is to two key design choices: (i) the Disagreement-Based DAgger mismatch-sample budget NDag and (ii) the strength of domain randomization (DR) used to generate the offline expert dataset. We focus on the eight highest-variance metrics for each scenario, as these are the most informative about what actually changes when NDag or the DR intensity is varied. 
+
+A. Disagreement-Based DAgger Sample Size Sensitivity 
+
+Disagreement-Based DAgger’s effect depends on the num-ber of mismatch samples NDag . We evaluate NDag ∈{0, 500 , 1000 , 2000 , 4000 , 8000 , 12000 }, starting from the 0 1k 2k 4k 8k 12k                
+
+> -1.5
+> -1.0
+> -0.5
+> 0.0
+> 0.5
+> SSE
+> (a)
+> Steady-state error
+> SSE_VCf
+> SSE_Vo
+> 01k 2k 4k 8k 12k
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+> 1.0
+> MSE
+> (b)
+> Mean squared error
+> MSE_VCf
+> MSE_iL
+> 01k 2k 4k 8k 12k
+> N_Dag (mismatch samples)
+> 2
+> 3
+> 4
+> 5
+> 6
+> Magnitude
+> (c)
+> Transient metrics (VCf)
+> Mp_VCf (%)
+> Overshoot_VCf (V)
+> 01k 2k 4k 8k 12k
+> N_Dag (mismatch samples)
+> 5
+> 6
+> 7
+> 8
+> Magnitude
+> (d)
+> Transient metrics (Vo)
+> Mp_Vo (%)
+> Overshoot_Vo (V)
+> Disagreement-Based DAgger Sensitivity of S2
+
+Fig. 8. Disagreement-Based DAgger Sensitivity of S2 0 1k 2k 4k 8k 12k                
+
+> -1.5
+> -1.0
+> -0.5
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> SSE
+> (a)
+> Steady-state error
+> SSE_VCf
+> SSE_Vo
+> 01k 2k 4k 8k 12k
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> 2.5
+> 3.0
+> MSE
+> (b)
+> Mean squared error
+> MSE_VCf
+> MSE_iL
+> 01k 2k 4k 8k 12k
+> N_Dag (mismatch samples)
+> 5
+> 10
+> 15
+> 20
+> 25
+> Magnitude
+> (c)
+> Transient metrics (VCf)
+> Mp_VCf (%)
+> Overshoot_VCf (V)
+> 01k 2k 4k 8k 12k
+> N_Dag (mismatch samples)
+> 3.5
+> 4.0
+> 4.5
+> 5.0
+> 5.5
+> 6.0
+> 6.5
+> 7.0
+> Magnitude
+> (d)
+> Transient metrics (Vo)
+> Mp_Vo (%)
+> Overshoot_Vo (V)
+> Disagreement-Based DAgger Sensitivity of S3
+
+Fig. 9. Disagreement-Based DAgger Sensitivity of S3 
+
+same DR-pretrained model. For each setting, we collect up to NDag mismatch states in closed loop, retrain the network, and then evaluate on Scenarios 2 and 3. The key observations are: 
+
+• Rapid changes in transient metrics with small budgets: The most visibly moving curves are the peak/overshoot-related terms (M p V cf, % and 
+
+Overshoot V cf in particular), indicating that adding a small number of disagreement samples mainly corrects 
+
+switching-boundary and transient decisions , reducing voltage spikes more than it changes steady tracking. 
+
+• A practical stability region (few thousand samples): 
+
+For intermediate budgets ( NDag ≈ 1000 –8000 ), the ma-jority of the plotted metrics settle into a relatively stable range. 
+
+• Non-monotonic behavior at very large budgets: At 
+
+NDag = 12000 , several transient-dominant metrics can rise again, consistent with mismatch states being over-represented near switching boundaries and the beam-14 10 30 50 80 100             
+
+> -1.00
+> -0.75
+> -0.50
+> -0.25
+> 0.00
+> 0.25
+> 0.50
+> 0.75
+> SSE
+> (a)
+> Steady-state error
+> SSE_VCf
+> SSE_Vo
+> 10 30 50 80 100
+> 0.25
+> 0.50
+> 0.75
+> 1.00
+> 1.25
+> 1.50
+> 1.75
+> 2.00
+> MSE
+> (b)
+> Mean squared error
+> MSE_VCf
+> MSE_iL
+> 10 30 50 80 100
+> DR intensity r (% of full range)
+> 2.0
+> 2.5
+> 3.0
+> 3.5
+> 4.0
+> Magnitude
+> (c)
+> Transient metrics (VCf)
+> Mp_VCf (%)
+> Overshoot_VCf (V)
+> 10 30 50 80 100
+> DR intensity r (% of full range)
+> 22
+> 23
+> 24
+> 25
+> 26
+> 27
+> Overshoot_Vo (V)
+> (d)
+> Output overshoot and penalty
+> Overshoot_Vo (V)
+> Penalty_over
+> 0.00032
+> 0.00034
+> 0.00036
+> 0.00038
+> 0.00040
+> Penalty_over
+
+DR Sensitivity of S2 
+
+Fig. 10. DR Sensitivity of S2 10 30 50 80 100             
+
+> -1.5
+> -1.0
+> -0.5
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> SSE
+> (a)
+> Steady-state error
+> SSE_VCf
+> SSE_Vo
+> 10 30 50 80 100
+> 0.6
+> 0.8
+> 1.0
+> 1.2
+> 1.4
+> MSE
+> (b)
+> Mean squared error
+> MSE_VCf
+> MSE_iL
+> 10 30 50 80 100
+> DR intensity r (% of full range)
+> 1.75
+> 2.00
+> 2.25
+> 2.50
+> 2.75
+> 3.00
+> 3.25
+> Magnitude
+> (c)
+> Transient metrics (VCf)
+> Mp_VCf (%)
+> Overshoot_VCf (V)
+> 10 30 50 80 100
+> DR intensity r (% of full range)
+> 3
+> 4
+> 5
+> 6
+> 7
+> Magnitude
+> (d)
+> Transient metrics (Vo)
+> Mp_Vo (%)
+> Overshoot_Vo (V)
+
+DR Sensitivity of S3 
+
+Fig. 11. DR Sensitivity of S3 
+
+search expert providing less consistent labels in rarely visited states. This suggests that Disagreement-Based DAgger is highly sample-efficient: a few thousand additional expert queries are sufficient to obtain most of the improvement, especially in peak/overshoot behavior. 
+
+B. Domain Randomization Intensity Sensitivity 
+
+To evaluate DR intensity, we scale the randomization range as r ∈ { 10% , 30% , 50% , 80% , 100% } relative to the full range used in the main experiments. For each r, we regenerate the DR dataset, retrain the ANN for 40 epochs, and evaluate on the fixed Scenario 2 and Scenario 3 test sets. The results show: 
+
+• Under-coverage (10% DR): Insufficient randomization leads to poorer robustness, most evident in dynamic-tracking metrics ( M SE iL and SSE terms). 
+
+• Intermediate ranges (30%–50%): The best trade-off is achieved at intermediate DR, keeping both average errors and transient measures in a balanced regime. 
+
+• Very strong DR (80%–100%): Increasing DR further does not necessarily improve the averages and can worsen transient behavior , as the approximation task becomes harder. 
+
+• Average efficiency Ef f avg is almost invariant across DR ranges, indicating that DR mainly affects dynamic tracking and not steady-state power conversion quality. Overall, DR exhibits an “intermediate-optimal” behavior with a broad effective range (roughly 30%–80%), suggesting that the framework is not overly sensitive to precise DR tuning.

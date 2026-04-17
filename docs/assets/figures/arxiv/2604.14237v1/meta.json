@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.14237v1/fig-001.webp",
+      "caption": "Figure 2: The TOPCELL workflow, showing Data Preparation (Left) to build a topology-diverse dataset and a GNN model for routability reward, and the main process (Right), which includes GRPO Post-Training (Top) to update the LLM policy and Inference (Bottom) to optimize a given cell topology.",
+      "page": 3,
+      "index": 1,
+      "width": 998,
+      "height": 184
+    },
+    {
+      "url": "assets/figures/arxiv/2604.14237v1/fig-002.webp",
+      "caption": "Figure 3: Structure of the Swap Region in LLM-Guided Topology Permutation. The region is bounded by NCA and NCD.",
+      "page": 3,
+      "index": 2,
+      "width": 509,
+      "height": 669
+    },
+    {
+      "url": "assets/figures/arxiv/2604.14237v1/fig-003.webp",
+      "caption": "Table 2: Comparison of layout quality and runtime between SO3-Cell and TOPCELL. TOPCELL generates optimized netlists in only a fraction of the time required by SO3-Cell, achieving comparable layout quality with an average speedup of 85.91×.",
+      "page": 6,
+      "index": 3,
+      "width": 882,
+      "height": 283
+    },
+    {
+      "url": "assets/figures/arxiv/2604.14237v1/fig-004.webp",
+      "caption": "Table 1: Comparative analysis of model performance in the evaluation benchmark. The overall SOTA results are shown in bold. Numbers in red indicate the performance improvement of our fine-tuned TOPCELLmodels over the respective Qwen2.5-Coder base models.",
+      "page": 5,
+      "index": 4,
+      "width": 482,
+      "height": 498
+    },
+    {
+      "url": "assets/figures/arxiv/2604.14237v1/fig-005.webp",
+      "caption": "Figure 1: Comparison of 7𝑛𝑚 AOI221_X1 layouts before (Top) and after (Bottom) topology optimization by TOPCELL. The optimized topology doesn’t require a dummy gate insertion, leading to a smaller area. This demonstrates the effectiveness of TOPCELL for improving cell layout quality.",
+      "page": 2,
+      "index": 5,
+      "width": 432,
+      "height": 333
+    }
+  ]
+}

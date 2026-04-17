@@ -1,0 +1,186 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-17T20:27:16.068264+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.14237v1",
+      "source": "arxiv",
+      "title": "TOPCELL: Topology Optimization of Standard Cell via LLMs",
+      "abstract": "Transistor topology optimization is a critical step in standard cell design, directly dictating diffusion sharing efficiency and downstream routability. However, identifying optimal topologies remains a persistent bottleneck, as conventional exhaustive search methods become computationally intractable with increasing circuit complexity in advanced nodes. This paper introduces TOPCELL, a novel and scalable framework that reformulates high-dimensional topology exploration as a generative task using Large Language Models (LLMs). We employ Group Relative Policy Optimization (GRPO) to fine-tune the model, aligning its topology optimization strategy with logical (circuit) and spatial (layout) constraints. Experimental results within an industrial flow targeting an advanced 2nm technology node demonstrate that TOPCELL significantly outperforms foundation models in discovering routable, physically-aware topologies. When integrated into a state-of-the-art (SOTA) automation flow for a 7nm library generation task, TOPCELL exhibits robust zero-shot generalization and matches the layout quality of exhaustive solvers while achieving an 85.91x speedup.",
+      "authors": [
+        "Zhan Song",
+        "Yu-Tung Liu",
+        "Chen Chen",
+        "Guoheng Sun",
+        "Jiaqi Yin",
+        "Chia-tung Ho",
+        "Ang Li",
+        "Haoxing Ren",
+        "Cunxi Yu"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-04-15T00:19:07+00:00",
+      "link": "https://arxiv.org/pdf/2604.14237v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Machine learning for transistor topology and layout constraint optimization",
+      "llm_evidence_cn": "用于晶体管拓扑和布局约束优化的机器学习方法",
+      "llm_evidence": "用于晶体管拓扑和布局约束优化的机器学习方法",
+      "canonical_evidence": "用于晶体管拓扑和布局约束优化的机器学习方法",
+      "llm_tldr_en": "Uses LLMs and reinforcement learning to optimize standard cell transistor topology for better routability.",
+      "llm_tldr_cn": "利用大语言模型和强化学习优化标准单元晶体管拓扑，提升布线效率。",
+      "llm_tldr": "利用大语言模型和强化学习优化标准单元晶体管拓扑，提升布线效率。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.08044v1",
+      "source": "arxiv",
+      "title": "A Full-Stack Performance Evaluation Infrastructure for 3D-DRAM-based LLM Accelerators",
+      "abstract": "Large language models (LLMs) exhibit memory-intensive behavior during decoding, making it a key bottleneck in LLM inference. To accelerate decoding execution, hybrid-bonding-based 3D-DRAM has been adopted in LLM accelerators. While this emerging technology provides strong performance gains over existing hardware, current 3D-DRAM accelerators (3D-Accelerators) rely on closed-source evaluation tools, limiting access to publicly available performance analysis methods. Moreover, existing designs are highly customized for specific scenarios, lacking a general and reusable full-stack modeling for 3D-Accelerators across diverse usecases.   To bridge this fundamental gap, we present ATLAS, the first silicon-proven Architectural Three-dimesional-DRAM-based LLM Accelerator Simulation framework. Built on commercially deployed multi-layer 3D-DRAM technology, ATLAS introduces unified abstractions for both 3D-Accelerator system architecture and programming primitives to support arbitrary LLM inference scenarios. Validation against real silicon shows that ATLAS achieves $\\le$8.57% simulation error and 97.26-99.96\\% correlation with measured performance. Through design space exploration with ATLAS, we demonstrate its ability to guide architecture design and distill key takeaways for both 3D-DRAM memory system and 3D-Accelerator microarchitecture across scenarios. ATLAS will be open-sourced upon publication, enabling further research on 3D-Accelerators.",
+      "authors": [
+        "Cong Li",
+        "Chenhao Xue",
+        "Yi Ren",
+        "Xiping Dong",
+        "Yu Cheng",
+        "Yinbo Hu",
+        "Fujun Bai",
+        "Yixin Guo",
+        "Xiping Jiang",
+        "Qiang Wu",
+        "Zhi Yang",
+        "Zhe Cheng",
+        "Yuan Xie",
+        "Guangyu Sun"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR"
+      ],
+      "published": "2026-04-09T09:48:43+00:00",
+      "link": "https://arxiv.org/pdf/2604.08044v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "full-stack modeling for 3D-DRAM-based accelerators",
+      "llm_evidence_cn": "基于3D-DRAM加速器的全栈建模",
+      "llm_evidence": "基于3D-DRAM加速器的全栈建模",
+      "canonical_evidence": "基于3D-DRAM加速器的全栈建模",
+      "llm_tldr_en": "Presents a performance evaluation infrastructure for 3D-DRAM-based LLM accelerators using hybrid bonding.",
+      "llm_tldr_cn": "提出了一种用于基于混合键合3D-DRAM的LLM加速器的性能评估基础设施。",
+      "llm_tldr": "提出了一种用于基于混合键合3D-DRAM的LLM加速器的性能评估基础设施。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "SI/PI analysis for 2.5D 3D and Chiplet packaging",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.11192v1",
+      "source": "arxiv",
+      "title": "Robust Neural Policy Distillation of Long-Horizon FCS-MPC for Flying-Capacitor Three-Level Boost Converters",
+      "abstract": "Long-horizon finite-control-set model predictive control (FCS-MPC) can improve transient regulation and flying-capacitor balancing in flying-capacitor three-level boost converters (FC-TLBCs). However, searching over switching sequences becomes computationally expensive at high switching frequencies. We train a feedforward neural network to imitate an $N$-step FCS-MPC expert computed with beam search. To improve robustness, expert trajectories are generated under randomized input voltage, load resistance, and component parameters, and a disagreement-based DAgger variant is used to relabel on-policy states where the student and expert disagree. In simulation, the learned policy maintains stable voltage regulation and capacitor balancing under nominal conditions, operating-point changes, and perturbations of several physical parameters. We demonstrate the effectiveness of our approach by reducing the computational burden. We also demonstrate transfer to an NPC-type three-level buck converter, where initializing from the FC-TLBC network improves sample efficiency compared with training from scratch.",
+      "authors": [
+        "Jinjian Sheng",
+        "Kazumune Hashimoto",
+        "Shuang Zhao",
+        "Mahdieh S. Sadabadi"
+      ],
+      "primary_category": "math.OC",
+      "categories": [
+        "math.OC"
+      ],
+      "published": "2026-04-13T08:49:25+00:00",
+      "link": "https://arxiv.org/pdf/2604.11192v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Neural network for transient regulation and voltage balancing in power converters",
+      "llm_evidence_cn": "用于电源转换器瞬态调节和电压平衡的神经网络",
+      "llm_evidence": "用于电源转换器瞬态调节和电压平衡的神经网络",
+      "canonical_evidence": "用于电源转换器瞬态调节和电压平衡的神经网络",
+      "llm_tldr_en": "Trains neural networks to accelerate model predictive control for power converters, ensuring stable regulation.",
+      "llm_tldr_cn": "训练神经网络加速电源转换器的模型预测控制，确保稳定的电压调节。",
+      "llm_tldr": "训练神经网络加速电源转换器的模型预测控制，确保稳定的电压调节。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Power integrity and PDN modeling optimization",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.15181v1",
+      "source": "arxiv",
+      "title": "One-shot learning for the complex dynamical behaviors of weakly nonlinear forced oscillators",
+      "abstract": "Extrapolative prediction of complex nonlinear dynamics remains a central challenge in engineering. This study proposes a one-shot learning method to identify global frequency-response curves from a single excitation time history by learning governing equations. We introduce MEv-SINDy (Multi-frequency Evolutionary Sparse Identification of Nonlinear Dynamics) to infer the governing equations of non-autonomous and multi-frequency systems. The methodology leverages the Generalized Harmonic Balance (GHB) method to decompose complex forced responses into a set of slow-varying evolution equations. We validated the capabilities of MEv-SINDy on two critical Micro-Electro-Mechanical Systems (MEMS). These applications include a nonlinear beam resonator and a MEMS micromirror. Our results show that the model trained on a single point accurately predicts softening/hardening effects and jump phenomena across a wide range of excitation levels. This approach significantly reduces the data acquisition burden for the characterization and design of nonlinear microsystems.",
+      "authors": [
+        "Teng Ma",
+        "Luca Rosafalco",
+        "Wei Cui",
+        "Lin Zhao",
+        "Attilio Frangi"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "math.DS"
+      ],
+      "published": "2026-04-16T16:10:44+00:00",
+      "link": "https://arxiv.org/pdf/2604.15181v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "One-shot learning for complex dynamical behaviors and frequency-response curves",
+      "llm_evidence_cn": "用于复杂动力学行为和频率响应曲线的单样本学习",
+      "llm_evidence": "用于复杂动力学行为和频率响应曲线的单样本学习",
+      "canonical_evidence": "用于复杂动力学行为和频率响应曲线的单样本学习",
+      "llm_tldr_en": "Proposes a machine learning method to identify frequency-response curves in nonlinear systems.",
+      "llm_tldr_cn": "提出了一种机器学习方法，用于识别非线性系统中的全局频率响应曲线。",
+      "llm_tldr": "提出了一种机器学习方法，用于识别非线性系统中的全局频率响应曲线。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

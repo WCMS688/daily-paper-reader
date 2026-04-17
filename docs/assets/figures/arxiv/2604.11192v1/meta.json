@@ -1,0 +1,78 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.11192v1/fig-001.webp",
+      "caption": "TABLE VII ANN ARCHITECTURE AND TRAINING HYPERPARAMETERS USED IN THE BASIC EXPERIMENTS",
+      "page": 6,
+      "index": 1,
+      "width": 529,
+      "height": 346
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11192v1/fig-002.webp",
+      "caption": "TABLE VIII CONSOLIDATED CLOSED-LOOP RESULTS FOR THE FC-TLBC UNDER SCENARIOS 1–3. SCENARIO 3 REPORTS THE ANN ONLY, SINCE THIS CASE IS USED PRIMARILY FOR ROBUSTNESS VALIDATION UNDER PLANT MISMATCH. DETAILED METRIC DEFINITIONS ARE GIVEN IN APPENDIX A.",
+      "page": 7,
+      "index": 2,
+      "width": 544,
+      "height": 337
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11192v1/fig-003.webp",
+      "caption": "TABLE XII CONTROLLERS COMPARED IN TRANSFER LEARNING EXPERIMENTS",
+      "page": 10,
+      "index": 3,
+      "width": 514,
+      "height": 266
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11192v1/fig-004.webp",
+      "caption": "Fig. 6. Closed-loop comparison in Transfer Learning Scenario 1 for the NPC-type three-level buck converter under a moderate load step. From top to bottom: input voltage, output voltage, inductor current, and load resistance. The transferred policy closely follows the Buck-3L MPC reference and improves over training from scratch.",
+      "page": 10,
+      "index": 4,
+      "width": 529,
+      "height": 319
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11192v1/fig-005.webp",
+      "caption": "Fig. 7. Closed-loop comparison in Transfer Learning Scenario 2 for the NPC-type three-level buck converter under a larger disturbance. From top to bottom: input voltage, output voltage, inductor current, and load resistance. The transferred policy remains close to the MPC reference, whereas the scratch-trained policy exhibits larger overshoot and slower recovery.",
+      "page": 10,
+      "index": 5,
+      "width": 529,
+      "height": 319
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11192v1/fig-006.webp",
+      "caption": "Fig. 8. Disagreement-Based DAgger Sensitivity of S2",
+      "page": 13,
+      "index": 6,
+      "width": 514,
+      "height": 380
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11192v1/fig-007.webp",
+      "caption": "Fig. 9. Disagreement-Based DAgger Sensitivity of S3",
+      "page": 13,
+      "index": 7,
+      "width": 514,
+      "height": 381
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11192v1/fig-008.webp",
+      "caption": "Fig. 4. Representative ANN closed-loop responses in Scenario 3 under simultaneous operating-point randomization and passive-component perturbations in L, Cf , and C. From top to bottom: output voltage vo, flying-capacitor voltage vCf , inductor current iL, and switching signal SA. Stable regulation and capacitor balancing are preserved despite parametric mismatch.",
+      "page": 8,
+      "index": 8,
+      "width": 529,
+      "height": 421
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11192v1/fig-009.webp",
+      "caption": "TABLE XI REPRESENTATIVE ABLATION RESULTS UNDER SCENARIOS 1–3 (LOWER IS BETTER FOR ALL METRICS SHOWN)",
+      "page": 8,
+      "index": 9,
+      "width": 529,
+      "height": 309
+    }
+  ]
+}
