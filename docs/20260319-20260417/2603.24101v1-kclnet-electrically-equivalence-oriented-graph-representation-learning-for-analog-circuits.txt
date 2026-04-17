@@ -1,0 +1,1561 @@
+Title: KCLNet: Electrically Equivalence-Oriented Graph Representation Learning for Analog Circuits
+
+URL Source: https://arxiv.org/pdf/2603.24101v1
+
+Published Time: Thu, 26 Mar 2026 00:49:48 GMT
+
+Number of Pages: 13
+
+Markdown Content:
+## KCLNet: Electrically Equivalence-Oriented Graph Representation Learning for Analog Circuits 
+
+Peng Xu *1 , Yapeng Li *2 , Tinghuan Chen 2, Tsung-Yi Ho 1, Bei Yu 1
+
+1 Department of Computer Science & Engineering, The Chinese University of Hong Kong 
+
+2 School of Science and Engineering, The Chinese University of Hong Kong (Shenzhen) 
+
+Abstract 
+
+Digital circsuit representation learning has made remark-able progress in the electronic design automation domain, effectively supporting critical tasks such as testability anal-ysis and logic reasoning. However, representation learning for analog circuits remains challenging due to their contin-uous electrical characteristics compared to the discrete states of digital circuits. This paper presents a direct current (DC) electrically equivalent-oriented analog representation learn-ing framework, named KCLNet . It cosmprises an asyn-chronous graph neural network structure with electrically-simulated message passing and a representation learning method inspired by Kirchhoff’s Current Law (KCL). This method maintains the orderliness of the circuit embedding space by enforcing the equality of the sum of outgoing and incoming current embeddings at each depth, which signifi-cantly enhances the generalization ability of circuit embed-dings. KCLNet offers a novel and effective solution for ana-log circuit representation learning with electrical constraints preserved. Experimental results demonstrate that our method achieves significant performance in a variety of downstream tasks, e.g., analog circuit classification, subcircuit detection, and circuit edit distance prediction. 
+
+Introduction 
+
+Analog and mixed-signal electronic systems have become the backbone of modern technological advancement, driving innovations from medical instrumentation to autonomous vehicles. Their pervasive presence relies fundamentally on the seamless integration of analog and digital circuits. Within this electronic design paradigm, analog circuits emerge as the critical interface bridging the physical and digital worlds (Gray et al. 2009). As shown in Figure 1, ana-log circuit components such as operational amplifiers and data converters translate real-world signals—temperature variations, sound waves, or wireless transmissions—into digitally processable information while maintaining signal fidelity. Despite occupying less than 20% of modern system-on-chip (SoC) area, analog blocks determine over 40% of product reliability and power efficiency metrics (Sansen 2007). The design of analog circuits confronts challenges rooted in their sensitivity to physical characteristics. Unlike 
+
+*These authors contributed equally. Copyright © 2026, Association for the Advancement of Artificial Intelligence (www.aaai.org). All rights reserved. <latexit sha1_base64="Fhy6dJPTFnHFWD43mdJ8HuXwkOY=">AAAB7HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseiF48VTFtoQ9lsN+3SzSbsToQS+hu8eFDEqz/Im//GbZuDVh8MPN6bYWZemEph0HW/nNLa+sbmVnm7srO7t39QPTxqmyTTjPsskYnuhtRwKRT3UaDk3VRzGoeSd8LJ7dzvPHJtRKIecJryIKYjJSLBKFrJ7wuhcFCtuXV3AfKXeAWpQYHWoPrZHyYsi7lCJqkxPc9NMcipRsEkn1X6meEpZRM64j1LFY25CfLFsTNyZpUhiRJtSyFZqD8nchobM41D2xlTHJtVby7+5/UyjK6DXKg0Q67YclGUSYIJmX9OhkJzhnJqCWVa2FsJG1NNGdp8KjYEb/Xlv6R9Ufca9cb9Za15U8RRhhM4hXPw4AqacAct8IGBgCd4gVdHOc/Om/O+bC05xcwx/ILz8Q3r347H</latexit> 
+
+> Z Z
+
+Difference 
+
+Amplifier Integrator 
+
+DAC 
+
+Comparator Analog 
+
+Input 
+
+1 0 1 0 1 0
+
+Digital 
+
+Output 
+
+Figure 1: ∆Σ analog-to-digital converter (ADC), a typical analog circuit type. digital counterparts operating in well-defined Boolean do-mains, analog components are perpetually exposed to para-sitic, process variation, and layout-dependent effects. Thus, analog circuit design, from schematic to layout, remains pri-marily a manual, time-consuming, and error-prone task (Xu et al. 2024b) at present. The inherent electrical complexities of analog circuits create heavy reliance on human expertise, forming a critical bottleneck in automation. Emerging machine learning paradigms, particularly graph neural networks (GNNs) (Hamilton 2020; Wu et al. 2021), exhibit substantial potential in decoding the design complex-ity inherent to analog circuits. Naturally, the analog circuits can be viewed as graphs that consist of devices and nets, and their connections. By converting analog circuits into graphs, contemporary methodologies have demonstrated significant progress across critical analog design sub-tasks (Chen et al. 2021; Gao et al. 2021; Kunal et al. 2020; Settaluri et al. 2020; Wang et al. 2020; Dong et al. 2023; Hou et al. 2024; Tu et al. 2025; Xu et al. 2024a, 2025). For analog topol-ogy classification, graph-level embeddings are utilized to re-trieve the targeted layout templates of analog circuits, such as amplifiers and filters in (Kunal et al. 2020). For sub-graph identification, parallel advancements in layout syn-thesis leverage subgraph-aware GNN architectures to reduce symmetry violations compared to manual design as in (Chen et al. 2021; Gao et al. 2021). At the transistor level, siz-ing optimization frameworks employing node-centric GNNs reduce simulation iterations (Settaluri et al. 2020; Wang et al. 2020; Dong et al. 2023; Hou et al. 2024). Addition-ally, analog circuit embeddings are also employed in various stages of analog circuit design, including large-scale sub-graph matching during testing and performance optimiza-
+
+> arXiv:2603.24101v1 [cs.LG] 25 Mar 2026
+
+tion during routing (Tu et al. 2025; Xu et al. 2024a, 2025). Despite widespread use of task-specific circuit embed-dings, general analog circuit representation learning remains deficient in physical prior integration and lacks dedicated re-search as a standalone field. Some efforts attempt to develop multi-modality analog pretraining frameworks, where name-based text embeddings and auxiliary layout data are incor-porated to incorporate domain knowledge (Ren et al. 2020; Zhu et al. 2022). While these multi-modality frameworks have demonstrated capability in the analog layout aspect, they have not demonstrated general representation capabil-ity at the analog circuit level. As the counterpart of analog circuits, digital circuit representation has demonstrated sig-nificant potential in leveraging physical laws, with Boolean algebra operations (J´ onsson 1988) becoming a cornerstone of digital circuit representation learning (Li et al. 2022; Shi et al. 2023, 2024; Zheng et al. 2025; Wang et al. 2024; Wu et al. 2025). The intrinsic physical characteristics of analog devices are still neglected. Incorporating physical laws into analog circuit representation learning is crucial to match the success achieved in digital representation learning. To address these limitations, we propose an electrical physics-inspired representation learning framework, named 
+
+KCLNet , which incorporates fundamental electrical prin-ciples through Kirchhoff’s current law (KCL) . Kirchhoff’s Current Law states that the algebraic sum of all currents flowing into a node (junction) is equal to the algebraic sum of all currents flowing out (Paul 2001; Rewie´ nski 2011; Athavale 2018). It is a fundamental principle in electrical circuit theory that forms the cornerstone of classical cir-cuit analysis. The KCL is integrated through an electrically simulated message passing and a novel contrastive learning scheme. Our contributions are summarized as follows: • To honor the electrical current flow, we convert analog circuits to directed acyclic graphs (DAGs) and propose an asynchronous message passing scheme with layer-wise propagation from voltage to ground nodes. • Based on that, a physics-informed contrastive objective is designed where depth-wise embeddings enforce Kirch-hoff’s current conservation positives and node masking creates electrically inconsistent negatives. We theoreti-cally justify that the proposed contrastive objective can preserve the electrical principle of KCL. • The experimental results show that the analog circuit em-beddings learned by our proposed KCLNet can benefit a variety of downstream tasks, with 20.77% improvement in Acc@1 gain in analog circuit classification, 43.36% mAP gain in analog subcircuit detection, and 1.6 % MAE gain in analog circuit graph-edit-distance prediction. Our codes are available at 
+
+Code — https://github.com/shipxu123/KCLNet. 
+
+Related Work and Preliminaries 
+
+Graph Neural Networks (GNNs) 
+
+GNNs consist of two major components, where the 
+
+aggregation step aggregates node features of target nodes’ Device Number of Pins Pin types NMOS nd + ng + ns + nb nd, ng, ns, nb PMOS nd + ng + ns + nb pd, pg, ps, pb NPN nb + nc + ne nb, nc, ne PNP nb + nc + ne nb, nc, ne Diode 2 n+, n-Resistor 2 n+, n-Capacitor 2 n+, n-Inductor 2 n+, n-Table 1: Typical Analog Device Types neighbors, and the combination step passes the previous ag-gregated features to networks to generate node embeddings. Mathematically, we can update node v’s embedding at the 
+
+l-th layer by: 
+
+elv = AGG   hl−1 
+
+> u
+
+|∀ u ∈ N (v)  ,
+
+hlv = COMBINE  hl−1 
+
+> v
+
+, elv
+
+ , (1) where N (v) denotes the neighbours of v.
+
+Analog Representation Learning (ARL) 
+
+Analog circuits pose unique representation challenges due to their bipartite structure (devices and nets) and heterogeneous device types. Recent work explores GNNs to learn analog circuit representations directly from graph structure (Kunal et al. 2020; Settaluri et al. 2020; Wang et al. 2020; Dong et al. 2023; Hou et al. 2024). We give the formal definition of an analog circuit graph as follows: 
+
+Definition 1 (Device) Each device vd ∈ V d is associated with attributes such as type (NMOS, RES, CAP, etc.), pa-rameters (e.g., W, L, resistance, capacitance, etc.), and con-nectivity information, as shown in Table 1. 
+
+Definition 2 (Net) Each net vn ∈ V n is a junction where multiple devices connect, with topological metrics decided by the connected pins of devices as shown in Table 1. 
+
+Definition 3 (Analog Circuit Graph) The analog circuit graph consists of two groups of nodes Vd, Vn, correspond-ing to devices and nets. Those two groups of nodes are con-nected by a set of edges E, where different edge types corre-spond to different pin types, presenting connection informa-tion. Hence, the analog circuit graph has a form of bipartite graph as G = {V d, Vn, E} .
+
+Method 
+
+Electrically-Simulated Async Message Passing 
+
+Directed Acyclic Circuit Graph Conversion . In traditional analog representation learning, existing methods frequently disregard the directions of the analog circuit graph (Chen et al. 2021; Kunal et al. 2020; Tu et al. 2025). This omis-sion leads to neglecting current flow directionality during the learning process, resulting in a loss of crucial physical infor-mation. Although behavioral-level analog circuits are used to construct directed graphs in (Dong et al. 2023) and (Hou et al. 2024), this approach is specifically tailored for specific analog devices, e.g., operational transconductance amplifier <latexit sha1_base64="4hu6SvV/PVpu0KNy/1qZR2M0my8=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipORqUK27VXYCsEy8nFcjRGJS/+sOYpRFKwwTVuue5ifEzqgxnAmelfqoxoWxCR9izVNIItZ8tDp2RC6sMSRgrW9KQhfp7IqOR1tMosJ0RNWO96s3F/7xeasJbP+MySQ1KtlwUpoKYmMy/JkOukBkxtYQyxe2thI2poszYbEo2BG/15XXSvqp6tWqteV2pX+dxFOEMzuESPLiBOtxDA1rAAOEZXuHNeXRenHfnY9lacPKZU/gD5/MHy9GM6A==</latexit> 
+
+g<latexit sha1_base64="4hu6SvV/PVpu0KNy/1qZR2M0my8=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipORqUK27VXYCsEy8nFcjRGJS/+sOYpRFKwwTVuue5ifEzqgxnAmelfqoxoWxCR9izVNIItZ8tDp2RC6sMSRgrW9KQhfp7IqOR1tMosJ0RNWO96s3F/7xeasJbP+MySQ1KtlwUpoKYmMy/JkOukBkxtYQyxe2thI2poszYbEo2BG/15XXSvqp6tWqteV2pX+dxFOEMzuESPLiBOtxDA1rAAOEZXuHNeXRenHfnY9lacPKZU/gD5/MHy9GM6A==</latexit> 
+
+g<latexit sha1_base64="OxqNHYM5GhZANXwNhBZQEdD7AfM=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipSQflilt1FyDrxMtJBXI0BuWv/jBmaYTSMEG17nluYvyMKsOZwFmpn2pMKJvQEfYslTRC7WeLQ2fkwipDEsbKljRkof6eyGik9TQKbGdEzVivenPxP6+XmvDWz7hMUoOSLReFqSAmJvOvyZArZEZMLaFMcXsrYWOqKDM2m5INwVt9eZ20r6perVprXlfq13kcRTiDc7gED26gDvfQgBYwQHiGV3hzHp0X5935WLYWnHzmFP7A+fwBwrmM4g==</latexit> 
+
+a<latexit sha1_base64="OxqNHYM5GhZANXwNhBZQEdD7AfM=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipSQflilt1FyDrxMtJBXI0BuWv/jBmaYTSMEG17nluYvyMKsOZwFmpn2pMKJvQEfYslTRC7WeLQ2fkwipDEsbKljRkof6eyGik9TQKbGdEzVivenPxP6+XmvDWz7hMUoOSLReFqSAmJvOvyZArZEZMLaFMcXsrYWOqKDM2m5INwVt9eZ20r6perVprXlfq13kcRTiDc7gED26gDvfQgBYwQHiGV3hzHp0X5935WLYWnHzmFP7A+fwBwrmM4g==</latexit> 
+
+a <latexit sha1_base64="Q/z3LnZkEKrhqj/2DTTp0nSRn1g=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipyQblilt1FyDrxMtJBXI0BuWv/jBmaYTSMEG17nluYvyMKsOZwFmpn2pMKJvQEfYslTRC7WeLQ2fkwipDEsbKljRkof6eyGik9TQKbGdEzVivenPxP6+XmvDWz7hMUoOSLReFqSAmJvOvyZArZEZMLaFMcXsrYWOqKDM2m5INwVt9eZ20r6perVprXlfq13kcRTiDc7gED26gDvfQgBYwQHiGV3hzHp0X5935WLYWnHzmFP7A+fwBxcGM5A==</latexit> 
+
+c<latexit sha1_base64="Q/z3LnZkEKrhqj/2DTTp0nSRn1g=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipyQblilt1FyDrxMtJBXI0BuWv/jBmaYTSMEG17nluYvyMKsOZwFmpn2pMKJvQEfYslTRC7WeLQ2fkwipDEsbKljRkof6eyGik9TQKbGdEzVivenPxP6+XmvDWz7hMUoOSLReFqSAmJvOvyZArZEZMLaFMcXsrYWOqKDM2m5INwVt9eZ20r6perVprXlfq13kcRTiDc7gED26gDvfQgBYwQHiGV3hzHp0X5935WLYWnHzmFP7A+fwBxcGM5A==</latexit> 
+
+c
+
+<latexit sha1_base64="NQFEBiA5DbH8cLfMSd5OEEMNCL8=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipGQzKFbfqLkDWiZeTCuRoDMpf/WHM0gilYYJq3fPcxPgZVYYzgbNSP9WYUDahI+xZKmmE2s8Wh87IhVWGJIyVLWnIQv09kdFI62kU2M6ImrFe9ebif14vNeGtn3GZpAYlWy4KU0FMTOZfkyFXyIyYWkKZ4vZWwsZUUWZsNiUbgrf68jppX1W9WrXWvK7Ur/M4inAG53AJHtxAHe6hAS1ggPAMr/DmPDovzrvzsWwtOPnMKfyB8/kDxD2M4w==</latexit> 
+
+b
+
+<latexit sha1_base64="NQFEBiA5DbH8cLfMSd5OEEMNCL8=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipGQzKFbfqLkDWiZeTCuRoDMpf/WHM0gilYYJq3fPcxPgZVYYzgbNSP9WYUDahI+xZKmmE2s8Wh87IhVWGJIyVLWnIQv09kdFI62kU2M6ImrFe9ebif14vNeGtn3GZpAYlWy4KU0FMTOZfkyFXyIyYWkKZ4vZWwsZUUWZsNiUbgrf68jppX1W9WrXWvK7Ur/M4inAG53AJHtxAHe6hAS1ggPAMr/DmPDovzrvzsWwtOPnMKfyB8/kDxD2M4w==</latexit> 
+
+b
+
+<latexit sha1_base64="g/PVSLanrCWWlArrQ/u/MvLY32s=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0lKqR4LXjxWtLXQhrLZbtqlm03YnQgl9Cd48aCIV3+RN/+N2zYHbX0w8Hhvhpl5QSKFQdf9dgobm1vbO8Xd0t7+weFR+fikY+JUM95msYx1N6CGS6F4GwVK3k00p1Eg+WMwuZn7j09cGxGrB5wm3I/oSIlQMIpWuleD2qBccavuAmSdeDmpQI7WoPzVH8YsjbhCJqkxPc9N0M+oRsEkn5X6qeEJZRM64j1LFY248bPFqTNyYZUhCWNtSyFZqL8nMhoZM40C2xlRHJtVby7+5/VSDK/9TKgkRa7YclGYSoIxmf9NhkJzhnJqCWVa2FsJG1NNGdp0SjYEb/XlddKpVb1GtXFXrzTreRxFOINzuAQPrqAJt9CCNjAYwTO8wpsjnRfn3flYthacfOYU/sD5/AH9RY2U</latexit> 
+
+n2
+
+<latexit sha1_base64="g/PVSLanrCWWlArrQ/u/MvLY32s=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0lKqR4LXjxWtLXQhrLZbtqlm03YnQgl9Cd48aCIV3+RN/+N2zYHbX0w8Hhvhpl5QSKFQdf9dgobm1vbO8Xd0t7+weFR+fikY+JUM95msYx1N6CGS6F4GwVK3k00p1Eg+WMwuZn7j09cGxGrB5wm3I/oSIlQMIpWuleD2qBccavuAmSdeDmpQI7WoPzVH8YsjbhCJqkxPc9N0M+oRsEkn5X6qeEJZRM64j1LFY248bPFqTNyYZUhCWNtSyFZqL8nMhoZM40C2xlRHJtVby7+5/VSDK/9TKgkRa7YclGYSoIxmf9NhkJzhnJqCWVa2FsJG1NNGdp0SjYEb/XlddKpVb1GtXFXrzTreRxFOINzuAQPrqAJt9CCNjAYwTO8wpsjnRfn3flYthacfOYU/sD5/AH9RY2U</latexit> 
+
+n2 <latexit sha1_base64="Io/0mmwxCTDMKKx0V2doPRq3p1Y=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0m0VI8FLx4rWltoQ9lsN+3SzSbsToQS+hO8eFDEq7/Im//GbZuDtj4YeLw3w8y8IJHCoOt+O4W19Y3NreJ2aWd3b/+gfHj0aOJUM95isYx1J6CGS6F4CwVK3kk0p1EgeTsY38z89hPXRsTqAScJ9yM6VCIUjKKV7lX/sl+uuFV3DrJKvJxUIEezX/7qDWKWRlwhk9SYrucm6GdUo2CST0u91PCEsjEd8q6likbc+Nn81Ck5s8qAhLG2pZDM1d8TGY2MmUSB7YwojsyyNxP/87ophtd+JlSSIldssShMJcGYzP4mA6E5QzmxhDIt7K2EjaimDG06JRuCt/zyKnm8qHr1av2uVmnU8jiKcAKncA4eXEEDbqEJLWAwhGd4hTdHOi/Ou/OxaC04+cwx/IHz+QP+yY2V</latexit> 
+
+n3
+
+<latexit sha1_base64="Io/0mmwxCTDMKKx0V2doPRq3p1Y=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0m0VI8FLx4rWltoQ9lsN+3SzSbsToQS+hO8eFDEq7/Im//GbZuDtj4YeLw3w8y8IJHCoOt+O4W19Y3NreJ2aWd3b/+gfHj0aOJUM95isYx1J6CGS6F4CwVK3kk0p1EgeTsY38z89hPXRsTqAScJ9yM6VCIUjKKV7lX/sl+uuFV3DrJKvJxUIEezX/7qDWKWRlwhk9SYrucm6GdUo2CST0u91PCEsjEd8q6likbc+Nn81Ck5s8qAhLG2pZDM1d8TGY2MmUSB7YwojsyyNxP/87ophtd+JlSSIldssShMJcGYzP4mA6E5QzmxhDIt7K2EjaimDG06JRuCt/zyKnm8qHr1av2uVmnU8jiKcAKncA4eXEEDbqEJLWAwhGd4hTdHOi/Ou/OxaC04+cwx/IHz+QP+yY2V</latexit> 
+
+n3
+
+<latexit sha1_base64="Fd0Zw8krpOtNsiuQZrhZv2a/M1k=">AAAB6HicbVDLTgJBEOzFF+IL9ehlIjHxRHYNQY8kXjxCIo8ENmR2aGBkdnYzM0tCNnyBFw8a49VP8ubfOMAeFKykk0pVd7q7glhwbVz328ltbe/s7uX3CweHR8cnxdOzlo4SxbDJIhGpTkA1Ci6xabgR2IkV0jAQ2A4m9wu/PUWleSQfzSxGP6QjyYecUWOlxrRfLLlldwmySbyMlCBDvV/86g0iloQoDRNU667nxsZPqTKcCZwXeonGmLIJHWHXUklD1H66PHROrqwyIMNI2ZKGLNXfEykNtZ6Fge0MqRnrdW8h/ud1EzO881Mu48SgZKtFw0QQE5HF12TAFTIjZpZQpri9lbAxVZQZm03BhuCtv7xJWjdlr1quNiqlWiWLIw8XcAnX4MEt1OAB6tAEBgjP8ApvzpPz4rw7H6vWnJPNnMMfOJ8/4o2M9w==</latexit> 
+
+v<latexit sha1_base64="Fd0Zw8krpOtNsiuQZrhZv2a/M1k=">AAAB6HicbVDLTgJBEOzFF+IL9ehlIjHxRHYNQY8kXjxCIo8ENmR2aGBkdnYzM0tCNnyBFw8a49VP8ubfOMAeFKykk0pVd7q7glhwbVz328ltbe/s7uX3CweHR8cnxdOzlo4SxbDJIhGpTkA1Ci6xabgR2IkV0jAQ2A4m9wu/PUWleSQfzSxGP6QjyYecUWOlxrRfLLlldwmySbyMlCBDvV/86g0iloQoDRNU667nxsZPqTKcCZwXeonGmLIJHWHXUklD1H66PHROrqwyIMNI2ZKGLNXfEykNtZ6Fge0MqRnrdW8h/ud1EzO881Mu48SgZKtFw0QQE5HF12TAFTIjZpZQpri9lbAxVZQZm03BhuCtv7xJWjdlr1quNiqlWiWLIw8XcAnX4MEt1OAB6tAEBgjP8ApvzpPz4rw7H6vWnJPNnMMfOJ8/4o2M9w==</latexit> 
+
+v
+
+<latexit sha1_base64="TIrYZn/ZDgGE9t3CY0tyG7MYllA=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0mkVI8FLx4r2g9oQ9lsN+3SzSbsToQS+hO8eFDEq7/Im//GbZuDtj4YeLw3w8y8IJHCoOt+O4WNza3tneJuaW//4PCofHzSNnGqGW+xWMa6G1DDpVC8hQIl7yaa0yiQvBNMbud+54lrI2L1iNOE+xEdKREKRtFKD2rgDcoVt+ouQNaJl5MK5GgOyl/9YczSiCtkkhrT89wE/YxqFEzyWamfGp5QNqEj3rNU0YgbP1ucOiMXVhmSMNa2FJKF+nsio5Ex0yiwnRHFsVn15uJ/Xi/F8MbPhEpS5IotF4WpJBiT+d9kKDRnKKeWUKaFvZWwMdWUoU2nZEPwVl9eJ+2rqlev1u9rlUYtj6MIZ3AOl+DBNTTgDprQAgYjeIZXeHOk8+K8Ox/L1oKTz5zCHzifP/vBjZM=</latexit> 
+
+n1
+
+<latexit sha1_base64="TIrYZn/ZDgGE9t3CY0tyG7MYllA=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0mkVI8FLx4r2g9oQ9lsN+3SzSbsToQS+hO8eFDEq7/Im//GbZuDtj4YeLw3w8y8IJHCoOt+O4WNza3tneJuaW//4PCofHzSNnGqGW+xWMa6G1DDpVC8hQIl7yaa0yiQvBNMbud+54lrI2L1iNOE+xEdKREKRtFKD2rgDcoVt+ouQNaJl5MK5GgOyl/9YczSiCtkkhrT89wE/YxqFEzyWamfGp5QNqEj3rNU0YgbP1ucOiMXVhmSMNa2FJKF+nsio5Ex0yiwnRHFsVn15uJ/Xi/F8MbPhEpS5IotF4WpJBiT+d9kKDRnKKeWUKaFvZWwMdWUoU2nZEPwVl9eJ+2rqlev1u9rlUYtj6MIZ3AOl+DBNTTgDprQAgYjeIZXeHOk8+K8Ox/L1oKTz5zCHzifP/vBjZM=</latexit> 
+
+n1
+
+<latexit sha1_base64="OxqNHYM5GhZANXwNhBZQEdD7AfM=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipSQflilt1FyDrxMtJBXI0BuWv/jBmaYTSMEG17nluYvyMKsOZwFmpn2pMKJvQEfYslTRC7WeLQ2fkwipDEsbKljRkof6eyGik9TQKbGdEzVivenPxP6+XmvDWz7hMUoOSLReFqSAmJvOvyZArZEZMLaFMcXsrYWOqKDM2m5INwVt9eZ20r6perVprXlfq13kcRTiDc7gED26gDvfQgBYwQHiGV3hzHp0X5935WLYWnHzmFP7A+fwBwrmM4g==</latexit> 
+
+a<latexit sha1_base64="OxqNHYM5GhZANXwNhBZQEdD7AfM=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipSQflilt1FyDrxMtJBXI0BuWv/jBmaYTSMEG17nluYvyMKsOZwFmpn2pMKJvQEfYslTRC7WeLQ2fkwipDEsbKljRkof6eyGik9TQKbGdEzVivenPxP6+XmvDWz7hMUoOSLReFqSAmJvOvyZArZEZMLaFMcXsrYWOqKDM2m5INwVt9eZ20r6perVprXlfq13kcRTiDc7gED26gDvfQgBYwQHiGV3hzHp0X5935WLYWnHzmFP7A+fwBwrmM4g==</latexit> 
+
+a <latexit sha1_base64="Q/z3LnZkEKrhqj/2DTTp0nSRn1g=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipyQblilt1FyDrxMtJBXI0BuWv/jBmaYTSMEG17nluYvyMKsOZwFmpn2pMKJvQEfYslTRC7WeLQ2fkwipDEsbKljRkof6eyGik9TQKbGdEzVivenPxP6+XmvDWz7hMUoOSLReFqSAmJvOvyZArZEZMLaFMcXsrYWOqKDM2m5INwVt9eZ20r6perVprXlfq13kcRTiDc7gED26gDvfQgBYwQHiGV3hzHp0X5935WLYWnHzmFP7A+fwBxcGM5A==</latexit> 
+
+c<latexit sha1_base64="Q/z3LnZkEKrhqj/2DTTp0nSRn1g=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipyQblilt1FyDrxMtJBXI0BuWv/jBmaYTSMEG17nluYvyMKsOZwFmpn2pMKJvQEfYslTRC7WeLQ2fkwipDEsbKljRkof6eyGik9TQKbGdEzVivenPxP6+XmvDWz7hMUoOSLReFqSAmJvOvyZArZEZMLaFMcXsrYWOqKDM2m5INwVt9eZ20r6perVprXlfq13kcRTiDc7gED26gDvfQgBYwQHiGV3hzHp0X5935WLYWnHzmFP7A+fwBxcGM5A==</latexit> 
+
+c
+
+<latexit sha1_base64="NQFEBiA5DbH8cLfMSd5OEEMNCL8=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipGQzKFbfqLkDWiZeTCuRoDMpf/WHM0gilYYJq3fPcxPgZVYYzgbNSP9WYUDahI+xZKmmE2s8Wh87IhVWGJIyVLWnIQv09kdFI62kU2M6ImrFe9ebif14vNeGtn3GZpAYlWy4KU0FMTOZfkyFXyIyYWkKZ4vZWwsZUUWZsNiUbgrf68jppX1W9WrXWvK7Ur/M4inAG53AJHtxAHe6hAS1ggPAMr/DmPDovzrvzsWwtOPnMKfyB8/kDxD2M4w==</latexit> 
+
+b
+
+<latexit sha1_base64="NQFEBiA5DbH8cLfMSd5OEEMNCL8=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipGQzKFbfqLkDWiZeTCuRoDMpf/WHM0gilYYJq3fPcxPgZVYYzgbNSP9WYUDahI+xZKmmE2s8Wh87IhVWGJIyVLWnIQv09kdFI62kU2M6ImrFe9ebif14vNeGtn3GZpAYlWy4KU0FMTOZfkyFXyIyYWkKZ4vZWwsZUUWZsNiUbgrf68jppX1W9WrXWvK7Ur/M4inAG53AJHtxAHe6hAS1ggPAMr/DmPDovzrvzsWwtOPnMKfyB8/kDxD2M4w==</latexit> 
+
+b
+
+<latexit sha1_base64="g/PVSLanrCWWlArrQ/u/MvLY32s=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0lKqR4LXjxWtLXQhrLZbtqlm03YnQgl9Cd48aCIV3+RN/+N2zYHbX0w8Hhvhpl5QSKFQdf9dgobm1vbO8Xd0t7+weFR+fikY+JUM95msYx1N6CGS6F4GwVK3k00p1Eg+WMwuZn7j09cGxGrB5wm3I/oSIlQMIpWuleD2qBccavuAmSdeDmpQI7WoPzVH8YsjbhCJqkxPc9N0M+oRsEkn5X6qeEJZRM64j1LFY248bPFqTNyYZUhCWNtSyFZqL8nMhoZM40C2xlRHJtVby7+5/VSDK/9TKgkRa7YclGYSoIxmf9NhkJzhnJqCWVa2FsJG1NNGdp0SjYEb/XlddKpVb1GtXFXrzTreRxFOINzuAQPrqAJt9CCNjAYwTO8wpsjnRfn3flYthacfOYU/sD5/AH9RY2U</latexit> 
+
+n2
+
+<latexit sha1_base64="g/PVSLanrCWWlArrQ/u/MvLY32s=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0lKqR4LXjxWtLXQhrLZbtqlm03YnQgl9Cd48aCIV3+RN/+N2zYHbX0w8Hhvhpl5QSKFQdf9dgobm1vbO8Xd0t7+weFR+fikY+JUM95msYx1N6CGS6F4GwVK3k00p1Eg+WMwuZn7j09cGxGrB5wm3I/oSIlQMIpWuleD2qBccavuAmSdeDmpQI7WoPzVH8YsjbhCJqkxPc9N0M+oRsEkn5X6qeEJZRM64j1LFY248bPFqTNyYZUhCWNtSyFZqL8nMhoZM40C2xlRHJtVby7+5/VSDK/9TKgkRa7YclGYSoIxmf9NhkJzhnJqCWVa2FsJG1NNGdp0SjYEb/XlddKpVb1GtXFXrzTreRxFOINzuAQPrqAJt9CCNjAYwTO8wpsjnRfn3flYthacfOYU/sD5/AH9RY2U</latexit> 
+
+n2 <latexit sha1_base64="Io/0mmwxCTDMKKx0V2doPRq3p1Y=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0m0VI8FLx4rWltoQ9lsN+3SzSbsToQS+hO8eFDEq7/Im//GbZuDtj4YeLw3w8y8IJHCoOt+O4W19Y3NreJ2aWd3b/+gfHj0aOJUM95isYx1J6CGS6F4CwVK3kk0p1EgeTsY38z89hPXRsTqAScJ9yM6VCIUjKKV7lX/sl+uuFV3DrJKvJxUIEezX/7qDWKWRlwhk9SYrucm6GdUo2CST0u91PCEsjEd8q6likbc+Nn81Ck5s8qAhLG2pZDM1d8TGY2MmUSB7YwojsyyNxP/87ophtd+JlSSIldssShMJcGYzP4mA6E5QzmxhDIt7K2EjaimDG06JRuCt/zyKnm8qHr1av2uVmnU8jiKcAKncA4eXEEDbqEJLWAwhGd4hTdHOi/Ou/OxaC04+cwx/IHz+QP+yY2V</latexit> 
+
+n3
+
+<latexit sha1_base64="Io/0mmwxCTDMKKx0V2doPRq3p1Y=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0m0VI8FLx4rWltoQ9lsN+3SzSbsToQS+hO8eFDEq7/Im//GbZuDtj4YeLw3w8y8IJHCoOt+O4W19Y3NreJ2aWd3b/+gfHj0aOJUM95isYx1J6CGS6F4CwVK3kk0p1EgeTsY38z89hPXRsTqAScJ9yM6VCIUjKKV7lX/sl+uuFV3DrJKvJxUIEezX/7qDWKWRlwhk9SYrucm6GdUo2CST0u91PCEsjEd8q6likbc+Nn81Ck5s8qAhLG2pZDM1d8TGY2MmUSB7YwojsyyNxP/87ophtd+JlSSIldssShMJcGYzP4mA6E5QzmxhDIt7K2EjaimDG06JRuCt/zyKnm8qHr1av2uVmnU8jiKcAKncA4eXEEDbqEJLWAwhGd4hTdHOi/Ou/OxaC04+cwx/IHz+QP+yY2V</latexit> 
+
+n3
+
+<latexit sha1_base64="TIrYZn/ZDgGE9t3CY0tyG7MYllA=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0mkVI8FLx4r2g9oQ9lsN+3SzSbsToQS+hO8eFDEq7/Im//GbZuDtj4YeLw3w8y8IJHCoOt+O4WNza3tneJuaW//4PCofHzSNnGqGW+xWMa6G1DDpVC8hQIl7yaa0yiQvBNMbud+54lrI2L1iNOE+xEdKREKRtFKD2rgDcoVt+ouQNaJl5MK5GgOyl/9YczSiCtkkhrT89wE/YxqFEzyWamfGp5QNqEj3rNU0YgbP1ucOiMXVhmSMNa2FJKF+nsio5Ex0yiwnRHFsVn15uJ/Xi/F8MbPhEpS5IotF4WpJBiT+d9kKDRnKKeWUKaFvZWwMdWUoU2nZEPwVl9eJ+2rqlev1u9rlUYtj6MIZ3AOl+DBNTTgDprQAgYjeIZXeHOk8+K8Ox/L1oKTz5zCHzifP/vBjZM=</latexit> 
+
+n1
+
+<latexit sha1_base64="TIrYZn/ZDgGE9t3CY0tyG7MYllA=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0mkVI8FLx4r2g9oQ9lsN+3SzSbsToQS+hO8eFDEq7/Im//GbZuDtj4YeLw3w8y8IJHCoOt+O4WNza3tneJuaW//4PCofHzSNnGqGW+xWMa6G1DDpVC8hQIl7yaa0yiQvBNMbud+54lrI2L1iNOE+xEdKREKRtFKD2rgDcoVt+ouQNaJl5MK5GgOyl/9YczSiCtkkhrT89wE/YxqFEzyWamfGp5QNqEj3rNU0YgbP1ucOiMXVhmSMNa2FJKF+nsio5Ex0yiwnRHFsVn15uJ/Xi/F8MbPhEpS5IotF4WpJBiT+d9kKDRnKKeWUKaFvZWwMdWUoU2nZEPwVl9eJ+2rqlev1u9rlUYtj6MIZ3AOl+DBNTTgDprQAgYjeIZXeHOk8+K8Ox/L1oKTz5zCHzifP/vBjZM=</latexit> 
+
+n1
+
+<latexit sha1_base64="g/PVSLanrCWWlArrQ/u/MvLY32s=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0lKqR4LXjxWtLXQhrLZbtqlm03YnQgl9Cd48aCIV3+RN/+N2zYHbX0w8Hhvhpl5QSKFQdf9dgobm1vbO8Xd0t7+weFR+fikY+JUM95msYx1N6CGS6F4GwVK3k00p1Eg+WMwuZn7j09cGxGrB5wm3I/oSIlQMIpWuleD2qBccavuAmSdeDmpQI7WoPzVH8YsjbhCJqkxPc9N0M+oRsEkn5X6qeEJZRM64j1LFY248bPFqTNyYZUhCWNtSyFZqL8nMhoZM40C2xlRHJtVby7+5/VSDK/9TKgkRa7YclGYSoIxmf9NhkJzhnJqCWVa2FsJG1NNGdp0SjYEb/XlddKpVb1GtXFXrzTreRxFOINzuAQPrqAJt9CCNjAYwTO8wpsjnRfn3flYthacfOYU/sD5/AH9RY2U</latexit> 
+
+n2
+
+<latexit sha1_base64="g/PVSLanrCWWlArrQ/u/MvLY32s=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0lKqR4LXjxWtLXQhrLZbtqlm03YnQgl9Cd48aCIV3+RN/+N2zYHbX0w8Hhvhpl5QSKFQdf9dgobm1vbO8Xd0t7+weFR+fikY+JUM95msYx1N6CGS6F4GwVK3k00p1Eg+WMwuZn7j09cGxGrB5wm3I/oSIlQMIpWuleD2qBccavuAmSdeDmpQI7WoPzVH8YsjbhCJqkxPc9N0M+oRsEkn5X6qeEJZRM64j1LFY248bPFqTNyYZUhCWNtSyFZqL8nMhoZM40C2xlRHJtVby7+5/VSDK/9TKgkRa7YclGYSoIxmf9NhkJzhnJqCWVa2FsJG1NNGdp0SjYEb/XlddKpVb1GtXFXrzTreRxFOINzuAQPrqAJt9CCNjAYwTO8wpsjnRfn3flYthacfOYU/sD5/AH9RY2U</latexit> 
+
+n2
+
+<latexit sha1_base64="4hu6SvV/PVpu0KNy/1qZR2M0my8=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipORqUK27VXYCsEy8nFcjRGJS/+sOYpRFKwwTVuue5ifEzqgxnAmelfqoxoWxCR9izVNIItZ8tDp2RC6sMSRgrW9KQhfp7IqOR1tMosJ0RNWO96s3F/7xeasJbP+MySQ1KtlwUpoKYmMy/JkOukBkxtYQyxe2thI2poszYbEo2BG/15XXSvqp6tWqteV2pX+dxFOEMzuESPLiBOtxDA1rAAOEZXuHNeXRenHfnY9lacPKZU/gD5/MHy9GM6A==</latexit> 
+
+g<latexit sha1_base64="4hu6SvV/PVpu0KNy/1qZR2M0my8=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipORqUK27VXYCsEy8nFcjRGJS/+sOYpRFKwwTVuue5ifEzqgxnAmelfqoxoWxCR9izVNIItZ8tDp2RC6sMSRgrW9KQhfp7IqOR1tMosJ0RNWO96s3F/7xeasJbP+MySQ1KtlwUpoKYmMy/JkOukBkxtYQyxe2thI2poszYbEo2BG/15XXSvqp6tWqteV2pX+dxFOEMzuESPLiBOtxDA1rAAOEZXuHNeXRenHfnY9lacPKZU/gD5/MHy9GM6A==</latexit> 
+
+g
+
+<latexit sha1_base64="OxqNHYM5GhZANXwNhBZQEdD7AfM=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipSQflilt1FyDrxMtJBXI0BuWv/jBmaYTSMEG17nluYvyMKsOZwFmpn2pMKJvQEfYslTRC7WeLQ2fkwipDEsbKljRkof6eyGik9TQKbGdEzVivenPxP6+XmvDWz7hMUoOSLReFqSAmJvOvyZArZEZMLaFMcXsrYWOqKDM2m5INwVt9eZ20r6perVprXlfq13kcRTiDc7gED26gDvfQgBYwQHiGV3hzHp0X5935WLYWnHzmFP7A+fwBwrmM4g==</latexit> 
+
+a<latexit sha1_base64="OxqNHYM5GhZANXwNhBZQEdD7AfM=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipSQflilt1FyDrxMtJBXI0BuWv/jBmaYTSMEG17nluYvyMKsOZwFmpn2pMKJvQEfYslTRC7WeLQ2fkwipDEsbKljRkof6eyGik9TQKbGdEzVivenPxP6+XmvDWz7hMUoOSLReFqSAmJvOvyZArZEZMLaFMcXsrYWOqKDM2m5INwVt9eZ20r6perVprXlfq13kcRTiDc7gED26gDvfQgBYwQHiGV3hzHp0X5935WLYWnHzmFP7A+fwBwrmM4g==</latexit> 
+
+a
+
+<latexit sha1_base64="Q/z3LnZkEKrhqj/2DTTp0nSRn1g=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipyQblilt1FyDrxMtJBXI0BuWv/jBmaYTSMEG17nluYvyMKsOZwFmpn2pMKJvQEfYslTRC7WeLQ2fkwipDEsbKljRkof6eyGik9TQKbGdEzVivenPxP6+XmvDWz7hMUoOSLReFqSAmJvOvyZArZEZMLaFMcXsrYWOqKDM2m5INwVt9eZ20r6perVprXlfq13kcRTiDc7gED26gDvfQgBYwQHiGV3hzHp0X5935WLYWnHzmFP7A+fwBxcGM5A==</latexit> 
+
+c<latexit sha1_base64="Q/z3LnZkEKrhqj/2DTTp0nSRn1g=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipyQblilt1FyDrxMtJBXI0BuWv/jBmaYTSMEG17nluYvyMKsOZwFmpn2pMKJvQEfYslTRC7WeLQ2fkwipDEsbKljRkof6eyGik9TQKbGdEzVivenPxP6+XmvDWz7hMUoOSLReFqSAmJvOvyZArZEZMLaFMcXsrYWOqKDM2m5INwVt9eZ20r6perVprXlfq13kcRTiDc7gED26gDvfQgBYwQHiGV3hzHp0X5935WLYWnHzmFP7A+fwBxcGM5A==</latexit> 
+
+c
+
+<latexit sha1_base64="NQFEBiA5DbH8cLfMSd5OEEMNCL8=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipGQzKFbfqLkDWiZeTCuRoDMpf/WHM0gilYYJq3fPcxPgZVYYzgbNSP9WYUDahI+xZKmmE2s8Wh87IhVWGJIyVLWnIQv09kdFI62kU2M6ImrFe9ebif14vNeGtn3GZpAYlWy4KU0FMTOZfkyFXyIyYWkKZ4vZWwsZUUWZsNiUbgrf68jppX1W9WrXWvK7Ur/M4inAG53AJHtxAHe6hAS1ggPAMr/DmPDovzrvzsWwtOPnMKfyB8/kDxD2M4w==</latexit> 
+
+b
+
+<latexit sha1_base64="NQFEBiA5DbH8cLfMSd5OEEMNCL8=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipGQzKFbfqLkDWiZeTCuRoDMpf/WHM0gilYYJq3fPcxPgZVYYzgbNSP9WYUDahI+xZKmmE2s8Wh87IhVWGJIyVLWnIQv09kdFI62kU2M6ImrFe9ebif14vNeGtn3GZpAYlWy4KU0FMTOZfkyFXyIyYWkKZ4vZWwsZUUWZsNiUbgrf68jppX1W9WrXWvK7Ur/M4inAG53AJHtxAHe6hAS1ggPAMr/DmPDovzrvzsWwtOPnMKfyB8/kDxD2M4w==</latexit> 
+
+b
+
+<latexit sha1_base64="Fd0Zw8krpOtNsiuQZrhZv2a/M1k=">AAAB6HicbVDLTgJBEOzFF+IL9ehlIjHxRHYNQY8kXjxCIo8ENmR2aGBkdnYzM0tCNnyBFw8a49VP8ubfOMAeFKykk0pVd7q7glhwbVz328ltbe/s7uX3CweHR8cnxdOzlo4SxbDJIhGpTkA1Ci6xabgR2IkV0jAQ2A4m9wu/PUWleSQfzSxGP6QjyYecUWOlxrRfLLlldwmySbyMlCBDvV/86g0iloQoDRNU667nxsZPqTKcCZwXeonGmLIJHWHXUklD1H66PHROrqwyIMNI2ZKGLNXfEykNtZ6Fge0MqRnrdW8h/ud1EzO881Mu48SgZKtFw0QQE5HF12TAFTIjZpZQpri9lbAxVZQZm03BhuCtv7xJWjdlr1quNiqlWiWLIw8XcAnX4MEt1OAB6tAEBgjP8ApvzpPz4rw7H6vWnJPNnMMfOJ8/4o2M9w==</latexit> 
+
+v<latexit sha1_base64="Fd0Zw8krpOtNsiuQZrhZv2a/M1k=">AAAB6HicbVDLTgJBEOzFF+IL9ehlIjHxRHYNQY8kXjxCIo8ENmR2aGBkdnYzM0tCNnyBFw8a49VP8ubfOMAeFKykk0pVd7q7glhwbVz328ltbe/s7uX3CweHR8cnxdOzlo4SxbDJIhGpTkA1Ci6xabgR2IkV0jAQ2A4m9wu/PUWleSQfzSxGP6QjyYecUWOlxrRfLLlldwmySbyMlCBDvV/86g0iloQoDRNU667nxsZPqTKcCZwXeonGmLIJHWHXUklD1H66PHROrqwyIMNI2ZKGLNXfEykNtZ6Fge0MqRnrdW8h/ud1EzO881Mu48SgZKtFw0QQE5HF12TAFTIjZpZQpri9lbAxVZQZm03BhuCtv7xJWjdlr1quNiqlWiWLIw8XcAnX4MEt1OAB6tAEBgjP8ApvzpPz4rw7H6vWnJPNnMMfOJ8/4o2M9w==</latexit> 
+
+v
+
+<latexit sha1_base64="fHd2hDd7Vf2kj20tjfK9intIG64=">AAAB8HicbVBNSwMxEM3Wr1q/qh69BIvgqexKqV6Egh48VrAf0i4lm2bb0CS7JLNCWforvHhQxKs/x5v/xmy7B219MPB4b4aZeUEsuAHX/XYKa+sbm1vF7dLO7t7+QfnwqG2iRFPWopGIdDcghgmuWAs4CNaNNSMyEKwTTG4yv/PEtOGReoBpzHxJRoqHnBKw0mP/lgkg125pUK64VXcOvEq8nFRQjuag/NUfRjSRTAEVxJie58bgp0QDp4LNSv3EsJjQCRmxnqWKSGb8dH7wDJ9ZZYjDSNtSgOfq74mUSGOmMrCdksDYLHuZ+J/XSyC88lOu4gSYootFYSIwRDj7Hg+5ZhTE1BJCNbe3YjommlCwGWUheMsvr5L2RdWrV+v3tUqjlsdRRCfoFJ0jD12iBrpDTdRCFEn0jF7Rm6OdF+fd+Vi0Fpx85hj9gfP5A4qfj44=</latexit> 
+
+  = 0 
+
+<latexit sha1_base64="fHd2hDd7Vf2kj20tjfK9intIG64=">AAAB8HicbVBNSwMxEM3Wr1q/qh69BIvgqexKqV6Egh48VrAf0i4lm2bb0CS7JLNCWforvHhQxKs/x5v/xmy7B219MPB4b4aZeUEsuAHX/XYKa+sbm1vF7dLO7t7+QfnwqG2iRFPWopGIdDcghgmuWAs4CNaNNSMyEKwTTG4yv/PEtOGReoBpzHxJRoqHnBKw0mP/lgkg125pUK64VXcOvEq8nFRQjuag/NUfRjSRTAEVxJie58bgp0QDp4LNSv3EsJjQCRmxnqWKSGb8dH7wDJ9ZZYjDSNtSgOfq74mUSGOmMrCdksDYLHuZ+J/XSyC88lOu4gSYootFYSIwRDj7Hg+5ZhTE1BJCNbe3YjommlCwGWUheMsvr5L2RdWrV+v3tUqjlsdRRCfoFJ0jD12iBrpDTdRCFEn0jF7Rm6OdF+fd+Vi0Fpx85hj9gfP5A4qfj44=</latexit> 
+
+  = 0 <latexit sha1_base64="V76zEYhLaDaHP4KK6t3zh8Qeeqk=">AAAB8HicbVBNSwMxEJ2tX7V+VT16CRbBU9mVUr0IBT14rGA/pF1KNs22oUl2SbJCWforvHhQxKs/x5v/xmy7B219MPB4b4aZeUHMmTau++0U1tY3NreK26Wd3b39g/LhUVtHiSK0RSIeqW6ANeVM0pZhhtNurCgWAaedYHKT+Z0nqjSL5IOZxtQXeCRZyAg2Vnrs31Ju8LVXGpQrbtWdA60SLycVyNEclL/6w4gkgkpDONa657mx8VOsDCOczkr9RNMYkwke0Z6lEguq/XR+8AydWWWIwkjZkgbN1d8TKRZaT0VgOwU2Y73sZeJ/Xi8x4ZWfMhknhkqyWBQmHJkIZd+jIVOUGD61BBPF7K2IjLHCxNiMshC85ZdXSfui6tWr9ftapVHL4yjCCZzCOXhwCQ24gya0gICAZ3iFN0c5L86787FoLTj5zDH8gfP5A4wkj48=</latexit> 
+
+  = 1 
+
+<latexit sha1_base64="V76zEYhLaDaHP4KK6t3zh8Qeeqk=">AAAB8HicbVBNSwMxEJ2tX7V+VT16CRbBU9mVUr0IBT14rGA/pF1KNs22oUl2SbJCWforvHhQxKs/x5v/xmy7B219MPB4b4aZeUHMmTau++0U1tY3NreK26Wd3b39g/LhUVtHiSK0RSIeqW6ANeVM0pZhhtNurCgWAaedYHKT+Z0nqjSL5IOZxtQXeCRZyAg2Vnrs31Ju8LVXGpQrbtWdA60SLycVyNEclL/6w4gkgkpDONa657mx8VOsDCOczkr9RNMYkwke0Z6lEguq/XR+8AydWWWIwkjZkgbN1d8TKRZaT0VgOwU2Y73sZeJ/Xi8x4ZWfMhknhkqyWBQmHJkIZd+jIVOUGD61BBPF7K2IjLHCxNiMshC85ZdXSfui6tWr9ftapVHL4yjCCZzCOXhwCQ24gya0gICAZ3iFN0c5L86787FoLTj5zDH8gfP5A4wkj48=</latexit> 
+
+  = 1 <latexit sha1_base64="4f3VavtCObZ1GZ5hfaCbP123AE8=">AAAB73icbVA9SwNBEJ2LXzF+RS1tFoNgFe5CiDZCQAvLCCYGkiPsbeaSJXt75+6eEEL+hI2FIrb+HTv/jZvkCk18MPB4b4aZeUEiuDau++3k1tY3Nrfy24Wd3b39g+LhUUvHqWLYZLGIVTugGgWX2DTcCGwnCmkUCHwIRtcz/+EJleaxvDfjBP2IDiQPOaPGSu3uDQpDryq9Ysktu3OQVeJlpAQZGr3iV7cfszRCaZigWnc8NzH+hCrDmcBpoZtqTCgb0QF2LJU0Qu1P5vdOyZlV+iSMlS1pyFz9PTGhkdbjKLCdETVDvezNxP+8TmrCS3/CZZIalGyxKEwFMTGZPU/6XCEzYmwJZYrbWwkbUkWZsREVbAje8surpFUpe7Vy7a5aqlezOPJwAqdwDh5cQB1uoQFNYCDgGV7hzXl0Xpx352PRmnOymWP4A+fzB1baj3w=</latexit> 
+
+  = 2 
+
+<latexit sha1_base64="4f3VavtCObZ1GZ5hfaCbP123AE8=">AAAB73icbVA9SwNBEJ2LXzF+RS1tFoNgFe5CiDZCQAvLCCYGkiPsbeaSJXt75+6eEEL+hI2FIrb+HTv/jZvkCk18MPB4b4aZeUEiuDau++3k1tY3Nrfy24Wd3b39g+LhUUvHqWLYZLGIVTugGgWX2DTcCGwnCmkUCHwIRtcz/+EJleaxvDfjBP2IDiQPOaPGSu3uDQpDryq9Ysktu3OQVeJlpAQZGr3iV7cfszRCaZigWnc8NzH+hCrDmcBpoZtqTCgb0QF2LJU0Qu1P5vdOyZlV+iSMlS1pyFz9PTGhkdbjKLCdETVDvezNxP+8TmrCS3/CZZIalGyxKEwFMTGZPU/6XCEzYmwJZYrbWwkbUkWZsREVbAje8surpFUpe7Vy7a5aqlezOPJwAqdwDh5cQB1uoQFNYCDgGV7hzXl0Xpx352PRmnOymWP4A+fzB1baj3w=</latexit> 
+
+  = 2 <latexit sha1_base64="Ev05rBC/ZObWIgaK7ssp1Xsp+F0=">AAAB73icbVDLSgNBEOz1GeMr6tHLYBA8hV0N0YsQ0IPHCOYByRJmJ5NkyOzsOtMrhCU/4cWDIl79HW/+jZNkD5pY0FBUddPdFcRSGHTdb2dldW19YzO3ld/e2d3bLxwcNkyUaMbrLJKRbgXUcCkUr6NAyVux5jQMJG8Go5up33zi2ohIPeA45n5IB0r0BaNopVbnlkuk1xfdQtEtuTOQZeJlpAgZat3CV6cXsSTkCpmkxrQ9N0Y/pRoFk3yS7ySGx5SN6IC3LVU05MZPZ/dOyKlVeqQfaVsKyUz9PZHS0JhxGNjOkOLQLHpT8T+vnWD/yk+FihPkis0X9RNJMCLT50lPaM5Qji2hTAt7K2FDqilDG1HehuAtvrxMGuclr1Kq3JeL1XIWRw6O4QTOwINLqMId1KAODCQ8wyu8OY/Oi/PufMxbV5xs5gj+wPn8AVhej30=</latexit> 
+
+  = 3 
+
+<latexit sha1_base64="Ev05rBC/ZObWIgaK7ssp1Xsp+F0=">AAAB73icbVDLSgNBEOz1GeMr6tHLYBA8hV0N0YsQ0IPHCOYByRJmJ5NkyOzsOtMrhCU/4cWDIl79HW/+jZNkD5pY0FBUddPdFcRSGHTdb2dldW19YzO3ld/e2d3bLxwcNkyUaMbrLJKRbgXUcCkUr6NAyVux5jQMJG8Go5up33zi2ohIPeA45n5IB0r0BaNopVbnlkuk1xfdQtEtuTOQZeJlpAgZat3CV6cXsSTkCpmkxrQ9N0Y/pRoFk3yS7ySGx5SN6IC3LVU05MZPZ/dOyKlVeqQfaVsKyUz9PZHS0JhxGNjOkOLQLHpT8T+vnWD/yk+FihPkis0X9RNJMCLT50lPaM5Qji2hTAt7K2FDqilDG1HehuAtvrxMGuclr1Kq3JeL1XIWRw6O4QTOwINLqMId1KAODCQ8wyu8OY/Oi/PufMxbV5xs5gj+wPn8AVhej30=</latexit> 
+
+  = 3 
+
+<latexit sha1_base64="TIrYZn/ZDgGE9t3CY0tyG7MYllA=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0mkVI8FLx4r2g9oQ9lsN+3SzSbsToQS+hO8eFDEq7/Im//GbZuDtj4YeLw3w8y8IJHCoOt+O4WNza3tneJuaW//4PCofHzSNnGqGW+xWMa6G1DDpVC8hQIl7yaa0yiQvBNMbud+54lrI2L1iNOE+xEdKREKRtFKD2rgDcoVt+ouQNaJl5MK5GgOyl/9YczSiCtkkhrT89wE/YxqFEzyWamfGp5QNqEj3rNU0YgbP1ucOiMXVhmSMNa2FJKF+nsio5Ex0yiwnRHFsVn15uJ/Xi/F8MbPhEpS5IotF4WpJBiT+d9kKDRnKKeWUKaFvZWwMdWUoU2nZEPwVl9eJ+2rqlev1u9rlUYtj6MIZ3AOl+DBNTTgDprQAgYjeIZXeHOk8+K8Ox/L1oKTz5zCHzifP/vBjZM=</latexit> 
+
+n1
+
+<latexit sha1_base64="TIrYZn/ZDgGE9t3CY0tyG7MYllA=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0mkVI8FLx4r2g9oQ9lsN+3SzSbsToQS+hO8eFDEq7/Im//GbZuDtj4YeLw3w8y8IJHCoOt+O4WNza3tneJuaW//4PCofHzSNnGqGW+xWMa6G1DDpVC8hQIl7yaa0yiQvBNMbud+54lrI2L1iNOE+xEdKREKRtFKD2rgDcoVt+ouQNaJl5MK5GgOyl/9YczSiCtkkhrT89wE/YxqFEzyWamfGp5QNqEj3rNU0YgbP1ucOiMXVhmSMNa2FJKF+nsio5Ex0yiwnRHFsVn15uJ/Xi/F8MbPhEpS5IotF4WpJBiT+d9kKDRnKKeWUKaFvZWwMdWUoU2nZEPwVl9eJ+2rqlev1u9rlUYtj6MIZ3AOl+DBNTTgDprQAgYjeIZXeHOk8+K8Ox/L1oKTz5zCHzifP/vBjZM=</latexit> 
+
+n1
+
+<latexit sha1_base64="wMjlW0d2GFiBPPMyETANLKd5drI=">AAAB8XicbVDLSgNBEOyNrxhfUY9eBoPgKexKiF6EgB48RjAPTJYwO+kkQ2Znl5lZISz5Cy8eFPHq33jzb5wke9DEgoaiqpvuriAWXBvX/XZya+sbm1v57cLO7t7+QfHwqKmjRDFssEhEqh1QjYJLbBhuBLZjhTQMBLaC8c3Mbz2h0jySD2YSox/SoeQDzqix0mPavUVh6HVl2iuW3LI7B1klXkZKkKHeK351+xFLQpSGCap1x3Nj46dUGc4ETgvdRGNM2ZgOsWOppCFqP51fPCVnVumTQaRsSUPm6u+JlIZaT8LAdobUjPSyNxP/8zqJGVz5KZdxYlCyxaJBIoiJyOx90ucKmRETSyhT3N5K2IgqyowNqWBD8JZfXiXNi7JXLVfvK6VaJYsjDydwCufgwSXU4A7q0AAGEp7hFd4c7bw4787HojXnZDPH8AfO5w8i0JCK</latexit> 
+
+  = 4 
+
+<latexit sha1_base64="wMjlW0d2GFiBPPMyETANLKd5drI=">AAAB8XicbVDLSgNBEOyNrxhfUY9eBoPgKexKiF6EgB48RjAPTJYwO+kkQ2Znl5lZISz5Cy8eFPHq33jzb5wke9DEgoaiqpvuriAWXBvX/XZya+sbm1v57cLO7t7+QfHwqKmjRDFssEhEqh1QjYJLbBhuBLZjhTQMBLaC8c3Mbz2h0jySD2YSox/SoeQDzqix0mPavUVh6HVl2iuW3LI7B1klXkZKkKHeK351+xFLQpSGCap1x3Nj46dUGc4ETgvdRGNM2ZgOsWOppCFqP51fPCVnVumTQaRsSUPm6u+JlIZaT8LAdobUjPSyNxP/8zqJGVz5KZdxYlCyxaJBIoiJyOx90ucKmRETSyhT3N5K2IgqyowNqWBD8JZfXiXNi7JXLVfvK6VaJYsjDydwCufgwSXU4A7q0AAGEp7hFd4c7bw4787HojXnZDPH8AfO5w8i0JCK</latexit> 
+
+  = 4 
+
+<latexit sha1_base64="Io/0mmwxCTDMKKx0V2doPRq3p1Y=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0m0VI8FLx4rWltoQ9lsN+3SzSbsToQS+hO8eFDEq7/Im//GbZuDtj4YeLw3w8y8IJHCoOt+O4W19Y3NreJ2aWd3b/+gfHj0aOJUM95isYx1J6CGS6F4CwVK3kk0p1EgeTsY38z89hPXRsTqAScJ9yM6VCIUjKKV7lX/sl+uuFV3DrJKvJxUIEezX/7qDWKWRlwhk9SYrucm6GdUo2CST0u91PCEsjEd8q6likbc+Nn81Ck5s8qAhLG2pZDM1d8TGY2MmUSB7YwojsyyNxP/87ophtd+JlSSIldssShMJcGYzP4mA6E5QzmxhDIt7K2EjaimDG06JRuCt/zyKnm8qHr1av2uVmnU8jiKcAKncA4eXEEDbqEJLWAwhGd4hTdHOi/Ou/OxaC04+cwx/IHz+QP+yY2V</latexit> 
+
+n3
+
+<latexit sha1_base64="Io/0mmwxCTDMKKx0V2doPRq3p1Y=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0m0VI8FLx4rWltoQ9lsN+3SzSbsToQS+hO8eFDEq7/Im//GbZuDtj4YeLw3w8y8IJHCoOt+O4W19Y3NreJ2aWd3b/+gfHj0aOJUM95isYx1J6CGS6F4CwVK3kk0p1EgeTsY38z89hPXRsTqAScJ9yM6VCIUjKKV7lX/sl+uuFV3DrJKvJxUIEezX/7qDWKWRlwhk9SYrucm6GdUo2CST0u91PCEsjEd8q6likbc+Nn81Ck5s8qAhLG2pZDM1d8TGY2MmUSB7YwojsyyNxP/87ophtd+JlSSIldssShMJcGYzP4mA6E5QzmxhDIt7K2EjaimDG06JRuCt/zyKnm8qHr1av2uVmnU8jiKcAKncA4eXEEDbqEJLWAwhGd4hTdHOi/Ou/OxaC04+cwx/IHz+QP+yY2V</latexit> 
+
+n3
+
+<latexit sha1_base64="TIrYZn/ZDgGE9t3CY0tyG7MYllA=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0mkVI8FLx4r2g9oQ9lsN+3SzSbsToQS+hO8eFDEq7/Im//GbZuDtj4YeLw3w8y8IJHCoOt+O4WNza3tneJuaW//4PCofHzSNnGqGW+xWMa6G1DDpVC8hQIl7yaa0yiQvBNMbud+54lrI2L1iNOE+xEdKREKRtFKD2rgDcoVt+ouQNaJl5MK5GgOyl/9YczSiCtkkhrT89wE/YxqFEzyWamfGp5QNqEj3rNU0YgbP1ucOiMXVhmSMNa2FJKF+nsio5Ex0yiwnRHFsVn15uJ/Xi/F8MbPhEpS5IotF4WpJBiT+d9kKDRnKKeWUKaFvZWwMdWUoU2nZEPwVl9eJ+2rqlev1u9rlUYtj6MIZ3AOl+DBNTTgDprQAgYjeIZXeHOk8+K8Ox/L1oKTz5zCHzifP/vBjZM=</latexit> 
+
+n1
+
+<latexit sha1_base64="TIrYZn/ZDgGE9t3CY0tyG7MYllA=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0mkVI8FLx4r2g9oQ9lsN+3SzSbsToQS+hO8eFDEq7/Im//GbZuDtj4YeLw3w8y8IJHCoOt+O4WNza3tneJuaW//4PCofHzSNnGqGW+xWMa6G1DDpVC8hQIl7yaa0yiQvBNMbud+54lrI2L1iNOE+xEdKREKRtFKD2rgDcoVt+ouQNaJl5MK5GgOyl/9YczSiCtkkhrT89wE/YxqFEzyWamfGp5QNqEj3rNU0YgbP1ucOiMXVhmSMNa2FJKF+nsio5Ex0yiwnRHFsVn15uJ/Xi/F8MbPhEpS5IotF4WpJBiT+d9kKDRnKKeWUKaFvZWwMdWUoU2nZEPwVl9eJ+2rqlev1u9rlUYtj6MIZ3AOl+DBNTTgDprQAgYjeIZXeHOk8+K8Ox/L1oKTz5zCHzifP/vBjZM=</latexit> 
+
+n1
+
+<latexit sha1_base64="g/PVSLanrCWWlArrQ/u/MvLY32s=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0lKqR4LXjxWtLXQhrLZbtqlm03YnQgl9Cd48aCIV3+RN/+N2zYHbX0w8Hhvhpl5QSKFQdf9dgobm1vbO8Xd0t7+weFR+fikY+JUM95msYx1N6CGS6F4GwVK3k00p1Eg+WMwuZn7j09cGxGrB5wm3I/oSIlQMIpWuleD2qBccavuAmSdeDmpQI7WoPzVH8YsjbhCJqkxPc9N0M+oRsEkn5X6qeEJZRM64j1LFY248bPFqTNyYZUhCWNtSyFZqL8nMhoZM40C2xlRHJtVby7+5/VSDK/9TKgkRa7YclGYSoIxmf9NhkJzhnJqCWVa2FsJG1NNGdp0SjYEb/XlddKpVb1GtXFXrzTreRxFOINzuAQPrqAJt9CCNjAYwTO8wpsjnRfn3flYthacfOYU/sD5/AH9RY2U</latexit> 
+
+n2
+
+<latexit sha1_base64="g/PVSLanrCWWlArrQ/u/MvLY32s=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0lKqR4LXjxWtLXQhrLZbtqlm03YnQgl9Cd48aCIV3+RN/+N2zYHbX0w8Hhvhpl5QSKFQdf9dgobm1vbO8Xd0t7+weFR+fikY+JUM95msYx1N6CGS6F4GwVK3k00p1Eg+WMwuZn7j09cGxGrB5wm3I/oSIlQMIpWuleD2qBccavuAmSdeDmpQI7WoPzVH8YsjbhCJqkxPc9N0M+oRsEkn5X6qeEJZRM64j1LFY248bPFqTNyYZUhCWNtSyFZqL8nMhoZM40C2xlRHJtVby7+5/VSDK/9TKgkRa7YclGYSoIxmf9NhkJzhnJqCWVa2FsJG1NNGdp0SjYEb/XlddKpVb1GtXFXrzTreRxFOINzuAQPrqAJt9CCNjAYwTO8wpsjnRfn3flYthacfOYU/sD5/AH9RY2U</latexit> 
+
+n2
+
+<latexit sha1_base64="Io/0mmwxCTDMKKx0V2doPRq3p1Y=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0m0VI8FLx4rWltoQ9lsN+3SzSbsToQS+hO8eFDEq7/Im//GbZuDtj4YeLw3w8y8IJHCoOt+O4W19Y3NreJ2aWd3b/+gfHj0aOJUM95isYx1J6CGS6F4CwVK3kk0p1EgeTsY38z89hPXRsTqAScJ9yM6VCIUjKKV7lX/sl+uuFV3DrJKvJxUIEezX/7qDWKWRlwhk9SYrucm6GdUo2CST0u91PCEsjEd8q6likbc+Nn81Ck5s8qAhLG2pZDM1d8TGY2MmUSB7YwojsyyNxP/87ophtd+JlSSIldssShMJcGYzP4mA6E5QzmxhDIt7K2EjaimDG06JRuCt/zyKnm8qHr1av2uVmnU8jiKcAKncA4eXEEDbqEJLWAwhGd4hTdHOi/Ou/OxaC04+cwx/IHz+QP+yY2V</latexit> 
+
+n3
+
+<latexit sha1_base64="Io/0mmwxCTDMKKx0V2doPRq3p1Y=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0m0VI8FLx4rWltoQ9lsN+3SzSbsToQS+hO8eFDEq7/Im//GbZuDtj4YeLw3w8y8IJHCoOt+O4W19Y3NreJ2aWd3b/+gfHj0aOJUM95isYx1J6CGS6F4CwVK3kk0p1EgeTsY38z89hPXRsTqAScJ9yM6VCIUjKKV7lX/sl+uuFV3DrJKvJxUIEezX/7qDWKWRlwhk9SYrucm6GdUo2CST0u91PCEsjEd8q6likbc+Nn81Ck5s8qAhLG2pZDM1d8TGY2MmUSB7YwojsyyNxP/87ophtd+JlSSIldssShMJcGYzP4mA6E5QzmxhDIt7K2EjaimDG06JRuCt/zyKnm8qHr1av2uVmnU8jiKcAKncA4eXEEDbqEJLWAwhGd4hTdHOi/Ou/OxaC04+cwx/IHz+QP+yY2V</latexit> 
+
+n3<latexit sha1_base64="Fd0Zw8krpOtNsiuQZrhZv2a/M1k=">AAAB6HicbVDLTgJBEOzFF+IL9ehlIjHxRHYNQY8kXjxCIo8ENmR2aGBkdnYzM0tCNnyBFw8a49VP8ubfOMAeFKykk0pVd7q7glhwbVz328ltbe/s7uX3CweHR8cnxdOzlo4SxbDJIhGpTkA1Ci6xabgR2IkV0jAQ2A4m9wu/PUWleSQfzSxGP6QjyYecUWOlxrRfLLlldwmySbyMlCBDvV/86g0iloQoDRNU667nxsZPqTKcCZwXeonGmLIJHWHXUklD1H66PHROrqwyIMNI2ZKGLNXfEykNtZ6Fge0MqRnrdW8h/ud1EzO881Mu48SgZKtFw0QQE5HF12TAFTIjZpZQpri9lbAxVZQZm03BhuCtv7xJWjdlr1quNiqlWiWLIw8XcAnX4MEt1OAB6tAEBgjP8ApvzpPz4rw7H6vWnJPNnMMfOJ8/4o2M9w==</latexit> 
+
+v<latexit sha1_base64="Fd0Zw8krpOtNsiuQZrhZv2a/M1k=">AAAB6HicbVDLTgJBEOzFF+IL9ehlIjHxRHYNQY8kXjxCIo8ENmR2aGBkdnYzM0tCNnyBFw8a49VP8ubfOMAeFKykk0pVd7q7glhwbVz328ltbe/s7uX3CweHR8cnxdOzlo4SxbDJIhGpTkA1Ci6xabgR2IkV0jAQ2A4m9wu/PUWleSQfzSxGP6QjyYecUWOlxrRfLLlldwmySbyMlCBDvV/86g0iloQoDRNU667nxsZPqTKcCZwXeonGmLIJHWHXUklD1H66PHROrqwyIMNI2ZKGLNXfEykNtZ6Fge0MqRnrdW8h/ud1EzO881Mu48SgZKtFw0QQE5HF12TAFTIjZpZQpri9lbAxVZQZm03BhuCtv7xJWjdlr1quNiqlWiWLIw8XcAnX4MEt1OAB6tAEBgjP8ApvzpPz4rw7H6vWnJPNnMMfOJ8/4o2M9w==</latexit> 
+
+v
+
+<latexit sha1_base64="4hu6SvV/PVpu0KNy/1qZR2M0my8=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipORqUK27VXYCsEy8nFcjRGJS/+sOYpRFKwwTVuue5ifEzqgxnAmelfqoxoWxCR9izVNIItZ8tDp2RC6sMSRgrW9KQhfp7IqOR1tMosJ0RNWO96s3F/7xeasJbP+MySQ1KtlwUpoKYmMy/JkOukBkxtYQyxe2thI2poszYbEo2BG/15XXSvqp6tWqteV2pX+dxFOEMzuESPLiBOtxDA1rAAOEZXuHNeXRenHfnY9lacPKZU/gD5/MHy9GM6A==</latexit> 
+
+g<latexit sha1_base64="4hu6SvV/PVpu0KNy/1qZR2M0my8=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipORqUK27VXYCsEy8nFcjRGJS/+sOYpRFKwwTVuue5ifEzqgxnAmelfqoxoWxCR9izVNIItZ8tDp2RC6sMSRgrW9KQhfp7IqOR1tMosJ0RNWO96s3F/7xeasJbP+MySQ1KtlwUpoKYmMy/JkOukBkxtYQyxe2thI2poszYbEo2BG/15XXSvqp6tWqteV2pX+dxFOEMzuESPLiBOtxDA1rAAOEZXuHNeXRenHfnY9lacPKZU/gD5/MHy9GM6A==</latexit> 
+
+g
+
+<latexit sha1_base64="fHd2hDd7Vf2kj20tjfK9intIG64=">AAAB8HicbVBNSwMxEM3Wr1q/qh69BIvgqexKqV6Egh48VrAf0i4lm2bb0CS7JLNCWforvHhQxKs/x5v/xmy7B219MPB4b4aZeUEsuAHX/XYKa+sbm1vF7dLO7t7+QfnwqG2iRFPWopGIdDcghgmuWAs4CNaNNSMyEKwTTG4yv/PEtOGReoBpzHxJRoqHnBKw0mP/lgkg125pUK64VXcOvEq8nFRQjuag/NUfRjSRTAEVxJie58bgp0QDp4LNSv3EsJjQCRmxnqWKSGb8dH7wDJ9ZZYjDSNtSgOfq74mUSGOmMrCdksDYLHuZ+J/XSyC88lOu4gSYootFYSIwRDj7Hg+5ZhTE1BJCNbe3YjommlCwGWUheMsvr5L2RdWrV+v3tUqjlsdRRCfoFJ0jD12iBrpDTdRCFEn0jF7Rm6OdF+fd+Vi0Fpx85hj9gfP5A4qfj44=</latexit> 
+
+  = 0 
+
+<latexit sha1_base64="fHd2hDd7Vf2kj20tjfK9intIG64=">AAAB8HicbVBNSwMxEM3Wr1q/qh69BIvgqexKqV6Egh48VrAf0i4lm2bb0CS7JLNCWforvHhQxKs/x5v/xmy7B219MPB4b4aZeUEsuAHX/XYKa+sbm1vF7dLO7t7+QfnwqG2iRFPWopGIdDcghgmuWAs4CNaNNSMyEKwTTG4yv/PEtOGReoBpzHxJRoqHnBKw0mP/lgkg125pUK64VXcOvEq8nFRQjuag/NUfRjSRTAEVxJie58bgp0QDp4LNSv3EsJjQCRmxnqWKSGb8dH7wDJ9ZZYjDSNtSgOfq74mUSGOmMrCdksDYLHuZ+J/XSyC88lOu4gSYootFYSIwRDj7Hg+5ZhTE1BJCNbe3YjommlCwGWUheMsvr5L2RdWrV+v3tUqjlsdRRCfoFJ0jD12iBrpDTdRCFEn0jF7Rm6OdF+fd+Vi0Fpx85hj9gfP5A4qfj44=</latexit> 
+
+  = 0 
+
+<latexit sha1_base64="V76zEYhLaDaHP4KK6t3zh8Qeeqk=">AAAB8HicbVBNSwMxEJ2tX7V+VT16CRbBU9mVUr0IBT14rGA/pF1KNs22oUl2SbJCWforvHhQxKs/x5v/xmy7B219MPB4b4aZeUHMmTau++0U1tY3NreK26Wd3b39g/LhUVtHiSK0RSIeqW6ANeVM0pZhhtNurCgWAaedYHKT+Z0nqjSL5IOZxtQXeCRZyAg2Vnrs31Ju8LVXGpQrbtWdA60SLycVyNEclL/6w4gkgkpDONa657mx8VOsDCOczkr9RNMYkwke0Z6lEguq/XR+8AydWWWIwkjZkgbN1d8TKRZaT0VgOwU2Y73sZeJ/Xi8x4ZWfMhknhkqyWBQmHJkIZd+jIVOUGD61BBPF7K2IjLHCxNiMshC85ZdXSfui6tWr9ftapVHL4yjCCZzCOXhwCQ24gya0gICAZ3iFN0c5L86787FoLTj5zDH8gfP5A4wkj48=</latexit> 
+
+  = 1 
+
+<latexit sha1_base64="V76zEYhLaDaHP4KK6t3zh8Qeeqk=">AAAB8HicbVBNSwMxEJ2tX7V+VT16CRbBU9mVUr0IBT14rGA/pF1KNs22oUl2SbJCWforvHhQxKs/x5v/xmy7B219MPB4b4aZeUHMmTau++0U1tY3NreK26Wd3b39g/LhUVtHiSK0RSIeqW6ANeVM0pZhhtNurCgWAaedYHKT+Z0nqjSL5IOZxtQXeCRZyAg2Vnrs31Ju8LVXGpQrbtWdA60SLycVyNEclL/6w4gkgkpDONa657mx8VOsDCOczkr9RNMYkwke0Z6lEguq/XR+8AydWWWIwkjZkgbN1d8TKRZaT0VgOwU2Y73sZeJ/Xi8x4ZWfMhknhkqyWBQmHJkIZd+jIVOUGD61BBPF7K2IjLHCxNiMshC85ZdXSfui6tWr9ftapVHL4yjCCZzCOXhwCQ24gya0gICAZ3iFN0c5L86787FoLTj5zDH8gfP5A4wkj48=</latexit> 
+
+  = 1 
+
+<latexit sha1_base64="4f3VavtCObZ1GZ5hfaCbP123AE8=">AAAB73icbVA9SwNBEJ2LXzF+RS1tFoNgFe5CiDZCQAvLCCYGkiPsbeaSJXt75+6eEEL+hI2FIrb+HTv/jZvkCk18MPB4b4aZeUEiuDau++3k1tY3Nrfy24Wd3b39g+LhUUvHqWLYZLGIVTugGgWX2DTcCGwnCmkUCHwIRtcz/+EJleaxvDfjBP2IDiQPOaPGSu3uDQpDryq9Ysktu3OQVeJlpAQZGr3iV7cfszRCaZigWnc8NzH+hCrDmcBpoZtqTCgb0QF2LJU0Qu1P5vdOyZlV+iSMlS1pyFz9PTGhkdbjKLCdETVDvezNxP+8TmrCS3/CZZIalGyxKEwFMTGZPU/6XCEzYmwJZYrbWwkbUkWZsREVbAje8surpFUpe7Vy7a5aqlezOPJwAqdwDh5cQB1uoQFNYCDgGV7hzXl0Xpx352PRmnOymWP4A+fzB1baj3w=</latexit> 
+
+  = 2 
+
+<latexit sha1_base64="4f3VavtCObZ1GZ5hfaCbP123AE8=">AAAB73icbVA9SwNBEJ2LXzF+RS1tFoNgFe5CiDZCQAvLCCYGkiPsbeaSJXt75+6eEEL+hI2FIrb+HTv/jZvkCk18MPB4b4aZeUEiuDau++3k1tY3Nrfy24Wd3b39g+LhUUvHqWLYZLGIVTugGgWX2DTcCGwnCmkUCHwIRtcz/+EJleaxvDfjBP2IDiQPOaPGSu3uDQpDryq9Ysktu3OQVeJlpAQZGr3iV7cfszRCaZigWnc8NzH+hCrDmcBpoZtqTCgb0QF2LJU0Qu1P5vdOyZlV+iSMlS1pyFz9PTGhkdbjKLCdETVDvezNxP+8TmrCS3/CZZIalGyxKEwFMTGZPU/6XCEzYmwJZYrbWwkbUkWZsREVbAje8surpFUpe7Vy7a5aqlezOPJwAqdwDh5cQB1uoQFNYCDgGV7hzXl0Xpx352PRmnOymWP4A+fzB1baj3w=</latexit> 
+
+  = 2 
+
+<latexit sha1_base64="Ev05rBC/ZObWIgaK7ssp1Xsp+F0=">AAAB73icbVDLSgNBEOz1GeMr6tHLYBA8hV0N0YsQ0IPHCOYByRJmJ5NkyOzsOtMrhCU/4cWDIl79HW/+jZNkD5pY0FBUddPdFcRSGHTdb2dldW19YzO3ld/e2d3bLxwcNkyUaMbrLJKRbgXUcCkUr6NAyVux5jQMJG8Go5up33zi2ohIPeA45n5IB0r0BaNopVbnlkuk1xfdQtEtuTOQZeJlpAgZat3CV6cXsSTkCpmkxrQ9N0Y/pRoFk3yS7ySGx5SN6IC3LVU05MZPZ/dOyKlVeqQfaVsKyUz9PZHS0JhxGNjOkOLQLHpT8T+vnWD/yk+FihPkis0X9RNJMCLT50lPaM5Qji2hTAt7K2FDqilDG1HehuAtvrxMGuclr1Kq3JeL1XIWRw6O4QTOwINLqMId1KAODCQ8wyu8OY/Oi/PufMxbV5xs5gj+wPn8AVhej30=</latexit> 
+
+  = 3 
+
+<latexit sha1_base64="Ev05rBC/ZObWIgaK7ssp1Xsp+F0=">AAAB73icbVDLSgNBEOz1GeMr6tHLYBA8hV0N0YsQ0IPHCOYByRJmJ5NkyOzsOtMrhCU/4cWDIl79HW/+jZNkD5pY0FBUddPdFcRSGHTdb2dldW19YzO3ld/e2d3bLxwcNkyUaMbrLJKRbgXUcCkUr6NAyVux5jQMJG8Go5up33zi2ohIPeA45n5IB0r0BaNopVbnlkuk1xfdQtEtuTOQZeJlpAgZat3CV6cXsSTkCpmkxrQ9N0Y/pRoFk3yS7ySGx5SN6IC3LVU05MZPZ/dOyKlVeqQfaVsKyUz9PZHS0JhxGNjOkOLQLHpT8T+vnWD/yk+FihPkis0X9RNJMCLT50lPaM5Qji2hTAt7K2FDqilDG1HehuAtvrxMGuclr1Kq3JeL1XIWRw6O4QTOwINLqMId1KAODCQ8wyu8OY/Oi/PufMxbV5xs5gj+wPn8AVhej30=</latexit> 
+
+  = 3 
+
+<latexit sha1_base64="wMjlW0d2GFiBPPMyETANLKd5drI=">AAAB8XicbVDLSgNBEOyNrxhfUY9eBoPgKexKiF6EgB48RjAPTJYwO+kkQ2Znl5lZISz5Cy8eFPHq33jzb5wke9DEgoaiqpvuriAWXBvX/XZya+sbm1v57cLO7t7+QfHwqKmjRDFssEhEqh1QjYJLbBhuBLZjhTQMBLaC8c3Mbz2h0jySD2YSox/SoeQDzqix0mPavUVh6HVl2iuW3LI7B1klXkZKkKHeK351+xFLQpSGCap1x3Nj46dUGc4ETgvdRGNM2ZgOsWOppCFqP51fPCVnVumTQaRsSUPm6u+JlIZaT8LAdobUjPSyNxP/8zqJGVz5KZdxYlCyxaJBIoiJyOx90ucKmRETSyhT3N5K2IgqyowNqWBD8JZfXiXNi7JXLVfvK6VaJYsjDydwCufgwSXU4A7q0AAGEp7hFd4c7bw4787HojXnZDPH8AfO5w8i0JCK</latexit> 
+
+  = 4 
+
+<latexit sha1_base64="wMjlW0d2GFiBPPMyETANLKd5drI=">AAAB8XicbVDLSgNBEOyNrxhfUY9eBoPgKexKiF6EgB48RjAPTJYwO+kkQ2Znl5lZISz5Cy8eFPHq33jzb5wke9DEgoaiqpvuriAWXBvX/XZya+sbm1v57cLO7t7+QfHwqKmjRDFssEhEqh1QjYJLbBhuBLZjhTQMBLaC8c3Mbz2h0jySD2YSox/SoeQDzqix0mPavUVh6HVl2iuW3LI7B1klXkZKkKHeK351+xFLQpSGCap1x3Nj46dUGc4ETgvdRGNM2ZgOsWOppCFqP51fPCVnVumTQaRsSUPm6u+JlIZaT8LAdobUjPSyNxP/8zqJGVz5KZdxYlCyxaJBIoiJyOx90ucKmRETSyhT3N5K2IgqyowNqWBD8JZfXiXNi7JXLVfvK6VaJYsjDydwCufgwSXU4A7q0AAGEp7hFd4c7bw4787HojXnZDPH8AfO5w8i0JCK</latexit> 
+
+  = 4 Figure 2: Directed acyclic circuit graph representation: (1) analog circuit; (2) convert bipartite graph representation (left) to DAG via topology sorting (right); (3) electrically-simulated asynchronous message passing scheme. (OTA), rather than being general-purpose. Notably, in ana-log circuits, current typically originates from the power sup-ply and traverses along the signal path to the ground, as no-ticed in (Gao et al. 2021). Consequently, to incorporate the physical characteristics of current flow into representation learning, this paper introduces a novel approach by desig-nating the voltage and ground nodes as special nodes. The original analog circuit graph, a bipartite graph, is thus trans-formed into a directed acyclic graph (DAG) next. We first discuss the conversion from undirected to di-rected graphs via topology sorting (Kahn 1962). The voltage 
+
+nodes and the ground nodes are added as the start nodes and the end nodes. Based on the current flow direction in the cir-cuit, assign directions to each edge in E. Typically, current flows from voltage nodes to the ground nodes, so the edge directions should align with this current flow. Given that the analog circuit graph is a bipartite graph with edges only between devices and nets, we make the following theorem by topologically traversing from voltage nodes to ground nodes: 
+
+Theorem 1 (Alicyclic Guarantee after Conversion) The original graph is a bipartite graph where edges only exist between devices and nets. Assume voltage and ground nodes are special devices added to the graph: 1. Voltage nodes have only outgoing edges with connected nets; 2. Ground nodes have only incoming edges with connected nets. The converted directed graph will be acyclic by traversing the bipartite graph via topology sorting, with the voltage and ground nodes as the start and end points. 
+
+The proof of this theorem is provided in Appendix A.6. Following the theorem, the resulting graph becomes a DAG after conversion with voltage nodes as the start nodes and ground nodes as the terminal nodes, as shown in Figure 2. All paths in this DAG, pointing from voltage nodes to ground nodes, are consistent with the physical characteris-tics and signal flow of the circuit. This conversion process formalizes the structure of an analog circuit into a DAG, providing a foundation graph format for subsequent analog circuit representation learning. 
+
+Depthwise Message Passing Scheme . Conventional graph neural networks (GNNs) operate synchronously as illus-trated in (Bruna et al. 2014; Defferrard, Bresson, and Van-dergheynst 2016; Hamilton, Ying, and Leskovec 2017; Velickovic et al. 2018; Xu et al. 2019). In synchronous mes-sage passing , all messages flow simultaneously along edges during each iteration. For better capturing current flow direction as in (Dimo 1975; Wedepohl and Jackson 2002), we propose an asyn-chronous GNN (AGNN) architecture that simulates depth-wise message passing from voltage nodes to ground nodes. We take voltage nodes as the root nodes of the first layer through topological ordering while fixing ground nodes as the terminal layer nodes. The electrically-simulated mes-sage passing process initiates from the voltage source node at depth 0, propagates sequentially from depth 1 to d, and ultimately reaches the ground nodes . At each depth level, only the vertices that have received messages from the pre-vious depth propagate messages to their direct successors. The Figure 2 demonstrates an example of embedding nodes using this asynchronous GNN. Formally, for a target vertex 
+
+v, the aggregation scheme of depth-asynchronous GNN at the ∆-th depth can be described as: 
+
+e(l)
+
+{i:D(i,v)= ∆−l} = AGG 
+
+n 
+
+h(k−1) 
+
+u : u ∈ N (i)
+
+o 
+
+,
+
+h(l)
+
+{i:D(i,v)= ∆−l} = COMBINE 
+
+
+
+e(l)
+
+i , h(0)
+
+i
+
+
+
+,
+
+(2) where D(i, v ) denotes the distance between vertices i and 
+
+v in the graph, and h(0) 
+
+i represents the initial feature vec-tor of vertex i. We used the same AGG and COMBINE 
+
+functions as GCN, with the sum of normalized neighbor em-beddings in our implementation (Kipf and Welling 2017). Thus, our AGNN can be regarded as a GCN variant. Specif-ically, during the k-th iteration of a depth-∆, aggregation occurs exclusively at vertices located at a distance of ∆ − k
+
+from the root node v, which selectively integrates messages from their topological predecessors. This aggregated output is then fused with the vertex’s original features to generate its updated representation vector. 
+
+Electrically Equivalent Contrastive Learning 
+
+Kirchhoff’s Current Law Analysis . KCL is one of the most fundamental theorems in analog circuit analysis (Paul 2001; Rewie´ nski 2011; Athavale 2018). It describes a crucial principle: the total current entering a node always equals the total current exiting it, as shown in Figure 3. Formally, it can be defined as: 
+
+Iin 1 + Iin 2 + · · · ⇔ Iout 1 + Iout 2 + · · · . (3) A key extension of the KCL is that the algebraic sum of input and output currents of multiple circuit components, i.e., a supernode, remains equal (Zeng and Zeng 2021; Zhu, Chen, and Yang 2024), which is frequently applied in the <latexit sha1_base64="QjFOBDSGI8zi9UDdKKBiyYR9A/I=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF71VtB/QhrLZTtqlm03Y3Qgl9Cd48aCIV3+RN/+N2zYHbX0w8Hhvhpl5QSK4Nq777RTW1jc2t4rbpZ3dvf2D8uFRS8epYthksYhVJ6AaBZfYNNwI7CQKaRQIbAfjm5nffkKleSwfzSRBP6JDyUPOqLHSw13f65crbtWdg6wSLycVyNHol796g5ilEUrDBNW667mJ8TOqDGcCp6VeqjGhbEyH2LVU0gi1n81PnZIzqwxIGCtb0pC5+nsio5HWkyiwnRE1I73szcT/vG5qwms/4zJJDUq2WBSmgpiYzP4mA66QGTGxhDLF7a2EjaiizNh0SjYEb/nlVdK6qHq1au3+slK/zOMowgmcwjl4cAV1uIUGNIHBEJ7hFd4c4bw4787HorXg5DPH8AfO5w/DY41u</latexit> 
+
+I1
+
+<latexit sha1_base64="QjFOBDSGI8zi9UDdKKBiyYR9A/I=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF71VtB/QhrLZTtqlm03Y3Qgl9Cd48aCIV3+RN/+N2zYHbX0w8Hhvhpl5QSK4Nq777RTW1jc2t4rbpZ3dvf2D8uFRS8epYthksYhVJ6AaBZfYNNwI7CQKaRQIbAfjm5nffkKleSwfzSRBP6JDyUPOqLHSw13f65crbtWdg6wSLycVyNHol796g5ilEUrDBNW667mJ8TOqDGcCp6VeqjGhbEyH2LVU0gi1n81PnZIzqwxIGCtb0pC5+nsio5HWkyiwnRE1I73szcT/vG5qwms/4zJJDUq2WBSmgpiYzP4mA66QGTGxhDLF7a2EjaiizNh0SjYEb/nlVdK6qHq1au3+slK/zOMowgmcwjl4cAV1uIUGNIHBEJ7hFd4c4bw4787HorXg5DPH8AfO5w/DY41u</latexit> 
+
+I1
+
+<latexit sha1_base64="mo1BHssEVSUTh5wvdcZohQ25sQA=">AAAB6nicbVDLSgNBEOyNrxhfUY9eBoPgKeyGED0GvOgtonlAsoTZSW8yZHZ2mZkVQsgnePGgiFe/yJt/4yTZgyYWNBRV3XR3BYng2rjut5Pb2Nza3snvFvb2Dw6PiscnLR2nimGTxSJWnYBqFFxi03AjsJMopFEgsB2Mb+Z++wmV5rF8NJME/YgOJQ85o8ZKD3f9Sr9YcsvuAmSdeBkpQYZGv/jVG8QsjVAaJqjWXc9NjD+lynAmcFbopRoTysZ0iF1LJY1Q+9PFqTNyYZUBCWNlSxqyUH9PTGmk9SQKbGdEzUivenPxP6+bmvDan3KZpAYlWy4KU0FMTOZ/kwFXyIyYWEKZ4vZWwkZUUWZsOgUbgrf68jppVcperVy7r5bq1SyOPJzBOVyCB1dQh1toQBMYDOEZXuHNEc6L8+58LFtzTjZzCn/gfP4AxOeNbw==</latexit> 
+
+I2
+
+<latexit sha1_base64="mo1BHssEVSUTh5wvdcZohQ25sQA=">AAAB6nicbVDLSgNBEOyNrxhfUY9eBoPgKeyGED0GvOgtonlAsoTZSW8yZHZ2mZkVQsgnePGgiFe/yJt/4yTZgyYWNBRV3XR3BYng2rjut5Pb2Nza3snvFvb2Dw6PiscnLR2nimGTxSJWnYBqFFxi03AjsJMopFEgsB2Mb+Z++wmV5rF8NJME/YgOJQ85o8ZKD3f9Sr9YcsvuAmSdeBkpQYZGv/jVG8QsjVAaJqjWXc9NjD+lynAmcFbopRoTysZ0iF1LJY1Q+9PFqTNyYZUBCWNlSxqyUH9PTGmk9SQKbGdEzUivenPxP6+bmvDan3KZpAYlWy4KU0FMTOZ/kwFXyIyYWEKZ4vZWwkZUUWZsOgUbgrf68jppVcperVy7r5bq1SyOPJzBOVyCB1dQh1toQBMYDOEZXuHNEc6L8+58LFtzTjZzCn/gfP4AxOeNbw==</latexit> 
+
+I2
+
+<latexit sha1_base64="EsCdKG/tGZ7HbZlpZluu4BTfDeI=">AAAB6nicbVDLSgNBEOyNrxhfUY9eBoPgKexqiB4DXvQW0TwgWcLspDcZMju7zMwKIeQTvHhQxKtf5M2/cZLsQRMLGoqqbrq7gkRwbVz328mtrW9sbuW3Czu7e/sHxcOjpo5TxbDBYhGrdkA1Ci6xYbgR2E4U0igQ2ApGNzO/9YRK81g+mnGCfkQHkoecUWOlh7veZa9YcsvuHGSVeBkpQYZ6r/jV7ccsjVAaJqjWHc9NjD+hynAmcFrophoTykZ0gB1LJY1Q+5P5qVNyZpU+CWNlSxoyV39PTGik9TgKbGdEzVAvezPxP6+TmvDan3CZpAYlWywKU0FMTGZ/kz5XyIwYW0KZ4vZWwoZUUWZsOgUbgrf88ippXpS9arl6XynVKlkceTiBUzgHD66gBrdQhwYwGMAzvMKbI5wX5935WLTmnGzmGP7A+fwBxmuNcA==</latexit> 
+
+I3
+
+<latexit sha1_base64="EsCdKG/tGZ7HbZlpZluu4BTfDeI=">AAAB6nicbVDLSgNBEOyNrxhfUY9eBoPgKexqiB4DXvQW0TwgWcLspDcZMju7zMwKIeQTvHhQxKtf5M2/cZLsQRMLGoqqbrq7gkRwbVz328mtrW9sbuW3Czu7e/sHxcOjpo5TxbDBYhGrdkA1Ci6xYbgR2E4U0igQ2ApGNzO/9YRK81g+mnGCfkQHkoecUWOlh7veZa9YcsvuHGSVeBkpQYZ6r/jV7ccsjVAaJqjWHc9NjD+hynAmcFrophoTykZ0gB1LJY1Q+5P5qVNyZpU+CWNlSxoyV39PTGik9TgKbGdEzVAvezPxP6+TmvDan3CZpAYlWywKU0FMTGZ/kz5XyIwYW0KZ4vZWwoZUUWZsOgUbgrf88ippXpS9arl6XynVKlkceTiBUzgHD66gBrdQhwYwGMAzvMKbI5wX5935WLTmnGzmGP7A+fwBxmuNcA==</latexit> 
+
+I3
+
+<latexit sha1_base64="myWP8AMDCiLzv9g/jSceDa2OQOs=">AAAB6nicbVBNS8NAEJ34WetX1aOXxSJ4KomU6rHgRW8V7Qe0oWy2m3bpZhN2J0IJ/QlePCji1V/kzX/jts1BWx8MPN6bYWZekEhh0HW/nbX1jc2t7cJOcXdv/+CwdHTcMnGqGW+yWMa6E1DDpVC8iQIl7ySa0yiQvB2Mb2Z++4lrI2L1iJOE+xEdKhEKRtFKD3f9ar9UdivuHGSVeDkpQ45Gv/TVG8QsjbhCJqkxXc9N0M+oRsEknxZ7qeEJZWM65F1LFY248bP5qVNybpUBCWNtSyGZq78nMhoZM4kC2xlRHJllbyb+53VTDK/9TKgkRa7YYlGYSoIxmf1NBkJzhnJiCWVa2FsJG1FNGdp0ijYEb/nlVdK6rHi1Su2+Wq5X8zgKcApncAEeXEEdbqEBTWAwhGd4hTdHOi/Ou/OxaF1z8pkT+APn8wfH741x</latexit> 
+
+I4
+
+<latexit sha1_base64="myWP8AMDCiLzv9g/jSceDa2OQOs=">AAAB6nicbVBNS8NAEJ34WetX1aOXxSJ4KomU6rHgRW8V7Qe0oWy2m3bpZhN2J0IJ/QlePCji1V/kzX/jts1BWx8MPN6bYWZekEhh0HW/nbX1jc2t7cJOcXdv/+CwdHTcMnGqGW+yWMa6E1DDpVC8iQIl7ySa0yiQvB2Mb2Z++4lrI2L1iJOE+xEdKhEKRtFKD3f9ar9UdivuHGSVeDkpQ45Gv/TVG8QsjbhCJqkxXc9N0M+oRsEknxZ7qeEJZWM65F1LFY248bP5qVNybpUBCWNtSyGZq78nMhoZM4kC2xlRHJllbyb+53VTDK/9TKgkRa7YYlGYSoIxmf1NBkJzhnJiCWVa2FsJG1FNGdp0ijYEb/nlVdK6rHi1Su2+Wq5X8zgKcApncAEeXEEdbqEBTWAwhGd4hTdHOi/Ou/OxaF1z8pkT+APn8wfH741x</latexit> 
+
+I4
+
+<latexit sha1_base64="XGeHnhEdHhg/neHscNfFpz0FXBM=">AAAB83icbVBNS8NAEJ3Ur1q/qh69BIvgqSRSqhehoAe9VbAf0ISy2U7apZtN2N0IJfRvePGgiFf/jDf/jds2B219MPB4b4aZeUHCmdKO820V1tY3NreK26Wd3b39g/LhUVvFqaTYojGPZTcgCjkT2NJMc+wmEkkUcOwE45uZ33lCqVgsHvUkQT8iQ8FCRok2knffz7xb5Jpc16b9csWpOnPYq8TNSQVyNPvlL28Q0zRCoSknSvVcJ9F+RqRmlOO05KUKE0LHZIg9QwWJUPnZ/OapfWaUgR3G0pTQ9lz9PZGRSKlJFJjOiOiRWvZm4n9eL9XhlZ8xkaQaBV0sClNu69ieBWAPmESq+cQQQiUzt9p0RCSh2sRUMiG4yy+vkvZF1a1X6w+1SqOWx1GEEziFc3DhEhpwB01oAYUEnuEV3qzUerHerY9Fa8HKZ47hD6zPH3JGkUY=</latexit> 
+
+I =4 
+
+<latexit sha1_base64="XGeHnhEdHhg/neHscNfFpz0FXBM=">AAAB83icbVBNS8NAEJ3Ur1q/qh69BIvgqSRSqhehoAe9VbAf0ISy2U7apZtN2N0IJfRvePGgiFf/jDf/jds2B219MPB4b4aZeUHCmdKO820V1tY3NreK26Wd3b39g/LhUVvFqaTYojGPZTcgCjkT2NJMc+wmEkkUcOwE45uZ33lCqVgsHvUkQT8iQ8FCRok2knffz7xb5Jpc16b9csWpOnPYq8TNSQVyNPvlL28Q0zRCoSknSvVcJ9F+RqRmlOO05KUKE0LHZIg9QwWJUPnZ/OapfWaUgR3G0pTQ9lz9PZGRSKlJFJjOiOiRWvZm4n9eL9XhlZ8xkaQaBV0sClNu69ieBWAPmESq+cQQQiUzt9p0RCSh2sRUMiG4yy+vkvZF1a1X6w+1SqOWx1GEEziFc3DhEhpwB01oAYUEnuEV3qzUerHerY9Fa8HKZ47hD6zPH3JGkUY=</latexit> 
+
+I =4 
+
+<latexit sha1_base64="vzkVIj4j6Zwo60+5tsEH60/75iU=">AAAB9XicbVBNS8NAEN3Ur1q/qh69BIvgqSRaqhehoAe9VbAf0May2U7apZtN2J0oJeR/ePGgiFf/izf/jduPg1YfDDzem2Fmnh8LrtFxvqzc0vLK6lp+vbCxubW9U9zda+ooUQwaLBKRavtUg+ASGshRQDtWQENfQMsfXU781gMozSN5h+MYvJAOJA84o2ik+/Sml3avQCC9OM2yXrHklJ0p7L/EnZMSmaPeK352+xFLQpDIBNW64zoxeilVyJmArNBNNMSUjegAOoZKGoL20unVmX1klL4dRMqURHuq/pxIaaj1OPRNZ0hxqBe9ifif10kwOPdSLuMEQbLZoiARNkb2JAK7zxUwFGNDKFPc3GqzIVWUoQmqYEJwF1/+S5onZbdart5WSrXKPI48OSCH5Ji45IzUyDWpkwZhRJEn8kJerUfr2Xqz3metOWs+s09+wfr4Bj1KklE=</latexit> 
+
+I =3 
+
+<latexit sha1_base64="vzkVIj4j6Zwo60+5tsEH60/75iU=">AAAB9XicbVBNS8NAEN3Ur1q/qh69BIvgqSRaqhehoAe9VbAf0May2U7apZtN2J0oJeR/ePGgiFf/izf/jduPg1YfDDzem2Fmnh8LrtFxvqzc0vLK6lp+vbCxubW9U9zda+ooUQwaLBKRavtUg+ASGshRQDtWQENfQMsfXU781gMozSN5h+MYvJAOJA84o2ik+/Sml3avQCC9OM2yXrHklJ0p7L/EnZMSmaPeK352+xFLQpDIBNW64zoxeilVyJmArNBNNMSUjegAOoZKGoL20unVmX1klL4dRMqURHuq/pxIaaj1OPRNZ0hxqBe9ifif10kwOPdSLuMEQbLZoiARNkb2JAK7zxUwFGNDKFPc3GqzIVWUoQmqYEJwF1/+S5onZbdart5WSrXKPI48OSCH5Ji45IzUyDWpkwZhRJEn8kJerUfr2Xqz3metOWs+s09+wfr4Bj1KklE=</latexit> 
+
+I =3 
+
+<latexit sha1_base64="ylDGTst9ps4Ugss3p/BwvKoS/UU=">AAAB9XicbVDLSgNBEJz1GeMr6tHLYBA8hd0QohchoAe9RTAPSNYwO+lNhsw+mOlVwpL/8OJBEa/+izf/xkmyB00saCiquunu8mIpNNr2t7Wyura+sZnbym/v7O7tFw4OmzpKFIcGj2Sk2h7TIEUIDRQooR0rYIEnoeWNrqZ+6xGUFlF4j+MY3IANQuELztBID7e9tHsNEhm9pOVJr1C0S/YMdJk4GSmSDPVe4avbj3gSQIhcMq07jh2jmzKFgkuY5LuJhpjxERtAx9CQBaDddHb1hJ4apU/9SJkKkc7U3xMpC7QeB57pDBgO9aI3Ff/zOgn6F24qwjhBCPl8kZ9IihGdRkD7QgFHOTaEcSXMrZQPmWIcTVB5E4Kz+PIyaZZLTrVUvasUa5Usjhw5JifkjDjknNTIDamTBuFEkWfySt6sJ+vFerc+5q0rVjZzRP7A+vwBIhCRmA==</latexit> 
+
+I =2 
+
+<latexit sha1_base64="ylDGTst9ps4Ugss3p/BwvKoS/UU=">AAAB9XicbVDLSgNBEJz1GeMr6tHLYBA8hd0QohchoAe9RTAPSNYwO+lNhsw+mOlVwpL/8OJBEa/+izf/xkmyB00saCiquunu8mIpNNr2t7Wyura+sZnbym/v7O7tFw4OmzpKFIcGj2Sk2h7TIEUIDRQooR0rYIEnoeWNrqZ+6xGUFlF4j+MY3IANQuELztBID7e9tHsNEhm9pOVJr1C0S/YMdJk4GSmSDPVe4avbj3gSQIhcMq07jh2jmzKFgkuY5LuJhpjxERtAx9CQBaDddHb1hJ4apU/9SJkKkc7U3xMpC7QeB57pDBgO9aI3Ff/zOgn6F24qwjhBCPl8kZ9IihGdRkD7QgFHOTaEcSXMrZQPmWIcTVB5E4Kz+PIyaZZLTrVUvasUa5Usjhw5JifkjDjknNTIDamTBuFEkWfySt6sJ+vFerc+5q0rVjZzRP7A+vwBIhCRmA==</latexit> 
+
+I =2 <latexit sha1_base64="MV8d51PldfU9IPvxFTPgMJ6az08=">AAAB/3icbVDNS8MwHE39nPOrKnjxEhyCp9EOmR4HXjxOcB+wlZKm6RaWJiVJhdHu4L/ixYMiXv03vPnfmG496OaDkMd7vx95eUHCqNKO822trW9sbm1Xdqq7e/sHh/bRcVeJVGLSwYIJ2Q+QIoxy0tFUM9JPJEFxwEgvmNwWfu+RSEUFf9DThHgxGnEaUYy0kXz7NM+HgWChmsbmysYzP8hzv+HbNafuzAFXiVuSGijR9u2vYShwGhOuMUNKDVwn0V6GpKaYkVl1mCqSIDxBIzIwlKOYKC+b55/BC6OEMBLSHK7hXP29kaFYFQHNZIz0WC17hfifN0h1dONllCepJhwvHopSBrWARRkwpJJgzaaGICypyQrxGEmEtamsakpwl7+8SrqNutusN++vaq1GWUcFnIFzcAlccA1a4A60QQdgkINn8ArerCfrxXq3Phaja1a5cwL+wPr8AQihlrc=</latexit> 
+
+|| hb|| 2
+
+<latexit sha1_base64="MV8d51PldfU9IPvxFTPgMJ6az08=">AAAB/3icbVDNS8MwHE39nPOrKnjxEhyCp9EOmR4HXjxOcB+wlZKm6RaWJiVJhdHu4L/ixYMiXv03vPnfmG496OaDkMd7vx95eUHCqNKO822trW9sbm1Xdqq7e/sHh/bRcVeJVGLSwYIJ2Q+QIoxy0tFUM9JPJEFxwEgvmNwWfu+RSEUFf9DThHgxGnEaUYy0kXz7NM+HgWChmsbmysYzP8hzv+HbNafuzAFXiVuSGijR9u2vYShwGhOuMUNKDVwn0V6GpKaYkVl1mCqSIDxBIzIwlKOYKC+b55/BC6OEMBLSHK7hXP29kaFYFQHNZIz0WC17hfifN0h1dONllCepJhwvHopSBrWARRkwpJJgzaaGICypyQrxGEmEtamsakpwl7+8SrqNutusN++vaq1GWUcFnIFzcAlccA1a4A60QQdgkINn8ArerCfrxXq3Phaja1a5cwL+wPr8AQihlrc=</latexit> 
+
+|| hb|| 2
+
+<latexit sha1_base64="g/PVSLanrCWWlArrQ/u/MvLY32s=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0lKqR4LXjxWtLXQhrLZbtqlm03YnQgl9Cd48aCIV3+RN/+N2zYHbX0w8Hhvhpl5QSKFQdf9dgobm1vbO8Xd0t7+weFR+fikY+JUM95msYx1N6CGS6F4GwVK3k00p1Eg+WMwuZn7j09cGxGrB5wm3I/oSIlQMIpWuleD2qBccavuAmSdeDmpQI7WoPzVH8YsjbhCJqkxPc9N0M+oRsEkn5X6qeEJZRM64j1LFY248bPFqTNyYZUhCWNtSyFZqL8nMhoZM40C2xlRHJtVby7+5/VSDK/9TKgkRa7YclGYSoIxmf9NhkJzhnJqCWVa2FsJG1NNGdp0SjYEb/XlddKpVb1GtXFXrzTreRxFOINzuAQPrqAJt9CCNjAYwTO8wpsjnRfn3flYthacfOYU/sD5/AH9RY2U</latexit> 
+
+n2
+
+<latexit sha1_base64="g/PVSLanrCWWlArrQ/u/MvLY32s=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0lKqR4LXjxWtLXQhrLZbtqlm03YnQgl9Cd48aCIV3+RN/+N2zYHbX0w8Hhvhpl5QSKFQdf9dgobm1vbO8Xd0t7+weFR+fikY+JUM95msYx1N6CGS6F4GwVK3k00p1Eg+WMwuZn7j09cGxGrB5wm3I/oSIlQMIpWuleD2qBccavuAmSdeDmpQI7WoPzVH8YsjbhCJqkxPc9N0M+oRsEkn5X6qeEJZRM64j1LFY248bPFqTNyYZUhCWNtSyFZqL8nMhoZM40C2xlRHJtVby7+5/VSDK/9TKgkRa7YclGYSoIxmf9NhkJzhnJqCWVa2FsJG1NNGdp0SjYEb/XlddKpVb1GtXFXrzTreRxFOINzuAQPrqAJt9CCNjAYwTO8wpsjnRfn3flYthacfOYU/sD5/AH9RY2U</latexit> 
+
+n2
+
+<latexit sha1_base64="Io/0mmwxCTDMKKx0V2doPRq3p1Y=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0m0VI8FLx4rWltoQ9lsN+3SzSbsToQS+hO8eFDEq7/Im//GbZuDtj4YeLw3w8y8IJHCoOt+O4W19Y3NreJ2aWd3b/+gfHj0aOJUM95isYx1J6CGS6F4CwVK3kk0p1EgeTsY38z89hPXRsTqAScJ9yM6VCIUjKKV7lX/sl+uuFV3DrJKvJxUIEezX/7qDWKWRlwhk9SYrucm6GdUo2CST0u91PCEsjEd8q6likbc+Nn81Ck5s8qAhLG2pZDM1d8TGY2MmUSB7YwojsyyNxP/87ophtd+JlSSIldssShMJcGYzP4mA6E5QzmxhDIt7K2EjaimDG06JRuCt/zyKnm8qHr1av2uVmnU8jiKcAKncA4eXEEDbqEJLWAwhGd4hTdHOi/Ou/OxaC04+cwx/IHz+QP+yY2V</latexit> 
+
+n3
+
+<latexit sha1_base64="Io/0mmwxCTDMKKx0V2doPRq3p1Y=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0m0VI8FLx4rWltoQ9lsN+3SzSbsToQS+hO8eFDEq7/Im//GbZuDtj4YeLw3w8y8IJHCoOt+O4W19Y3NreJ2aWd3b/+gfHj0aOJUM95isYx1J6CGS6F4CwVK3kk0p1EgeTsY38z89hPXRsTqAScJ9yM6VCIUjKKV7lX/sl+uuFV3DrJKvJxUIEezX/7qDWKWRlwhk9SYrucm6GdUo2CST0u91PCEsjEd8q6likbc+Nn81Ck5s8qAhLG2pZDM1d8TGY2MmUSB7YwojsyyNxP/87ophtd+JlSSIldssShMJcGYzP4mA6E5QzmxhDIt7K2EjaimDG06JRuCt/zyKnm8qHr1av2uVmnU8jiKcAKncA4eXEEDbqEJLWAwhGd4hTdHOi/Ou/OxaC04+cwx/IHz+QP+yY2V</latexit> 
+
+n3
+
+<latexit sha1_base64="4hu6SvV/PVpu0KNy/1qZR2M0my8=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipORqUK27VXYCsEy8nFcjRGJS/+sOYpRFKwwTVuue5ifEzqgxnAmelfqoxoWxCR9izVNIItZ8tDp2RC6sMSRgrW9KQhfp7IqOR1tMosJ0RNWO96s3F/7xeasJbP+MySQ1KtlwUpoKYmMy/JkOukBkxtYQyxe2thI2poszYbEo2BG/15XXSvqp6tWqteV2pX+dxFOEMzuESPLiBOtxDA1rAAOEZXuHNeXRenHfnY9lacPKZU/gD5/MHy9GM6A==</latexit> 
+
+g<latexit sha1_base64="4hu6SvV/PVpu0KNy/1qZR2M0my8=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipORqUK27VXYCsEy8nFcjRGJS/+sOYpRFKwwTVuue5ifEzqgxnAmelfqoxoWxCR9izVNIItZ8tDp2RC6sMSRgrW9KQhfp7IqOR1tMosJ0RNWO96s3F/7xeasJbP+MySQ1KtlwUpoKYmMy/JkOukBkxtYQyxe2thI2poszYbEo2BG/15XXSvqp6tWqteV2pX+dxFOEMzuESPLiBOtxDA1rAAOEZXuHNeXRenHfnY9lacPKZU/gD5/MHy9GM6A==</latexit> 
+
+g
+
+<latexit sha1_base64="OxqNHYM5GhZANXwNhBZQEdD7AfM=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipSQflilt1FyDrxMtJBXI0BuWv/jBmaYTSMEG17nluYvyMKsOZwFmpn2pMKJvQEfYslTRC7WeLQ2fkwipDEsbKljRkof6eyGik9TQKbGdEzVivenPxP6+XmvDWz7hMUoOSLReFqSAmJvOvyZArZEZMLaFMcXsrYWOqKDM2m5INwVt9eZ20r6perVprXlfq13kcRTiDc7gED26gDvfQgBYwQHiGV3hzHp0X5935WLYWnHzmFP7A+fwBwrmM4g==</latexit> 
+
+a<latexit sha1_base64="OxqNHYM5GhZANXwNhBZQEdD7AfM=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipSQflilt1FyDrxMtJBXI0BuWv/jBmaYTSMEG17nluYvyMKsOZwFmpn2pMKJvQEfYslTRC7WeLQ2fkwipDEsbKljRkof6eyGik9TQKbGdEzVivenPxP6+XmvDWz7hMUoOSLReFqSAmJvOvyZArZEZMLaFMcXsrYWOqKDM2m5INwVt9eZ20r6perVprXlfq13kcRTiDc7gED26gDvfQgBYwQHiGV3hzHp0X5935WLYWnHzmFP7A+fwBwrmM4g==</latexit> 
+
+a
+
+<latexit sha1_base64="Q/z3LnZkEKrhqj/2DTTp0nSRn1g=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipyQblilt1FyDrxMtJBXI0BuWv/jBmaYTSMEG17nluYvyMKsOZwFmpn2pMKJvQEfYslTRC7WeLQ2fkwipDEsbKljRkof6eyGik9TQKbGdEzVivenPxP6+XmvDWz7hMUoOSLReFqSAmJvOvyZArZEZMLaFMcXsrYWOqKDM2m5INwVt9eZ20r6perVprXlfq13kcRTiDc7gED26gDvfQgBYwQHiGV3hzHp0X5935WLYWnHzmFP7A+fwBxcGM5A==</latexit> 
+
+c<latexit sha1_base64="Q/z3LnZkEKrhqj/2DTTp0nSRn1g=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipyQblilt1FyDrxMtJBXI0BuWv/jBmaYTSMEG17nluYvyMKsOZwFmpn2pMKJvQEfYslTRC7WeLQ2fkwipDEsbKljRkof6eyGik9TQKbGdEzVivenPxP6+XmvDWz7hMUoOSLReFqSAmJvOvyZArZEZMLaFMcXsrYWOqKDM2m5INwVt9eZ20r6perVprXlfq13kcRTiDc7gED26gDvfQgBYwQHiGV3hzHp0X5935WLYWnHzmFP7A+fwBxcGM5A==</latexit> 
+
+c
+
+<latexit sha1_base64="NQFEBiA5DbH8cLfMSd5OEEMNCL8=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipGQzKFbfqLkDWiZeTCuRoDMpf/WHM0gilYYJq3fPcxPgZVYYzgbNSP9WYUDahI+xZKmmE2s8Wh87IhVWGJIyVLWnIQv09kdFI62kU2M6ImrFe9ebif14vNeGtn3GZpAYlWy4KU0FMTOZfkyFXyIyYWkKZ4vZWwsZUUWZsNiUbgrf68jppX1W9WrXWvK7Ur/M4inAG53AJHtxAHe6hAS1ggPAMr/DmPDovzrvzsWwtOPnMKfyB8/kDxD2M4w==</latexit> 
+
+b
+
+<latexit sha1_base64="NQFEBiA5DbH8cLfMSd5OEEMNCL8=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipGQzKFbfqLkDWiZeTCuRoDMpf/WHM0gilYYJq3fPcxPgZVYYzgbNSP9WYUDahI+xZKmmE2s8Wh87IhVWGJIyVLWnIQv09kdFI62kU2M6ImrFe9ebif14vNeGtn3GZpAYlWy4KU0FMTOZfkyFXyIyYWkKZ4vZWwsZUUWZsNiUbgrf68jppX1W9WrXWvK7Ur/M4inAG53AJHtxAHe6hAS1ggPAMr/DmPDovzrvzsWwtOPnMKfyB8/kDxD2M4w==</latexit> 
+
+b
+
+<latexit sha1_base64="gNOyMA+t+TGGhR5wC9ODIelL90I=">AAAB/3icbVDNS8MwHE39nPOrKnjxEhyCp9EOmR4HXjxOcB+wlZKm6RaWJiVJhdHu4L/ixYMiXv03vPnfmG496OaDkMd7vx95eUHCqNKO822trW9sbm1Xdqq7e/sHh/bRcVeJVGLSwYIJ2Q+QIoxy0tFUM9JPJEFxwEgvmNwWfu+RSEUFf9DThHgxGnEaUYy0kXz7NM+HgWChmsbmysYzH+W53/DtmlN35oCrxC1JDZRo+/bXMBQ4jQnXmCGlBq6TaC9DUlPMyKw6TBVJEJ6gERkYylFMlJfN88/ghVFCGAlpDtdwrv7eyFCsioBmMkZ6rJa9QvzPG6Q6uvEyypNUE44XD0Upg1rAogwYUkmwZlNDEJbUZIV4jCTC2lRWNSW4y19eJd1G3W3Wm/dXtVajrKMCzsA5uAQuuAYtcAfaoAMwyMEzeAVv1pP1Yr1bH4vRNavcOQF/YH3+AAcZlrY=</latexit> 
+
+|| ha|| 2
+
+<latexit sha1_base64="gNOyMA+t+TGGhR5wC9ODIelL90I=">AAAB/3icbVDNS8MwHE39nPOrKnjxEhyCp9EOmR4HXjxOcB+wlZKm6RaWJiVJhdHu4L/ixYMiXv03vPnfmG496OaDkMd7vx95eUHCqNKO822trW9sbm1Xdqq7e/sHh/bRcVeJVGLSwYIJ2Q+QIoxy0tFUM9JPJEFxwEgvmNwWfu+RSEUFf9DThHgxGnEaUYy0kXz7NM+HgWChmsbmysYzH+W53/DtmlN35oCrxC1JDZRo+/bXMBQ4jQnXmCGlBq6TaC9DUlPMyKw6TBVJEJ6gERkYylFMlJfN88/ghVFCGAlpDtdwrv7eyFCsioBmMkZ6rJa9QvzPG6Q6uvEyypNUE44XD0Upg1rAogwYUkmwZlNDEJbUZIV4jCTC2lRWNSW4y19eJd1G3W3Wm/dXtVajrKMCzsA5uAQuuAYtcAfaoAMwyMEzeAVv1pP1Yr1bH4vRNavcOQF/YH3+AAcZlrY=</latexit> 
+
+|| ha|| 2
+
+<latexit sha1_base64="Dk9inSAZIDbMDcG/YwGWnpbugWM=">AAAB/3icbVDNS8MwHE39nPOrKnjxEhyCp9EOmR4HXjxOcB+wlZKm6RaWJiVJhdHu4L/ixYMiXv03vPnfmG496OaDkMd7vx95eUHCqNKO822trW9sbm1Xdqq7e/sHh/bRcVeJVGLSwYIJ2Q+QIoxy0tFUM9JPJEFxwEgvmNwWfu+RSEUFf9DThHgxGnEaUYy0kXz7NM+HgWChmsbmysYzH+e53/DtmlN35oCrxC1JDZRo+/bXMBQ4jQnXmCGlBq6TaC9DUlPMyKw6TBVJEJ6gERkYylFMlJfN88/ghVFCGAlpDtdwrv7eyFCsioBmMkZ6rJa9QvzPG6Q6uvEyypNUE44XD0Upg1rAogwYUkmwZlNDEJbUZIV4jCTC2lRWNSW4y19eJd1G3W3Wm/dXtVajrKMCzsA5uAQuuAYtcAfaoAMwyMEzeAVv1pP1Yr1bH4vRNavcOQF/YH3+AAoplrg=</latexit> 
+
+|| hc|| 2
+
+<latexit sha1_base64="Dk9inSAZIDbMDcG/YwGWnpbugWM=">AAAB/3icbVDNS8MwHE39nPOrKnjxEhyCp9EOmR4HXjxOcB+wlZKm6RaWJiVJhdHu4L/ixYMiXv03vPnfmG496OaDkMd7vx95eUHCqNKO822trW9sbm1Xdqq7e/sHh/bRcVeJVGLSwYIJ2Q+QIoxy0tFUM9JPJEFxwEgvmNwWfu+RSEUFf9DThHgxGnEaUYy0kXz7NM+HgWChmsbmysYzH+e53/DtmlN35oCrxC1JDZRo+/bXMBQ4jQnXmCGlBq6TaC9DUlPMyKw6TBVJEJ6gERkYylFMlJfN88/ghVFCGAlpDtdwrv7eyFCsioBmMkZ6rJa9QvzPG6Q6uvEyypNUE44XD0Upg1rAogwYUkmwZlNDEJbUZIV4jCTC2lRWNSW4y19eJd1G3W3Wm/dXtVajrKMCzsA5uAQuuAYtcAfaoAMwyMEzeAVv1pP1Yr1bH4vRNavcOQF/YH3+AAoplrg=</latexit> 
+
+|| hc|| 2
+
+<latexit sha1_base64="MV8d51PldfU9IPvxFTPgMJ6az08=">AAAB/3icbVDNS8MwHE39nPOrKnjxEhyCp9EOmR4HXjxOcB+wlZKm6RaWJiVJhdHu4L/ixYMiXv03vPnfmG496OaDkMd7vx95eUHCqNKO822trW9sbm1Xdqq7e/sHh/bRcVeJVGLSwYIJ2Q+QIoxy0tFUM9JPJEFxwEgvmNwWfu+RSEUFf9DThHgxGnEaUYy0kXz7NM+HgWChmsbmysYzP8hzv+HbNafuzAFXiVuSGijR9u2vYShwGhOuMUNKDVwn0V6GpKaYkVl1mCqSIDxBIzIwlKOYKC+b55/BC6OEMBLSHK7hXP29kaFYFQHNZIz0WC17hfifN0h1dONllCepJhwvHopSBrWARRkwpJJgzaaGICypyQrxGEmEtamsakpwl7+8SrqNutusN++vaq1GWUcFnIFzcAlccA1a4A60QQdgkINn8ArerCfrxXq3Phaja1a5cwL+wPr8AQihlrc=</latexit> 
+
+|| hb|| 2
+
+<latexit sha1_base64="MV8d51PldfU9IPvxFTPgMJ6az08=">AAAB/3icbVDNS8MwHE39nPOrKnjxEhyCp9EOmR4HXjxOcB+wlZKm6RaWJiVJhdHu4L/ixYMiXv03vPnfmG496OaDkMd7vx95eUHCqNKO822trW9sbm1Xdqq7e/sHh/bRcVeJVGLSwYIJ2Q+QIoxy0tFUM9JPJEFxwEgvmNwWfu+RSEUFf9DThHgxGnEaUYy0kXz7NM+HgWChmsbmysYzP8hzv+HbNafuzAFXiVuSGijR9u2vYShwGhOuMUNKDVwn0V6GpKaYkVl1mCqSIDxBIzIwlKOYKC+b55/BC6OEMBLSHK7hXP29kaFYFQHNZIz0WC17hfifN0h1dONllCepJhwvHopSBrWARRkwpJJgzaaGICypyQrxGEmEtamsakpwl7+8SrqNutusN++vaq1GWUcFnIFzcAlccA1a4A60QQdgkINn8ArerCfrxXq3Phaja1a5cwL+wPr8AQihlrc=</latexit> 
+
+|| hb|| 2
+
+<latexit sha1_base64="zUDaRCCb3y9tB1P9y0iCw6gKjag=">AAAB63icbZDNSgMxFIXvVK21/tW6dBMsggspMyLVZcGNywr2B9pSMmmmDU0yY5IRytCFL9CNC0XcutSHcefbmGm70NYDgY9z7iX3Xj/iTBvX/XYya+sb2c3cVn57Z3dvv3BQbOgwVoTWSchD1fKxppxJWjfMcNqKFMXC57Tpj67TvPlAlWahvDPjiHYFHkgWMIJNanUG9L5XKLlldya0Ct4CStXs9Kz48fhZ6xW+Ov2QxIJKQzjWuu25kekmWBlGOJ3kO7GmESYjPKBtixILqrvJbNYJOrFOHwWhsk8aNHN/dyRYaD0Wvq0U2Az1cpaa/2Xt2ARX3YTJKDZUkvlHQcyRCVG6OOozRYnhYwuYKGZnRWSIFSbGnidvj+Atr7wKjfOyVylXbr1S9QLmysERHMMpeHAJVbiBGtSBwBCm8AwvjnCenFfnbV6acRY9h/BHzvsP+m2RIw==</latexit> 
+
+ 
+
+<latexit sha1_base64="zUDaRCCb3y9tB1P9y0iCw6gKjag=">AAAB63icbZDNSgMxFIXvVK21/tW6dBMsggspMyLVZcGNywr2B9pSMmmmDU0yY5IRytCFL9CNC0XcutSHcefbmGm70NYDgY9z7iX3Xj/iTBvX/XYya+sb2c3cVn57Z3dvv3BQbOgwVoTWSchD1fKxppxJWjfMcNqKFMXC57Tpj67TvPlAlWahvDPjiHYFHkgWMIJNanUG9L5XKLlldya0Ct4CStXs9Kz48fhZ6xW+Ov2QxIJKQzjWuu25kekmWBlGOJ3kO7GmESYjPKBtixILqrvJbNYJOrFOHwWhsk8aNHN/dyRYaD0Wvq0U2Az1cpaa/2Xt2ARX3YTJKDZUkvlHQcyRCVG6OOozRYnhYwuYKGZnRWSIFSbGnidvj+Atr7wKjfOyVylXbr1S9QLmysERHMMpeHAJVbiBGtSBwBCm8AwvjnCenFfnbV6acRY9h/BHzvsP+m2RIw==</latexit> 
+
+ <latexit sha1_base64="zUDaRCCb3y9tB1P9y0iCw6gKjag=">AAAB63icbZDNSgMxFIXvVK21/tW6dBMsggspMyLVZcGNywr2B9pSMmmmDU0yY5IRytCFL9CNC0XcutSHcefbmGm70NYDgY9z7iX3Xj/iTBvX/XYya+sb2c3cVn57Z3dvv3BQbOgwVoTWSchD1fKxppxJWjfMcNqKFMXC57Tpj67TvPlAlWahvDPjiHYFHkgWMIJNanUG9L5XKLlldya0Ct4CStXs9Kz48fhZ6xW+Ov2QxIJKQzjWuu25kekmWBlGOJ3kO7GmESYjPKBtixILqrvJbNYJOrFOHwWhsk8aNHN/dyRYaD0Wvq0U2Az1cpaa/2Xt2ARX3YTJKDZUkvlHQcyRCVG6OOozRYnhYwuYKGZnRWSIFSbGnidvj+Atr7wKjfOyVylXbr1S9QLmysERHMMpeHAJVbiBGtSBwBCm8AwvjnCenFfnbV6acRY9h/BHzvsP+m2RIw==</latexit> 
+
+ 
+
+<latexit sha1_base64="zUDaRCCb3y9tB1P9y0iCw6gKjag=">AAAB63icbZDNSgMxFIXvVK21/tW6dBMsggspMyLVZcGNywr2B9pSMmmmDU0yY5IRytCFL9CNC0XcutSHcefbmGm70NYDgY9z7iX3Xj/iTBvX/XYya+sb2c3cVn57Z3dvv3BQbOgwVoTWSchD1fKxppxJWjfMcNqKFMXC57Tpj67TvPlAlWahvDPjiHYFHkgWMIJNanUG9L5XKLlldya0Ct4CStXs9Kz48fhZ6xW+Ov2QxIJKQzjWuu25kekmWBlGOJ3kO7GmESYjPKBtixILqrvJbNYJOrFOHwWhsk8aNHN/dyRYaD0Wvq0U2Az1cpaa/2Xt2ARX3YTJKDZUkvlHQcyRCVG6OOozRYnhYwuYKGZnRWSIFSbGnidvj+Atr7wKjfOyVylXbr1S9QLmysERHMMpeHAJVbiBGtSBwBCm8AwvjnCenFfnbV6acRY9h/BHzvsP+m2RIw==</latexit> 
+
+ 
+
+<latexit sha1_base64="gNOyMA+t+TGGhR5wC9ODIelL90I=">AAAB/3icbVDNS8MwHE39nPOrKnjxEhyCp9EOmR4HXjxOcB+wlZKm6RaWJiVJhdHu4L/ixYMiXv03vPnfmG496OaDkMd7vx95eUHCqNKO822trW9sbm1Xdqq7e/sHh/bRcVeJVGLSwYIJ2Q+QIoxy0tFUM9JPJEFxwEgvmNwWfu+RSEUFf9DThHgxGnEaUYy0kXz7NM+HgWChmsbmysYzH+W53/DtmlN35oCrxC1JDZRo+/bXMBQ4jQnXmCGlBq6TaC9DUlPMyKw6TBVJEJ6gERkYylFMlJfN88/ghVFCGAlpDtdwrv7eyFCsioBmMkZ6rJa9QvzPG6Q6uvEyypNUE44XD0Upg1rAogwYUkmwZlNDEJbUZIV4jCTC2lRWNSW4y19eJd1G3W3Wm/dXtVajrKMCzsA5uAQuuAYtcAfaoAMwyMEzeAVv1pP1Yr1bH4vRNavcOQF/YH3+AAcZlrY=</latexit> 
+
+|| ha|| 2
+
+<latexit sha1_base64="gNOyMA+t+TGGhR5wC9ODIelL90I=">AAAB/3icbVDNS8MwHE39nPOrKnjxEhyCp9EOmR4HXjxOcB+wlZKm6RaWJiVJhdHu4L/ixYMiXv03vPnfmG496OaDkMd7vx95eUHCqNKO822trW9sbm1Xdqq7e/sHh/bRcVeJVGLSwYIJ2Q+QIoxy0tFUM9JPJEFxwEgvmNwWfu+RSEUFf9DThHgxGnEaUYy0kXz7NM+HgWChmsbmysYzH+W53/DtmlN35oCrxC1JDZRo+/bXMBQ4jQnXmCGlBq6TaC9DUlPMyKw6TBVJEJ6gERkYylFMlJfN88/ghVFCGAlpDtdwrv7eyFCsioBmMkZ6rJa9QvzPG6Q6uvEyypNUE44XD0Upg1rAogwYUkmwZlNDEJbUZIV4jCTC2lRWNSW4y19eJd1G3W3Wm/dXtVajrKMCzsA5uAQuuAYtcAfaoAMwyMEzeAVv1pP1Yr1bH4vRNavcOQF/YH3+AAcZlrY=</latexit> 
+
+|| ha|| 2
+
+<latexit sha1_base64="2F/jePa4dC+Rg8IOXo7zx29k03s=">AAAB7XicbVBNSwMxEJ2tX7V+VT16CRbBU9kVqZ6k4MVjBfsB7VKyabaNzSYhyQpl6X/w4kERr/4fb/4b03YP2vpg4PHeDDPzIsWZsb7/7RXW1jc2t4rbpZ3dvf2D8uFRy8hUE9okkkvdibChnAnatMxy2lGa4iTitB2Nb2d++4lqw6R4sBNFwwQPBYsZwdZJrZ5UPDX9csWv+nOgVRLkpAI5Gv3yV28gSZpQYQnHxnQDX9kww9oywum01EsNVZiM8ZB2HRU4oSbM5tdO0ZlTBiiW2pWwaK7+nshwYswkiVxngu3ILHsz8T+vm9r4OsyYUKmlgiwWxSlHVqLZ62jANCWWTxzBRDN3KyIjrDGxLqCSCyFYfnmVtC6qQa1au7+s1G/yOIpwAqdwDgFcQR3uoAFNIPAIz/AKb570Xrx372PRWvDymWP4A+/zB9Jcj0w=</latexit> 
+
+ 
+
+<latexit sha1_base64="2F/jePa4dC+Rg8IOXo7zx29k03s=">AAAB7XicbVBNSwMxEJ2tX7V+VT16CRbBU9kVqZ6k4MVjBfsB7VKyabaNzSYhyQpl6X/w4kERr/4fb/4b03YP2vpg4PHeDDPzIsWZsb7/7RXW1jc2t4rbpZ3dvf2D8uFRy8hUE9okkkvdibChnAnatMxy2lGa4iTitB2Nb2d++4lqw6R4sBNFwwQPBYsZwdZJrZ5UPDX9csWv+nOgVRLkpAI5Gv3yV28gSZpQYQnHxnQDX9kww9oywum01EsNVZiM8ZB2HRU4oSbM5tdO0ZlTBiiW2pWwaK7+nshwYswkiVxngu3ILHsz8T+vm9r4OsyYUKmlgiwWxSlHVqLZ62jANCWWTxzBRDN3KyIjrDGxLqCSCyFYfnmVtC6qQa1au7+s1G/yOIpwAqdwDgFcQR3uoAFNIPAIz/AKb570Xrx372PRWvDymWP4A+/zB9Jcj0w=</latexit> 
+
+ 
+
+<latexit sha1_base64="2F/jePa4dC+Rg8IOXo7zx29k03s=">AAAB7XicbVBNSwMxEJ2tX7V+VT16CRbBU9kVqZ6k4MVjBfsB7VKyabaNzSYhyQpl6X/w4kERr/4fb/4b03YP2vpg4PHeDDPzIsWZsb7/7RXW1jc2t4rbpZ3dvf2D8uFRy8hUE9okkkvdibChnAnatMxy2lGa4iTitB2Nb2d++4lqw6R4sBNFwwQPBYsZwdZJrZ5UPDX9csWv+nOgVRLkpAI5Gv3yV28gSZpQYQnHxnQDX9kww9oywum01EsNVZiM8ZB2HRU4oSbM5tdO0ZlTBiiW2pWwaK7+nshwYswkiVxngu3ILHsz8T+vm9r4OsyYUKmlgiwWxSlHVqLZ62jANCWWTxzBRDN3KyIjrDGxLqCSCyFYfnmVtC6qQa1au7+s1G/yOIpwAqdwDgFcQR3uoAFNIPAIz/AKb570Xrx372PRWvDymWP4A+/zB9Jcj0w=</latexit> 
+
+ 
+
+<latexit sha1_base64="2F/jePa4dC+Rg8IOXo7zx29k03s=">AAAB7XicbVBNSwMxEJ2tX7V+VT16CRbBU9kVqZ6k4MVjBfsB7VKyabaNzSYhyQpl6X/w4kERr/4fb/4b03YP2vpg4PHeDDPzIsWZsb7/7RXW1jc2t4rbpZ3dvf2D8uFRy8hUE9okkkvdibChnAnatMxy2lGa4iTitB2Nb2d++4lqw6R4sBNFwwQPBYsZwdZJrZ5UPDX9csWv+nOgVRLkpAI5Gv3yV28gSZpQYQnHxnQDX9kww9oywum01EsNVZiM8ZB2HRU4oSbM5tdO0ZlTBiiW2pWwaK7+nshwYswkiVxngu3ILHsz8T+vm9r4OsyYUKmlgiwWxSlHVqLZ62jANCWWTxzBRDN3KyIjrDGxLqCSCyFYfnmVtC6qQa1au7+s1G/yOIpwAqdwDgFcQR3uoAFNIPAIz/AKb570Xrx372PRWvDymWP4A+/zB9Jcj0w=</latexit> 
+
+ 
+
+<latexit sha1_base64="2F/jePa4dC+Rg8IOXo7zx29k03s=">AAAB7XicbVBNSwMxEJ2tX7V+VT16CRbBU9kVqZ6k4MVjBfsB7VKyabaNzSYhyQpl6X/w4kERr/4fb/4b03YP2vpg4PHeDDPzIsWZsb7/7RXW1jc2t4rbpZ3dvf2D8uFRy8hUE9okkkvdibChnAnatMxy2lGa4iTitB2Nb2d++4lqw6R4sBNFwwQPBYsZwdZJrZ5UPDX9csWv+nOgVRLkpAI5Gv3yV28gSZpQYQnHxnQDX9kww9oywum01EsNVZiM8ZB2HRU4oSbM5tdO0ZlTBiiW2pWwaK7+nshwYswkiVxngu3ILHsz8T+vm9r4OsyYUKmlgiwWxSlHVqLZ62jANCWWTxzBRDN3KyIjrDGxLqCSCyFYfnmVtC6qQa1au7+s1G/yOIpwAqdwDgFcQR3uoAFNIPAIz/AKb570Xrx372PRWvDymWP4A+/zB9Jcj0w=</latexit> 
+
+ 
+
+<latexit sha1_base64="2F/jePa4dC+Rg8IOXo7zx29k03s=">AAAB7XicbVBNSwMxEJ2tX7V+VT16CRbBU9kVqZ6k4MVjBfsB7VKyabaNzSYhyQpl6X/w4kERr/4fb/4b03YP2vpg4PHeDDPzIsWZsb7/7RXW1jc2t4rbpZ3dvf2D8uFRy8hUE9okkkvdibChnAnatMxy2lGa4iTitB2Nb2d++4lqw6R4sBNFwwQPBYsZwdZJrZ5UPDX9csWv+nOgVRLkpAI5Gv3yV28gSZpQYQnHxnQDX9kww9oywum01EsNVZiM8ZB2HRU4oSbM5tdO0ZlTBiiW2pWwaK7+nshwYswkiVxngu3ILHsz8T+vm9r4OsyYUKmlgiwWxSlHVqLZ62jANCWWTxzBRDN3KyIjrDGxLqCSCyFYfnmVtC6qQa1au7+s1G/yOIpwAqdwDgFcQR3uoAFNIPAIz/AKb570Xrx372PRWvDymWP4A+/zB9Jcj0w=</latexit> 
+
+ 
+
+<latexit sha1_base64="g/PVSLanrCWWlArrQ/u/MvLY32s=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0lKqR4LXjxWtLXQhrLZbtqlm03YnQgl9Cd48aCIV3+RN/+N2zYHbX0w8Hhvhpl5QSKFQdf9dgobm1vbO8Xd0t7+weFR+fikY+JUM95msYx1N6CGS6F4GwVK3k00p1Eg+WMwuZn7j09cGxGrB5wm3I/oSIlQMIpWuleD2qBccavuAmSdeDmpQI7WoPzVH8YsjbhCJqkxPc9N0M+oRsEkn5X6qeEJZRM64j1LFY248bPFqTNyYZUhCWNtSyFZqL8nMhoZM40C2xlRHJtVby7+5/VSDK/9TKgkRa7YclGYSoIxmf9NhkJzhnJqCWVa2FsJG1NNGdp0SjYEb/XlddKpVb1GtXFXrzTreRxFOINzuAQPrqAJt9CCNjAYwTO8wpsjnRfn3flYthacfOYU/sD5/AH9RY2U</latexit> 
+
+n2
+
+<latexit sha1_base64="g/PVSLanrCWWlArrQ/u/MvLY32s=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0lKqR4LXjxWtLXQhrLZbtqlm03YnQgl9Cd48aCIV3+RN/+N2zYHbX0w8Hhvhpl5QSKFQdf9dgobm1vbO8Xd0t7+weFR+fikY+JUM95msYx1N6CGS6F4GwVK3k00p1Eg+WMwuZn7j09cGxGrB5wm3I/oSIlQMIpWuleD2qBccavuAmSdeDmpQI7WoPzVH8YsjbhCJqkxPc9N0M+oRsEkn5X6qeEJZRM64j1LFY248bPFqTNyYZUhCWNtSyFZqL8nMhoZM40C2xlRHJtVby7+5/VSDK/9TKgkRa7YclGYSoIxmf9NhkJzhnJqCWVa2FsJG1NNGdp0SjYEb/XlddKpVb1GtXFXrzTreRxFOINzuAQPrqAJt9CCNjAYwTO8wpsjnRfn3flYthacfOYU/sD5/AH9RY2U</latexit> 
+
+n2
+
+<latexit sha1_base64="4hu6SvV/PVpu0KNy/1qZR2M0my8=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipORqUK27VXYCsEy8nFcjRGJS/+sOYpRFKwwTVuue5ifEzqgxnAmelfqoxoWxCR9izVNIItZ8tDp2RC6sMSRgrW9KQhfp7IqOR1tMosJ0RNWO96s3F/7xeasJbP+MySQ1KtlwUpoKYmMy/JkOukBkxtYQyxe2thI2poszYbEo2BG/15XXSvqp6tWqteV2pX+dxFOEMzuESPLiBOtxDA1rAAOEZXuHNeXRenHfnY9lacPKZU/gD5/MHy9GM6A==</latexit> 
+
+g<latexit sha1_base64="4hu6SvV/PVpu0KNy/1qZR2M0my8=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipORqUK27VXYCsEy8nFcjRGJS/+sOYpRFKwwTVuue5ifEzqgxnAmelfqoxoWxCR9izVNIItZ8tDp2RC6sMSRgrW9KQhfp7IqOR1tMosJ0RNWO96s3F/7xeasJbP+MySQ1KtlwUpoKYmMy/JkOukBkxtYQyxe2thI2poszYbEo2BG/15XXSvqp6tWqteV2pX+dxFOEMzuESPLiBOtxDA1rAAOEZXuHNeXRenHfnY9lacPKZU/gD5/MHy9GM6A==</latexit> 
+
+g
+
+<latexit sha1_base64="OxqNHYM5GhZANXwNhBZQEdD7AfM=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipSQflilt1FyDrxMtJBXI0BuWv/jBmaYTSMEG17nluYvyMKsOZwFmpn2pMKJvQEfYslTRC7WeLQ2fkwipDEsbKljRkof6eyGik9TQKbGdEzVivenPxP6+XmvDWz7hMUoOSLReFqSAmJvOvyZArZEZMLaFMcXsrYWOqKDM2m5INwVt9eZ20r6perVprXlfq13kcRTiDc7gED26gDvfQgBYwQHiGV3hzHp0X5935WLYWnHzmFP7A+fwBwrmM4g==</latexit> 
+
+a<latexit sha1_base64="OxqNHYM5GhZANXwNhBZQEdD7AfM=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipSQflilt1FyDrxMtJBXI0BuWv/jBmaYTSMEG17nluYvyMKsOZwFmpn2pMKJvQEfYslTRC7WeLQ2fkwipDEsbKljRkof6eyGik9TQKbGdEzVivenPxP6+XmvDWz7hMUoOSLReFqSAmJvOvyZArZEZMLaFMcXsrYWOqKDM2m5INwVt9eZ20r6perVprXlfq13kcRTiDc7gED26gDvfQgBYwQHiGV3hzHp0X5935WLYWnHzmFP7A+fwBwrmM4g==</latexit> 
+
+a
+
+<latexit sha1_base64="Q/z3LnZkEKrhqj/2DTTp0nSRn1g=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipyQblilt1FyDrxMtJBXI0BuWv/jBmaYTSMEG17nluYvyMKsOZwFmpn2pMKJvQEfYslTRC7WeLQ2fkwipDEsbKljRkof6eyGik9TQKbGdEzVivenPxP6+XmvDWz7hMUoOSLReFqSAmJvOvyZArZEZMLaFMcXsrYWOqKDM2m5INwVt9eZ20r6perVprXlfq13kcRTiDc7gED26gDvfQgBYwQHiGV3hzHp0X5935WLYWnHzmFP7A+fwBxcGM5A==</latexit> 
+
+c<latexit sha1_base64="Q/z3LnZkEKrhqj/2DTTp0nSRn1g=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipyQblilt1FyDrxMtJBXI0BuWv/jBmaYTSMEG17nluYvyMKsOZwFmpn2pMKJvQEfYslTRC7WeLQ2fkwipDEsbKljRkof6eyGik9TQKbGdEzVivenPxP6+XmvDWz7hMUoOSLReFqSAmJvOvyZArZEZMLaFMcXsrYWOqKDM2m5INwVt9eZ20r6perVprXlfq13kcRTiDc7gED26gDvfQgBYwQHiGV3hzHp0X5935WLYWnHzmFP7A+fwBxcGM5A==</latexit> 
+
+c
+
+<latexit sha1_base64="NQFEBiA5DbH8cLfMSd5OEEMNCL8=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipGQzKFbfqLkDWiZeTCuRoDMpf/WHM0gilYYJq3fPcxPgZVYYzgbNSP9WYUDahI+xZKmmE2s8Wh87IhVWGJIyVLWnIQv09kdFI62kU2M6ImrFe9ebif14vNeGtn3GZpAYlWy4KU0FMTOZfkyFXyIyYWkKZ4vZWwsZUUWZsNiUbgrf68jppX1W9WrXWvK7Ur/M4inAG53AJHtxAHe6hAS1ggPAMr/DmPDovzrvzsWwtOPnMKfyB8/kDxD2M4w==</latexit> 
+
+b
+
+<latexit sha1_base64="NQFEBiA5DbH8cLfMSd5OEEMNCL8=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipGQzKFbfqLkDWiZeTCuRoDMpf/WHM0gilYYJq3fPcxPgZVYYzgbNSP9WYUDahI+xZKmmE2s8Wh87IhVWGJIyVLWnIQv09kdFI62kU2M6ImrFe9ebif14vNeGtn3GZpAYlWy4KU0FMTOZfkyFXyIyYWkKZ4vZWwsZUUWZsNiUbgrf68jppX1W9WrXWvK7Ur/M4inAG53AJHtxAHe6hAS1ggPAMr/DmPDovzrvzsWwtOPnMKfyB8/kDxD2M4w==</latexit> 
+
+b
+
+<latexit sha1_base64="Fd0Zw8krpOtNsiuQZrhZv2a/M1k=">AAAB6HicbVDLTgJBEOzFF+IL9ehlIjHxRHYNQY8kXjxCIo8ENmR2aGBkdnYzM0tCNnyBFw8a49VP8ubfOMAeFKykk0pVd7q7glhwbVz328ltbe/s7uX3CweHR8cnxdOzlo4SxbDJIhGpTkA1Ci6xabgR2IkV0jAQ2A4m9wu/PUWleSQfzSxGP6QjyYecUWOlxrRfLLlldwmySbyMlCBDvV/86g0iloQoDRNU667nxsZPqTKcCZwXeonGmLIJHWHXUklD1H66PHROrqwyIMNI2ZKGLNXfEykNtZ6Fge0MqRnrdW8h/ud1EzO881Mu48SgZKtFw0QQE5HF12TAFTIjZpZQpri9lbAxVZQZm03BhuCtv7xJWjdlr1quNiqlWiWLIw8XcAnX4MEt1OAB6tAEBgjP8ApvzpPz4rw7H6vWnJPNnMMfOJ8/4o2M9w==</latexit> 
+
+v<latexit sha1_base64="Fd0Zw8krpOtNsiuQZrhZv2a/M1k=">AAAB6HicbVDLTgJBEOzFF+IL9ehlIjHxRHYNQY8kXjxCIo8ENmR2aGBkdnYzM0tCNnyBFw8a49VP8ubfOMAeFKykk0pVd7q7glhwbVz328ltbe/s7uX3CweHR8cnxdOzlo4SxbDJIhGpTkA1Ci6xabgR2IkV0jAQ2A4m9wu/PUWleSQfzSxGP6QjyYecUWOlxrRfLLlldwmySbyMlCBDvV/86g0iloQoDRNU667nxsZPqTKcCZwXeonGmLIJHWHXUklD1H66PHROrqwyIMNI2ZKGLNXfEykNtZ6Fge0MqRnrdW8h/ud1EzO881Mu48SgZKtFw0QQE5HF12TAFTIjZpZQpri9lbAxVZQZm03BhuCtv7xJWjdlr1quNiqlWiWLIw8XcAnX4MEt1OAB6tAEBgjP8ApvzpPz4rw7H6vWnJPNnMMfOJ8/4o2M9w==</latexit> 
+
+v <latexit sha1_base64="TIrYZn/ZDgGE9t3CY0tyG7MYllA=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0mkVI8FLx4r2g9oQ9lsN+3SzSbsToQS+hO8eFDEq7/Im//GbZuDtj4YeLw3w8y8IJHCoOt+O4WNza3tneJuaW//4PCofHzSNnGqGW+xWMa6G1DDpVC8hQIl7yaa0yiQvBNMbud+54lrI2L1iNOE+xEdKREKRtFKD2rgDcoVt+ouQNaJl5MK5GgOyl/9YczSiCtkkhrT89wE/YxqFEzyWamfGp5QNqEj3rNU0YgbP1ucOiMXVhmSMNa2FJKF+nsio5Ex0yiwnRHFsVn15uJ/Xi/F8MbPhEpS5IotF4WpJBiT+d9kKDRnKKeWUKaFvZWwMdWUoU2nZEPwVl9eJ+2rqlev1u9rlUYtj6MIZ3AOl+DBNTTgDprQAgYjeIZXeHOk8+K8Ox/L1oKTz5zCHzifP/vBjZM=</latexit> 
+
+n1
+
+<latexit sha1_base64="TIrYZn/ZDgGE9t3CY0tyG7MYllA=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0mkVI8FLx4r2g9oQ9lsN+3SzSbsToQS+hO8eFDEq7/Im//GbZuDtj4YeLw3w8y8IJHCoOt+O4WNza3tneJuaW//4PCofHzSNnGqGW+xWMa6G1DDpVC8hQIl7yaa0yiQvBNMbud+54lrI2L1iNOE+xEdKREKRtFKD2rgDcoVt+ouQNaJl5MK5GgOyl/9YczSiCtkkhrT89wE/YxqFEzyWamfGp5QNqEj3rNU0YgbP1ucOiMXVhmSMNa2FJKF+nsio5Ex0yiwnRHFsVn15uJ/Xi/F8MbPhEpS5IotF4WpJBiT+d9kKDRnKKeWUKaFvZWwMdWUoU2nZEPwVl9eJ+2rqlev1u9rlUYtj6MIZ3AOl+DBNTTgDprQAgYjeIZXeHOk8+K8Ox/L1oKTz5zCHzifP/vBjZM=</latexit> 
+
+n1 <latexit sha1_base64="Io/0mmwxCTDMKKx0V2doPRq3p1Y=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0m0VI8FLx4rWltoQ9lsN+3SzSbsToQS+hO8eFDEq7/Im//GbZuDtj4YeLw3w8y8IJHCoOt+O4W19Y3NreJ2aWd3b/+gfHj0aOJUM95isYx1J6CGS6F4CwVK3kk0p1EgeTsY38z89hPXRsTqAScJ9yM6VCIUjKKV7lX/sl+uuFV3DrJKvJxUIEezX/7qDWKWRlwhk9SYrucm6GdUo2CST0u91PCEsjEd8q6likbc+Nn81Ck5s8qAhLG2pZDM1d8TGY2MmUSB7YwojsyyNxP/87ophtd+JlSSIldssShMJcGYzP4mA6E5QzmxhDIt7K2EjaimDG06JRuCt/zyKnm8qHr1av2uVmnU8jiKcAKncA4eXEEDbqEJLWAwhGd4hTdHOi/Ou/OxaC04+cwx/IHz+QP+yY2V</latexit> 
+
+n3
+
+<latexit sha1_base64="Io/0mmwxCTDMKKx0V2doPRq3p1Y=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0m0VI8FLx4rWltoQ9lsN+3SzSbsToQS+hO8eFDEq7/Im//GbZuDtj4YeLw3w8y8IJHCoOt+O4W19Y3NreJ2aWd3b/+gfHj0aOJUM95isYx1J6CGS6F4CwVK3kk0p1EgeTsY38z89hPXRsTqAScJ9yM6VCIUjKKV7lX/sl+uuFV3DrJKvJxUIEezX/7qDWKWRlwhk9SYrucm6GdUo2CST0u91PCEsjEd8q6likbc+Nn81Ck5s8qAhLG2pZDM1d8TGY2MmUSB7YwojsyyNxP/87ophtd+JlSSIldssShMJcGYzP4mA6E5QzmxhDIt7K2EjaimDG06JRuCt/zyKnm8qHr1av2uVmnU8jiKcAKncA4eXEEDbqEJLWAwhGd4hTdHOi/Ou/OxaC04+cwx/IHz+QP+yY2V</latexit> 
+
+n3
+
+<latexit sha1_base64="fHd2hDd7Vf2kj20tjfK9intIG64=">AAAB8HicbVBNSwMxEM3Wr1q/qh69BIvgqexKqV6Egh48VrAf0i4lm2bb0CS7JLNCWforvHhQxKs/x5v/xmy7B219MPB4b4aZeUEsuAHX/XYKa+sbm1vF7dLO7t7+QfnwqG2iRFPWopGIdDcghgmuWAs4CNaNNSMyEKwTTG4yv/PEtOGReoBpzHxJRoqHnBKw0mP/lgkg125pUK64VXcOvEq8nFRQjuag/NUfRjSRTAEVxJie58bgp0QDp4LNSv3EsJjQCRmxnqWKSGb8dH7wDJ9ZZYjDSNtSgOfq74mUSGOmMrCdksDYLHuZ+J/XSyC88lOu4gSYootFYSIwRDj7Hg+5ZhTE1BJCNbe3YjommlCwGWUheMsvr5L2RdWrV+v3tUqjlsdRRCfoFJ0jD12iBrpDTdRCFEn0jF7Rm6OdF+fd+Vi0Fpx85hj9gfP5A4qfj44=</latexit> 
+
+  = 0 
+
+<latexit sha1_base64="fHd2hDd7Vf2kj20tjfK9intIG64=">AAAB8HicbVBNSwMxEM3Wr1q/qh69BIvgqexKqV6Egh48VrAf0i4lm2bb0CS7JLNCWforvHhQxKs/x5v/xmy7B219MPB4b4aZeUEsuAHX/XYKa+sbm1vF7dLO7t7+QfnwqG2iRFPWopGIdDcghgmuWAs4CNaNNSMyEKwTTG4yv/PEtOGReoBpzHxJRoqHnBKw0mP/lgkg125pUK64VXcOvEq8nFRQjuag/NUfRjSRTAEVxJie58bgp0QDp4LNSv3EsJjQCRmxnqWKSGb8dH7wDJ9ZZYjDSNtSgOfq74mUSGOmMrCdksDYLHuZ+J/XSyC88lOu4gSYootFYSIwRDj7Hg+5ZhTE1BJCNbe3YjommlCwGWUheMsvr5L2RdWrV+v3tUqjlsdRRCfoFJ0jD12iBrpDTdRCFEn0jF7Rm6OdF+fd+Vi0Fpx85hj9gfP5A4qfj44=</latexit> 
+
+  = 0 <latexit sha1_base64="V76zEYhLaDaHP4KK6t3zh8Qeeqk=">AAAB8HicbVBNSwMxEJ2tX7V+VT16CRbBU9mVUr0IBT14rGA/pF1KNs22oUl2SbJCWforvHhQxKs/x5v/xmy7B219MPB4b4aZeUHMmTau++0U1tY3NreK26Wd3b39g/LhUVtHiSK0RSIeqW6ANeVM0pZhhtNurCgWAaedYHKT+Z0nqjSL5IOZxtQXeCRZyAg2Vnrs31Ju8LVXGpQrbtWdA60SLycVyNEclL/6w4gkgkpDONa657mx8VOsDCOczkr9RNMYkwke0Z6lEguq/XR+8AydWWWIwkjZkgbN1d8TKRZaT0VgOwU2Y73sZeJ/Xi8x4ZWfMhknhkqyWBQmHJkIZd+jIVOUGD61BBPF7K2IjLHCxNiMshC85ZdXSfui6tWr9ftapVHL4yjCCZzCOXhwCQ24gya0gICAZ3iFN0c5L86787FoLTj5zDH8gfP5A4wkj48=</latexit> 
+
+  = 1 
+
+<latexit sha1_base64="V76zEYhLaDaHP4KK6t3zh8Qeeqk=">AAAB8HicbVBNSwMxEJ2tX7V+VT16CRbBU9mVUr0IBT14rGA/pF1KNs22oUl2SbJCWforvHhQxKs/x5v/xmy7B219MPB4b4aZeUHMmTau++0U1tY3NreK26Wd3b39g/LhUVtHiSK0RSIeqW6ANeVM0pZhhtNurCgWAaedYHKT+Z0nqjSL5IOZxtQXeCRZyAg2Vnrs31Ju8LVXGpQrbtWdA60SLycVyNEclL/6w4gkgkpDONa657mx8VOsDCOczkr9RNMYkwke0Z6lEguq/XR+8AydWWWIwkjZkgbN1d8TKRZaT0VgOwU2Y73sZeJ/Xi8x4ZWfMhknhkqyWBQmHJkIZd+jIVOUGD61BBPF7K2IjLHCxNiMshC85ZdXSfui6tWr9ftapVHL4yjCCZzCOXhwCQ24gya0gICAZ3iFN0c5L86787FoLTj5zDH8gfP5A4wkj48=</latexit> 
+
+  = 1 <latexit sha1_base64="4f3VavtCObZ1GZ5hfaCbP123AE8=">AAAB73icbVA9SwNBEJ2LXzF+RS1tFoNgFe5CiDZCQAvLCCYGkiPsbeaSJXt75+6eEEL+hI2FIrb+HTv/jZvkCk18MPB4b4aZeUEiuDau++3k1tY3Nrfy24Wd3b39g+LhUUvHqWLYZLGIVTugGgWX2DTcCGwnCmkUCHwIRtcz/+EJleaxvDfjBP2IDiQPOaPGSu3uDQpDryq9Ysktu3OQVeJlpAQZGr3iV7cfszRCaZigWnc8NzH+hCrDmcBpoZtqTCgb0QF2LJU0Qu1P5vdOyZlV+iSMlS1pyFz9PTGhkdbjKLCdETVDvezNxP+8TmrCS3/CZZIalGyxKEwFMTGZPU/6XCEzYmwJZYrbWwkbUkWZsREVbAje8surpFUpe7Vy7a5aqlezOPJwAqdwDh5cQB1uoQFNYCDgGV7hzXl0Xpx352PRmnOymWP4A+fzB1baj3w=</latexit> 
+
+  = 2 
+
+<latexit sha1_base64="4f3VavtCObZ1GZ5hfaCbP123AE8=">AAAB73icbVA9SwNBEJ2LXzF+RS1tFoNgFe5CiDZCQAvLCCYGkiPsbeaSJXt75+6eEEL+hI2FIrb+HTv/jZvkCk18MPB4b4aZeUEiuDau++3k1tY3Nrfy24Wd3b39g+LhUUvHqWLYZLGIVTugGgWX2DTcCGwnCmkUCHwIRtcz/+EJleaxvDfjBP2IDiQPOaPGSu3uDQpDryq9Ysktu3OQVeJlpAQZGr3iV7cfszRCaZigWnc8NzH+hCrDmcBpoZtqTCgb0QF2LJU0Qu1P5vdOyZlV+iSMlS1pyFz9PTGhkdbjKLCdETVDvezNxP+8TmrCS3/CZZIalGyxKEwFMTGZPU/6XCEzYmwJZYrbWwkbUkWZsREVbAje8surpFUpe7Vy7a5aqlezOPJwAqdwDh5cQB1uoQFNYCDgGV7hzXl0Xpx352PRmnOymWP4A+fzB1baj3w=</latexit> 
+
+  = 2 <latexit sha1_base64="Ev05rBC/ZObWIgaK7ssp1Xsp+F0=">AAAB73icbVDLSgNBEOz1GeMr6tHLYBA8hV0N0YsQ0IPHCOYByRJmJ5NkyOzsOtMrhCU/4cWDIl79HW/+jZNkD5pY0FBUddPdFcRSGHTdb2dldW19YzO3ld/e2d3bLxwcNkyUaMbrLJKRbgXUcCkUr6NAyVux5jQMJG8Go5up33zi2ohIPeA45n5IB0r0BaNopVbnlkuk1xfdQtEtuTOQZeJlpAgZat3CV6cXsSTkCpmkxrQ9N0Y/pRoFk3yS7ySGx5SN6IC3LVU05MZPZ/dOyKlVeqQfaVsKyUz9PZHS0JhxGNjOkOLQLHpT8T+vnWD/yk+FihPkis0X9RNJMCLT50lPaM5Qji2hTAt7K2FDqilDG1HehuAtvrxMGuclr1Kq3JeL1XIWRw6O4QTOwINLqMId1KAODCQ8wyu8OY/Oi/PufMxbV5xs5gj+wPn8AVhej30=</latexit> 
+
+  = 3 
+
+<latexit sha1_base64="Ev05rBC/ZObWIgaK7ssp1Xsp+F0=">AAAB73icbVDLSgNBEOz1GeMr6tHLYBA8hV0N0YsQ0IPHCOYByRJmJ5NkyOzsOtMrhCU/4cWDIl79HW/+jZNkD5pY0FBUddPdFcRSGHTdb2dldW19YzO3ld/e2d3bLxwcNkyUaMbrLJKRbgXUcCkUr6NAyVux5jQMJG8Go5up33zi2ohIPeA45n5IB0r0BaNopVbnlkuk1xfdQtEtuTOQZeJlpAgZat3CV6cXsSTkCpmkxrQ9N0Y/pRoFk3yS7ySGx5SN6IC3LVU05MZPZ/dOyKlVeqQfaVsKyUz9PZHS0JhxGNjOkOLQLHpT8T+vnWD/yk+FihPkis0X9RNJMCLT50lPaM5Qji2hTAt7K2FDqilDG1HehuAtvrxMGuclr1Kq3JeL1XIWRw6O4QTOwINLqMId1KAODCQ8wyu8OY/Oi/PufMxbV5xs5gj+wPn8AVhej30=</latexit> 
+
+  = 3 <latexit sha1_base64="wMjlW0d2GFiBPPMyETANLKd5drI=">AAAB8XicbVDLSgNBEOyNrxhfUY9eBoPgKexKiF6EgB48RjAPTJYwO+kkQ2Znl5lZISz5Cy8eFPHq33jzb5wke9DEgoaiqpvuriAWXBvX/XZya+sbm1v57cLO7t7+QfHwqKmjRDFssEhEqh1QjYJLbBhuBLZjhTQMBLaC8c3Mbz2h0jySD2YSox/SoeQDzqix0mPavUVh6HVl2iuW3LI7B1klXkZKkKHeK351+xFLQpSGCap1x3Nj46dUGc4ETgvdRGNM2ZgOsWOppCFqP51fPCVnVumTQaRsSUPm6u+JlIZaT8LAdobUjPSyNxP/8zqJGVz5KZdxYlCyxaJBIoiJyOx90ucKmRETSyhT3N5K2IgqyowNqWBD8JZfXiXNi7JXLVfvK6VaJYsjDydwCufgwSXU4A7q0AAGEp7hFd4c7bw4787HojXnZDPH8AfO5w8i0JCK</latexit> 
+
+  = 4 
+
+<latexit sha1_base64="wMjlW0d2GFiBPPMyETANLKd5drI=">AAAB8XicbVDLSgNBEOyNrxhfUY9eBoPgKexKiF6EgB48RjAPTJYwO+kkQ2Znl5lZISz5Cy8eFPHq33jzb5wke9DEgoaiqpvuriAWXBvX/XZya+sbm1v57cLO7t7+QfHwqKmjRDFssEhEqh1QjYJLbBhuBLZjhTQMBLaC8c3Mbz2h0jySD2YSox/SoeQDzqix0mPavUVh6HVl2iuW3LI7B1klXkZKkKHeK351+xFLQpSGCap1x3Nj46dUGc4ETgvdRGNM2ZgOsWOppCFqP51fPCVnVumTQaRsSUPm6u+JlIZaT8LAdobUjPSyNxP/8zqJGVz5KZdxYlCyxaJBIoiJyOx90ucKmRETSyhT3N5K2IgqyowNqWBD8JZfXiXNi7JXLVfvK6VaJYsjDydwCufgwSXU4A7q0AAGEp7hFd4c7bw4787HojXnZDPH8AfO5w8i0JCK</latexit> 
+
+  = 4 
+
+Negatives 
+
+<latexit sha1_base64="UTx1jPxSoRDZMBfj42LoIkJ4EM4=">AAACCnicbVDLSsNAFJ34rPUVdekmWgquSqKluhEKurC7CvYBbQiT6aQdOnkwcyOUkLUbf8WNC0Xc+gXu/BsnbRBtPXDhcM693HuPG3EmwTS/tKXlldW19cJGcXNre2dX39tvyzAWhLZIyEPRdbGknAW0BQw47UaCYt/ltOOOrzK/c0+FZGFwB5OI2j4eBsxjBIOSHP2o3HCS/jXlgC+rabE/wpA00h/pLC06esmsmFMYi8TKSQnlaDr6Z38QktinARCOpexZZgR2ggUwwqnaEUsaYTLGQ9pTNMA+lXYyfSU1ykoZGF4oVAVgTNXfEwn2pZz4rur0MYzkvJeJ/3m9GLwLO2FBFAMNyGyRF3MDQiPLxRgwQQnwiSKYCKZuNcgIC0xApZeFYM2/vEjapxWrVqndVkv1ah5HAR2iY3SCLHSO6ugGNVELEfSAntALetUetWftTXuftS5p+cwB+gPt4xtjTZlp</latexit> 
+
+ˆI =3 
+
+<latexit sha1_base64="UTx1jPxSoRDZMBfj42LoIkJ4EM4=">AAACCnicbVDLSsNAFJ34rPUVdekmWgquSqKluhEKurC7CvYBbQiT6aQdOnkwcyOUkLUbf8WNC0Xc+gXu/BsnbRBtPXDhcM693HuPG3EmwTS/tKXlldW19cJGcXNre2dX39tvyzAWhLZIyEPRdbGknAW0BQw47UaCYt/ltOOOrzK/c0+FZGFwB5OI2j4eBsxjBIOSHP2o3HCS/jXlgC+rabE/wpA00h/pLC06esmsmFMYi8TKSQnlaDr6Z38QktinARCOpexZZgR2ggUwwqnaEUsaYTLGQ9pTNMA+lXYyfSU1ykoZGF4oVAVgTNXfEwn2pZz4rur0MYzkvJeJ/3m9GLwLO2FBFAMNyGyRF3MDQiPLxRgwQQnwiSKYCKZuNcgIC0xApZeFYM2/vEjapxWrVqndVkv1ah5HAR2iY3SCLHSO6ugGNVELEfSAntALetUetWftTXuftS5p+cwB+gPt4xtjTZlp</latexit> 
+
+ˆI =3 
+
+<latexit sha1_base64="KvE4iS088juuGHtVWfY89FRvIBk=">AAAB+3icbVBNS8NAEN3Ur1q/Yj16CRbBU0lKqV6Egh70VsHWQhPCZrtpl242YXcilpC/4sWDIl79I978N27bHLT1wcDjvRlm5gUJZwps+9sora1vbG6Vtys7u3v7B+ZhtafiVBLaJTGPZT/AinImaBcYcNpPJMVRwOlDMLma+Q+PVCoWi3uYJtSL8EiwkBEMWvLNqjvGkN3mfuZeUw74spH7Zs2u23NYq8QpSA0V6PjmlzuMSRpRAYRjpQaOnYCXYQmMcJpX3FTRBJMJHtGBpgJHVHnZ/PbcOtXK0ApjqUuANVd/T2Q4UmoaBbozwjBWy95M/M8bpBBeeBkTSQpUkMWiMOUWxNYsCGvIJCXAp5pgIpm+1SJjLDEBHVdFh+Asv7xKeo2606q37pq1drOIo4yO0Qk6Qw46R210gzqoiwh6Qs/oFb0ZufFivBsfi9aSUcwcoT8wPn8AzeGUQg==</latexit> 
+
+ˆI =2 
+
+<latexit sha1_base64="KvE4iS088juuGHtVWfY89FRvIBk=">AAAB+3icbVBNS8NAEN3Ur1q/Yj16CRbBU0lKqV6Egh70VsHWQhPCZrtpl242YXcilpC/4sWDIl79I978N27bHLT1wcDjvRlm5gUJZwps+9sora1vbG6Vtys7u3v7B+ZhtafiVBLaJTGPZT/AinImaBcYcNpPJMVRwOlDMLma+Q+PVCoWi3uYJtSL8EiwkBEMWvLNqjvGkN3mfuZeUw74spH7Zs2u23NYq8QpSA0V6PjmlzuMSRpRAYRjpQaOnYCXYQmMcJpX3FTRBJMJHtGBpgJHVHnZ/PbcOtXK0ApjqUuANVd/T2Q4UmoaBbozwjBWy95M/M8bpBBeeBkTSQpUkMWiMOUWxNYsCGvIJCXAp5pgIpm+1SJjLDEBHVdFh+Asv7xKeo2606q37pq1drOIo4yO0Qk6Qw46R210gzqoiwh6Qs/oFb0ZufFivBsfi9aSUcwcoT8wPn8AzeGUQg==</latexit> 
+
+ˆI =2 
+
+<latexit sha1_base64="TIrYZn/ZDgGE9t3CY0tyG7MYllA=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0mkVI8FLx4r2g9oQ9lsN+3SzSbsToQS+hO8eFDEq7/Im//GbZuDtj4YeLw3w8y8IJHCoOt+O4WNza3tneJuaW//4PCofHzSNnGqGW+xWMa6G1DDpVC8hQIl7yaa0yiQvBNMbud+54lrI2L1iNOE+xEdKREKRtFKD2rgDcoVt+ouQNaJl5MK5GgOyl/9YczSiCtkkhrT89wE/YxqFEzyWamfGp5QNqEj3rNU0YgbP1ucOiMXVhmSMNa2FJKF+nsio5Ex0yiwnRHFsVn15uJ/Xi/F8MbPhEpS5IotF4WpJBiT+d9kKDRnKKeWUKaFvZWwMdWUoU2nZEPwVl9eJ+2rqlev1u9rlUYtj6MIZ3AOl+DBNTTgDprQAgYjeIZXeHOk8+K8Ox/L1oKTz5zCHzifP/vBjZM=</latexit> 
+
+n1
+
+<latexit sha1_base64="TIrYZn/ZDgGE9t3CY0tyG7MYllA=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0mkVI8FLx4r2g9oQ9lsN+3SzSbsToQS+hO8eFDEq7/Im//GbZuDtj4YeLw3w8y8IJHCoOt+O4WNza3tneJuaW//4PCofHzSNnGqGW+xWMa6G1DDpVC8hQIl7yaa0yiQvBNMbud+54lrI2L1iNOE+xEdKREKRtFKD2rgDcoVt+ouQNaJl5MK5GgOyl/9YczSiCtkkhrT89wE/YxqFEzyWamfGp5QNqEj3rNU0YgbP1ucOiMXVhmSMNa2FJKF+nsio5Ex0yiwnRHFsVn15uJ/Xi/F8MbPhEpS5IotF4WpJBiT+d9kKDRnKKeWUKaFvZWwMdWUoU2nZEPwVl9eJ+2rqlev1u9rlUYtj6MIZ3AOl+DBNTTgDprQAgYjeIZXeHOk8+K8Ox/L1oKTz5zCHzifP/vBjZM=</latexit> 
+
+n1
+
+<latexit sha1_base64="g/PVSLanrCWWlArrQ/u/MvLY32s=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0lKqR4LXjxWtLXQhrLZbtqlm03YnQgl9Cd48aCIV3+RN/+N2zYHbX0w8Hhvhpl5QSKFQdf9dgobm1vbO8Xd0t7+weFR+fikY+JUM95msYx1N6CGS6F4GwVK3k00p1Eg+WMwuZn7j09cGxGrB5wm3I/oSIlQMIpWuleD2qBccavuAmSdeDmpQI7WoPzVH8YsjbhCJqkxPc9N0M+oRsEkn5X6qeEJZRM64j1LFY248bPFqTNyYZUhCWNtSyFZqL8nMhoZM40C2xlRHJtVby7+5/VSDK/9TKgkRa7YclGYSoIxmf9NhkJzhnJqCWVa2FsJG1NNGdp0SjYEb/XlddKpVb1GtXFXrzTreRxFOINzuAQPrqAJt9CCNjAYwTO8wpsjnRfn3flYthacfOYU/sD5/AH9RY2U</latexit> 
+
+n2
+
+<latexit sha1_base64="g/PVSLanrCWWlArrQ/u/MvLY32s=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0lKqR4LXjxWtLXQhrLZbtqlm03YnQgl9Cd48aCIV3+RN/+N2zYHbX0w8Hhvhpl5QSKFQdf9dgobm1vbO8Xd0t7+weFR+fikY+JUM95msYx1N6CGS6F4GwVK3k00p1Eg+WMwuZn7j09cGxGrB5wm3I/oSIlQMIpWuleD2qBccavuAmSdeDmpQI7WoPzVH8YsjbhCJqkxPc9N0M+oRsEkn5X6qeEJZRM64j1LFY248bPFqTNyYZUhCWNtSyFZqL8nMhoZM40C2xlRHJtVby7+5/VSDK/9TKgkRa7YclGYSoIxmf9NhkJzhnJqCWVa2FsJG1NNGdp0SjYEb/XlddKpVb1GtXFXrzTreRxFOINzuAQPrqAJt9CCNjAYwTO8wpsjnRfn3flYthacfOYU/sD5/AH9RY2U</latexit> 
+
+n2
+
+<latexit sha1_base64="OxqNHYM5GhZANXwNhBZQEdD7AfM=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipSQflilt1FyDrxMtJBXI0BuWv/jBmaYTSMEG17nluYvyMKsOZwFmpn2pMKJvQEfYslTRC7WeLQ2fkwipDEsbKljRkof6eyGik9TQKbGdEzVivenPxP6+XmvDWz7hMUoOSLReFqSAmJvOvyZArZEZMLaFMcXsrYWOqKDM2m5INwVt9eZ20r6perVprXlfq13kcRTiDc7gED26gDvfQgBYwQHiGV3hzHp0X5935WLYWnHzmFP7A+fwBwrmM4g==</latexit> 
+
+a<latexit sha1_base64="OxqNHYM5GhZANXwNhBZQEdD7AfM=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipSQflilt1FyDrxMtJBXI0BuWv/jBmaYTSMEG17nluYvyMKsOZwFmpn2pMKJvQEfYslTRC7WeLQ2fkwipDEsbKljRkof6eyGik9TQKbGdEzVivenPxP6+XmvDWz7hMUoOSLReFqSAmJvOvyZArZEZMLaFMcXsrYWOqKDM2m5INwVt9eZ20r6perVprXlfq13kcRTiDc7gED26gDvfQgBYwQHiGV3hzHp0X5935WLYWnHzmFP7A+fwBwrmM4g==</latexit> 
+
+a
+
+<latexit sha1_base64="Q/z3LnZkEKrhqj/2DTTp0nSRn1g=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipyQblilt1FyDrxMtJBXI0BuWv/jBmaYTSMEG17nluYvyMKsOZwFmpn2pMKJvQEfYslTRC7WeLQ2fkwipDEsbKljRkof6eyGik9TQKbGdEzVivenPxP6+XmvDWz7hMUoOSLReFqSAmJvOvyZArZEZMLaFMcXsrYWOqKDM2m5INwVt9eZ20r6perVprXlfq13kcRTiDc7gED26gDvfQgBYwQHiGV3hzHp0X5935WLYWnHzmFP7A+fwBxcGM5A==</latexit> 
+
+c<latexit sha1_base64="Q/z3LnZkEKrhqj/2DTTp0nSRn1g=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipyQblilt1FyDrxMtJBXI0BuWv/jBmaYTSMEG17nluYvyMKsOZwFmpn2pMKJvQEfYslTRC7WeLQ2fkwipDEsbKljRkof6eyGik9TQKbGdEzVivenPxP6+XmvDWz7hMUoOSLReFqSAmJvOvyZArZEZMLaFMcXsrYWOqKDM2m5INwVt9eZ20r6perVprXlfq13kcRTiDc7gED26gDvfQgBYwQHiGV3hzHp0X5935WLYWnHzmFP7A+fwBxcGM5A==</latexit> 
+
+c
+
+<latexit sha1_base64="NQFEBiA5DbH8cLfMSd5OEEMNCL8=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipGQzKFbfqLkDWiZeTCuRoDMpf/WHM0gilYYJq3fPcxPgZVYYzgbNSP9WYUDahI+xZKmmE2s8Wh87IhVWGJIyVLWnIQv09kdFI62kU2M6ImrFe9ebif14vNeGtn3GZpAYlWy4KU0FMTOZfkyFXyIyYWkKZ4vZWwsZUUWZsNiUbgrf68jppX1W9WrXWvK7Ur/M4inAG53AJHtxAHe6hAS1ggPAMr/DmPDovzrvzsWwtOPnMKfyB8/kDxD2M4w==</latexit> 
+
+b
+
+<latexit sha1_base64="NQFEBiA5DbH8cLfMSd5OEEMNCL8=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipGQzKFbfqLkDWiZeTCuRoDMpf/WHM0gilYYJq3fPcxPgZVYYzgbNSP9WYUDahI+xZKmmE2s8Wh87IhVWGJIyVLWnIQv09kdFI62kU2M6ImrFe9ebif14vNeGtn3GZpAYlWy4KU0FMTOZfkyFXyIyYWkKZ4vZWwsZUUWZsNiUbgrf68jppX1W9WrXWvK7Ur/M4inAG53AJHtxAHe6hAS1ggPAMr/DmPDovzrvzsWwtOPnMKfyB8/kDxD2M4w==</latexit> 
+
+b Mask 
+
+Matrix 
+
+Positives 
+
+<latexit sha1_base64="4hu6SvV/PVpu0KNy/1qZR2M0my8=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipORqUK27VXYCsEy8nFcjRGJS/+sOYpRFKwwTVuue5ifEzqgxnAmelfqoxoWxCR9izVNIItZ8tDp2RC6sMSRgrW9KQhfp7IqOR1tMosJ0RNWO96s3F/7xeasJbP+MySQ1KtlwUpoKYmMy/JkOukBkxtYQyxe2thI2poszYbEo2BG/15XXSvqp6tWqteV2pX+dxFOEMzuESPLiBOtxDA1rAAOEZXuHNeXRenHfnY9lacPKZU/gD5/MHy9GM6A==</latexit> 
+
+g<latexit sha1_base64="4hu6SvV/PVpu0KNy/1qZR2M0my8=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipORqUK27VXYCsEy8nFcjRGJS/+sOYpRFKwwTVuue5ifEzqgxnAmelfqoxoWxCR9izVNIItZ8tDp2RC6sMSRgrW9KQhfp7IqOR1tMosJ0RNWO96s3F/7xeasJbP+MySQ1KtlwUpoKYmMy/JkOukBkxtYQyxe2thI2poszYbEo2BG/15XXSvqp6tWqteV2pX+dxFOEMzuESPLiBOtxDA1rAAOEZXuHNeXRenHfnY9lacPKZU/gD5/MHy9GM6A==</latexit> 
+
+g
+
+<latexit sha1_base64="TIrYZn/ZDgGE9t3CY0tyG7MYllA=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0mkVI8FLx4r2g9oQ9lsN+3SzSbsToQS+hO8eFDEq7/Im//GbZuDtj4YeLw3w8y8IJHCoOt+O4WNza3tneJuaW//4PCofHzSNnGqGW+xWMa6G1DDpVC8hQIl7yaa0yiQvBNMbud+54lrI2L1iNOE+xEdKREKRtFKD2rgDcoVt+ouQNaJl5MK5GgOyl/9YczSiCtkkhrT89wE/YxqFEzyWamfGp5QNqEj3rNU0YgbP1ucOiMXVhmSMNa2FJKF+nsio5Ex0yiwnRHFsVn15uJ/Xi/F8MbPhEpS5IotF4WpJBiT+d9kKDRnKKeWUKaFvZWwMdWUoU2nZEPwVl9eJ+2rqlev1u9rlUYtj6MIZ3AOl+DBNTTgDprQAgYjeIZXeHOk8+K8Ox/L1oKTz5zCHzifP/vBjZM=</latexit> 
+
+n1
+
+<latexit sha1_base64="TIrYZn/ZDgGE9t3CY0tyG7MYllA=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0mkVI8FLx4r2g9oQ9lsN+3SzSbsToQS+hO8eFDEq7/Im//GbZuDtj4YeLw3w8y8IJHCoOt+O4WNza3tneJuaW//4PCofHzSNnGqGW+xWMa6G1DDpVC8hQIl7yaa0yiQvBNMbud+54lrI2L1iNOE+xEdKREKRtFKD2rgDcoVt+ouQNaJl5MK5GgOyl/9YczSiCtkkhrT89wE/YxqFEzyWamfGp5QNqEj3rNU0YgbP1ucOiMXVhmSMNa2FJKF+nsio5Ex0yiwnRHFsVn15uJ/Xi/F8MbPhEpS5IotF4WpJBiT+d9kKDRnKKeWUKaFvZWwMdWUoU2nZEPwVl9eJ+2rqlev1u9rlUYtj6MIZ3AOl+DBNTTgDprQAgYjeIZXeHOk8+K8Ox/L1oKTz5zCHzifP/vBjZM=</latexit> 
+
+n1
+
+<latexit sha1_base64="g/PVSLanrCWWlArrQ/u/MvLY32s=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0lKqR4LXjxWtLXQhrLZbtqlm03YnQgl9Cd48aCIV3+RN/+N2zYHbX0w8Hhvhpl5QSKFQdf9dgobm1vbO8Xd0t7+weFR+fikY+JUM95msYx1N6CGS6F4GwVK3k00p1Eg+WMwuZn7j09cGxGrB5wm3I/oSIlQMIpWuleD2qBccavuAmSdeDmpQI7WoPzVH8YsjbhCJqkxPc9N0M+oRsEkn5X6qeEJZRM64j1LFY248bPFqTNyYZUhCWNtSyFZqL8nMhoZM40C2xlRHJtVby7+5/VSDK/9TKgkRa7YclGYSoIxmf9NhkJzhnJqCWVa2FsJG1NNGdp0SjYEb/XlddKpVb1GtXFXrzTreRxFOINzuAQPrqAJt9CCNjAYwTO8wpsjnRfn3flYthacfOYU/sD5/AH9RY2U</latexit> 
+
+n2
+
+<latexit sha1_base64="g/PVSLanrCWWlArrQ/u/MvLY32s=">AAAB6nicbVBNS8NAEJ3Ur1q/qh69LBbBU0lKqR4LXjxWtLXQhrLZbtqlm03YnQgl9Cd48aCIV3+RN/+N2zYHbX0w8Hhvhpl5QSKFQdf9dgobm1vbO8Xd0t7+weFR+fikY+JUM95msYx1N6CGS6F4GwVK3k00p1Eg+WMwuZn7j09cGxGrB5wm3I/oSIlQMIpWuleD2qBccavuAmSdeDmpQI7WoPzVH8YsjbhCJqkxPc9N0M+oRsEkn5X6qeEJZRM64j1LFY248bPFqTNyYZUhCWNtSyFZqL8nMhoZM40C2xlRHJtVby7+5/VSDK/9TKgkRa7YclGYSoIxmf9NhkJzhnJqCWVa2FsJG1NNGdp0SjYEb/XlddKpVb1GtXFXrzTreRxFOINzuAQPrqAJt9CCNjAYwTO8wpsjnRfn3flYthacfOYU/sD5/AH9RY2U</latexit> 
+
+n2
+
+<latexit sha1_base64="OxqNHYM5GhZANXwNhBZQEdD7AfM=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipSQflilt1FyDrxMtJBXI0BuWv/jBmaYTSMEG17nluYvyMKsOZwFmpn2pMKJvQEfYslTRC7WeLQ2fkwipDEsbKljRkof6eyGik9TQKbGdEzVivenPxP6+XmvDWz7hMUoOSLReFqSAmJvOvyZArZEZMLaFMcXsrYWOqKDM2m5INwVt9eZ20r6perVprXlfq13kcRTiDc7gED26gDvfQgBYwQHiGV3hzHp0X5935WLYWnHzmFP7A+fwBwrmM4g==</latexit> 
+
+a<latexit sha1_base64="OxqNHYM5GhZANXwNhBZQEdD7AfM=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipSQflilt1FyDrxMtJBXI0BuWv/jBmaYTSMEG17nluYvyMKsOZwFmpn2pMKJvQEfYslTRC7WeLQ2fkwipDEsbKljRkof6eyGik9TQKbGdEzVivenPxP6+XmvDWz7hMUoOSLReFqSAmJvOvyZArZEZMLaFMcXsrYWOqKDM2m5INwVt9eZ20r6perVprXlfq13kcRTiDc7gED26gDvfQgBYwQHiGV3hzHp0X5935WLYWnHzmFP7A+fwBwrmM4g==</latexit> 
+
+a
+
+<latexit sha1_base64="Q/z3LnZkEKrhqj/2DTTp0nSRn1g=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipyQblilt1FyDrxMtJBXI0BuWv/jBmaYTSMEG17nluYvyMKsOZwFmpn2pMKJvQEfYslTRC7WeLQ2fkwipDEsbKljRkof6eyGik9TQKbGdEzVivenPxP6+XmvDWz7hMUoOSLReFqSAmJvOvyZArZEZMLaFMcXsrYWOqKDM2m5INwVt9eZ20r6perVprXlfq13kcRTiDc7gED26gDvfQgBYwQHiGV3hzHp0X5935WLYWnHzmFP7A+fwBxcGM5A==</latexit> 
+
+c<latexit sha1_base64="Q/z3LnZkEKrhqj/2DTTp0nSRn1g=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipyQblilt1FyDrxMtJBXI0BuWv/jBmaYTSMEG17nluYvyMKsOZwFmpn2pMKJvQEfYslTRC7WeLQ2fkwipDEsbKljRkof6eyGik9TQKbGdEzVivenPxP6+XmvDWz7hMUoOSLReFqSAmJvOvyZArZEZMLaFMcXsrYWOqKDM2m5INwVt9eZ20r6perVprXlfq13kcRTiDc7gED26gDvfQgBYwQHiGV3hzHp0X5935WLYWnHzmFP7A+fwBxcGM5A==</latexit> 
+
+c
+
+<latexit sha1_base64="NQFEBiA5DbH8cLfMSd5OEEMNCL8=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipGQzKFbfqLkDWiZeTCuRoDMpf/WHM0gilYYJq3fPcxPgZVYYzgbNSP9WYUDahI+xZKmmE2s8Wh87IhVWGJIyVLWnIQv09kdFI62kU2M6ImrFe9ebif14vNeGtn3GZpAYlWy4KU0FMTOZfkyFXyIyYWkKZ4vZWwsZUUWZsNiUbgrf68jppX1W9WrXWvK7Ur/M4inAG53AJHtxAHe6hAS1ggPAMr/DmPDovzrvzsWwtOPnMKfyB8/kDxD2M4w==</latexit> 
+
+b
+
+<latexit sha1_base64="NQFEBiA5DbH8cLfMSd5OEEMNCL8=">AAAB6HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseCF48t2A9oQ9lsJ+3azSbsboQS+gu8eFDEqz/Jm//GbZuDtj4YeLw3w8y8IBFcG9f9dgobm1vbO8Xd0t7+weFR+fikreNUMWyxWMSqG1CNgktsGW4EdhOFNAoEdoLJ3dzvPKHSPJYPZpqgH9GR5CFn1FipGQzKFbfqLkDWiZeTCuRoDMpf/WHM0gilYYJq3fPcxPgZVYYzgbNSP9WYUDahI+xZKmmE2s8Wh87IhVWGJIyVLWnIQv09kdFI62kU2M6ImrFe9ebif14vNeGtn3GZpAYlWy4KU0FMTOZfkyFXyIyYWkKZ4vZWwsZUUWZsNiUbgrf68jppX1W9WrXWvK7Ur/M4inAG53AJHtxAHe6hAS1ggPAMr/DmPDovzrvzsWwtOPnMKfyB8/kDxD2M4w==</latexit> 
+
+b
+
+<latexit sha1_base64="ylDGTst9ps4Ugss3p/BwvKoS/UU=">AAAB9XicbVDLSgNBEJz1GeMr6tHLYBA8hd0QohchoAe9RTAPSNYwO+lNhsw+mOlVwpL/8OJBEa/+izf/xkmyB00saCiquunu8mIpNNr2t7Wyura+sZnbym/v7O7tFw4OmzpKFIcGj2Sk2h7TIEUIDRQooR0rYIEnoeWNrqZ+6xGUFlF4j+MY3IANQuELztBID7e9tHsNEhm9pOVJr1C0S/YMdJk4GSmSDPVe4avbj3gSQIhcMq07jh2jmzKFgkuY5LuJhpjxERtAx9CQBaDddHb1hJ4apU/9SJkKkc7U3xMpC7QeB57pDBgO9aI3Ff/zOgn6F24qwjhBCPl8kZ9IihGdRkD7QgFHOTaEcSXMrZQPmWIcTVB5E4Kz+PIyaZZLTrVUvasUa5Usjhw5JifkjDjknNTIDamTBuFEkWfySt6sJ+vFerc+5q0rVjZzRP7A+vwBIhCRmA==</latexit> 
+
+I =2 
+
+<latexit sha1_base64="ylDGTst9ps4Ugss3p/BwvKoS/UU=">AAAB9XicbVDLSgNBEJz1GeMr6tHLYBA8hd0QohchoAe9RTAPSNYwO+lNhsw+mOlVwpL/8OJBEa/+izf/xkmyB00saCiquunu8mIpNNr2t7Wyura+sZnbym/v7O7tFw4OmzpKFIcGj2Sk2h7TIEUIDRQooR0rYIEnoeWNrqZ+6xGUFlF4j+MY3IANQuELztBID7e9tHsNEhm9pOVJr1C0S/YMdJk4GSmSDPVe4avbj3gSQIhcMq07jh2jmzKFgkuY5LuJhpjxERtAx9CQBaDddHb1hJ4apU/9SJkKkc7U3xMpC7QeB57pDBgO9aI3Ff/zOgn6F24qwjhBCPl8kZ9IihGdRkD7QgFHOTaEcSXMrZQPmWIcTVB5E4Kz+PIyaZZLTrVUvasUa5Usjhw5JifkjDjknNTIDamTBuFEkWfySt6sJ+vFerc+5q0rVjZzRP7A+vwBIhCRmA==</latexit> 
+
+I =2 
+
+<latexit sha1_base64="vzkVIj4j6Zwo60+5tsEH60/75iU=">AAAB9XicbVBNS8NAEN3Ur1q/qh69BIvgqSRaqhehoAe9VbAf0May2U7apZtN2J0oJeR/ePGgiFf/izf/jduPg1YfDDzem2Fmnh8LrtFxvqzc0vLK6lp+vbCxubW9U9zda+ooUQwaLBKRavtUg+ASGshRQDtWQENfQMsfXU781gMozSN5h+MYvJAOJA84o2ik+/Sml3avQCC9OM2yXrHklJ0p7L/EnZMSmaPeK352+xFLQpDIBNW64zoxeilVyJmArNBNNMSUjegAOoZKGoL20unVmX1klL4dRMqURHuq/pxIaaj1OPRNZ0hxqBe9ifif10kwOPdSLuMEQbLZoiARNkb2JAK7zxUwFGNDKFPc3GqzIVWUoQmqYEJwF1/+S5onZbdart5WSrXKPI48OSCH5Ji45IzUyDWpkwZhRJEn8kJerUfr2Xqz3metOWs+s09+wfr4Bj1KklE=</latexit> 
+
+I =3 
+
+<latexit sha1_base64="vzkVIj4j6Zwo60+5tsEH60/75iU=">AAAB9XicbVBNS8NAEN3Ur1q/qh69BIvgqSRaqhehoAe9VbAf0May2U7apZtN2J0oJeR/ePGgiFf/izf/jduPg1YfDDzem2Fmnh8LrtFxvqzc0vLK6lp+vbCxubW9U9zda+ooUQwaLBKRavtUg+ASGshRQDtWQENfQMsfXU781gMozSN5h+MYvJAOJA84o2ik+/Sml3avQCC9OM2yXrHklJ0p7L/EnZMSmaPeK352+xFLQpDIBNW64zoxeilVyJmArNBNNMSUjegAOoZKGoL20unVmX1klL4dRMqURHuq/pxIaaj1OPRNZ0hxqBe9ifif10kwOPdSLuMEQbLZoiARNkb2JAK7zxUwFGNDKFPc3GqzIVWUoQmqYEJwF1/+S5onZbdart5WSrXKPI48OSCH5Ji45IzUyDWpkwZhRJEn8kJerUfr2Xqz3metOWs+s09+wfr4Bj1KklE=</latexit> 
+
+I =3 
+
+<latexit sha1_base64="XGeHnhEdHhg/neHscNfFpz0FXBM=">AAAB83icbVBNS8NAEJ3Ur1q/qh69BIvgqSRSqhehoAe9VbAf0ISy2U7apZtN2N0IJfRvePGgiFf/jDf/jds2B219MPB4b4aZeUHCmdKO820V1tY3NreK26Wd3b39g/LhUVvFqaTYojGPZTcgCjkT2NJMc+wmEkkUcOwE45uZ33lCqVgsHvUkQT8iQ8FCRok2knffz7xb5Jpc16b9csWpOnPYq8TNSQVyNPvlL28Q0zRCoSknSvVcJ9F+RqRmlOO05KUKE0LHZIg9QwWJUPnZ/OapfWaUgR3G0pTQ9lz9PZGRSKlJFJjOiOiRWvZm4n9eL9XhlZ8xkaQaBV0sClNu69ieBWAPmESq+cQQQiUzt9p0RCSh2sRUMiG4yy+vkvZF1a1X6w+1SqOWx1GEEziFc3DhEhpwB01oAYUEnuEV3qzUerHerY9Fa8HKZ47hD6zPH3JGkUY=</latexit> 
+
+I =4 
+
+<latexit sha1_base64="XGeHnhEdHhg/neHscNfFpz0FXBM=">AAAB83icbVBNS8NAEJ3Ur1q/qh69BIvgqSRSqhehoAe9VbAf0ISy2U7apZtN2N0IJfRvePGgiFf/jDf/jds2B219MPB4b4aZeUHCmdKO820V1tY3NreK26Wd3b39g/LhUVvFqaTYojGPZTcgCjkT2NJMc+wmEkkUcOwE45uZ33lCqVgsHvUkQT8iQ8FCRok2knffz7xb5Jpc16b9csWpOnPYq8TNSQVyNPvlL28Q0zRCoSknSvVcJ9F+RqRmlOO05KUKE0LHZIg9QwWJUPnZ/OapfWaUgR3G0pTQ9lz9PZGRSKlJFJjOiOiRWvZm4n9eL9XhlZ8xkaQaBV0sClNu69ieBWAPmESq+cQQQiUzt9p0RCSh2sRUMiG4yy+vkvZF1a1X6w+1SqOWx1GEEziFc3DhEhpwB01oAYUEnuEV3qzUerHerY9Fa8HKZ47hD6zPH3JGkUY=</latexit> 
+
+I =4 Figure 3: The framework of the physics-guided contrastive learning scheme, named the KCL Loss analysis of the current values at different depths. Our key idea is to preserve this equivalence in the analog circuit em-bedding space at different depths: 
+
+I∆ = I∆′ ,
+
+X h(l)
+
+{i:D(i,v)= ∆−l} = X h(l)
+
+{j:D(j,v)= ∆′−l}, (4) where ∆ and ∆′ are different depths of current analog cir-cuit graph. The electrical equivalence relation ” ⇔” is an equivalence relation under the constraint of Equation (4). For all device sets within one equivalent depth, the sum of the embeddings of all devices they consist of should be equal. This equation finds a natural equivalence that exists in universal analog circuits with the same current inputs and outputs. 
+
+Electrical Equivalence as Positives . For an analog circuit DAG graph Gi = Vid, Vin, Ei , we first use the GNN en-coder to process all nodes from different depths in this graph and get their embeddings. As shown in Figure 3, the subcir-cuit embedding pairs (I∆, I∆′ ) from different depths are treated as positive pairs, whose embedding discrepancy will be minimized. According to Equation (4), a straightforward loss function is therefore: 
+
+L =
+
+dX
+
+∆′̸ =∆
+
+sim (I∆, I∆′ ),
+
+where sim ( v1, v2) is the cosine similarity function 
+
+v⊤
+
+1 v2
+
+∥v1∥·∥ v2∥ as in (He et al. 2020), and d is the maximum depth. This simple constraint is critical for enhancing the qual-ity of analog circuit embeddings. We show that by enforcing such constraints, the trained neural network can thus pre-serve the electrical characteristic of KCL with the following theorem: 
+
+Theorem 2 (Kirchhoff’s Current Law preservation) Let 
+
+{I∆1 , I∆2 , . . . , I∆n } and {I∆′
+
+1 , I∆′
+
+2 , . . . , I∆′
+
+n } be two sets of vectors in Rd, where n ≤ d and 0 ≤ ∆i, ∆′
+
+i < d , and d
+
+is the longest distance of the the analog circuit graph. Then, there exists a non-trivial linear map ϕ : Rd → R such that 
+
+ϕ(I∆i ) = ϕ(I∆′
+
+i ) for all i = 1 , 2, . . . , n .
+
+The proof of this theorem is provided in Appendix A.7. The theorem shows that for the current embeddings of differ-ent layers, there always exists a nonlinear mapping function that determines the input and output current values, with the algebraic sum satisfying KCL. Based on that, we also have the following corollary , with the proof also attached in Ap-pendix A.7: 
+
+Corollary 1 Suppose that for each i, the distance between the corresponding vectors after normalization is sufficiently small, i.e., 1 − ˆI⊤
+
+∆i
+
+ˆI∆′
+
+i ≤ ϵ. A smaller ϵ makes constructing the desired map ϕ(·) easier. 
+
+Directly minimizing the loss function is ineffective, as the model would become degenerate by producing all-zero vec-tors for every subcircuit embedding (Chen et al. 2020; Pang et al. 2022). Typical approaches to address this involve using negative sampling or contrastive learning techniques. In our work, we introduce a novel technique for generating neg-ative samples by leveraging the electrical contradiction of KCL. 
+
+Electrical Contradiction as Hard Negatives . We introduce a novel technique for generating negative samples ˆI∆ by se-lectively applying dropout to node embeddings at each depth 
+
+∆. Because the sum of incoming currents at each layer is equal, artificially creating an imbalance by discarding node embeddings with higher current values naturally generates negative samples from the circuit’s perspective. As shown in Figure 3, compute the squared L2 norm of its embedding h{i:D(i,v) as a measure of its magnitude and define a binary mask to identify top-k largest nodes: 
+
+r∆
+
+i = h(l)
+
+{i:D(i,v)= ∆−l} 2
+
+,
+
+M ∆[i] = 
+
+1 if r∆
+
+i ∈ top-k of {r∆
+
+1 , . . . , r ∆
+
+n }
+
+0 otherwise .
+
+(5) Apply the dropout by element-wise multiplication of the original embeddings with the inverted mask: 
+
+ˆI∆ = X   h{i:D(i,v)} ⊙  1 − M ∆ , (6) where ⊙ denotes element-wise multiplication, and 1 is a ma-trix of ones. This zeros out embeddings for the top-k nodes, creating hard negatives. <latexit sha1_base64="SSGg36TSXQrTkDpSUzvaQbD+2M0=">AAACB3icbVDLSsNAFJ34rPUVdSnIYBFclaSU6rLgwi4r2Ac0IUwmk3boZBJmJkIJ2bnxV9y4UMStv+DOv3HSZqGtF4Y5nHMv99zjJ4xKZVnfxtr6xubWdmWnuru3f3BoHh33ZZwKTHo4ZrEY+kgSRjnpKaoYGSaCoMhnZOBPbwp98ECEpDG/V7OEuBEacxpSjJSmPPPM8WMWyFmkv6yTe5kTITXBiGW3udfIPbNm1a15wVVgl6AGyup65pcTxDiNCFeYISlHtpUoN0NCUcxIXnVSSRKEp2hMRhpyFBHpZvM7cnihmQCGsdCPKzhnf09kKJKFVd1ZuJTLWkH+p41SFV67GeVJqgjHi0VhyqCKYREKDKggWLGZBggLqr1CPEECYaWjq+oQ7OWTV0G/Ubdb9dZds9ZulnFUwCk4B5fABlegDTqgC3oAg0fwDF7Bm/FkvBjvxseidc0oZ07AnzI+fwAHlJoE</latexit> 
+
+HG2
+
+<latexit sha1_base64="SSGg36TSXQrTkDpSUzvaQbD+2M0=">AAACB3icbVDLSsNAFJ34rPUVdSnIYBFclaSU6rLgwi4r2Ac0IUwmk3boZBJmJkIJ2bnxV9y4UMStv+DOv3HSZqGtF4Y5nHMv99zjJ4xKZVnfxtr6xubWdmWnuru3f3BoHh33ZZwKTHo4ZrEY+kgSRjnpKaoYGSaCoMhnZOBPbwp98ECEpDG/V7OEuBEacxpSjJSmPPPM8WMWyFmkv6yTe5kTITXBiGW3udfIPbNm1a15wVVgl6AGyup65pcTxDiNCFeYISlHtpUoN0NCUcxIXnVSSRKEp2hMRhpyFBHpZvM7cnihmQCGsdCPKzhnf09kKJKFVd1ZuJTLWkH+p41SFV67GeVJqgjHi0VhyqCKYREKDKggWLGZBggLqr1CPEECYaWjq+oQ7OWTV0G/Ubdb9dZds9ZulnFUwCk4B5fABlegDTqgC3oAg0fwDF7Bm/FkvBjvxseidc0oZ07AnzI+fwAHlJoE</latexit> 
+
+HG2
+
+<latexit sha1_base64="XPjKnUA0rPXm9ii6r4eXr0n/7pA=">AAACB3icbVDLSsNAFJ3UV62vqEtBgkVwVRIp1WXBhV1WsA9oQphMJu3QyUyYmQglZOfGX3HjQhG3/oI7/8ZJm4W2XhjmcM693HNPkFAilW1/G5W19Y3Nrep2bWd3b//APDzqS54KhHuIUy6GAZSYEoZ7iiiKh4nAMA4oHgTTm0IfPGAhCWf3apZgL4ZjRiKCoNKUb566AaehnMX6yzq5n7kxVBMEaXab+07um3W7Yc/LWgVOCeqgrK5vfrkhR2mMmUIUSjly7ER5GRSKIIrzmptKnEA0hWM80pDBGEsvm9+RW+eaCa2IC/2Ysubs74kMxrKwqjsLl3JZK8j/tFGqomsvIyxJFWZosShKqaW4VYRihURgpOhMA4gE0V4tNIECIqWjq+kQnOWTV0H/suG0Gq27Zr3dLOOoghNwBi6AA65AG3RAF/QAAo/gGbyCN+PJeDHejY9Fa8UoZ47BnzI+fwAGD5oD</latexit> 
+
+HG1
+
+<latexit sha1_base64="XPjKnUA0rPXm9ii6r4eXr0n/7pA=">AAACB3icbVDLSsNAFJ3UV62vqEtBgkVwVRIp1WXBhV1WsA9oQphMJu3QyUyYmQglZOfGX3HjQhG3/oI7/8ZJm4W2XhjmcM693HNPkFAilW1/G5W19Y3Nrep2bWd3b//APDzqS54KhHuIUy6GAZSYEoZ7iiiKh4nAMA4oHgTTm0IfPGAhCWf3apZgL4ZjRiKCoNKUb566AaehnMX6yzq5n7kxVBMEaXab+07um3W7Yc/LWgVOCeqgrK5vfrkhR2mMmUIUSjly7ER5GRSKIIrzmptKnEA0hWM80pDBGEsvm9+RW+eaCa2IC/2Ysubs74kMxrKwqjsLl3JZK8j/tFGqomsvIyxJFWZosShKqaW4VYRihURgpOhMA4gE0V4tNIECIqWjq+kQnOWTV0H/suG0Gq27Zr3dLOOoghNwBi6AA65AG3RAF/QAAo/gGbyCN+PJeDHejY9Fa8UoZ47BnzI+fwAGD5oD</latexit> 
+
+HG1
+
+<latexit sha1_base64="cqvbHsqhHeWVz9cU6etuJ8utlwg=">AAACEXicbVDLSgMxFM34rPU16tJNsAgVpMyUUl0WVOqygn1AW4ZMmmlDMw+SO2IZ5hfc+CtuXCji1p07/8b0saitBwIn59zLvfe4keAKLOvHWFldW9/YzGxlt3d29/bNg8OGCmNJWZ2GIpQtlygmeMDqwEGwViQZ8V3Bmu7wauw3H5hUPAzuYRSxrk/6Afc4JaAlx8x3gD1CUr25TvMdn8CAEpFUU8c+x/Pf4plj5qyCNQFeJvaM5NAMNcf87vRCGvssACqIUm3biqCbEAmcCpZmO7FiEaFD0mdtTQPiM9VNJhel+FQrPeyFUr8A8ESd70iIr9TId3XleEu16I3F/7x2DN5lN+FBFAML6HSQFwsMIR7Hg3tcMgpipAmhkutdMR0QSSjoELM6BHvx5GXSKBbscqF8V8pVSrM4MugYnaA8stEFqqBbVEN1RNETekFv6N14Nl6ND+NzWrpizHqO0B8YX7+IzJzJ</latexit> 
+
+GED( G1, G2)
+
+<latexit sha1_base64="cqvbHsqhHeWVz9cU6etuJ8utlwg=">AAACEXicbVDLSgMxFM34rPU16tJNsAgVpMyUUl0WVOqygn1AW4ZMmmlDMw+SO2IZ5hfc+CtuXCji1p07/8b0saitBwIn59zLvfe4keAKLOvHWFldW9/YzGxlt3d29/bNg8OGCmNJWZ2GIpQtlygmeMDqwEGwViQZ8V3Bmu7wauw3H5hUPAzuYRSxrk/6Afc4JaAlx8x3gD1CUr25TvMdn8CAEpFUU8c+x/Pf4plj5qyCNQFeJvaM5NAMNcf87vRCGvssACqIUm3biqCbEAmcCpZmO7FiEaFD0mdtTQPiM9VNJhel+FQrPeyFUr8A8ESd70iIr9TId3XleEu16I3F/7x2DN5lN+FBFAML6HSQFwsMIR7Hg3tcMgpipAmhkutdMR0QSSjoELM6BHvx5GXSKBbscqF8V8pVSrM4MugYnaA8stEFqqBbVEN1RNETekFv6N14Nl6ND+NzWrpizHqO0B8YX7+IzJzJ</latexit> 
+
+GED( G1, G2)
+
+<latexit sha1_base64="E3eNw8EL2Zdbz36IPTEaF1h9snY=">AAACY3icjVBBi9NAFJ5EXWurbuzuTYTBIqwgJZHS9SIUvOxepILdFppSJtOXdtjJJMy8LNYhf9KbNy/7P3aSFtGuBx8MfHzf996b9yWFFAbD8KfnP3j46Ohx60m78/TZ8+PgRffK5KXmMOG5zPUsYQakUDBBgRJmhQaWJRKmyfWnWp/egDYiV19xW8AiY2slUsEZOmoZfI8RvqG9zCcV/UjjVDNuG6oZbTWsKhv3hELQZ5+XO8kWNV29o78J1CVU1duq9pbKDf4PL10GvbAfNkXvg2gPemRf42XwI17lvMxAIZfMmHkUFriwTKPgEqp2XBooGL9ma5g7qFgGZmGbQyr6xjErmubaPYW0Yf/ssCwzZpslzpkx3JhDrSb/pc1LTD8srFBFiaD4blFaSoo5rQOnK6GBo9w6wLgW7q+Ub5jL2UVq2i6E6PDk++DqfT8a9odfBr3RYB9Hi7wkr8kZicg5GZELMiYTwskv78g79gLv1u/4Xf90Z/W9fc8J+av8V3c8Ybra</latexit> 
+
+IoU = #inter (Npred , N true )
+
+#union (Npred , N true )
+
+<latexit sha1_base64="E3eNw8EL2Zdbz36IPTEaF1h9snY=">AAACY3icjVBBi9NAFJ5EXWurbuzuTYTBIqwgJZHS9SIUvOxepILdFppSJtOXdtjJJMy8LNYhf9KbNy/7P3aSFtGuBx8MfHzf996b9yWFFAbD8KfnP3j46Ohx60m78/TZ8+PgRffK5KXmMOG5zPUsYQakUDBBgRJmhQaWJRKmyfWnWp/egDYiV19xW8AiY2slUsEZOmoZfI8RvqG9zCcV/UjjVDNuG6oZbTWsKhv3hELQZ5+XO8kWNV29o78J1CVU1duq9pbKDf4PL10GvbAfNkXvg2gPemRf42XwI17lvMxAIZfMmHkUFriwTKPgEqp2XBooGL9ma5g7qFgGZmGbQyr6xjErmubaPYW0Yf/ssCwzZpslzpkx3JhDrSb/pc1LTD8srFBFiaD4blFaSoo5rQOnK6GBo9w6wLgW7q+Ub5jL2UVq2i6E6PDk++DqfT8a9odfBr3RYB9Hi7wkr8kZicg5GZELMiYTwskv78g79gLv1u/4Xf90Z/W9fc8J+av8V3c8Ybra</latexit> 
+
+IoU = #inter (Npred , N true )
+
+#union (Npred , N true )
+
+<latexit sha1_base64="XPjKnUA0rPXm9ii6r4eXr0n/7pA=">AAACB3icbVDLSsNAFJ3UV62vqEtBgkVwVRIp1WXBhV1WsA9oQphMJu3QyUyYmQglZOfGX3HjQhG3/oI7/8ZJm4W2XhjmcM693HNPkFAilW1/G5W19Y3Nrep2bWd3b//APDzqS54KhHuIUy6GAZSYEoZ7iiiKh4nAMA4oHgTTm0IfPGAhCWf3apZgL4ZjRiKCoNKUb566AaehnMX6yzq5n7kxVBMEaXab+07um3W7Yc/LWgVOCeqgrK5vfrkhR2mMmUIUSjly7ER5GRSKIIrzmptKnEA0hWM80pDBGEsvm9+RW+eaCa2IC/2Ysubs74kMxrKwqjsLl3JZK8j/tFGqomsvIyxJFWZosShKqaW4VYRihURgpOhMA4gE0V4tNIECIqWjq+kQnOWTV0H/suG0Gq27Zr3dLOOoghNwBi6AA65AG3RAF/QAAo/gGbyCN+PJeDHejY9Fa8UoZ47BnzI+fwAGD5oD</latexit> 
+
+HG1
+
+<latexit sha1_base64="XPjKnUA0rPXm9ii6r4eXr0n/7pA=">AAACB3icbVDLSsNAFJ3UV62vqEtBgkVwVRIp1WXBhV1WsA9oQphMJu3QyUyYmQglZOfGX3HjQhG3/oI7/8ZJm4W2XhjmcM693HNPkFAilW1/G5W19Y3Nrep2bWd3b//APDzqS54KhHuIUy6GAZSYEoZ7iiiKh4nAMA4oHgTTm0IfPGAhCWf3apZgL4ZjRiKCoNKUb566AaehnMX6yzq5n7kxVBMEaXab+07um3W7Yc/LWgVOCeqgrK5vfrkhR2mMmUIUSjly7ER5GRSKIIrzmptKnEA0hWM80pDBGEsvm9+RW+eaCa2IC/2Ysubs74kMxrKwqjsLl3JZK8j/tFGqomsvIyxJFWZosShKqaW4VYRihURgpOhMA4gE0V4tNIECIqWjq+kQnOWTV0H/suG0Gq27Zr3dLOOoghNwBi6AA65AG3RAF/QAAo/gGbyCN+PJeDHejY9Fa8UoZ47BnzI+fwAGD5oD</latexit> 
+
+HG1
+
+2. Subcircuit Detection 1. Circuit Classification 3. GED Prediction Figure 4: The illustration of the downstream tasks: (1) Analog circuit classification ; (2) Analog subcircuit detection ; (3) Analog GED preidction .
+
+KCL Loss . Combine the positives and negatives inspired by KCL, we follow the contrastive framework in (You et al. 2020; Zhu et al. 2020) to derive the KCL Loss, the training objective for (I∆, I∆′ ) with N = d × (d − 1) pairs is: 
+
+L = − log esim( I∆,I∆′ )/τ 
+
+PNj=1 esim (I∆, ˆI∆′ )/τ ,
+
+where τ is a temperature hyperparameter. 
+
+Experiments 
+
+We conduct experiments to address the following issues: (1) 
+
+How does KCLNet compare to general GNNs and graph pre-trained methods in terms of performance? (2) How effective is the proposed KCL Loss? (3) What is the impact of each KCLNet module on its overall performance? 
+
+Experimental Setup 
+
+Dataset and Downstream Tasks . We employ the analog circuits dataset ANALOG in (Tu et al. 2025) generated us-ing the analog circuit topology synthesis framework (Zhao and Zhang 2022). The generated circuits contain fundamen-tal topologies ranging from basic building blocks to complex industrial-scale systems. The details of the used analog cir-cuit topologies are in Appendix A.2. In this paper, we introduce three downstream applications as shown in Figure 4 to verify our pre-trained circuit embed-ding. Three datasets for sub-tasks were developed for ana-log circuit-related tasks. For analog circuit classification, the 
+
+ANALOG dataset was expanded by adjusting sizing parame-ters, resulting in ANALOG-CLS-428k ; for analog subcir-cuit detection, following Kunal et al.’s (Kunal et al. 2020) framework, base circuit categories were classified via man-ual annotation, creating ANALOG-DET-242k with 242,320 samples; for analog graph edit distance (GED) prediction, 
+
+ANALOG-GED-194k was generated via mutations on ex-isting data. All datasets emphasize balanced splits and pro-portional representation of circuit characteristics to ensure robust model evaluation. The details of the definition of sub-tasks and the dataset partition scheme are provided in Ap-pendix A.2. 
+
+Evaluation Metrics . For the analog circuit classification task, we adopt standard classification metrics for evalua-tion: top-k accuracy (Acc@1, Acc@2, Acc@5), True Pos-itive Rate (Recall), and F1 Score. For the analog subcircuit detection task, we use common evaluation metrics in detec-tion tasks, including mAP (mean Average Precision), Re-call, F1 Score, and IoU (Intersection over Union). We utilize common evaluation metrics in regression tasks for the graph edit distance prediction task, including MAE and MSE. The reported results are the average of the best results in 5 runs from different random seeds. 
+
+Baseline Methods . The baseline methods we compare in-clude two categories: (1) mainstream GNN encoders with-out pretraining; (2) mainstream GNN representation learn-ing method combined with different GNN Encoders. For the mainstream GNN Encoders, we adopted the follow-ing commonly used GNN frameworks as our analog cir-cuits encoder: GCN (Kipf and Welling 2017), GAT (Velick-ovic et al. 2018), GIN (Xu et al. 2019), Graphsage (Hamil-ton, Ying, and Leskovec 2017), GAT v2 (Brody, Alon, and Yahav 2022). For mainstream GNN pretraining methods, we utilized the general graph pre-training method named GraphCL (You et al. 2020) , combined with different graph encoders as comparison methods. All methods are compared based on the same hyperparameter. The baseline methods’ implementation details are provided in Appendix A.4. 
+
+Experimental Results 
+
+Analog Circuits Classification . As shown in Table 2, we comprehensively compared the experimental results of vari-ous methods for the analog circuit classification task. Specif-ically, KCLNet achieves the highest accuracy among all baseline models, showcasing its superior representation abil-ity for downstream classification. Compared to the pre-trained graph model GraphCL GCN , our method brings about a 39.76% and 51.19% improvement in Acc@1 and F1 Score, respectively. When compared to the best performing meth-ods, GraphCL GIN and GIN, it offers a 5.56% and 20.77% improvement in Acc@1 and F1 Score, respectively. These results confirm that KCLNet has better representation com-pared with existing approaches in the analog circuit classifi-cation task. 
+
+Analog Subcircuits Detection . As shown in Table 3, Method Acc@1 ↑ Acc@2 ↑ Acc@5 ↑ Recall ↑ F1 Score ↑
+
+Base Models 
+
+GCN 0.561 ±0.061 0.784 ±0.040 0.913 ±0.014 0.405 ±0.087 0.404 ±0.121 
+
+GAT 0.479 ±0.105 0.681 ±0.148 0.794 ±0.118 0.327 ±0.060 0.275 ±0.069 
+
+GATv2 0.498 ±0.100 0.694 ±0.139 0.799 ±0.133 0.322 ±0.051 0.270 ±0.075 
+
+GIN 0.786 ±0.077 0.883 ±0.058 0.931 ±0.039 0.648 ±0.101 0.669 ±0.118 
+
+SAGE 0.774 ±0.019 0.927 ±0.023 0.938 ±0.004 0.626 ±0.028 0.638 ±0.055 
+
+GraphCL Variants 
+
+GraphCL GCN 0.679 ±0.131 0.795 ±0.120 0.910 ±0.063 0.558 ±0.150 0.564 ±0.186 
+
+GraphCL GAT 0.537 ±0.108 0.794 ±0.046 0.919 ±0.046 0.408 ±0.135 0.368 ±0.173 
+
+GraphCL GATv2 0.493 ±0.112 0.650 ±0.075 0.809 ±0.112 0.401 ±0.104 0.357 ±0.148 
+
+GraphCL GIN 0.875 ±0.083 0.943 ±0.009 0.950 ±0.006 0.741 ±0.083 0.759 ±0.102 
+
+GraphCL SAGE 0.899 ±0.013 0.958 ±0.001 0.962 ±0.001 0.726 ±0.024 0.744 ±0.036 
+
+Our Methods KCLNet 0.949 ±0.004 0.958 ±0.005 0.964 ±0.004 0.829 ±0.015 0.853 ±0.011 
+
+w.o Pos KCL 0.938 ±0.005 0.942 ±0.006 0.944 ±0.003 0.794 ±0.013 0.830 ±0.012 
+
+w.o Neg KCL 0.939 ±0.004 0.946 ±0.010 0.949 ±0.010 0.801 ±0.015 0.682 ±0.335 
+
+w.o Pos+Neg KCL 0.938 ±0.003 0.941 ±0.005 0.944 ±0.002 0.794 ±0.009 0.822 ±0.018 
+
+Table 2: Performance comparison on analog circuit classification. Top performers in each category are bold. Method mAP ↑ Recall ↑ F1 Score ↑ AUC ↑ IoU ↑
+
+Base Models 
+
+GCN 0.368 ±0.002 0.260 ±0.004 0.225 ±0.003 0.796 ±0.002 0.144 ±0.002 
+
+GAT 0.383 ±0.013 0.290 ±0.033 0.262 ±0.038 0.808 ±0.012 0.170 ±0.032 
+
+GATv2 0.382 ±0.017 0.303 ±0.059 0.279 ±0.072 0.807 ±0.022 0.183 ±0.051 
+
+GIN 0.553 ±0.029 0.667 ±0.019 0.695 ±0.020 0.932 ±0.005 0.565 ±0.021 
+
+SAGE 0.355 ±0.004 0.255 ±0.002 0.211 ±0.002 0.785 ±0.001 0.133 ±0.001 
+
+GraphCL Variants 
+
+GraphCL GCN 0.363 ±0.014 0.222 ±0.005 0.181 ±0.008 0.762 ±0.008 0.115 ±0.005 
+
+GraphCL GAT 0.371 ±0.016 0.231 ±0.027 0.193 ±0.032 0.757 ±0.032 0.121 ±0.023 
+
+GraphCL GATv2 0.389 ±0.010 0.271 ±0.096 0.236 ±0.105 0.779 ±0.052 0.154 ±0.077 
+
+GraphCL GIN 0.434 ±0.033 0.539 ±0.076 0.539 ±0.090 0.898 ±0.017 0.420 ±0.070 
+
+GraphCL SAGE 0.361 ±0.016 0.253 ±0.015 0.213 ±0.013 0.776 ±0.014 0.134 ±0.009 
+
+Our Methods KCLNet 0.622 ±0.002 0.721 ±0.002 0.753 ±0.002 0.949 ±0.000 0.634 ±0.003 
+
+w.o Pos KCL 0.374 ±0.027 0.399 ±0.098 0.381 ±0.117 0.845 ±0.042 0.273 ±0.096 
+
+w.o Neg KCL 0.602 ±0.039 0.706 ±0.040 0.736 ±0.046 0.944 ±0.010 0.615 ±0.053 
+
+w.o Pos+Neg KCL 0.561 ±0.035 0.654 ±0.038 0.674 ±0.045 0.931 ±0.010 0.545 ±0.051 
+
+Table 3: Performance comparison on subcircuit detection task. KCLNet also outperforms other methods in the subcircuit detection task. Compared to the best performing methods, GraphCL GIN and GIN, KCLNet achieves improvements of up to 43.36%, 33.80%, 39.61%, 5.67%, and 51.02% in the mAP, Recall, F1 Score, AUC, and IoU metrics, respec-tively. It can be observed that the general-purpose graph pre-training algorithm GraphCL GIN fails to enhance the model’s performance on downstream circuit-related tasks compared to GIN. The key issue is that these generic pre-training tasks often fail to capture equivalence in circuit diagrams. These improvements in metrics further indicate that KCLNet’s rep-resentation learning capabilities enhance the detection accu-racy, recall, and robustness. 
+
+Graph-Edit-Distance Prediction . As shown in Figure 5, the proposed contrastive learning framework reduces up to 3.8% MAE compared to vanilla GNNs. Additionally, com-pared with methods that have experienced improvement through general pretraining, such as GraphCL GIN , KCLNet 0.96   
+
+> 0.97
+> 0.98
+> 0.99
+> Norm. MAE ↓Base Models GraphCL Ours
+> 0.95
+> 0.96
+> 0.97
+> 0.98
+> Norm. MSE ↓
+
+Figure 5: The averaged and normalized performance com-parison on the analog circuit GED prediction task. 0.93 0.94 0.95     
+
+> w.o KCL
+> w.o KCL NEG
+> w.o KCL POS
+> KCLNet
+> ACC@1 ↑
+
+(a) 0.36 0.50 0.64    
+
+> w.o KCL
+> w.o KCL NEG
+> w.o KCL POS
+> KCLNet
+> mAP ↑
+
+(b) 
+
+Figure 6: Comparison between KCLNet with different vari-ants of KCL Loss. maintains a similar improvement with up to 1.6%. It can also be observed that general graph pretraining methods do not necessarily guarantee an improvement in the performance of GCN, which can be seen from the close MAE and MSE values. 
+
+Ablation Studies 
+
+KCL-Inspired Loss at Work . A notable advantage of KCLNet lies in its ability to generate positive embeddings in the analog circuits from an electrical perspective. To ver-ify this, Figure 6a and Figure 6b show performance com-parisons of different KCL Loss variants. The w.o KCL POS 
+
+uses general graph-augmented positive samples to maximize alignment, w.o KCL NEG replaces KCL-based negatives with different graph samples in the same batch, and w.o KCL re-moves KCL Loss entirely, relying solely on asynchronous message passing. The results show that KCL Loss is crucial for final performance, with positive embeddings being the most important. 
+
+Asynchronous Message Passing Scheme . In Table 4, we compare the performance differences between the proposed 20 65 110 155 200 
+
+> 0.400
+> 0.600
+> 0.800
+> Epochs
+> F1-Score(%) ↑
+> GraphCL GIN
+> GraphCL GCN
+> KCLNet
+
+Figure 7: The pre-training epochs impact of KCLNet on classification, which outperforms general graph pretraining at earlier epochs. Classification Detection Acc@1 ↑ F1-Score ↑ mAP ↑ IoU ↑                        
+
+> GCN 0.561 ±0.061 0.404 ±0.121 0.368 ±0.002 0.144 ±0.002
+> GAT 0.496 ±0.127 0.306 ±0.101 0.383 ±0.013 0.170 ±0.032
+> GATv2 0.498 ±0.100 0.270 ±0.075 0.382 ±0.017 0.183 ±0.051
+> GIN 0.786 ±0.077 0.669 ±0.118 0.553 ±0.029 0.565 ±0.021
+> SAGE 0.774 ±0.019 0.638 ±0.055 0.355 ±0.004 0.133 ±0.001
+> AGNN 0.938 ±0.003 0.822 ±0.018 0.561 ±0.035 0.545 ±0.051
+
+Table 4: Performance comparison between synchronous and asynchronous message passing (AGNN). AGNN and synchronous GNN. AGNN outperforms the best synchronous model, GIN, by 19.6% and 22.9% in Acc@1 and F1-score in the cls task. It also improves the mAP by 1.4% in the det task, surpassing all other GNN mod-els. These results confirm the effectiveness of electrically-simulated asynchronous message passing. 
+
+The Effect of Training Epochs in KCLNet . As shown in Figure 7, KCLNet surpasses GraphCL pretrained methods for different epochs (GraphCL GIN and GraphCL GCN ) start-ing from 20 epochs, showing strong early performance. Un-like other frameworks that rely on augmentation for positive samples with more pretraining epochs needed, KCLNet uses KCL’s physical prior knowledge to generate positive embed-dings without augmentation, reducing the needed pretrain-ing epochs. 
+
+Conclusion 
+
+In this work, we use an electrically-simulated asynchronous graph neural network as the analog circuit encoder, lever-aging Kirchhoff’s current law to aid representation learn-ing by enforcing current embedding conservation across depths. Experiments show the model learns vital physical priors, significantly enhancing generalization across analog sub-tasks. We propose three future directions: 1) modeling Kirchhoff’s voltage law from a voltage perspective; 2) ex-ploring better encoders like graph transformers; 3) incorpo-rating additional inputs like SPICE codes to assist learning. 
+
+Acknowledgments 
+
+This work is supported by The National Key Research and Development Program of China (No. 2023YFB4402900), The National Natural Science Foundation of China (No. 92573108 and No. 62304197), and The Research Grants Council of Hong Kong SAR (No. CUHK14211824 and No. CUHK14201624). References 
+
+Athavale, P. 2018. Kirchoff’s current law and Kirchoff’s voltage law. Johns Hopkins University, Retrived , 6. Brody, S.; Alon, U.; and Yahav, E. 2022. How Attentive are Graph Attention Networks? In Proc. ICLR .Bruna, J.; Zaremba, W.; Szlam, A.; and LeCun, Y. 2014. Spectral Networks and Locally Connected Networks on Graphs. In Proc. ICLR .Chen, H.; Zhu, K.; Liu, M.; Tang, X.; Sun, N.; and Pan, D. Z. 2021. Universal symmetry constraint extraction for analog and mixed-signal circuits with graph neural networks. In 
+
+Proc. DAC , 1243–1248. IEEE. Chen, T.; Kornblith, S.; Norouzi, M.; and Hinton, G. 2020. A simple framework for contrastive learning of visual repre-sentations. In Proc. ICML , 1597–1607. Defferrard, M.; Bresson, X.; and Vandergheynst, P. 2016. Convolutional Neural Networks on Graphs with Fast Local-ized Spectral Filtering. In Proc. NIPS .Dimo, P. 1975. Nodal analysis of power systems . Interna-tional Scholarly Book Services, Inc., Forest Grove, OR. Dong, Z.; Cao, W.; Zhang, M.; Tao, D.; Chen, Y.; and Zhang, X. 2023. CktGNN: Circuit Graph Neural Network for Elec-tronic Design Automation. In Proc. ICLR .Gao, X.; Deng, C.; Liu, M.; Zhang, Z.; Pan, D. Z.; and Lin, Y. 2021. Layout symmetry annotation for analog circuits with graph neural networks. In Proc. ASPDAC , 152–157. Gray, P. R.; Hurst, P. J.; Lewis, S. H.; and Meyer, R. G. 2009. 
+
+Analysis and design of analog integrated circuits . John Wi-ley & Sons. Hamilton, W. L. 2020. Graph Representation Learning. 
+
+Synthesis Lectures on Artificial Intelligence and Machine Learning , 14(3): 1–159. Hamilton, W. L.; Ying, Z.; and Leskovec, J. 2017. Inductive Representation Learning on Large Graphs. In Proc. NIPS .He, K.; Fan, H.; Wu, Y.; Xie, S.; and Girshick, R. 2020. Momentum contrast for unsupervised visual representation learning. In Proceedings of the IEEE/CVF conference on computer vision and pattern recognition , 9729–9738. Hou, Y.; Zhang, J.; Chen, H.; Zhou, M.; Yu, F.; Fan, H.; and Yang, Y. 2024. CktGen: Specification-Conditioned Analog Circuit Generation. arXiv preprint arXiv:2410.00995 .J´ onsson, B. 1988. Relation algebras and Schr¨ oder cate-gories. Discrete Mathematics , 70(1): 27–45. Kahn, A. B. 1962. Topological sorting of large networks. 
+
+Communications of the ACM , 5(11): 558–562. Kipf, T. N.; and Welling, M. 2017. Semi-Supervised Classi-fication with Graph Convolutional Networks. In Proc. ICLR .Kunal, K.; Dhar, T.; Madhusudan, M.; Poojary, J.; Sharma, A.; Xu, W.; Burns, S. M.; Hu, J.; Harjani, R.; and Sapat-nekar, S. S. 2020. GANA: Graph convolutional network based automated netlist annotation for analog circuits. In 
+
+Proc. DATE , 55–60. IEEE. Li, M.; Khan, S.; Shi, Z.; Wang, N.; Yu, H.; and Xu, Q. 2022. Deepgate: Learning neural representations of logic gates. In 
+
+Proc. DAC , 667–672. Pang, B.; Zhang, Y.; Li, Y.; Cai, J.; and Lu, C. 2022. Unsu-pervised visual representation learning by synchronous mo-mentum grouping. In Proc. ECCV , 265–282. Springer. Paul, C. R. 2001. Fundamentals of electric circuit analysis .John Wiley & Sons. Ren, H.; Kokai, G. F.; Turner, W. J.; and Ku, T.-S. 2020. ParaGraph: Layout parasitics and device parameter predic-tion using graph neural networks. In Proc. DAC , 1–6. IEEE. Rewie´ nski, M. 2011. A perspective on fast-SPICE simula-tion technology. In Simulation and Verification of Electronic and Biological Systems , 23–42. Springer. Sansen, W. M. 2007. Analog design essentials , volume 859. Springer Science & Business Media. Settaluri, K.; Haj-Ali, A.; Huang, Q.; Hakhamaneshi, K.; and Nikolic, B. 2020. Autockt: Deep reinforcement learning of analog circuit designs. In Proc. DATE , 490–495. IEEE. Shi, Z.; Pan, H.; Khan, S.; Li, M.; Liu, Y.; Huang, J.; Zhen, H.-L.; Yuan, M.; Chu, Z.; and Xu, Q. 2023. Deep-gate2: Functionality-aware circuit representation learning. In Proc. ICCAD , 1–9. IEEE. Shi, Z.; Zheng, Z.; Khan, S.; Zhong, J.; Li, M.; and Xu, Q. 2024. Deepgate3: Towards scalable circuit representation learning. arXiv preprint arXiv:2407.11095 .Tu, J.; Li, Y.; Li, P.; Xu, P.; Zhang, Q.; Wan, S.; Sun, Y.; Yu, B.; and Chen, T. 2025. SMART: Graph Learning-Boosted Subcircuit Matching for Large-Scale Analog Circuits. IEEE TCAD .Velickovic, P.; Cucurull, G.; Casanova, A.; Romero, A.; Li` o, P.; and Bengio, Y. 2018. Graph Attention Networks. In 
+
+Proc. ICLR .Wang, H.; Wang, K.; Yang, J.; Shen, L.; Sun, N.; Lee, H.-S.; and Han, S. 2020. GCN-RL circuit designer: Transferable transistor sizing with graph neural networks and reinforce-ment learning. In Proc. DAC , 1–6. IEEE. Wang, Z.; Bai, C.; He, Z.; Zhang, G.; Xu, Q.; Ho, T.-Y.; Huang, Y.; and Yu, B. 2024. Fgnn2: A powerful pre-training framework for learning the logic functionality of circuits. 
+
+IEEE TCAD .Wedepohl, L.; and Jackson, L. 2002. Modified nodal analy-sis: an essential addition to electrical circuit theory and anal-ysis. Engineering science and education journal , 11(3): 84– 92. Wu, H.; Zheng, H.; Pu, Y.; and Yu, B. 2025. Circuit Representation Learning with Masked Gate Modeling and Verilog-AIG Alignment. Proc. ICLR .Wu, Z.; Pan, S.; Chen, F.; Long, G.; Zhang, C.; and Yu, P. S. 2021. A Comprehensive Survey on Graph Neural Networks. 
+
+IEEE Transactions on Neural Networks and Learning Sys-tems , 32(1): 4–24. Xu, K.; Hu, W.; Leskovec, J.; and Jegelka, S. 2019. How Powerful are Graph Neural Networks? In Proc. ICML .Xu, P.; Chen, G.; Zhu, K.; Chen, T.; Ho, T.-Y.; and Yu, B. 2024a. Performance-driven analog routing via heteroge-neous 3dgnn and potential relaxation. In Proc. DAC , 1–6. Xu, P.; Li, J.; Ho, T.-Y.; Yu, B.; and Zhu, K. 2024b. Performance-driven analog layout automation: Current sta-tus and future directions. In Proc. ASPDAC , 679–685. Xu, P.; Tu, J.; Chen, G.; Zhu, K.; Chen, T.; Ho, T.-Y.; and Yu, B. 2025. PARoute2: Enhanced Analog Routing via Performance-Drive Guidance Generation. IEEE TCAD .You, Y.; Chen, T.; Sui, Y.; Chen, T.; Wang, Z.; and Shen, Y. 2020. Graph contrastive learning with augmentations. 
+
+Proc. NIPS , 33: 5812–5823. Zeng, G. L.; and Zeng, M. 2021. Kirchhoff’s Current Law (KCL). Electric Circuits: A Concise, Conceptual Tutorial ,31–35. Zhao, Z.; and Zhang, L. 2022. Analog integrated circuit topology synthesis with deep reinforcement learning. IEEE TCAD , 41(12): 5138–5151. Zheng, Z.; Huang, S.; Zhong, J.; Shi, Z.; Dai, G.; Xu, N.; and Xu, Q. 2025. DeepGate4: Efficient and Effective Represen-tation Learning for Circuit Design at Scale. In Proc. ICLR .Zhu, K.; Chen, H.; Turner, W. J.; Kokai, G. F.; Wei, P.-H.; Pan, D. Z.; and Ren, H. 2022. Tag: Learning circuit spatial embedding from layouts. In Proc. ICCAD , 1–9. Zhu, Y.; Xu, Y.; Yu, F.; Liu, Q.; Wu, S.; and Wang, L. 2020. Deep Graph Contrastive Representation Learning. In ICML Workshop on Graph Representation Learning and Beyond .Zhu, Z.; Chen, Z.; and Yang, S. 2024. A Fast SIE Solver With Cut Set Analysis and Terminals as Supernodes for In-terconnects. IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems , 43(9): 2730–2740. A Appendix 
+
+A.1 The Introduction of GNNs 
+
+Graph neural networks (GNNs) are powerful representa-tion learning techniques (Xu et al. 2019) with many key applications (Hamilton, Ying, and Leskovec 2017). Early GNNs are motivated from the spectral perspective, such as Spectral GNN (Bruna et al. 2014) that applies the Lapla-cian operators directly. ChebNet (Defferrard, Bresson, and Vandergheynst 2016) approximates these operators using summation instead to avoid a high computational cost. GCN (Kipf and Welling 2017) further simplifies ChebNet by using its first order, and reaches the balance between efficiency and effectiveness, revealing the message-passing mechanism of modern GNNs. Concretely, recent GNNs ag-gregate node features from neighbors and stack multiple lay-ers to capture long-range dependencies. For instance, Graph-SAGE (Hamilton, Ying, and Leskovec 2017) concatenates node features with mean/max/LSTM pooled neighboring in-formation. GAT (Velickovic et al. 2018) aggregates neigh-bor information using learnable attention weights. GIN (Xu et al. 2019) converts the aggregation as a learnable func-tion based on the Weisfeiler-Lehman test instead of prefixed ones, aiming to maximize the power of GNNs. GNNs consist of two major components, where the 
+
+aggregation step aggregates node features of target nodes’ neighbors, and the combination step passes the previous ag-gregated features to networks to generate node embeddings. Mathematically, we can update node v’s embedding at the 
+
+l-th layer by: 
+
+elv = AGGREGATE   hl−1 
+
+> u
+
+|∀ u ∈ N (v)  ,
+
+hlv = COMBINE  hl−1 
+
+> v
+
+, elv
+
+ , (7) where N (v) denotes the neighbours of v.
+
+A.2 Dataset Details 
+
+Table 5 provides the details for circuit topologies: transis-tor counts (PMOS/NMOS), passive components (#C capac-itors, #R resistors), and node counts after graph conversion. Our hierarchical benchmark structure enables comprehen-sive evaluation across different complexity tiers: 1) small-scale: matches core building blocks (inverters, push-pull stages) with complex implementations; 2) medium-scale: tests intermediate structures (operational amplifiers, output stages); 3) large-scale: evaluates system-level designs in-cluding ADC cores, and Industrial SerDes circuit ( > 10 , 000 
+
+nodes). This framework spans circuit scales from 10 1 to 10 3
+
+nodes, covering diverse analog circuit topologies. 
+
+A.3 Downstream Tasks for Analog Representation Learning 
+
+In this paper, we introduce three downstream applications to verify our pre-trained circuit embedding. 
+
+Problem 1 (Analog Circuit Classification) Assign a class label y ∈ { 1, 2, . . . , C } to a circuit graph G. Let Dcls =
+
+{(Gi, y i)}Ni=1 be a dataset of labeled circuit graphs. The task is to learn a classifier fcls : Rd → RC such that: 
+
+ˆy = softmax (fcls (z)) , where z = ϕ(G).
+
+The loss function is typically the cross-entropy function: 
+
+Lcls = −
+
+> N
+
+X
+
+> i=1
+> C
+
+X
+
+> c=1
+
+I(yi = c) log ˆ yi,c .
+
+Problem 2 (Analog Subcircuit Detection.) Let Ddet =
+
+{(Gi, S i, v ij , y i,j )}Mi=1 , where yi,j ∈ {0, 1} indicates whether node vij in circuit Gi belongs to subcircuit type Si.The task is to learn a detector fdet : Rd × Rd → [0 , 1] such that: 
+
+ˆyi,j = σ(fdet (zvj , S i)) , where zvj = ϕ(vj ),
+
+where σ is the sigmoid function. The loss is cross-entropy: 
+
+Ldet = −
+
+> M
+
+X
+
+> i=1
+> Ni
+
+X
+
+> j=1
+
+[yi,j log ˆ yi,j + (1 − yi,j ) log(1 − ˆyi,j )] ,
+
+where Ni is the number of nodes in circuit Gi.
+
+Problem 3 (Analog Graph Edit Distance (GED) Prediction) 
+
+Predict the minimum number of edit operations (node/edge insertions, deletions, substitutions) Required to transform graph G1 into G2. Let Dged = {(Gi
+
+> 1
+
+, G i
+
+> 2
+
+, d i)}Ki=1 , where di
+
+is the ground-truth GED between Gi 
+
+> 1
+
+and Gi
+
+> 2
+
+. The task is to learn a regressor fged : Rd × Rd → R such that: 
+
+ˆd = fged (z1, z 2), where z1 = ϕ(G1), z 2 = ϕ(G2).
+
+The loss is mean squared error (MSE): 
+
+Lged = 1
+
+K
+
+> K
+
+X
+
+> i=1
+
+( ˆdi − di)2.
+
+A.4 Dataset Partition Details 
+
+For the analog circuit classification task, we generated additional foundational subcircuit detection graphs and expanded the dataset scale by adjusting siz-ing parameters through further processing of the ANALOG 
+
+dataset classified into 12 general classes. The dataset is par-titioned into training, validation, and testing sets of 360 , 000 ,
+
+28 , 800 , and 39 , 600 analog circuit graphs, referred to as 
+
+ANALOG-CLS-428k . This split ensures a balanced repre-sentation of circuit types and complexities across all phases. For the analog subcircuit detection task, we followed the experimental framework of Kunal et al. (Ku-nal et al. 2020), classifying fundamental circuit elements into 12 distinct base categories through manual annota-tion. We adhere to the electrical characteristics of these components to integrate different circuit connections into a larger circuit. The voltage and ground nodes are explicitly omitted from detection targets. The device nodes and net nodes retain their original classification labels. The result-ing dataset ANALOG-DET-242k contains 242 , 320 sam-ples distributed as training 76.9%, validation: 7.7%, testing: 15.4%. This stratified partitioning Ensures the proportional representation of subcircuit categories and complexity levels across all splits, mitigating potential evaluation bias. For the analog graph edit distance (GED) prediction task, we generated labeled training (70%), validation (10%), and test (20%) datasets by performing mu-tating operations on the existing data. We aim to predict Table 5: Integrated circuit dataset statistics across different circuit categories.                                                                                                                                              
+
+> Category Circuit Examples #NMOS #PMOS #RES #CAP #Nets #Nodes #Edges Data Converters Signal conversion between analog and digital domains, precision-critical
+> DAC R2R Type 34 34 103 0131 307 466 ADC SAR Small 27 27 0036 93 196 ADC SAR Large 27 27 0036 93 196
+> Digital Logic Discrete-valued binary operations, high noise immunity, well-defined states
+> Decoder 3to7 38 38 0044 123 274 Digital Mux 35 35 0043 115 223 ResNetwork PNP 0080 080 163 161 SignBit Detector 27 27 4032 93 208
+> Signal Circuits Continuous signal processing, high linearity, sensitive to noise
+> Power Management LDO Regular 18 18 33 054 126 199 Current Reference CurrentRef 5uA 24 29 0035 91 183 Op Amp OpAmp FirstStage 17 25 0028 73 142 Resistor Divider ResistorDivider 63 63 60 072 261 578 Bandgap Reference BandgapRef Mux 20 20 0026 69 147
+> Timing and I/O Clock generation, signal synchronization, external interface management
+> Clock PLL PhaseDetector 34 34 4044 119 251 PLL PostProcessor 76 76 0076 230 499 I/O Circuits IO Buffer Pad 19 25 5031 83 159 Buffers Buffer Calibrated 50 76 1177 208 441
+> Other Components Design reuse, flexibility elements, standardized cell architecture
+> Spare Cells SpareCell Standard 90 90 2090 276 582
+
+the GED between two circuit graphs based on their embed-dings. The purpose of this task is to demonstrate whether the learned embeddings of analog circuits can preserve the structural similarity between the circuits. This ensures a bal-anced graph edit distance distribution across all phases. We named this dataset ANALOG-GED-194k .
+
+A.5 Experimental Implementation Details 
+
+All the experiments were performed on an Amazon EC2 cluster with an Intel Xeon E5-2686 v4 CPU, 61GB DRAM, and an NVIDIA Tesla V100 GPU 
+
+The pretraining configuration. . In our experiments, we adopt 3-layer GNN as the backbone. Unless specified, our experiments follow the same settings for pretraining as GraphCL (You et al. 2020) : • GraphAugmentation. We align the default augmenta-tion strength 0.2 with (You et al. 2020). We select the hyperparameter γ controlling the trade-off in the opti-mization as 0.1.• Optimizer. We use SGD to update models’ parameters, i.e., w. The learning rate and SGD momentum are given as 0.025 and 0, respectively, where the learning rate has a cosine decay schedule for 200 epochs. We fix the weight decay value, i.e., set ρ1 = 0 .00125 .• Batch size. We adopt in-memory datasets, and the 
+
+batch size is fixed as 32 for all pertaining methods. • KCL Loss. In implementing KCL Loss of KCLNet, we set the k in top-k to 1 for negative samples, to facili-tate handling layers with only one node. A layer-specific dropout strategy could be further explored in future work. At the downstream tasks, we adopt SGD as the optimizer and set the scheduler with cosine decay to adjust the learn-ing rate. For fairness, the total number of epochs is fixed at 
+
+20 for all GNN models. The details of the training configu-rations are listed as follows: • Analog circuit classification : We set the initial learning rate as 0.01 and weight decay as 0.005 .The configuration for GNN models is as follows: 
+
+hidden size = 64 , dropout = 0 .6, and using ReLU 
+
+as the activation function. • Analog subcircuit detection : We set the ini-tial learning rate as 0.03 and weight decay as 0.005 .The configuration for GNN models is as follows: 
+
+hidden size = 64 , dropout = 0 .6, and using ReLU 
+
+as the activation function. • Graph edit distance prediction : We set the initial learning rate as 0.01 and weight decay as 0.0025 .The configuration for GNN models is as follows: 
+
+hidden size = 64 , dropout = 0 .6, and using ReLU 
+
+as the activation function. 
+
+A.6 Proof for the Alicyclic Guarantee after Conversion theorem 
+
+Theorem 3 (Alicyclic Guarantee after Conversion) Let 
+
+G = ( V, E ) be a directed graph constructed as follows: (1) Node set V = D ∪ N ∪ { v} ∪ { g}, where: 
+
+• D: Regular devices (resistors, capacitors, etc.); 
+
+• N : Nets; 
+
+• {v}: Voltage nodes (special devices); • {g}: Ground nodes (special devices). (2) Edge set E satisfies: 
+
+• ∀d ∈ D ∪ { v}, there exists an edge d → n for each net 
+
+n ∈ N connected to d (based on the original bipartite graph); 
+
+• No edges into v or out of g.Let the original graph be the undirected bipartite graph with node set D ∪ N and edges between devices and nets (excluding {v} and {g}). If this original graph is bipartite between devices ( D) and nets ( N ), then G is acyclic. 
+
+Proof 1 We prove acyclicity by defining a ranking function 
+
+ρ : V → N such that for every directed edge (u, w ) ∈ E,
+
+ρ(u) < ρ (w). This implies no cycles exist, as a cycle u1 →
+
+u2 → · · · → uk → u1 would yield ρ(u1) < ρ (u2) < · · · <ρ(u1), a contradiction. 
+
+Defining the ranking function ρ: Consider the undirected graph H with node set D ∪ N ∪ { v} ∪ { g} and edges: 
+
+• All edges from the original bipartite graph (between D
+
+and N ); 
+
+• Edges between {v} and nets n ∈ N connected to v;
+
+• Edges between {g} and all nets n ∈ N connected to g.
+
+H is bipartite between devices ( D ∪{ v}∪{ g}) and nets ( N )because: 
+
+• The original graph is bipartite between D and N by as-sumption. 
+
+• Adding {v} and {g} to the device set preserves bipartite-ness, as edges are only between devices and nets. Perform a Breadth First Search (BFS) in H starting from v
+
+to assign layers: 
+
+L0 = {v}
+
+L1 = {n ∈ N | nadj to. v in H}
+
+L2 = {d ∈ D ∪ { g} | d ∈ N (n), n ∈ L1}
+
+L3 = {n ∈ N | n ∈ N (d), d ∈ L2}
+
+...
+
+Lℓ = remaining nodes (until all are visited) Since H is bipartite, nodes alternate between nets (odd lay-ers) and devices (even layers), and the layering is well-defined (no contradictions). Let M = max {layer index } be the maximum layer number. Define ρ(u) as: 
+
+ρ(u) = 
+
+layer (u) if u / ∈ { g}
+
+M + 1 if u ∈ { g}
+
+Here, layer (u) is the BFS layer index of u in H. For {g}, we set ρ(g) = M + 1 to ensure it has the highest rank. 
+
+Verifying ρ(u) < ρ (w) for all edges (u, w ) ∈ E: Consider each type of edge in G:
+
+• Edge d → n for d ∈ D ∪ { v}, n ∈ N :By construction, d and n are adjacent in H, so 
+
+|layer (d) − layer (n)| = 1 . Since devices are in even lay-ers and nets in odd layers: 
+
+– If layer (d) < layer (n), then ρ(d) = layer (d) <
+
+layer (n) = ρ(n).
+
+– If layer (d) > layer (n), then layer (d) ≥ layer (n) + 2 
+
+(layers alternate), but |layer (d) − layer (n)| = 1 , so this case is impossible. Thus, only layer (d) < layer (n)
+
+occurs, implying ρ(d) < ρ (n).
+
+• Edge n → g for n ∈ N :Since ρ(n) = layer (n) ≤ M and ρ(g) = M + 1 , we have ρ(n) ≤ M < M + 1 = ρ(g), so ρ(n) < ρ (g).Thus, for all edges (u, w ) ∈ E, ρ(u) < ρ (w).
+
+Contradiction for cycles: Suppose, for contradiction, that 
+
+G contains a cycle C = u1 → u2 → · · · → uk → u1. For each edge ui → ui+1 (with uk+1 = u1), ρ(ui) < ρ (ui+1 ).This implies: 
+
+ρ(u1) < ρ (u2) < · · · < ρ (uk) < ρ (u1),
+
+which simplifies to ρ(u1) < ρ (u1), a contradiction. There-fore, G is acyclic. 
+
+A.7 Proof for Kirchhoff’s Current Law characteristic preservation theorem 
+
+Theorem 4 Let two sets of vectors be {I∆1 , I∆2 , . . . , I∆n }
+
+and {I∆′ 
+
+> 1
+
+, I∆′ 
+
+> 2
+
+, . . . , I∆′ 
+
+> n
+
+} in Rd, where n < ∥D∥ and 0 ≤
+
+∆i, ∆′ 
+
+> i
+
+≤ ∥D∥ for all i and n < d . Then, there exists a non-trivial linear map ϕ : Rd → R such that ϕ(I∆i ) = ϕ(I∆′ 
+
+> i
+
+)
+
+for all i = 1 , 2, . . . , n .
+
+Proof 2 We define difference vectors as vi = I∆i − I∆′ 
+
+> i
+
+.Then, we let V = span ({v1, v2, . . . , vn}) be the subspace spanned by these difference vectors. We aim to construct a non-trivial linear map ϕ(·) such that: 
+
+ϕ(I∆i ) = ϕ(I∆′ 
+
+> i
+
+), ∀i = 1 , 2, . . . , n. 
+
+This is equivalent to finding a non-zero vector w in the orthogonal complement V ⊥ of V , since any w ∈ V ⊥ satis-fies: 
+
+w · vi = 0 , ∀i, 
+
+and we can define ϕ(x) = w · x + c, where c is any constant number. The difference vectors {v1, v2, . . . , vn} lie in Rd, and there are at most n such vectors. Since n < d , the subspace 
+
+V spanned by these vectors has dimension at most n, i.e., 
+
+dim( V ) ≤ n. The orthogonal complement V ⊥ of V in Rd
+
+satisfies: 
+
+dim( V ⊥) = d − dim( V ) ≥ d − n > 0.
+
+Thus, V ⊥ is non-trivial, and there exist non-zero vectors 
+
+w ∈ V ⊥.Since, any non-zero vector w ∈ V ⊥ defines a linear map: 
+
+ϕ(x) = w · x + c, where c is any constant number. For each 
+
+i, the difference vectors vi satisfy: 
+
+w · vi = 0 .
+
+Hence, we have: 
+
+ϕ(I∆i ) − ϕ(I∆′ 
+
+> i
+
+) = w · (I∆i − I∆′ 
+
+> i
+
+) = w · vi = 0 .
+
+Therefore, ϕ(I∆i ) = ϕ(I∆′ 
+
+> i
+
+) for all i, and the map ϕ sat-isfies the conditions of the theorem. Corollary 2 Suppose that for each i, the distance between the corresponding vectors with normalization is sufficiently small, i.e., 1 − ˆI⊤
+
+> ∆i
+
+ˆI∆′ 
+
+> i
+
+≤ ϵ. A smaller ϵ makes constructing the desired map ϕ(·) easier. 
+
+Proof 3 The squared Euclidean distance between vectors satisfies: 
+
+ˆI∆i − ˆI∆′
+
+> i
+> 22
+
+= ˆI∆i
+
+> 2
+
++ ˆI∆′
+
+> i
+> 2
+
+− 2 ˆI⊤
+
+> ∆i
+
+ˆI∆′ 
+
+> i
+
+,
+
+= 2 − 2 ˆI⊤
+
+> ∆i
+
+ˆI∆′ 
+
+> i
+
+,
+
+= 2(1 − ˆI⊤
+
+> ∆i
+
+ˆI∆′ 
+
+> i
+
+),
+
+≤ 2ϵ. 
+
+The first inequality can be easily achieve by normalization operation, with ˆI∆i , ˆI∆′ 
+
+> i
+
+≤ 1. Thus, each difference vector vi = ˆI∆i − ˆI∆′ 
+
+> i
+
+satisfies ∥vi∥2 ≤ √2ϵ.Let A ∈ Rd×n be the matrix with columns v1, . . . , vn. Its Frobenius norm is bounded by: 
+
+∥A∥F =
+
+vuut nX
+
+> i=1
+
+∥vi∥22 ≤ √2nϵ. 
+
+The singular value decomposition (SVD) of A is: 
+
+A = U ΣV T ,
+
+where U ∈ Rd×d and V ∈ Rn×n are orthogonal matri-ces, Σ ∈ Rd×n is a diagonal matrix containing the singular values σ1, σ 2, . . . , σ n of A.The Frobenius norm of A is related to its singular values: 
+
+∥A∥F =
+
+vuut nX
+
+> i=1
+
+σ2 
+
+> i
+
+.
+
+Since ∥A∥F ≤ √2nϵ , it follows that: 
+
+> n
+
+X
+
+> i=1
+
+σ2 
+
+> i
+
+≤ 2nϵ. 
+
+The null space of AT corresponds to the orthogonal com-plement V ⊥. The dimension of the null space of AT is: 
+
+dim( null (AT )) = d − rank (A).
+
+Since rank (A) ≤ n, we have: 
+
+dim( null (AT )) ≥ d − n > 0.
+
+The size of the smallest singular value of A, denoted σmin ,determines the numerical stability of the null space. If σmin is small, the null space of AT becomes larger. From the bound on the singular values, we thus have the following: 
+
+σmin ≤ ∥ A∥F ≤ √2nϵ. 
+
+As ϵ decreases, the singular values of A decrease, making the null space of AT more prominent and easier to find non-zero vectors w ∈ null (AT ) = V ⊥. This makes it easier to find a non-zero vector w ∈ V ⊥ to define the Required non-trivial linear map ϕ(·).Thus, a smaller ϵ makes it easier to construct the desired map ϕ(·).

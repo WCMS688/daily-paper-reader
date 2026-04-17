@@ -1,0 +1,38 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.23203v1/fig-001.webp",
+      "caption": "Fig. 3: Magnitude of the dd-admittance for all operating points grouped by cluster.",
+      "page": 3,
+      "index": 1,
+      "width": 477,
+      "height": 312
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23203v1/fig-002.webp",
+      "caption": "Fig. 4: Testing performance of the trained FNN model for Group 1.",
+      "page": 4,
+      "index": 2,
+      "width": 518,
+      "height": 252
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23203v1/fig-003.webp",
+      "caption": "Fig. 1: A clustering-driven framework for impedance identification in multi-IBR grids.",
+      "page": 2,
+      "index": 3,
+      "width": 966,
+      "height": 435
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23203v1/fig-004.webp",
+      "caption": "Fig. 5: True, predicted, and corresponding errors of the conductance components of the GFLI4 admittance over the studied operating points.",
+      "page": 5,
+      "index": 4,
+      "width": 867,
+      "height": 722
+    }
+  ]
+}

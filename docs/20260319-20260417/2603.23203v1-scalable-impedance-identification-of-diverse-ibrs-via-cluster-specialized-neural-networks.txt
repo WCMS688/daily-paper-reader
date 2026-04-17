@@ -1,0 +1,352 @@
+Title: Scalable Impedance Identification of Diverse IBRs via Cluster-Specialized Neural Networks
+
+URL Source: https://arxiv.org/pdf/2603.23203v1
+
+Published Time: Wed, 25 Mar 2026 01:32:52 GMT
+
+Number of Pages: 5
+
+Markdown Content:
+# Scalable Impedance Identification of Diverse IBRs via Cluster-Specialized Neural Networks 
+
+Quang Manh Hoang 1, Guilherme Vieira Hollweg 1, Bang Nguyen 3, Akhtar Hussain 2, Wencong Su 1,* , Van-Hai Bui 1,* 1Department of Electrical and Computer Engineering, University of Michigan-Dearborn, USA 
+
+2Department of Electrical and Computer Engineering, Laval University, Canada 
+
+3National Renewable Energy Laboratory, Golden, CO, USA 
+
+Abstract —Modern machine learning approaches typically iden-tify the impedance of a single inverter-based resource (IBR) and assume similar impedance characteristics across devices. In modern power systems, however, IBRs will employ diverse con-trol topologies and algorithms, leading to highly heterogeneous impedance behaviors. Training one model per IBR is inefficient and does not scale. This paper proposes a scalable impedance identification framework for diverse IBRs via cluster-specialized neural networks. First, the dataset is partitioned into multiple clusters with similar feature profiles using the K-means clustering method. Then, each cluster is assigned a specialized feed-forward neural network (FNN) tailored to its characteristics, improving both accuracy and computational efficiency. In deployment, only a small number of measurements are required to predict impedance over a wide range of operating points. The framework is validated on six IBRs with varying control bandwidths, control structures, and operating conditions, and further tested on a previously unseen IBR using only ten measurement points. The results demonstrate high accuracy in both the clustering and prediction stages, confirming the effectiveness and scalability of the proposed method. 
+
+Index Terms —Black-box inverter model, feedforward neural network, impedance-based stability, K-means clustering, small-signal model. 
+
+I. I NTRODUCTION 
+
+Modern power grids are expected to integrate an increasing number of inverter-based resources, which makes the system more vulnerable and reduces the applicability of traditional control and stability analysis methods. One of the major challenges is the complex interaction among multiple IBRs due to their wide range of control bandwidths, topologies, and algorithms, together with the reduced inertia compared to traditional synchronous-generator (SGs)-based power systems. These interactions can lead to small-signal stability problems such as sub-synchronous oscillation, near-synchronous oscil-lation, and super-synchronous resonance [1]. In traditional power systems dominated by SGs, small-signal stability can be studied using white-box state-space models, because SGs have standardized structures and known param-eters; therefore, eigenvalue analysis can be directly applied to investigate the system stability [2]. However, this approach is not applicable to inverter-dominated power systems, where the control structures and parameters of IBRs are often kept confidential by power converter manufacturers due to secu-rity and intellectual property considerations [3]. As a result, 
+
+Corresponding authors: V.H. Bui (vhbui@umich.edu) and W. Su (wen-cong@umich.edu). 
+
+impedance-based stability analysis, which is well studied in the literature, has emerged as a powerful tool for assessing the small-signal stability of black-box models in the frequency domain [1], [4], [5]. In this method, the converter is treated as a black-box impedance model that relates voltage and current perturbations, typically obtained by injecting current or voltage at selected frequencies and measuring the corresponding re-sponses [6]. Various impedance measurement methods based on frequency scanning have been developed for dc and ac converters. However, measurement-based methods are known to be tedious and time-consuming, especially for large inverter-based power systems and wide frequency ranges. Even for a single IBR with detailed control structure, it may take several hours to obtain wide-frequency-range impedance characteristics at multiple operating points, and highly intermittent inverter-dominated systems require many such operating scenarios to be analyzed, which further increases the computational burden and complexity. To overcome these drawbacks, several studies have fo-cused on using data-driven methods to identify black-box IBR impedance models at multiple operating points [5], [7]–[9]. In [8], an artificial neural network (ANN) was used to identify the impedance model of a single grid-following inverter (GFLI) at different operating points; however, this model cannot predict impedance for converters with different control topologies, such as grid-forming inverters (GFMIs), without collecting a large amount of additional data. A related work in [5] proposed a machine learning end-to-end framework based on transfer learning to identify GFLI impedance models at mul-tiple operating points and with different control bandwidths. Nevertheless, the prediction accuracy of that model degrades significantly when applied to GFMIs, whose impedance char-acteristics differ from those of GFLIs. In [9], the authors used a support vector machine algorithm to predict the impedance of current-control GFLI, power-control GFLI, and virtual-synchronous-generator-based GFMI, but the model is retrained separately for each IBR rather than trained jointly. Notably, many existing machine-learning-based impedance modeling approaches struggle to generalize across highly heterogeneous IBR topologies. Although different IBRs may share identical input structures and operating variables, their fundamentally different dynamic behaviors lead to distinct impedance char-acteristics, which often results in degraded prediction accuracy     
+
+> arXiv:2603.23203v1 [eess.SY] 24 Mar 2026 Impedance measurement
+> Clustering Algorithm
+> IBR1
+> IBR2
+> IBR3
+> IBRn
+> IBR_new Measure few data points
+> or Analytical model Feature chosen (e.g. )
+> Group 1
+> Group 2
+> Group 3
+> Group 2
+> FNN1
+> FNN2
+> FNN3
+> FNN2
+> according to OPs (e.g. )
+> Training
+> Predicting
+> Multiple IBRs with different characteristics (e.g. control topologies, control bandwidth, filter topologies)
+> Each Group is trained with specialized FNN structure to optimize performance
+
+Fig. 1: A clustering-driven framework for impedance identification in multi-IBR grids. when a single unified model is applied. To address these limitations, this paper proposes a scal-able impedance identification framework for diverse IBRs via cluster-specialized neural networks. The primary contribution lies in a system-level framework that addresses a practical and increasingly important challenge in large-scale power-electronic-dominated grids: scalable impedance identification under device heterogeneity. First, the dataset of six IBRs (three GFMIs and three GFLIs) with varying control bandwidths, control structures, and operating conditions is generated from analytical models. This dataset is then partitioned into multiple clusters with similar features using the K-means clustering method. Each cluster is subsequently assigned and trained with a specialized feed-forward neural network tailored to its feature profile, improving both accuracy and computational efficiency. In deployment, an unseen GFLI4 is tested using only ten measurement points at a single operating point. The results demonstrate high accuracy in both the clustering and prediction stages, confirming the effectiveness and scalability of the proposed method. II. P ROPOSED FRAMEWORK 
+
+Figure 1 depicts the proposed framework, consisting of an offline phase (clustering and model training) and an online prediction phase. In the offline phase, impedance datasets for multiple IBRs are obtained either via measurement-based identification or from analytical models over a wide range of operating points (see Subsection II-A). After assembling the dataset, one or more salient features (e.g., the Ydd component) are used for clustering (Subsection II-B). Since the resulting clusters exhibit distinct characteristics, each cluster is assigned a dedicated feed-forward neural network architecture, as de-tailed in Subsection II-C. During deployment, the impedance of an unseen IBR can be identified from only a few measurements: first assign the device to its most likely cluster, then use the corresponding network to predict impedance across the broader operating range. 
+
+A. Data Acquisition 1) Generate dataset: For model training, datasets can be obtained from offline or hardware-in-the-loop simulations; from field devices using measurement-based methods [6]; or from analytical models of IBRs [5]. In this paper, the analytical approach is employed for both GFLI and GFMI impedance modeling, using typical configurations reported in the literature. The accuracy of this approach has been validated against measurement-based identification in [4], [10]. Analytical impedance models of both GFMIs and GFLIs have been extensively investigated [4], [10]–[12]. Among the available techniques, the component-connection method is widely adopted due to its simplicity and ease of implemen-tation [4], [10], [12]. In this method, linear subsystems, each described by a state-space model, are combined into a single overall system by stacking the state, input, and output vectors and assembling the corresponding coefficient matrices on the block diagonal. Interconnection relationships between subsys-tem inputs and outputs are then introduced, from which the composite system matrices Asys , Bsys , Csys , Dsys are obtained by standard matrix algebra [10]. Once the overall state-space model of the IBR is available, the transfer function between the system inputs (containing 
+
+vdq ) and outputs (containing idq ) follows directly from control theory, G(s) = Csys (sIsys − Asys )−1Bsys + Dsys , (1) where Isys is the identity matrix of the same dimension as 
+
+Asys . The admittance in the dq domain is then expressed as 
+
+Ydq (s) = idq (s)
+
+vdq (s) . (2) 
+
+2) Data structure: Based on the analytical models of the GFMIs and GFLIs described in the previous section, six IBRs (three GFLIs and three GFMIs) are considered, with parame-ters listed in [13]. The inputs represent the operating points of interest and the frequency range, defined as (V, P, Q, f ) in per-unit form, where V ∈ [0 .9, 1.1] , P ∈ [−1, 1] , and Q ∈ [−1, 1] .The training dataset is generated in MATLAB. A total of 100 frequency points are selected and evenly distributed on a logarithmic scale over f ∈ [1 , 200] . The steps for (V, P, Q )
+
+are chosen as {0.1, 0.5, 0.5}. The outputs consist of the conductance and susceptance values, that is, the real and imaginary parts of Ydd , Ydq , Yqd , and Yqq . Therefore, each sample has a dimension of R1×12 . Some generated operating points exceed the rated power limit (apparent power greater than 1 pu) and are discarded, resulting in a total of 3900 samples per IBR. The testing dataset is generated using the same principles, but with finer resolution: 200 frequency points per operating point and steps for (V, P, Q ) equal to {0.1, 0.2, 0.2}. Operat-ing points that exceed the rated power are similarly removed, yielding a total of 48,600 testing samples. Since the training dataset aggregates samples from all six IBRs, training a single FNN for all devices is infeasible. Al-though the inputs share an identical structure and values, each IBR produces different output characteristics. This mismatch leads to poor prediction accuracy and explains why existing studies do not report impedance prediction for multiple hetero-geneous IBRs using a single model. Therefore, in this research, the dataset must be partitioned into subgroups with similar features before training, as presented in the next section using a clustering algorithm. 
+
+B. Clustering Module 
+
+After collecting the data from all six IBRs, the samples must be clustered into subgroups for training purposes. If all input features are used directly, the strong similarity in input structure can lead to poor clustering performance. Therefore, only a representative feature is selected for the clustering step. In this paper, the magnitude of the dd -admittance, |Ydd |, is chosen as a minimal yet effective feature for scalability, and the K-means clustering algorithm is employed [14]. Although a single feature is used in this work, the proposed framework itself does not restrict the choice of clustering features and can be readily extended to multi-feature or weighted-feature configurations when needed. The next challenge is to determine an appropriate number of clusters, Kmeans . To address this, the K-means clustering algorithm is executed with different numbers of clusters rang-ing from 2 to 6. Two criteria, inertia and silhouette score, are used to evaluate the quality of the resulting partitions. Inertia quantifies the internal compactness of clusters by measuring the sum of squared distances between data points and their corresponding centroids; lower values indicate tighter and more coherent cluster structures. The silhouette score captures both the cohesion of a point within its assigned cluster and its separation from other clusters; higher average values reflect well-defined cluster boundaries and overall superior clustering quality [14]. The variation of these two indices with respect to the number of clusters is shown in Fig. 2. By computing Optimal number of clusters 
+
+Fig. 2: Inertia and silhouette score for each number of clusters. Group 1 {GFMI 1,2,3} Group 2 {GFLI 1,2} Group 3 {GFLI 3} 
+
+Fig. 3: Magnitude of the dd -admittance for all operating points grouped by cluster. the average rank over both criteria, three clusters are selected as the optimal choice for this dataset. After running the K-means clustering algorithm with three clusters, the magnitudes of the dd -admittance for all operating points are plotted in Fig. 3. As shown, Group 1 contains GFMI1, GFMI2, and GFMI3 with different power control bandwidths, leading to larger variance and making this group more challenging to model accurately. Group 2 contains GFLI1 and GFLI2 with very small variance, while Group 3 contains GFLI3. It can be observed that each group exhibits distinct characteristics, especially Group 1. Hence, it is essential to design specialized FNN models for each group. These aspects are further discussed in the next section. 
+
+C. Cluster-Specialized Neural Networks 
+
+A state-of-the-art feed-forward neural network (FNN) archi-tecture is employed to train three separate models, one for each cluster, using common hyperparameter settings summarized in Table I [15]. The networks are trained using the mean squared error (MSE) loss and the Adam optimizer with mini-batch training. The only difference between the three models is the number of neurons in the hidden layers. In particular, the model for Group 1 uses fewer neurons per layer to reduce overfitting, because Group 1 exhibits greater variability in the data, especially in the low-frequency range, whereas Groups 2 and 3 are more homogeneous. The values of the hyperparameters are selected by manual trial-and-error. A related study has employed the Optuna hyperparameter-optimization framework integrated with TensorFlow [5]. How-TABLE I: FNN model and training settings               
+
+> FNN 1 FNN 2 FNN 3 Maximum iterations 1200 1200 1200 Activation function ReLU ReLU ReLU Solver Adam Adam Adam Hidden layers (4, 8) (32, 32) (32, 32)
+
+ever, automated hyperparameter tuning is not the primary focus of this work. In the present implementation, the datasets are preprocessed using the scikit-learn library, and the networks are trained on a personal computer equipped with an Intel 13th Gen Core i5-13500HX processor. To illustrate the effectiveness of the proposed framework, detailed testing results for Group 1 are presented, as shown in Fig. 4. Figure 4a presents the true and predicted conductance for the four admittance components of Ydq at the operating point V = 0 .9 pu, P = 1 pu, and Q = 0 . Figure 4b shows the corresponding susceptance at the same operating point. As mentioned in Section II-A, the testing dataset has finer resolution than the training dataset, which provides a stringent evaluation of the generalization capability of the FNN. As can be seen in these figures, the model predicts the admittance with high accuracy across the studied frequency range. For further validation, an unseen grid-following inverter, denoted GFLI4, with different PLL control parameters is used to evaluate the effectiveness of the proposed framework, and the corresponding results are discussed in the next subsection.  
+
+> (a) Conductance on testing. (b) Susceptance on testing.
+
+Fig. 4: Testing performance of the trained FNN model for Group 1. III. C ASE STUDY AND VALIDATION 
+
+In this section, an unseen inverter, denoted GFLI4, with parameters identical to those of GFLI1 in previous section, except Kppll = 7 .9 and Kipll = 78 .9, is used to validate the proposed framework under the assumption that only ten frequency points at a single operating point ( V = 1 pu, P =1 pu, Q = 0 pu) are available. First, the magnitude of the 
+
+dd -admittance is computed and normalized in the same way as in the clustering stage. During training, the centroids of the three clusters, μ(1) , μ (2) , μ (3) , have already been calculated and stored. Hence, whenever a new IBR needs to be assigned to a cluster, the Euclidean distance between its |Ydd | profile and each centroid is computed as 
+
+dk = z − μ(k)
+
+> 2
+
+, k = 1 , 2, 3, (3) where z denotes the normalized |Ydd | vector of the new IBR. The new device is then assigned to the cluster with the smallest distance. For GFLI4, the distances to Groups 1, 2, and 3 are 
+
+{d1, d 2, d 3} = {18 .7, 1.17 , 3.9}, so the model associated with Group 2 (FNN2) is selected for predicting the admittance over a wide range of operating points and frequencies. The prediction results are shown in Fig. 5, where the voltage and reactive power are fixed at 1 pu and 0 pu, respectively, for better visualization. The active power is varied from −1 pu to 1 pu with a step of 0.2, and 200 frequency points are considered for each operating point. As can be seen from these figures, FNN2 accurately predicts the admittance of the new GFLI across most of the studied frequency range. The largest discrepancies appear at low frequencies, which is expected because the PLL dynamics typically dominate in this region and are more sensitive to parameter variations. Nevertheless, the overall agreement confirms that the cluster-specialized model can generalize well to a previously unseen IBR using only a small number of measurement points. In practice, when a new IBR is integrated into the system, the selected cluster model can be further fine-tuned with a few additional measurements from that device, especially in the low-frequency range, to improve accuracy if required. This illustrates a practical workflow in which the proposed framework provides a good initial impedance model with minimal data, and optional fine-tuning can be applied to meet stricter accuracy demands. This case study illustrates the few-shot capability of the proposed cluster-specialized framework for modeling heterogeneous IBRs. IV. C ONCLUSION 
+
+This paper proposed a clustering-based machine learning framework for impedance identification of diverse inverter-based resources. Impedance datasets for three grid-forming and three grid-following inverters with different control param-eters were generated from analytical models and partitioned into three clusters, and a specialized feed-forward neural network was trained for each cluster, reducing computational resources and model complexity compared with assigning one model per IBR. The framework was further validated on an unseen grid-following inverter using only ten measurement points at a single operating point, showing high prediction accuracy over most of the frequency range, with larger errors concentrated at low frequencies where phase-locked loop dy-namics dominate. Although the proposed framework addresses the scalability challenge, it still relies on centralized data aggregation, which may introduce cybersecurity and privacy concerns; future work will investigate secure and privacy-preserving implementations and extend the approach to ex-perimental datasets and larger IBR fleets. ACKNOWLEDGMENT 
+
+This work was supported in part by the U.S. National Science Foundation (NSF) under Award 2509993. 10 0
+
+> 10 1
+> 10 2
+> 10 3
+> Frequency (Hz)
+> 1.0
+> 0.5
+> 0.0
+> 0.5
+> 1.0
+> P (pu)
+> 0
+> 10
+> 20
+> 30
+> 40
+> 50
+> |Re(Y)| (dB)
+
+Ydd 
+
+> 10 0
+> 10 1
+> 10 2
+> 10 3
+> Frequency (Hz)
+> 1.0
+> 0.5
+> 0.0
+> 0.5
+> 1.0
+> P (pu)
+> 60
+> 40
+> 20
+> 0
+> 20
+> |Re(Y)| (dB)
+
+Ydq 
+
+> 10 0
+> 10 1
+> 10 2
+> 10 3
+> Frequency (Hz)
+> 1.0
+> 0.5
+> 0.0
+> 0.5
+> 1.0
+> P (pu)
+> 60
+> 40
+> 20
+> 0
+> 20
+> |Re(Y)| (dB)
+
+Yqd 
+
+> 10 0
+> 10 1
+> 10 2
+> 10 3
+> Frequency (Hz)
+> 1.0
+> 0.5
+> 0.0
+> 0.5
+> 1.0
+> P (pu)
+> 0
+> 10
+> 20
+> 30
+> 40
+> 50
+> |Re(Y)| (dB)
+
+Yqq (a) True (analytical) conductance of GFLI4. 10 0
+
+> 10 1
+> 10 2
+> 10 3
+> Frequency (Hz)
+> 1.0
+> 0.5
+> 0.0
+> 0.5
+> 1.0
+> P (pu)
+> 20
+> 0
+> 20
+> 40
+> |Re(Y)| (dB)
+
+Ydd 
+
+> 10 0
+> 10 1
+> 10 2
+> 10 3
+> Frequency (Hz)
+> 1.0
+> 0.5
+> 0.0
+> 0.5
+> 1.0
+> P (pu)
+> 40
+> 20
+> 0
+> 20
+> |Re(Y)| (dB)
+
+Ydq 
+
+> 10 0
+> 10 1
+> 10 2
+> 10 3
+> Frequency (Hz)
+> 1.0
+> 0.5
+> 0.0
+> 0.5
+> 1.0
+> P (pu)
+> 60
+> 40
+> 20
+> 0
+> 20
+> |Re(Y)| (dB)
+
+Yqd 
+
+> 10 0
+> 10 1
+> 10 2
+> 10 3
+> Frequency (Hz)
+> 1.0
+> 0.5
+> 0.0
+> 0.5
+> 1.0
+> P (pu)
+> 10
+> 0
+> 10
+> 20
+> 30
+> 40
+> 50
+> |Re(Y)| (dB)
+
+Yqq 
+
+(b) Predicted conductance of GFLI4. 10 0
+
+> 10 1
+> 10 2
+> 10 3
+> Frequency (Hz)
+> 1.0
+> 0.5
+> 0.0
+> 0.5
+> 1.0
+> P (pu)
+> 30
+> 20
+> 10
+> 0
+> 10
+> 20
+> |Re(Y)| (dB)
+
+Ydd 
+
+> 10 0
+> 10 1
+> 10 2
+> 10 3
+> Frequency (Hz)
+> 1.0
+> 0.5
+> 0.0
+> 0.5
+> 1.0
+> P (pu)
+> 0
+> 20
+> 40
+> |Re(Y)| (dB)
+
+Ydq 
+
+> 10 0
+> 10 1
+> 10 2
+> 10 3
+> Frequency (Hz)
+> 1.0
+> 0.5
+> 0.0
+> 0.5
+> 1.0
+> P (pu)
+> 20
+> 0
+> 20
+> 40
+> |Re(Y)| (dB)
+
+Yqd 
+
+> 10 0
+> 10 1
+> 10 2
+> 10 3
+> Frequency (Hz)
+> 1.0
+> 0.5
+> 0.0
+> 0.5
+> 1.0
+> P (pu)
+> 10
+> 5
+> 0
+> 5
+> 10
+> 15
+> |Re(Y)| (dB)
+
+Yqq 
+
+(c) Prediction error (predicted - true). 
+
+Fig. 5: True, predicted, and corresponding errors of the conductance components of the GFLI4 admittance over the studied operating points. REFERENCES [1] S. Shah, V. Gevorgian, P. Koralewicz, R. Wallen, and W. Yan, “Impedance methods for analyzing stability impacts of inverter-based resources,” in Proc. 2nd National Science Foundation (NSF) Workshop on Power Electronics-Enabled Operation of Power systems , 2019. [2] P. Kundur et al. , “Power system stability,” Power system stability and control , vol. 10, no. 1, pp. 7–1, 2007. [3] H. Wu, F. Zhao, and X. Wang, “A survey on impedance-based dynamics analysis method for inverter-based resources,” IEEE Power Electronics Magazine , vol. 10, no. 3, pp. 43–51, 2023. [4] W. Zhou, N. Mohammed, and B. Bahrani, “Comprehensive modeling, analysis, and comparison of state-space and admittance models of pll-based grid-following inverters considering different outer control modes,” IEEE Access , vol. 10, pp. 30109–30146, 2022. [5] Y. Li, Y. Liao, L. Zhao, M. Chen, X. Wang, L. Nordstr¨ om, P. Mittal, and H. V. Poor, “Machine learning at the grid edge: Data-driven impedance models for model-free inverters,” IEEE transactions on power electronics , vol. 39, no. 8, pp. 10465–10481, 2024. [6] G. Francis, R. Burgos, D. Boroyevich, F. Wang, and K. Karimi, “An algorithm and implementation system for measuring impedance in the dq domain,” in 2011 IEEE Energy Conversion Congress and Exposition ,pp. 3221–3228, IEEE, 2011. [7] Q.-M. Hoang, N. Van Nam, T. Kim, G. V. Hollweg, W. Su, and V.-H. Bui, “Ann-based grid impedance estimation for adaptive gain scheduling in vsg under dynamic grid conditions,” in 2025 IEEE Energy Conversion Conference Congress and Exposition (ECCE) , pp. 1–7, 2025. [8] M. Zhang, X. Wang, D. Yang, and M. G. Christensen, “Artificial neural network based identification of multi-operating-point impedance model,” 
+
+IEEE Transactions on Power Electronics , vol. 36, no. 2, pp. 1231–1235, 2020. [9] N. Mohammed, W. Zhou, B. Bahrani, and D. J. Hill, “Support vector ma-chines for predicting the impedance model of inverter-based resources,” 
+
+IEEE Transactions on Power Systems , vol. 39, no. 6, pp. 7359–7375, 2024. [10] J. Xu, W. Zhou, and B. Bahrani, “Small-signal modeling and validation including state-space and admittance models of the virtual synchronous machine,” in Grid-Forming Power Inverters , pp. 107–130, CRC Press, 2023. [11] B. Wen, D. Boroyevich, R. Burgos, P. Mattavelli, and Z. Shen, “Analysis of dq small-signal impedance of grid-tied inverters,” IEEE Transactions on Power Electronics , vol. 31, no. 1, pp. 675–687, 2015. [12] L. Harnefors, M. Bongiorno, and S. Lundberg, “Input-admittance cal-culation and shaping for controlled voltage-source converters,” IEEE transactions on industrial electronics , vol. 54, no. 6, pp. 3323–3334, 2007. [13] M. Hoang, “Appendix to: Scalable impedance identification of di-verse ibrs via cluster-specialized neural networks.” https://github.com/ ManhqhUMich12, 2025. Accessed: 2025-02-XX. [14] A. Likas, N. Vlassis, and J. J. Verbeek, “The global k-means clustering algorithm,” Pattern recognition , vol. 36, no. 2, pp. 451–461, 2003. [15] G. Bebis and M. Georgiopoulos, “Feed-forward neural networks,” Ieee Potentials , vol. 13, no. 4, pp. 27–31, 2002.

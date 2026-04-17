@@ -1,0 +1,710 @@
+Title: From Physics to Surrogate Intelligence: A Unified Electro-Thermo-Optimization Framework for TSV Networks
+
+URL Source: https://arxiv.org/pdf/2603.29268v1
+
+Published Time: Wed, 01 Apr 2026 00:36:39 GMT
+
+Number of Pages: 13
+
+Markdown Content:
+> 1
+
+# From Physics to Surrogate Intelligence: A Unified Electro-Thermo-Optimization Framework for TSV Networks 
+
+Mohamed Gharib ∗ , Graduate Student Member, IEEE, Leonid Popryho ∗ , Graduate Student Member, IEEE, and Inna Partin-Vaisband , Senior Member, IEEE 
+
+Abstract —High-density through-substrate vias (TSVs) enable 2.5D/3D heterogeneous integration but introduce significant signal-integrity and thermal-reliability challenges due to electri-cal coupling, insertion loss, and self-heating. Conventional full-wave finite-element method (FEM) simulations provide high ac-curacy but become computationally prohibitive for large design-space exploration. This work presents a scalable electro–thermal modeling and optimization framework that combines physics-informed analytical modeling, graph neural network (GNN) surrogates, and full-wave sign-off validation. A multi-conductor analytical model computes broadband S-parameters and effective anisotropic thermal conductivities of TSV arrays, achieving 
+
+5% –10% relative Frobenius error (RFE) across array sizes up to 15 × 15 . A physics-informed GNN surrogate (TSV-PhGNN), trained on analytical data and fine-tuned with HFSS simulations, generalizes to larger arrays with RFE below 2% and nearly constant variance. The surrogate is integrated into a multi-objective Pareto optimization framework targeting reflection coefficient, insertion loss, worst-case crosstalk (NEXT/FEXT), and effective thermal conductivity. Millions of TSV configurations can be explored within minutes, enabling exhaustive layout and geometric optimization that would be infeasible using FEM alone. Final designs are validated with Ansys HFSS and Mechanical, showing strong agreement. The proposed framework enables rapid electro–thermal co-design of TSV arrays while reducing per-design evaluation time by more than six orders of magnitude. 
+
+Index Terms —Through-substrate vias (TSVs), package model-ing, electro–thermal modeling, graph neural networks (GNNs), surrogate modeling, S-parameters, Pareto optimization, hetero-geneous integration, 2.5D/3D IC design automation 
+
+I. I NTRODUCTION 
+
+High-performance computing (HPC) and modern hetero-geneous systems, including AI accelerators, memory-centric architectures, and sensor-integrated platforms, require inter-connect technologies that provide high bandwidth, low loss, and strong thermal reliability for efficient die-to-die commu-nication [1]–[3]. Conventional two-dimensional (2D) intercon-nects increasingly suffer from resistive and dielectric losses, 
+
+This work was supported by the Center on Cognitive Multispectral Sensors (CogniSense), one of seven centers in Joint University Microelectronics Program (JUMP) 2.0, a Semiconductor Research Corporation (SRC) program sponsored by the Defense Advanced Research Project Agency (DARPA). The authors used generative artificial intelligence (ChatGPT, OpenAI) solely for language editing and improving writing clarity. All technical content and results were developed and verified by the authors. 
+
+> ∗
+
+These authors contributed equally to this work. Mohamed Gharib, Leonid Popryho, and Inna Partin-Vaisband are with the Department of Electrical and Computer Engineering, University of Illinois Chicago, Chicago, IL 60607, USA (e-mail: mghari5@uic.edu). 
+
+bandwidth limitations, and propagation delay, which constrain system scalability. In contrast, through-substrate vias (TSVs) enable three-dimensional (3D) heterogeneous integration by providing short vertical interconnect paths and fine pitch, thereby supporting high-bandwidth, low-latency communica-tion [4]–[7]. However, dense TSV arrays introduce significant electro-magnetic challenges, including reflection, insertion loss, and inter-TSV coupling [8]–[10]. Thermal challenges also arise due to the low thermal conductivity of dielectric liners sur-rounding TSVs, which degrade the effective thermal conduc-tivity (ETC) of the substrate and impact signal integrity [11]– [13]. Accurate characterization of these coupled electrothermal effects is therefore essential during early design stages. Full-wave finite-element method (FEM) tools such as Ansys HFSS provide high accuracy but become computationally prohibitive for large TSV arrays, while approximations such as mesh coarsening reduce solution fidelity. Several analytical and semi-analytical models have been proposed to enable faster TSV analysis during design-space exploration. However, most existing approaches are restricted to simplified configurations, such as signal–ground pairs or small symmetric structures, and therefore fail to capture the behavior of dense TSV arrays [14]–[19]. Moreover, some mod-els neglect parasitic inductive effects, limiting their validity to frequencies below approximately 10–20 GHz [19], [20]. In practical systems, TSVs are typically arranged in asymmet-ric signal–ground configurations with multiple ground return paths. While multi-ground TSV structures have been explored in [21], the proposed models remain limited to symmetric layouts and frequencies below 20 GHz, and often neglect inter-TSV coupling by assuming ground rings around signal TSVs—an assumption that does not hold in dense arrays. Machine-learning-assisted FEM frameworks have recently been explored to improve TSV design optimization. In [22], Ansys Q2D simulations are combined with genetic optimiza-tion to determine signal–ground assignments, but the approach is limited to 5×5 arrays due to the high cost of repeated FEM simulations. Larger arrays are approximated using tiled sub-arrays, which neglect inter-sub-array coupling and can produce optimistic performance estimates (e.g., up to 13 × lower cou-pling in a 10 ×10 array). Other works employ multiphysics co-simulation with particle swarm optimization [23] or rein-forcement learning techniques [24], yet these methods remain dependent on repeated FEM simulations and therefore scale 
+
+> arXiv:2603.29268v1 [cs.LG] 31 Mar 2026 2
+
+Fig. 1: Comparison of representative TSV modeling and optimization frameworks in terms of scalability, frequency range, and computational cost. poorly for dense TSV arrays [25]. Thermal and electrothermal modeling approaches have also been proposed to reduce FEM reliance by representing TSVs as thermal conduction paths within the substrate [26]–[28]. However, many such models neglect ohmic self-heating effects, which become increasingly significant at high operating frequencies and in dense TSV structures. A comparison of representative TSV modeling and optimization frameworks is summarized in Fig. 1. To address these limitations, this work presents a unified electro–thermal modeling and optimization framework for dense TSV arrays with arbitrary size, signal–ground allocation, and geometric parameters. The framework integrates physics-informed analytical modeling, graph-based machine learning (ML) acceleration, and full-wave FEM sign-off validation. The main contributions are summarized as follows:  
+
+> •
+
+Physics-informed analytical electro–thermal modeling: 
+
+A wideband analytical solver, extended from [29] to sup-port multi-ground TSV structures, computes multi-port S-parameters and effective anisotropic thermal conductivities (kx, k y , k z ) for arbitrary TSV layouts. Validation against HFSS using complex-domain relative Frobenius error (RFE) yields 5% –10 .6% error while reducing simulation runtime from ∼ 10 3 seconds (FEM) to sub-second execution.  
+
+> •
+
+Graph neural network surrogate modeling: A GNN-based surrogate trained on analytical data and fine-tuned with HFSS simulations generalizes from 3×3–7×7 training arrays to grids up to 15 × 15 , achieving complex-domain RFE below 1.68% . For a 15 × 15 array, the surrogate performs inference in 1.73 ms compared with 2, 998 s for HFSS, corresponding to ∼ 1.7 × 10 6 acceleration.  
+
+> •
+
+Rapid large-scale design-space exploration: The surrogate enables exhaustive evaluation of large TSV configuration spaces. For a 5 × 5 grid with 12 signal TSVs, the  25 12 
+
+ =5.2 × 10 6 possible layouts can be explored in minutes. Exploiting dihedral symmetry ( D4) reduces the search space by up to 8×, enabling full exploration in under one minute.  
+
+> •
+
+Multi-objective electro–thermal Pareto optimization: 
+
+The framework jointly optimizes TSV layout and geometric parameters—including radius, pitch, height, and oxide thick-ness—to construct Pareto fronts capturing tradeoffs among reflection, insertion loss, crosstalk, and thermal conductivity.  
+
+> •
+
+Automated FEM sign-off validation: Pareto-optimal de-signs are automatically exported through a PyAEDT work-flow for verification using Ansys HFSS and Ansys Mechan-ical. Overall, the proposed framework enables scalable elec-tro–thermal co-design of dense TSV arrays, achieving million-fold acceleration over conventional FEM-based design-space exploration while maintaining near-FEM accuracy. The remainder of this paper is organized as follows. Sec-tion II revisits the analytical framework of [29] and extends it to multi-ground TSV structures. Section III describes the machine-learning methodology, including dataset generation, model architecture, and transfer learning strategy. Section IV evaluates the analytical and ML frameworks against full-wave FEM tools and state-of-the-art approaches. Finally, Section V concludes the paper. II. E LECTROTHERMAL ANALYTICAL MODEL 
+
+The electrothermal modeling framework for cylindrical ver-tical interconnects in [29] is adopted as the basis of this work and extended to dense, irregular TSV arrays. Electrically, the original metal-insulator-metal (MIM) formulation for a single-reference ground is generalized to multi-ground signal-ground configurations, enabling accurate modeling of practical TSV arrays with arbitrary signal assignments and multiple return paths. Thermally, the steady-state ETC formulation in [29] is ex-tended with sparsity-aware corrections for partially populated and irregular layouts. This anisotropic treatment preserves physical consistency and avoids overestimating lateral heat spreading under uniform homogenization assumptions. 
+
+A. Electromagnetic Framework 
+
+The Python-based framework takes as input the substrate and TSV dimensions, operating frequency, and signal/ground assignments. The TSV array is represented by the distributed RLCG equivalent circuit shown in Fig. 2, with component expressions summarized in Table I and physical parameters listed in Table II. These parameters fully characterize the frequency-dependent electrical behavior of the array. The depletion thickness is obtained by solving the nonlinear sidewall-capacitance equation of a MOS varactor structure [31]. The oxide and depletion capacitances are then computed using a coaxial transmission-line formulation [32], while self and mutual external inductances are derived from multicon-ductor transmission-line theory [33]. In practical TSV arrays, multiple ground TSVs act as dis-tributed return paths. To capture this behavior while reducing matrix dimensionality, the inductance matrix is constructed and reduced as follows: 1) A single TSV is selected as a mathematical reference for evaluating partial inductances Lii and Lij . This choice only fixes the reference for inductance extraction and does not imply that current returns through a single TSV. 2) The full inductance matrix L = {Lij } is assembled and reordered into signal and ground sub-blocks, 
+
+L =
+
+Lss Lsg 
+
+Lgs Lgg 
+
+
+
+, (1) 3
+
+TABLE I: RLCG Impedances for the Circuit Components [30]. 
+
+Element Equation 
+
+Depletion thickness 
+
+tdep = 4εskT q2Na ln 
+
+ Na
+
+> ni
+
+
+
+= −0.5t2 
+
+> dep
+
+− tdep (rcond + tins )+ ( rcond + tins + tdep )2 ln 
+
+ rcond +tins +tdep 
+
+> rcond +tins
+
+
+
+Oxide and depletion capacitance Cox+dep = 2πε sεs 
+
+> εsln
+
+  rcond +tins   
+
+> rcond )+ εins ln
+
+  rcond +tins +tdep 
+
+> rcond +tins
+
+
+
+Self inductance Lii = μ0 
+
+> 2π
+
+ln 
+
+ d2 
+
+> i, ref
+> rcond i·rcond ref
+
+
+
+Mutual inductance Lij = μ0 
+
+> 2π
+
+ln 
+
+ di, ref dj, ref  
+
+> rcond ref di,j
+
+
+
+Substrate capacitance Csi×j = μ0ϵsL−1
+
+> i×j
+
+Substrate conductance Gsi×j = μ0σsL−1
+
+> i×j
+
+Conductor impedance Z ≜ Rcond + jωL cond ,internal = χ/σ Cu 
+
+> 2πr 2cond
+> I0(χ)
+> I1(χ)
+
+χ(ω) = rcond 
+
+√jωμ Cu σCu 
+
+Inter-metal dielectric capacitance CIMD = πε ox  
+
+> cosh −1
+
+  di,j 
+
+> 2rcond
+
+
+
+Fig. 2: Analytical simulation flow, where a Python-based netlist generator creates an RLCG SPICE representation of the TSV array, which is simulated using PrimeSim HSPICE to extract wideband S-parameters. where Lss = L[S, S], Lsg = L[S, G], Lgs = L[G, S],and Lgg = L[G, G], with S and G denoting the signal and ground index sets. 3) The ground-current degrees of freedom are eliminated using a Schur-complement reduction [33], yielding the effective signal-domain inductance matrix 
+
+Leff = Lss − Lsg L−1 
+
+> gg
+
+Lgs . (2) This operation captures current redistribution among the ground TSV network and preserves shielding and cou-pling effects while reducing the system dimension from 
+
+(Ns + Ng ) to Ns.Substrate capacitance and conductance are formulated using the same geometric coupling formulation as the inductance expressions. Specifically, permeability is replaced with per-mittivity (for capacitance) and substrate conductivity (for conductance), as shown by Csi×j and Gsi×j in Table I). The TABLE II: Technology and Physical Parameters. 
+
+Parameter Symbol 
+
+Conductor radius [μm] rcond 
+
+Interconnect height [μm] hint 
+
+Interconnects pitch [μm] pint 
+
+Insulator thickness [μm] tins 
+
+Depletion thickness [μm] tdep 
+
+IMD height [μm] hIMD 
+
+Conductivity of substrate [S/m] σs
+
+Permittivity of substrate ϵs
+
+Permittivity of insulator ϵins 
+
+Permittivity of IMD ϵimd 
+
+Permeability of conductor μr,cond 
+
+Thermal voltage [ V ] kT /q 
+
+Boltzmann’s constant[ J/K ] k
+
+Absolute temperature [ K] T
+
+Absolute electron charge [ C] q
+
+Doping concentration [ cm −3] NA
+
+Distance between the ith and reference conductors di, ref 
+
+Distance between the ith and jth conductors di,j 
+
+effective radius incorporates the metal conductor radius along with the surrounding oxide and depletion regions, thereby defining the physical boundary for the electric field solu-tion. The resulting capacitance and conductance matrices are partitioned and reduced using the same block structure and Schur complement procedure as in (1) and (2). This reduction eliminates the ground degrees of freedom and yields effective signal-domain matrices that capture charge redistribution and shielding effects within the coupled ground TSV network. The conductor impedance is modeled using the frequency-dependent internal impedance of cylindrical wires, expressed through modified Bessel functions I0 and I1. This formula-tion captures skin-effect current crowding and the associated reduction in external inductance at higher frequencies [33]. The inter-metal dielectric (IMD) capacitance between adjacent TSVs is evaluated using a parallel-wire capacitance model [34]. After computing all RLCG parameters, the equivalent cir-cuit (Fig. 2) is instantiated in PrimeSim HSPICE to extract the broadband S-parameters, which are associated with the corresponding TSV configuration for subsequent analysis. 
+
+B. Electrothermal Framework Using Equivalent Thermal Conductivity 
+
+In practical TSV-based interconnect systems, metallic con-ductors exhibit finite electrical resistance, resulting in ohmic power dissipation and the generation of Joule heat. Temper-ature variations, in turn, directly affect electrical behavior by increasing the resistivity of conductive materials, thereby further amplifying power loss. The temperature dependence of copper resistivity is modeled as [35] 
+
+ρCu = ρ0
+
+1 + α(T − T0), (3) 4
+
+Fig. 3: Flowchart of the coupled electrothermal simulation framework. Electrical losses are extracted from S-parameters and mapped to thermal heat sources. The resulting temperature distribution is used to update temperature-dependent electrical parameters until convergence. where ρ0 = 1 .7 × 10 −8 Ω · m denotes the resistivity at the reference temperature T0 = 300 K, and α = 3 .9×10 −3 K−1 is the temperature coefficient of resistivity. As evident from (3), an increase in temperature raises conductor resistance, which increases ohmic losses and further elevates temperature. This electrothermal interaction forms a positive feedback loop that must converge to a steady-state operating point. The proposed framework captures this interaction through a coupled electrothermal modeling flow, in which electrical losses extracted from S-parameters are mapped to thermal heat sources, and the resulting temperature rise is used to update temperature-dependent electrical parameters. While the framework supports transient electrothermal analysis, the fo-cus of this work is on steady-state temperature estimation. The overall electrothermal simulation flow is illustrated in Fig. 3. 
+
+1) Equivalent Thermal Conductivity Formulation: Each TSV is modeled using a square thermal unit cell of side length 2( rcond + tins ), comprising three distinct regions: the copper via, the surrounding oxide liner, and the substrate. The corresponding cross-sectional areas are given by 
+
+szv = πr 2cond , (4) 
+
+szl = π(rcond + tins )2 − r2cond 
+
+, (5) 
+
+szs = ( rcond + tins )2(4 − π). (6) Using these area fractions, the vertical ETC of a single TSV unit cell is computed as 
+
+kz 
+
+> cond
+
+= kv szv + klszl + ksszs
+
+4( rcond + tins )2 , (7) where kv , kl, and ks denote the thermal conductivities of the via metal, insulating liner, and substrate, respectively, and 
+
+sz is the cross-sectional area (along the z-direction) of the corresponding material region. Unlike vertical heat flow, lateral heat conduction encounters spatially varying material composition across the TSV cross section. To accurately capture this behavior, the lateral ETC is computed using numerical integration 
+
+kx,y  
+
+> cond
+
+=
+
+Z rcond +tins 
+
+> 0
+
+dx   
+
+> Wv(x)
+> kv
+
++ Wl(x) 
+
+> kl
+
++ Ws(x)
+
+> ks
+
+, (8) where Wv (x), Wl(x), and Ws(x) represent the local material widths at position x. This formulation captures nonuniform lateral heat-flow paths without relying on simplified series or parallel resistance approximations. 
+
+2) Equivalent Volumetric Heat Capacity: In addition to ETC, the framework computes an equivalent volumetric heat capacity for completeness and future use in transient elec-trothermal simulations. For a single TSV unit cell, the equiv-alent volumetric heat capacity is given by 
+
+(ρC p)eq = ρv Cp,v szv + ρlCp,l szl + ρsCp,s szs
+
+4( rcond + tins )2 , (9) where ρ and Cp denote, respectively, the mass density and specific heat capacity of the corresponding material region. To account for the surrounding substrate beyond the TSV unit cells, an extended equivalent volumetric heat capacity is computed over the full substrate area. Under steady-state conditions, the ρC p term multiplies the transient temperature derivative and therefore drops out from the governing heat equation. Nevertheless, it is reported to enable direct extension of the framework to transient electrothermal analysis. 
+
+3) Array-Level Anisotropic Conductivities: Prior array-level ETC formulations, including [26], implicitly assume that TSVs form a fully populated rectangular array with uniform spacing, such that all M ×N unit cells contain TSVs. While this assumption simplifies analysis, it does not generally hold for practical TSV layouts, which often include reserved regions for routing, power delivery, or mechanical constraints. To address this limitation, the proposed framework explic-itly accounts for sparse TSV arrays . Let M and N denote the number of rows and columns, respectively, and let nTSV 
+
+denote the total number of TSVs within the M × N array. A sparsity factor is defined as 
+
+focc = nTSV 
+
+M N , 0 < f occ ≤ 1. (10) The effective TSV footprint used in lateral conduction is scaled by √focc to preserve the correct total TSV area contribution, yielding 
+
+lcond,eff = wcond,eff = 2( rcond + tins )pfocc , (11) where lcond,eff and wcond,eff are the side lengths of a square thermal TSV unit cell. Using these effective dimensions, the lateral array-level ETCs are expressed as 
+
+kx 
+
+> eq
+
+= ks(ws − N w cond,eff )
+
+ws
+
+kx 
+
+> cond
+
+· N l swcond,eff 
+
+M l cond,eff ws
+
+, (12) 
+
+ky 
+
+> eq
+
+= ks(ls − M l cond,eff )
+
+ls
+
+ky 
+
+> cond
+
+· M w slcond,eff 
+
+N l swcond,eff 
+
+, (13) where ls and ws denote total lateral length and width of the substrate region, respectively. The vertical array-level ETC is computed using the actual TSV area fraction rather than assuming a fully populated rectangle 
+
+kz 
+
+> eq
+
+= ks + lcond wcond 
+
+lsws
+
+nTSV 
+
+ kz 
+
+> cond
+
+− ks
+
+. (14) This sparsity-aware formulation ensures that the effective anisotropic thermal conductivities remain physically consistent for irregular TSV layouts and avoids systematic overestimation of heat-spreading capability in partially populated arrays. 5
+
+Fig. 4: Extraction of Joule heating from S-parameters and mapping to volumetric heat sources. 
+
+4) Heat Source Extraction from S-Parameters: The volu-metric heat generation rate G is derived directly from the electrical S-parameters. Since TSV arrays exhibit conductive and dielectric losses, the sum of the squared magnitudes of the scattering parameters is less than unity, and the deficit corresponds to dissipated power. For excitation of the jth 
+
+conductor, the dissipated power is computed as 
+
+Ploss = Pin 1 −
+
+> q
+
+X
+
+> i=1
+
+|Sij |2
+
+!
+
+, (15) where q = ( N × M − 1) × 2 denotes the total number of ports in the array with each TSV modeled as a two-port network. The corresponding volumetric heat generation rate within the jth TSV is obtained by normalizing the dissipated power over the conductor volume, 
+
+Gcond ,j = Ploss 
+
+πr 2
+
+> cond
+
+h . (16) This procedure is applied to all conductors to construct the full volumetric heat generation field G as shown in Fig. 4. 
+
+5) Steady-State Thermal Solution Using Ansys Mechanical: 
+
+Instead of explicitly solving the heat conduction equation on TSV-resolved geometries, the extracted anisotropic ETCs 
+
+(kxeq , k yeq , k zeq ) are imported into Ansys Mechanical as an equivalent anisotropic thermal block. The volumetric heat sources derived from the S-parameters are applied to this block under the same boundary conditions used in full 3D simulations. This homogenized ETC-based approach enables rapid steady-state temperature extraction while maintaining close agreement with TSV-resolved finite-element simulations, achieving speedups from ∼ 35 × for 5 × 5 sparse arrays to 
+
+∼ 1300 × for fully populated 10 × 10 arrays. III. ML-A SSISTED OPTIMIZATION FRAMEWORK 
+
+The proposed framework integrates analytical physics mod-eling, GNNs, and transfer learning to create a surrogate model capable of rapid and accurate S-parameter prediction for TSV arrays. 
+
+A. Analytical Dataset Generation 
+
+To mitigate the prohibitive computational cost of three-dimensional FEM simulations (e.g., Ansys HFSS) during the initial model training stage, the physics-based analytical framework described in Section II is used to generate a large-scale pretraining dataset. Using this framework, 100,000 data samples are generated analytically for TSV arrays with dimen-sions ranging from 3 × 3 to 20 × 20 , and the corresponding RLCG-based netlists are simulated using the HSPICE circuit simulator. The resulting dataset is partitioned into 80,000 samples for training and 20,000 samples for validation. 
+
+B. Graph Representation 
+
+The TSV array is modeled as a graph G = ( V, E), en-abling a flexible representation that naturally supports arbitrary TSV arrangement patterns and variable array sizes as shown in Fig. 5. Graph-based modeling is particularly well suited for this problem, as it captures complex spatial interactions while remaining inherently scalable. As a result, the proposed framework can generalize to TSV arrays larger than those encountered during training without requiring architectural modifications. 
+
+1) Node Representation: The node set V corresponds to the TSVs in the array, where each TSV is represented by a node 
+
+vi ∈ V . The node feature vector xi ∈ R6 encodes both the physical dimensions and the functional role of the TSV: 
+
+xi = Type , r via , p, h via , t ox , f . (17) Here, Type ∈ { 1, 0, −1} denotes signal TSVs, empty loca-tions, and ground TSVs, respectively. The remaining features represent the TSV radius rvia , pitch p, via height hvia , oxide thickness tox , and operating frequency f . This formulation enables the model to jointly reason about geometric properties, material configuration, and electrical excitation. 
+
+2) Edge Representation: The edge set E captures electro-magnetic interactions between TSVs. To account for long-range coupling effects, the graph is constructed as fully connected, where each edge eij ∈ E represents the interaction between TSVs i and j. The corresponding edge feature vector 
+
+eij encodes their spatial relationship through distance-based descriptors: 
+
+eij = dij , d −1 
+
+> ij
+
+, d −2
+
+> ij
+
+, (18) where dij is the Euclidean distance between TSVs i and j.Explicit inclusion of inverse-distance terms facilitates learning of electromagnetic field decay behavior and mutual coupling characteristics, which are critical for accurate wideband S-parameter prediction. 
+
+C. Physics-Informed Graph Neural Network 
+
+The proposed learning architecture, referred to as TSV-PhGNN , is explicitly designed to embed key physical prin-ciples governing electromagnetic propagation and coupling in TSV arrays. 6
+
+Fig. 5: Graph representation of a 3 × 4 TSV array. Red nodes represent Signal TSVs, and blue nodes represent Ground TSVs. Edges carry spatial distance features. 
+
+1) Feature-Wise Linear Modulation: Electromagnetic be-havior in TSV interconnects exhibits distinct operating regimes as a function of frequency (e.g., transition from quasi-static to skin-effect-dominated behavior). To capture this dependence, the operating frequency f is treated as a conditioning vari-able rather than a conventional input feature. Specifically, a Feature-wise Linear Modulation (FiLM) mechanism is em-ployed to adapt the geometry-dependent latent representation based on frequency [36]. Let hgeom denote the geometry embedding and hfreq denote the frequency embedding. The modulated representation is 
+
+h′ = γ(hfreq ) ⊙ hgeom + β(hfreq ), (19) where γ(·) and β(·) are learnable functions producing feature-wise scaling and bias terms, respectively, and ⊙ denotes element-wise multiplication. This formulation enables the net-work to dynamically adapt its internal representations across frequency regimes. 
+
+2) Message Passing via Graph Transformer: Message pass-ing is performed using a Graph Transformer architecture. Unlike uniform aggregation schemes, the Transformer com-putes attention coefficients αij for each edge, allowing the model to learn direction-dependent and context-aware cou-pling strengths between TSVs. This mechanism is particularly effective for capturing electromagnetic shielding and screening effects, for example by assigning reduced attention weights to interactions obstructed by ground TSVs. 
+
+3) Symmetry-Enforced Output Heads: The network pre-dicts complex-valued S-parameters and employs two special-ized output heads:  
+
+> •
+
+Node Head: Predicts return loss ( S11 ) and insertion loss (S21 ) for each signal TSV.  
+
+> •
+
+Edge Head: Predicts near-end crosstalk (NEXT) and far-end crosstalk (FEXT) between pairs of signal TSVs. A fundamental physical constraint is reciprocity, which re-quires Sij = Sji . Since standard neural network architectures do not inherently satisfy this condition, reciprocity is enforced explicitly by symmetrizing the edge-level predictions: 
+
+ˆy(i,j ) 
+
+> edge
+
+= 12 (MLP (hi, hj ) + MLP (hj , hi)) . (20) 
+
+D. Homoscedastic Physics-Aware Loss Function 
+
+The training objective jointly enforces regression accuracy and physical consistency. Due to the large dynamic range between transmission-related terms (e.g., S21 ) and crosstalk terms (e.g., Sij ), direct optimization using a single loss leads to task imbalance. To address this issue, a homoscedastic uncertainty-based weighting strategy is adopted. The regres-sion loss is defined as 
+
+Lreg = X
+
+> k∈K
+
+ 12σ2
+
+> k
+
+LMSE ,k + log σk
+
+
+
+, (21) where K = {IL , RL , NEXT , FEXT } denotes the set of predicted S-parameter quantities. Specifically, IL corresponds to insertion loss (e.g., |S21 | in dB), RL to return loss (e.g., 
+
+|S11 | in dB), and NEXT /FEXT to near- and far-end crosstalk magnitudes (e.g., |S31 | and |S41 | in dB, depending on port assignment). The mean-squared error for task k is defined as 
+
+LMSE ,k = 1
+
+N
+
+> N
+
+X
+
+> n=1
+
+(ˆ yk,n − yk,n )2 , (22) where ˆyk,n and yk,n denote the predicted and reference values, respectively. The parameters σk are learnable task-dependent variances that adaptively balance the contributions of the individual regression targets during training. In addition, a passivity constraint is imposed to enforce energy conservation. For a passive multiport network, the sum of squared magnitudes in any row of the S-matrix must not exceed unity. Violations are penalized using 
+
+Lpassivity = mean 
+
+ReLU 
+
+X
+
+> j
+
+|Sij |2 − 1
+
+ . (23) The total training objective is given by 
+
+L = Lreg + λLpassivity , (24) where λ controls the strength of the passivity regularization. 
+
+E. Transfer Learning Strategy 
+
+While the implemented physics-based analytical model en-ables rapid generation of large-scale training data, it relies on simplifying assumptions (e.g., quasi-TEM behavior) that do not fully capture three-dimensional electromagnetic effects. To achieve analytical scalability with full-wave fidelity, a multi-fidelity simulation-to-simulation (Sim-to-Sim) transfer learning framework is adopted [37]. The approach exploits the strong correlation between low-fidelity (analytical) and high-fidelity (full-wave) physical manifolds. Although the analytical model may exhibit magnitude deviations, it preserves the dominant geometric and frequency-dependent trends of the S-parameters. Accordingly, training is performed in two stages. 
+
+1) Pre-training (Low Fidelity): The proposed TSV-PhGNN is first trained on a large analytically generated dataset (N = 80 ,000 ) obtained from RLCG-based HSPICE simula-tions. This stage enables the network to learn topology-aware relationships between TSV geometry, spatial arrangement, 7
+
+Fig. 6: Overview of the proposed ML-assisted optimization framework for TSV arrays. Large-scale analytical data generated from RLCG-based circuit simulations (80,000 training and 20,000 validation samples) are first used to pre-train a physics-informed Graph Neural Network (GNN). The TSV array is represented as a fully connected graph with geometry-aware node features and distance-based edge features. The architecture integrates feature-wise linear modulation, Graph Transformer message passing, symmetry-enforced output heads, and a homoscedastic physics-aware loss function. The pre-trained model is subsequently fine-tuned using high-fidelity FEM data (10,000 samples) generated by Ansys HFSS through a simulation-to-simulation (Sim-to-Sim) transfer learning strategy. and broadband S-parameter behavior, providing a physics-consistent weight initialization. 
+
+2) Fine-tuning (High Fidelity): The pre-trained model is subsequently fine-tuned using a smaller full-wave dataset (N = 10 ,000 ) generated from 3D FEM simulations in Ansys HFSS for compact arrays ( 3 × 3 to 7 × 7). With an identical input feature space and a reduced learning rate ( 10 −4), the network adapts to higher-order 3D effects (e.g., skin effect and complex scattering) while retaining the structural knowledge acquired during pre-training. This multi-fidelity strategy substantially reduces reliance on computationally intensive full-wave simulations while main-taining FEM-level predictive accuracy (Fig. 6). Thermal pa-rameters, including the equivalent thermal conductivities, are computed directly from the analytical electrothermal model (Section II-B) since their evaluation is computationally inex-pensive and does not require surrogate modeling. IV. E XPERIMENTS AND RESULTS 
+
+This section presents a comprehensive evaluation of the proposed framework. First, the analytical electrothermal model described in Section II is validated against full-wave elec-tromagnetic simulations in Ansys HFSS and thermal simu-lations in Ansys Mechanical. This comparison establishes the accuracy and reliability of the analytical framework, thereby justifying its use for large-scale dataset generation during the pre-training stage of the ML model prior to fine-tuning with high-fidelity Ansys data. Second, the predictive perfor-mance of the proposed ML model is evaluated by comparing its S-parameter predictions against Ansys simulation results. Finally, optimization case studies are conducted using the trained ML surrogate model, and the resulting designs are benchmarked against SOTA TSV architectures to demonstrate performance improvements. 
+
+A. Experimental Setup 
+
+All circuit-level simulations are performed using Synop-sys PrimeSim HSPICE (V-2023.12-2, Linux64) on a high-performance compute server running Red Hat Enterprise Linux 9.7 (Plow). The server is equipped with an AMD Ryzen 9 7950X processor (16 physical cores, 32 threads), 128 GB of system memory, and an NVIDIA GeForce RTX 4090 GPU with 24 GB of VRAM. Machine learning training and inference are conducted in Python 3.13.5 using PyTorch 2.8.0 with CUDA 12.9 support. Full-wave electromagnetic and thermal simulations are carried out using Ansys Electronic Desktop (AEDT) 2024 R2 on a separate workstation running Windows 11. The system features a 14-core (20-thread) Intel ®
+
+processor operating at up to 2.6 GHz and 32 GB of memory. 8
+
+Fig. 7: Per-sample runtime comparison between the ML surro-gate, the analytical solver, and Ansys HFSS versus TSV grid size ( N × N ). 
+
+Fig. 8: Magnitude comparison (in dB) of selected S-parameters obtained from HFSS full-wave simulations and the proposed analytical model. The corresponding TSV array top view is illustrated in the inset, where red circles denote signal TSVs and blue circles denote ground TSVs, arranged on a uniform pitch grid. All HFSS and Mechanical simulations are executed within a Python 3.12 virtual environment. To ensure a fair runtime comparison between the proposed ETC-based framework and the full EM–thermal simulation flow, both approaches are executed under identical hardware and software configurations on their respective platforms. 
+
+B. Analytical Model Performance 
+
+The proposed electromagnetic analytical framework is eval-uated on TSV arrays ranging from 4 × 4 to 22 × 22 using 1,000 randomly generated samples. As shown in Fig. 7, the average runtime increased modestly from 27 ms for the 4 × 4
+
+array to 175 ms for the 22 × 22 array, demonstrating favorable scalability with array size. In contrast, full-wave simulations of the same structures using Ansys HFSS require 371.8 s for the 5 × 5 array, 2,298 s for the 15 × 15 array, and convergence could not be achieved for larger arrays within practical computational lim-its. Consequently, the proposed analytical framework achieves a speedup of approximately 13 , 700 × in medium-scale arrays. This performance advantage is expected to increase further for larger TSV arrays, given the superlinear computational 
+
+Fig. 9: Steady-state temperature of TSV arrays under various thermal boundary conditions based on the homogenized ETC model. The percentage above each bar denotes the relative error with respect to the corresponding full Ansys Mechanical solution. complexity of full-wave electromagnetic solvers. However, validation beyond the 15 × 15 configuration was not feasible because of the computational and memory limitations of the HFSS environment. Importantly, this substantial acceleration is achieved without compromising accuracy. The analytical model demonstrates close agreement with Ansys HFSS full-wave simulations, as exemplified in Fig. 8 for a multi-ground 7 × 7 TSV array with pitch p = 35 μm, via radius rvia = 2.5 μm, oxide thickness tox = 0 .25 μm, and TSV height hvia = 100 μm, over a frequency range up to 100 GHz. Detailed validation across diverse TSV counts and array configurations is provided in Section IV-D, confirming the robustness and reliability of the proposed analytical framework for high-frequency TSV analysis. To validate the proposed homogenized equivalent thermal conductivity (ETC) model, steady-state thermal simulations are conducted for TSV arrays ranging from 5 × 5 to 10 × 10 
+
+TSVs under three representative boundary-condition scenarios: (i) fully populated arrays with natural convection applied to all external faces and an adiabatic bottom surface, (ii) sparse arrays under the same natural-convection boundary conditions, and (iii) sparse arrays with forced convection applied at the top surface ( h = 500 W /m2K) while the remaining faces are treated as adiabatic. Validation across operating frequen-cies of 1 − 80 GHz spans a wide range of geometric and electrical parameters, including TSV radii ( 2 − 6 μm), pitches (20 −40 μm), TSV heights ( 50 −100 μm), and liner thicknesses (1 − 3 μm). For each configuration, a single TSV is excited by 100 mW, and the ETC-based model is compared against the corresponding full Ansys Mechanical solution in terms of maximum steady-state temperature and total simulation runtime. The resulting temperature values are shown in Fig. 9. The ETC model closely tracks the maximum temperature variations as the array size increases, while also capturing the strong dependence of thermal behavior on boundary conditions and TSV population density. In particular, the forced-convection scenario results in significantly lower peak temperatures com-9
+
+Fig. 10: Total thermal analysis runtime comparison between the full detailed model and the ETC-based model. pared with the natural-convection cases, and the ETC model accurately reproduces this behavior. Furthermore, sparse arrays exhibit slightly higher temperatures than fully populated arrays due to the reduced copper fraction within the substrate. Since TSV copper provides a high-conductivity vertical heat path, decreasing the number of TSVs reduces the effective verti-cal thermal conductivity of the substrate, leading to modest temperature increases in sparse configurations. These results confirm that the proposed homogenization framework accu-rately captures both boundary-condition effects and structural variations in TSV density. At the same time, a substantial reduction in computational cost is observed (Fig. 10). The ETC model provides consistent runtime speedups over the full detailed simulation, ranging from approximately 35 × for 5 × 5 sparse arrays to about 
+
+1, 300 × for fully populated 10 × 10 arrays. The speedup in-creases with array size because the computational complexity of the full model grows rapidly with the number of TSVs, whereas the homogenized ETC representation maintains a compact problem size. Overall, only a negligible degradation in thermal accuracy ( ∼ 5% in the worst case) is observed, while significant computational speedups are achieved, en-abling rapid design-space exploration of large TSV arrays. 
+
+C. ML Model Runtime Performance 
+
+The proposed ML model is evaluated using the same dataset employed for runtime benchmarking of the analytical model, with the analysis further extended to TSV arrays ranging from 
+
+4×4 to 22 ×22 . As shown in Fig. 7, the average inference time increases from 0.07 ms for a 4 × 4 array to 2 ms for a 15 × 15 
+
+array, and then to 7.4 ms for a 22 × 22 array, demonstrating excellent scalability with array size. Compared to full-wave simulations in HFSS, the ML model achieves a speed-up of up to 1 × 10 6 to 5 × 10 6 depending on the array size. This substantial acceleration enables rapid exploration of extremely large design spaces, reducing evaluations that would otherwise require hours or days of FEM computation to execution times on the order of seconds. 
+
+D. Relative Frobenius Error (RFE) Evaluation 
+
+To quantitatively assess the agreement between the ML model, the analytical model, and the full-wave HFSS refer-ence, we compute the RFE in the complex domain. Unlike magnitude-only or dB-based comparisons, the RFE captures both magnitude and phase discrepancies simultaneously. For a given S-parameter matrix, S(f ), evaluated over all frequencies and port pairs, the RFE is defined as 
+
+RFE = ∥Smodel − SHFSS ∥F
+
+∥SHFSS ∥F
+
+, (25) where ∥ · ∥ F denotes the Frobenius norm, defined as 
+
+∥A∥F =
+
+sX
+
+> f
+
+X
+
+> i
+
+X
+
+> j
+
+|Aij (f )|2. (26) Here, Smodel represents either the ML-predicted or analytical S-parameter matrix, while SHFSS corresponds to the full-wave reference. The normalization by the HFSS Frobenius norm ensures scale invariance, enabling fair comparison across different array sizes and frequency points. This metric provides a compact global measure of complex-domain error and is used consistently to benchmark both the ML and analytical models against the full-wave electromagnetic solver. 
+
+Fig. 11: Relative Frobenius error (RFE) versus TSV array dimension ( N × N ) comparing the analytical (HSPICE-based) model and the ML-based surrogate against the HFSS full-wave reference. Solid lines denote the mean RFE across test cases, while shaded regions represent variability (mean ± standard deviation). As shown in Fig. 11, both models demonstrate stable behavior across increasing TSV array sizes. The analytical model achieves RFE values ranging approximately from 5.4% 
+
+to 10 .6% across grid dimensions from 4 × 4 up to 15 × 15 ,considering TSV radius, pitch, liner thickness, and height varying from 2–6 μm, 60–100 μm, 20–60 μm, and 0.5–3 μm, respectively. While the error shows mild variation with array size—primarily due to accumulated coupling and substrate-loss modeling approximations—it remains consistently below 
+
+11% , confirming that the physics-based formulation preserves the dominant electromagnetic behavior even for larger port counts. The ML-based surrogate demonstrates substantially lower complex-domain error. After hyperparameter optimization and dataset refinement, and despite being fine-tuned only on arrays ranging from 3 × 3 to 7 × 7, the GNN predictor achieves RFE 10 
+
+TABLE III: TSV Array Physical and Geometrical Parameters.                         
+
+> Parameters Symbol Value
+> TSV radius rTSV 5μm
+> TSV height hTSV 100 μm
+> Pitch between adjacent TSVs p60 μm
+> Thickness of SiO 2layer tox 0.5μm
+> Copper conductivity σCu 5.8×10 7S/m
+> Silicon conductivity σSi 10 S /m
+> Dielectric constant of SiO 2εox 4
+
+values between 0.98% and 1.68% across the full scalability sweep. This result highlights the strong extrapolation capa-bility of the graph-based model, which generalizes effectively to larger arrays without additional retraining. Notably, the ML error remains nearly constant as the array dimension increases, indicating robustness to growing port counts and structural complexity. The consistently low variance observed across experiments further validates the stability and reliability of the learned representation. These results demonstrate two key findings:  
+
+> •
+
+The analytical model provides physically consistent and scalable predictions with bounded complex-domain error, offering strong interpretability and robustness for syn-thetic training data generation.  
+
+> •
+
+The ML model achieves near-HFSS accuracy (sub-2% 
+
+global complex error) while maintaining scalability, mak-ing it highly suitable for rapid design-space exploration. Overall, the RFE evaluation confirms that the proposed frame-work unifies physics-grounded modeling with near full-wave accuracy in a scalable design framework. 
+
+E. ML Framework for Optimization 
+
+In addition to serving as a fast surrogate model for S-parameter prediction, the proposed ML framework can be directly leveraged as an efficient optimization engine for TSV array design. Specifically, once trained, the ML model enables rapid evaluation of a large combinatorial design space without requiring repeated full-wave simulations. To demonstrate the optimization capability of the proposed framework, the benchmark problem introduced in [22] is revisited. In that work, a 5×5 TSV array comprising 12 signal TSVs and 13 ground TSVs is considered, with all physical and geometrical parameters fixed as summarized in Table III. The optimization objective is to determine the optimal placement of the signal TSVs that minimizes the overall crosstalk within the array. The performance metric used for optimization is the average crosstalk across all signal TSVs. This metric accounts for both near-end crosstalk (NEXT) and far-end crosstalk (FEXT) contributions and is defined as 
+
+Xtalk = 1
+
+s(s − 1) 
+
+> s
+
+X
+
+> v=1
+
+dB  Xtot 
+
+> v
+
+ , (27) where s denotes the number of signal TSVs, and Xtot  
+
+> v
+
+repre-sents the total coupling experienced by the v-th victim signal TSV. For each victim TSV, the total crosstalk is computed by aggregating the magnitudes of NEXT and FEXT contributions from all other aggressor signal TSVs. In this work, an RMS-based aggregation is employed to capture the combined energy of coupling terms 
+
+Xtot  
+
+> v
+
+=
+
+vuuut
+
+> s
+
+X
+
+> a=1
+> a̸=v
+
+
+
+M (v,a )NEXT 
+
+2
+
++
+
+> s
+
+X
+
+> a=1
+> a̸=v
+
+
+
+M (v,a )FEXT 
+
+2
+
+, (28) where v denotes the index of the victim signal TSV, and a de-notes the index of an aggressor signal TSV. The terms M (v,a )
+
+> NEXT
+
+and M (v,a ) 
+
+> FEXT
+
+represent the magnitudes of, respectively, the near-end and far-end crosstalk components from aggressor a to victim v. This formulation ensures that both magnitude and distribution of coupling contributions are properly reflected in the victim’s total interference level. Under this configuration, the optimization problem reduces to evaluating all possible placements of 12 signal TSVs among the 25 available grid locations. The total number of possible configurations is given by 
+
+25 12 
+
+
+
+= 25! 12!(25 − 12)! = 5 ,200 ,300 . (29) Exhaustive exploration of this combinatorial space using full-wave FEM solvers would be computationally prohibitive due to the extremely high simulation cost per configuration. In contrast, the proposed ML surrogate enables millisecond-scale inference, allowing the entire design space to be evaluated within 5 minutes. Additionally, the square TSV grid exhibits dihedral sym-metry ( D4), comprising four rotations and four reflections. Let f (x) denote the surrogate mapping from a placement 
+
+x to its corresponding S-parameters, and let g(x) represent a symmetry transformation applied to the layout. Due to geometric invariance and consistent port reindexing, these mappings commute, 
+
+f (g(x)) = g(f (x)) , ∀x. (30) As a result, configurations belonging to the same symmetry orbit are electrically equivalent up to permutation. Evalu-ating a single representative per orbit reduces the effective search space by up to approximately 8×, further accelerating the exploration. The symmetry-reduced space (approximately 
+
+6.5 × 10 5 configurations) can therefore be exhaustively eval-uated in under one minute, enabling complete Pareto frontier construction. The optimal arrangement identified by the proposed ML-based optimization framework is illustrated in Fig. 12a. In this configuration, the worst victim, defined as the signal TSV experiencing the highest aggregated total crosstalk, exhibits crosstalk levels no higher than approximately −45 dB across all aggressor couplings. This represents a substantial improvement compared to the worst-case crosstalk level of approximately −34 dB reported in [22]. In terms of magnitude reduction, this corresponds to an improvement of nearly 11 dB ( ∼3.5 × reduction in linear magnitude), demonstrating the effectiveness of the proposed 11  
+
+> (a) (b)
+
+Fig. 12: Near-end (NEXT) and far-end (FEXT) crosstalk at 15 GHz for the worst-case victim TSV, comparing the proposed signal–ground assignment with the state-of-the-art configuration in [22]. Insets show the corresponding TSV layouts. Bars denote the proposed design and line markers the results reported in [22]. The horizontal dashed lines indicate the worst-case total crosstalk, showing an improvement of (a) 11 dB in the 12-signal ( 5 × 5) array and (b) 18 dB in the 9-signal ( 5 × 5) array. optimization framework in suppressing worst-case TSV inter-ference. Another test case from [22] considers optimization under a relaxed constraint on the number of signal TSVs. Instead of fixing the number of signal TSVs to 12, the signal count is allowed to vary between 9 and 15, while the remain-ing TSVs are assigned as ground. The same physical and geometrical parameters listed in Table III are maintained. Under this setting, the total number of possible arrangements increases significantly. For example, selecting 9 signal TSVs out of 25 locations requires approximately 2 × 10 6 evaluations according to (29), while selecting 10 signal TSVs requires approximately 3 × 10 6 evaluations. Extending this process up to 15 signal TSVs results in a cumulative design space of approximately 2.8 × 10 7 candidate configurations. Such large-scale design-space exploration becomes tractable primarily due to the proposed ultra-fast ML surrogate, which replaces com-putationally intensive full-wave simulations with millisecond-level inference. Exploiting the dihedral symmetry ( D4) of the square TSV grid further reduces the effective design space by eliminating geometrically equivalent configurations. The resulting symmetry-reduced candidates are evaluated using the surrogate framework, enabling efficient Pareto frontier construction and identification of optimal TSV placements with respect to crosstalk performance. As shown in Fig. 12b, the worst victim TSV shows the high-est crosstalk value in the optimized configuration of −48 dB ,occurring between TSV 3 (victim) and TSV 2 (aggressor). This result represents an improvement of approximately 18 dB compared to the worst-case crosstalk reported in [22]. In linear terms, this corresponds to nearly an 8 × reduction in coupling magnitude, demonstrating the effectiveness of the proposed ML-driven optimization framework. Another optimized configuration with 14 signal TSVs is illustrated in Fig. 13. This optimal architecture is identified through the same design-space exploration spanning 9 to 15 signal TSVs. In [22], such exploration yields the configuration with nine TSVs shown in Fig. 12b. With the proposed layout, the worst NEXT associated with the worst victim (TSV 4) occurs between TSV 4 and TSV 1, yielding −35 .2 dB coupling. This represents an improvement of more than 5 dB compared to the 9-TSV layout in [22], albeit the increased TSV density in the 14-TSV layout. The entire exploration is completed within 28 minutes. This rapid turnaround demon-strates the framework’s ability to efficiently evaluate diverse signal–ground assignments with varying signal counts and identify configurations that deliver improved crosstalk perfor-mance within a short computational time. 
+
+Fig. 13: Results of a design space exploration 9-15 signal TSVs in a 5 × 5 array. Near-end (NEXT) and far-end (FEXT) crosstalk at 15 GHz for the worst-case victim TSV in the optimized signal–ground assignment (14 signal TSVs). The inset shows the corresponding TSV layout. It is important to emphasize that such high-density, high-performance configurations may be overlooked by traditional co-simulation workflows that rely on iterative FEM-based evaluation combined with machine learning, as discussed in Section I [22]–[25]. These approaches are fundamentally con-strained by the computational burden of full-wave simulations, which limits the number of feasible design iterations. In con-12 
+
+trast, the proposed fast surrogate-driven exploration enables exhaustive Pareto-based search over millions of configurations, allowing the discovery of non-intuitive arrangements with sig-nificantly improved worst-case coupling characteristics. Over-all, these results confirm that large-scale combinatorial explo-ration, enabled by the fast surrogate model, can substantially outperform previously reported TSV arrangements in worst-case crosstalk performance. The proposed framework extends beyond spatial TSV ar-rangement optimization and can also be leveraged to optimize geometrical design parameters to meet specific performance targets. To illustrate this capability, a multi-objective Pareto optimization is performed over the parameter ranges summa-rized in Table IV. In this study, the surrogate model systematically explores the design space by sweeping the TSV radius, pitch, height, and oxide thickness. For each sampled configuration, key elec-trical and electro-thermal performance metrics are evaluated, including the maximum reflection coefficient, max |S11 |, aver-age insertion loss, S21 , worst-case NEXT/FEXT crosstalk, and the effective thermal conductivities ( kx, ky , kz ). By construct-ing the Pareto frontier across these competing objectives, the framework enables a comprehensive tradeoff analysis between signal integrity (predicted by the ML model) and thermal performance (computed using the ETC-based electrothermal framework described in Section II-B). This allows designers to directly identify configurations that balance electromagnetic matching, attenuation, isolation, and heat dissipation according to application-specific requirements. The Pareto extraction yields four representative optimal configurations, each opti-mizing a distinct objective (crosstalk, thermal conductivity, insertion loss, or reflection). The corresponding geometrical parameters and performance metrics are summarized in Ta-ble V. As shown in Table V, the optimal TSV configurations reveal clear tradeoffs among competing objectives. Designs that min-imize worst-case crosstalk achieve up to −50 .7 dB coupling but do not maximize thermal conductivity, while thermally optimal configurations increase kz to 149 W/mK at the cost of degraded crosstalk performance. Similarly, the insertion-loss-optimal design achieves the lowest average attenuation (−0.066 dB), whereas the reflection-optimal configuration im-proves impedance matching ( max S11 = −45 .75 dB) without simultaneously minimizing coupling. These results highlight the inherent tradeoff between electromagnetic isolation, signal integrity, and thermal transport in dense TSV arrays. Unlike traditional approaches that rely on iterative full-wave co-simulation, the proposed surrogate-based framework enables efficient exploration of the multi-dimensional design space. By extracting the full Pareto frontier, designers can di-rectly select TSV configurations based on application-specific TABLE IV: Geometrical Parameters of TSV Array Sweep                        
+
+> Parameters Symbol Value
+> TSV radius rTSV 2→6μm
+> TSV height hTSV 60 →100 μm
+> Pitch between adjacent TSVs p20 →60 μm
+> Thickness of SiO 2layer tox 0.5→3μm
+
+TABLE V: Pareto-Optimal TSV Designs at 15 GHz                                         
+
+> Parameter Best Crosstalk Best Thermal Best Insertion Best Reflection
+> rTSV (μm) 3.56 2.63 2.03 2.69
+> p(μm) 20.15 53.43 29.66 20.09
+> hTSV (μm) 62.20 60.04 60.74 60.17
+> tox (μm) 2.72 0.90 2.98 2.98
+> S21 (dB) -0.083 -0.171 -0.066 -0.071
+> max S11 (dB) -35.29 -35.74 -35.30 -45.75 Worst Xtalk (dB) -50.71 -40.10 -40.62 -42.12
+> kz(W/mK) 142.35 149.02 140.72 133.81
+
+priorities, such as minimizing crosstalk, improving matching, reducing insertion loss, or enhancing thermal conductivity. This capability transforms TSV design from a trial-and-error process into a systematic, data-driven optimization problem. 
+
+F. Scalability and Computational Considerations 
+
+The computational scalability of the proposed graph-based ML framework is discussed in this section. For an N × N
+
+TSV grid, the number of TSVs scales as V = N 2. Since the graph representation models coupling interactions between all TSV pairs, it is treated as fully connected, leading to 
+
+E = V (V − 1) = O(N 4) edges. This quadratic growth in vertices and quartic growth in edge interactions increases memory and computational requirements. Because inference is primarily GPU-accelerated, the framework becomes limited by available VRAM for very large arrays. While CPU-based inference can support larger graphs, it incurs higher runtime. Consequently, a tradeoff exists between array scalability, run-time, and hardware memory constraints. Future work will investigate sparse graph representations and locality-aware edge pruning to reduce memory complexity while preserving modeling accuracy. V. C ONCLUSION 
+
+A scalable electro–thermal co-design framework for dense TSV arrays is presented, integrating physics-based analyti-cal modeling, machine-learning acceleration, and FEM sign-off. The analytical solver computes wideband multi-port S-parameters and anisotropic thermal conductivities for arbitrary TSV layouts. Validation against HFSS using complex-domain RFE shows 5% –10 .6% error for moderate array sizes while reducing evaluation time from ∼ 10 3 seconds (FEM) to sub-second levels. A GNN surrogate, fine-tuned with a limited HFSS dataset, further improves accuracy to below ∼2% RFE with millisecond inference, enabling over 10 6× acceleration for medium-size ( 15 × 15 ) arrays. The framework supports large-scale multi-objective Pareto exploration over geometrical and spatial configurations, eval-uating millions of candidates within minutes and revealing tradeoffs among reflection, insertion loss, crosstalk, and ther-mal conductivity. Final designs are validated through au-tomated HFSS and Mechanical simulations, enabling rapid electro–thermal optimization of dense TSV networks with full-wave verification. 13 
+
+REFERENCES [1] S. Abdelzaher, M. Gharib, and I. Partin-Vaisband, “Hybrid Voltage Regulators for High Performance Computing: Analytical Models and Design Methodology,” in IEEE Electronic Components and Technology Conference (ECTC) , 2025, pp. 2286–2292. [2] S. Abdelzaher, M. Gharib, A. R. Trivedi, and I. Partin-Vaisband, “Bandit Learning-Driven Power Gating with State Retention for High Perfor-mance Computing,” in IEEE Conference on Electrical Performance of Electronic Packaging and Systems (EPEPS) , 2025, pp. 1–3. [3] R. Rasheedi and I. Partin-Vaisband, “High Aspect Ratio Spiral Inductor with Progressive Turn Widths for Embedded Power Converters,” in IEEE Electronic Components and Technology Conference (ECTC) , 2025, pp. 2271–2277. [4] J. H. Lau, “Recent Advances and Trends in Multiple System and Hetero-geneous Integration With TSV-Less Interposers,” IEEE Transactions on Components, Packaging and Manufacturing Technology , vol. 12, no. 8, pp. 1271–1281, 2022. [5] Y. Zhou, X. Zhong, H. Diao, B. Ma, F. Tang, X. Fu, P. Lai, H. Wang, J. Liu, X. Chen, G. Lu, H. Chen, and X. Yang, “Evolution of Electrical Transmission Characteristics in TSV and TGV Interconnect Structures Under Thermal Loading,” IEEE Transactions on Device and Materials Reliability , vol. 25, no. 4, pp. 966–976, 2025. [6] J. H. Lau, “Recent Advances and Trends in Multiple System and Heterogeneous Integration With TSV Interposers,” IEEE Transactions on Components, Packaging and Manufacturing Technology , vol. 13, no. 1, pp. 3–25, 2023. [7] M. Gharib and I. Partin-Vaisband, “Package-Aware Performance of Sensor Arrays with Advanced Packaging Architectures,” in IEEE In-ternational Midwest Symposium on Circuits and Systems (MWSCAS) ,2025, pp. 528–532. [8] E.-P. Li, Modeling of Through-Silicon Vias (TSV) in 3D Integration .Hoboken, NJ, USA: Wiley-IEEE Press, 2012, pp. 331–360. [9] M. Swaminathan and K. J. Han, Design and Modeling for 3D ICs and Interposers . WORLD SCIENTIFIC, 2013. [Online]. Available: https://www.worldscientific.com/doi/abs/10.1142/8814 [10] M. Lee, J. Pak, and J. Kim, Electrical Design of Through Silicon Via .Dordrecht, Netherlands: Springer, 01 2014. [11] M. Lee, J. Cho, J. Kim, J. S. Pak, H. Lee, J. Lee, K. Park, and J. Kim, “Thermal effects on through-silicon via (TSV) signal integrity,” in IEEE Electronic Components and Technology Conference , 2012, pp. 816–821. [12] M. Lee, D. H. Jung, H. Kim, J. Cho, and J. Kim, “High-Frequency Temperature-Dependent Through-Silicon-Via (TSV) Model and High-Speed Channel Performance for 3-D ICs,” IEEE Design & Test , vol. 33, no. 2, pp. 17–29, 2016. [13] Q. Min, E.-P. Li, J.-M. Jin, and W. Chen, “Electrical–Thermal Cosimu-lation of Coaxial TSVs With Temperature-Dependent MOS Effect Using Equivalent Circuit Models,” IEEE Transactions on Electromagnetic Compatibility , vol. 62, no. 5, pp. 2247–2256, 2020. [14] H. Kim, S. Lee, J. Park, Y. Shin, S. Woo, J. Kim, J. Cho, and S. Ahn, “Signal Integrity Analysis of Through-Silicon Via (TSV) With a Silicon Dioxide Well to Reduce Leakage Current for High-Bandwidth Memory Interface,” IEEE Transactions on Components, Packaging and Manufacturing Technology , vol. 13, no. 5, pp. 700–714, 2023. [15] S. Oh, T. Zheng, and M. S. Bakir, “Electrical Characterization of Shielded TSVs With Airgap Isolation for RF/mmWave Applications,” 
+
+IEEE Transactions on Components, Packaging and Manufacturing Tech-nology , vol. 14, no. 2, pp. 202–210, 2024. [16] M. A. Gharib, S. Abdelzaher, and I. Partin-Vaisband, “An Analytical Model for High-Frequency Through Silicon Vias,” in ACM Proceedings of the Great Lakes Symposium on VLSI (GLSVLSI) , June 2024, p. 282–286. [Online]. Available: https://doi.org/10.1145/3649476.3658792 [17] Q. Lu, Z. Zhu, Y. Yang, R. Ding, and Y. Li, “High-Frequency Electrical Model of Through-Silicon Vias for 3-D Integrated Circuits Considering Eddy Current and Proximity Effects,” IEEE Transactions on Compo-nents, Packaging and Manufacturing Technology , vol. 7, no. 12, pp. 2036–2044, 2017. [18] K. Kim, K. Hwang, and S. Ahn, “An Improved 100 GHz Equivalent Circuit Model of a Through Silicon Via With Substrate Current Loop,” 
+
+IEEE Microwave and Wireless Components Letters , vol. 26, no. 6, pp. 425–427, 2016. [19] B. Vaisband and E. G. Friedman, “Noise Coupling Models in Hetero-geneous 3-D ICs,” IEEE Transactions on Very Large Scale Integration (VLSI) Systems , vol. 24, no. 8, pp. 2778–2786, 2016. [20] T. Song, C. Liu, Y. Peng, and S. K. Lim, “Full-Chip Signal Integrity Analysis and Optimization of 3-D ICs,” IEEE Transactions on Very Large Scale Integration (VLSI) Systems , vol. 24, no. 5, pp. 1636–1648, 2016. [21] C. Qu, R. Ding, X. Liu, and Z. Zhu, “Modeling and Optimization of Multiground TSVs for Signals Shield in 3-D ICs,” IEEE Transactions on Electromagnetic Compatibility , vol. 59, no. 2, pp. 461–467, 2017. [22] J.-Y. Ju, Q. Qiang Liu, P. Zhang, J. Wang, P. Zhao, X. Lin, C.-Y. Yao, and W.-S. Zhao, “Distribution Optimization of Through-Silicon Via (TSV) Array Based on Genetic Algorithm,” IEEE Transactions on Components, Packaging and Manufacturing Technology , vol. 15, no. 2, pp. 399–409, 2025. [23] G. Li, G. Shan, B. Meng, Y. Zheng, and Y. Yang, “Intelligent Multifield Collaborative Optimization Method for TSV Array With Performance Constraints,” IEEE Transactions on Electron Devices , vol. 70, no. 9, pp. 4772–4778, 2023. [24] K. Kim, H. Park, S. Kim, Y. Kim, K. Son, D. Lho, K. Son, T. Shin, B. Sim, J. Park, S. Park, and J. Kim, “Policy-Based Reinforcement Learning for Through Silicon Via Array Design in High-Bandwidth Memory Considering Signal Integrity,” IEEE Transactions on Electro-magnetic Compatibility , vol. 66, no. 1, pp. 256–269, 2024. [25] S. Liu, S. Xue, J. Huang, H. Wang, Z. Wang, and C. Wang, “A Data-Driven Approach to Collaborative Optimization for Enhancing TSV Multiphysics Performance,” IEEE Transactions on Components, Packaging and Manufacturing Technology , vol. 15, no. 2, pp. 253–262, 2025. [26] C. Nie, Q. Xu, and L. Chen, “Equivalent thermal model of through silicon via and bump for advanced packaging of integrated circuits,” Microelectronics Reliability , vol. 137, p. 114790, 2022. [Online]. Available: https://www.sciencedirect.com/science/article/pii/ S0026271422003146 [27] W. Zhu, G. Dong, and Y. Yang, “Thermal-Aware Modeling and Analysis for a Power Distribution Network Including Through-Silicon-Vias in 3-D ICs,” IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems , vol. 38, no. 7, pp. 1278–1290, 2019. [28] M. Choi, S. Krishnakumar, R. Rahimzadeh Khorasani, M. Swaminathan, I. Partin-Vaisband, and S. Kumar, “Substrate-Embedded Microfluidic Cooling of Distributed Vertical Power Delivery Architectures for High-Performance Computing Processors,” IEEE Transactions on Compo-nents, Packaging and Manufacturing Technology , vol. 15, no. 9, pp. 1912–1920, 2025. [29] M. Gharib and I. Partin-Vaisband, “Efficient Scalable Thermoelectric Modeling of High-Frequency Cylindrical Interconnects for Heteroge-neous Package Arrays,” in IEEE Electronic Components and Technology Conference (ECTC) , 2025, pp. 2278–2285. [30] A. E. Engin and S. R. Narasimhan, “Modeling of Crosstalk in Through Silicon Vias,” IEEE Transactions on Electromagnetic Compatibility ,vol. 55, no. 1, pp. 149–158, 2013. [31] Metal-Insulator-Semiconductor Capacitors . John Wiley & Sons, Ltd, 2006, pp. 197–240. [Online]. Available: https://onlinelibrary.wiley.com/ doi/abs/10.1002/9780470068328.ch4 [32] C. Xu, H. Li, R. Suaya, and K. Banerjee, “Compact AC Modeling and Performance Analysis of Through-Silicon Vias in 3-D ICs,” IEEE Transactions on Electron Devices , vol. 57, no. 12, pp. 3405–3417, 2010. [33] C. Paul, Analysis of Multiconductor Transmission Lines , ser. IEEE Press. Wiley, 2007. [Online]. Available: https://books.google.com/ books?id=uO5HiV6V8bkC [34] J. Kim, J. S. Pak, J. Cho, E. Song, J. Cho, H. Kim, T. Song, J. Lee, H. Lee, K. Park, S. Yang, M.-S. Suh, K.-Y. Byun, and J. Kim, “High-Frequency Scalable Electrical Model and Analysis of a Through Silicon Via (TSV),” IEEE Transactions on Components, Packaging and Manufacturing Technology , vol. 1, no. 2, pp. 181–195, 2011. [35] R. A. Matula, “Electrical resistivity of copper, gold, palladium, and silver,” Journal of Physical and Chemical Reference Data , vol. 8, pp. 1147–1298, 1979. [Online]. Available: https://api.semanticscholar.org/ CorpusID:95005999 [36] E. Perez, F. Strub, H. de Vries, V. Dumoulin, and A. Courville, “FiLM: visual reasoning with a general conditioning layer,” in Proceedings of the Thirty-Second AAAI Conference on Artificial Intelligence and Thirtieth Innovative Applications of Artificial Intelligence Conference and Eighth AAAI Symposium on Educational Advances in Artificial Intelligence , ser. AAAI’18/IAAI’18/EAAI’18. AAAI Press, 2018. [37] S. J. Pan and Q. Yang, “A Survey on Transfer Learning,” IEEE Transactions on Knowledge and Data Engineering , vol. 22, no. 10, pp. 1345–1359, 2010.

@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.29068v1/fig-001.webp",
+      "caption": "TABLE II: Unified comparison across all methods (160 conditioned specs, 10 per topology; autoregressive results averaged over 5 seeds with standard deviation). Search baselines have oracle access to the correct topology; ARCS generates from scratch.",
+      "page": 6,
+      "index": 1,
+      "width": 508,
+      "height": 513
+    },
+    {
+      "url": "assets/figures/arxiv/2603.29068v1/fig-002.webp",
+      "caption": "TABLE XI: Per-topology hybrid-ranked results (50 samples, spec-aware reward).",
+      "page": 11,
+      "index": 2,
+      "width": 408,
+      "height": 733
+    },
+    {
+      "url": "assets/figures/arxiv/2603.29068v1/fig-003.webp",
+      "caption": "Fig. 1: ARCS system overview. Top: Training pipeline—SPICE templates generate data, supervised pre-training learns the sequence distribution, and GRPO with SPICE-in-the-loop per-topology advantages refines value quality. Bottom: Inference pipeline—a target specification is tokenized, the trained model autoregressively generates component tokens with grammarconstrained masking, producing a valid circuit in ∼20 ms.",
+      "page": 2,
+      "index": 3,
+      "width": 790,
+      "height": 258
+    },
+    {
+      "url": "assets/figures/arxiv/2603.29068v1/fig-004.webp",
+      "caption": "Fig. 4: Simulation and structural validity across model variants (mean of 5 seeds). GRPO achieves the best sim-validity among autoregressive methods (+9.6 pp over REINFORCE). Grammar-constrained decoding (GT+Constr) achieves 100% on both metrics.",
+      "page": 7,
+      "index": 4,
+      "width": 504,
+      "height": 243
+    },
+    {
+      "url": "assets/figures/arxiv/2603.29068v1/fig-005.webp",
+      "caption": "Fig. 5: RL training dynamics. Important: these curves show in-training validation on small stochastic batches (high variance); Table II reports held-out evaluation on 160 conditioned specs averaged over 5 seeds (lower variance, different numbers). REINFORCE (5,000 steps) fluctuates around the SL baseline (45.6%, dashed) without consistent improvement. GRPO (3,000 steps) steadily improves to 77% in-training. The best GRPO checkpoint (step 500, 53.1±3.1% in Table II) was selected via the held-out protocol; the gap between in-training (77%) and held-out (48.8%) at step 3000 reflects overfitting to the training topology distribution.",
+      "page": 7,
+      "index": 5,
+      "width": 518,
+      "height": 267
+    },
+    {
+      "url": "assets/figures/arxiv/2603.29068v1/fig-006.webp",
+      "caption": "Fig. 2: Example ARCS-generated buck converter. Top: Token",
+      "page": 3,
+      "index": 6,
+      "width": 446,
+      "height": 323
+    }
+  ]
+}

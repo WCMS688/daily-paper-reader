@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.23394v1/fig-001.webp",
+      "caption": "Fig. 3. Overview of the proposed Markov-based microarray channel model. (a) A 1D Markov chain with nearest-neighbor diffusion among the free states and reversible binding/unbinding between the receiver-adjacent free state sNf and the bound state sN . (b) State occupancy probabilities xi(t) under a point release at the transmitter, illustrating transient propagation, binding, and convergence toward equilibrium; the highlighted rows correspond to the trajectories shown in (c) and (d). (c) Observable channel response h(t) = xN (t), with equilibrium gain heq and settling time teq. (d) Example hidden-state trajectory x1(t), illustrating the evolution of an internal, non-observable state. Illustrative parameters are used here for visual clarity and may differ from those adopted in the numerical results.",
+      "page": 5,
+      "index": 1,
+      "width": 1057,
+      "height": 276
+    }
+  ]
+}

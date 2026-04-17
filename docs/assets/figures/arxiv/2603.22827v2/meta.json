@@ -1,0 +1,94 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.22827v2/fig-001.webp",
+      "caption": "Figure 2: Quarter-domain ωq exploiting four-fold symmetry of the circular wafer mid-surface ω. (a) Red boundaries: dashed lines denote symmetry edges Γx,Γy (zero normal slope); solid arc denotes the outer boundary ΓR (Dirichlet conditions). The striker region ωS is shown near the origin. (b) The corresponding finite-element mesh (42,449 triangular elements) used in the DOLFINx computation.",
+      "page": 11,
+      "index": 1,
+      "width": 945,
+      "height": 495
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22827v2/fig-002.webp",
+      "caption": "Figure 4: Snapshots of the displacement field w at nine time instances during bonding (h = 70µm gap). The out-ofplane displacement is warped by a factor of 500 to enhance the visualisation. The bottom wafer shape is represented by the gray shape, and the colormap indicates the out-of-plane displacement of the top wafer.",
+      "page": 15,
+      "index": 2,
+      "width": 946,
+      "height": 1071
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22827v2/fig-003.webp",
+      "caption": "Table 1: Parameters appearing in Section 2.",
+      "page": 7,
+      "index": 3,
+      "width": 952,
+      "height": 1398
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22827v2/fig-004.webp",
+      "caption": "Figure 3: Top wafer displacement w(r, t) versus time at a fixed radial location r = mid-region for h0 = 30, 70, and 100µm. Solid lines (orange) show the finite-element solution; dashed lines (blue) show the experimental measurement.",
+      "page": 14,
+      "index": 4,
+      "width": 625,
+      "height": 476
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22827v2/fig-005.webp",
+      "caption": "Figure 8: Interfacial energy sensitivity diagnostics: (a) bond speed over time, (b) bond speed versus radius, and (c) temporal growth of the bonded radius. Higher interfacial energy accelerates the bond front and increases the bonded area for equal time stamps.",
+      "page": 18,
+      "index": 5,
+      "width": 968,
+      "height": 284
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22827v2/fig-006.webp",
+      "caption": "Figure 1: (a) Cross-sectional view of the initial domain configuration showing the top wafer Ωtop and the bottom wafer Ωbot separated by an air gap of height h0, and (b) schematic of the six stages of the wafer-to-wafer bonding process.",
+      "page": 4,
+      "index": 6,
+      "width": 1073,
+      "height": 1303
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22827v2/fig-007.webp",
+      "caption": "Figure 9: Spatio-temporal evolution of the radial displacement field w(r, t) for three bond gaps.",
+      "page": 19,
+      "index": 7,
+      "width": 965,
+      "height": 771
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22827v2/fig-008.webp",
+      "caption": "Figure 6: Bond speed diagnostics for three bond gaps: (a) bonded radius versus time, (b) bond speed versus time, and (c) bond speed versus radial position for h = 30, 70, and 100µm.",
+      "page": 17,
+      "index": 8,
+      "width": 973,
+      "height": 281
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22827v2/fig-009.webp",
+      "caption": "Figure 7: Effect of air viscosity on: (a) bond speed over time, (b) bond speed versus radius, and (c) temporal growth of the bonded radius.",
+      "page": 17,
+      "index": 9,
+      "width": 968,
+      "height": 284
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22827v2/fig-010.webp",
+      "caption": "Figure 10: Radial air-pressure profiles pair(r) in the unbonded region, r > rb(t), for h0 = 30, 70, and 100µm, evaluated at the common time t = 9 s: (a) full radial range and (b) zoomed view for the outer region near the bond front.",
+      "page": 20,
+      "index": 10,
+      "width": 966,
+      "height": 820
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22827v2/fig-011.webp",
+      "caption": "Figure 5: Displacement w(r) (left) and pressure p(r) (right) at the final time step (t = 50 s) for a 70µm gap. The average pressure p̄ computed by integrating the Reynolds pressure over the bonded area (r ≤ Rpin) equals the applied pressure |p̃|, verifying force equilibrium across the bonding front. This confirms that the Reynolds pressure field correctly captures the contact mechanics at the bond front.",
+      "page": 16,
+      "index": 11,
+      "width": 917,
+      "height": 334
+    }
+  ]
+}
