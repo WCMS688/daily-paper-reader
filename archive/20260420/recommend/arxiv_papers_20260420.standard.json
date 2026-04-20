@@ -1,0 +1,135 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-20T19:48:39.098409+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.15493v1",
+      "source": "arxiv",
+      "title": "End-to-End Physical Design Automation Flow for Yield-Optimized Inverse-Designed Large-Scale Electronic-Photonic Integrated Circuits",
+      "abstract": "As AI systems scale to multi-chiplet and wafer-level architectures, the demand for ultra-high bandwidth and system scalability has outpaced the capabilities of electrical interconnects and computing units. Large-scale heterogeneous electronic-photonic integrated chiplets (EPICs) provide a promising solution, but their practical adoption is limited by the lack of a unified, fabrication-aware physical design automation stack. At the same time, inverse-designed ultra-compact photonic devices offer orders-of-magnitude improvements in spatial and spectral density, yet remain constrained by insufficient design-for-manufacturing support and yield optimization. In this work, we present OptoSynthesizer, an end-to-end physical design automation flow for yield-optimized, inverse-designed EPICs. It integrates three key components across the physical design pipeline: (1) OptoSynthesizer-InvDes, a physical-AI-augmented, digital-twin-assisted photonic inverse design and photonics-aware inverse lithography framework; (2) OptoSynthesizer-Place, a GPU-accelerated routing-informed EPIC placer for large-scale routability-optimized layout; and (3) OptoSynthesizer-Route, a hierarchical curvy-aware waveguide router with global-planning-assisted electrical-optical co-routing. Together, these toolkits form a seamless flow from EPIC netlists to fabrication-ready, yield-robust GDS layouts. We demonstrate how this framework enables compact large-scale photonic tensor cores and high-bandwidth interconnect fabrics for heterogeneous EPIC platforms, providing a practical foundation for manufacturable large-scale EPICs in next-generation AI systems.",
+      "authors": [
+        "Hongjian Zhou",
+        "Haoyu Yang",
+        "Haoxing Ren",
+        "Joaquin Matres",
+        "Jiaqi Gu"
+      ],
+      "primary_category": "physics.optics",
+      "categories": [
+        "physics.optics",
+        "cs.ET"
+      ],
+      "published": "2026-04-16T19:48:58+00:00",
+      "link": "https://arxiv.org/pdf/2604.15493v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "physical design automation for multi-chiplet and electronic-photonic integrated circuits",
+      "llm_evidence_cn": "多芯片组和电光集成电路的物理设计自动化",
+      "llm_evidence": "多芯片组和电光集成电路的物理设计自动化",
+      "canonical_evidence": "多芯片组和电光集成电路的物理设计自动化",
+      "llm_tldr_en": "Proposes a design automation flow for large-scale electronic-photonic chiplets and heterogeneous integration.",
+      "llm_tldr_cn": "提出了一种用于大规模电光芯片组和异构集成的设计自动化流程。",
+      "llm_tldr": "提出了一种用于大规模电光芯片组和异构集成的设计自动化流程。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "SI/PI analysis for 2.5D 3D and Chiplet packaging",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.15642v1",
+      "source": "arxiv",
+      "title": "HYPERHEURIST: A Simulated Annealing-Based Control Framework for LLM-Driven Code Generation in Optimized Hardware Design",
+      "abstract": "Large Language Models (LLMs) have shown promising progress for generating Register Transfer Level (RTL) hardware designs, largely because they can rapidly propose alternative architectural realizations. However, single-shot LLM generation struggles to consistently produce designs that are both functionally correct and power-efficient. This paper proposes HYPERHEURIST, a simulated annealing-based control framework that treats LLM-generated RTL as intermediate candidates rather than final designs. The suggested system not only focuses on functionality correctness but also on Power-Performance-Area (PPA) optimization. In the first phase, RTL candidates are filtered through compilation, structural checks, and simulation to identify functionally valid designs. PPA optimization is restricted to RTL designs that have already passed compilation and simulation. Evaluated across eight RTL benchmarks, this staged approach yields more stable and repeatable optimization behavior than single-pass LLM-generated RTL.",
+      "authors": [
+        "Shiva Ahir",
+        "Prajna Bhat",
+        "Alex Doboli"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR",
+        "cs.AI"
+      ],
+      "published": "2026-04-17T02:39:20+00:00",
+      "link": "https://arxiv.org/pdf/2604.15642v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "LLM-driven hardware design optimization for Power-Performance-Area (PPA)",
+      "llm_evidence_cn": "大模型驱动的硬件设计PPA（功耗、性能、面积）优化",
+      "llm_evidence": "大模型驱动的硬件设计PPA（功耗、性能、面积）优化",
+      "canonical_evidence": "大模型驱动的硬件设计PPA（功耗、性能、面积）优化",
+      "llm_tldr_en": "A framework using simulated annealing and LLMs to optimize hardware design for PPA metrics.",
+      "llm_tldr_cn": "一种利用模拟退火和LLM优化硬件设计PPA指标的框架。",
+      "llm_tldr": "一种利用模拟退火和LLM优化硬件设计PPA指标的框架。",
+      "llm_tags": [
+        "query:si-pi:composite"
+      ],
+      "matched_query_tag": "query:si-pi:composite",
+      "matched_query_text": "Papers central to 板级、封装级、芯片级信号完整性与电源完整性（SI/PI）相关论文检索，涵盖高速互连、建模、PDN优化及机器学习应用。, especially work that connects or combines: Power integrity and PDN modeling optimization; Signal integrity analysis for high-speed interconnects; SerDes DDR and HBM channel modeling and simulation; PDN impedance modeling and decoupling capacitor design; SI/PI analysis for 2.5D 3D and Chiplet packaging; Machine learning methods for SI/PI analysis and optimization; Advanced modeling and optimization techniques for SI/PI in high speed systems; Machine learning applications for signal and power integrity analysis; SI/PI challenges and solutions for Chiplet and 3D heterogeneous integration; High speed channel characterization for SerDes and HBM interfaces.",
+      "matched_requirement_id": "req-composite-si-pi",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.15714v1",
+      "source": "arxiv",
+      "title": "Neuromorphic Parameter Estimation for Power Converter Health Monitoring Using Spiking Neural Networks",
+      "abstract": "Always-on converter health monitoring demands sub-mW edge inference, a regime inaccessible to GPU-based physics-informed neural networks. This work separates spiking temporal processing from physics enforcement: a three-layer leaky integrate-and-fire SNN estimates passive component parameters while a differentiable ODE solver provides physics-consistent training by decoupling the ODE physics loss from the unrolled spiking loop. On an EMI-corrupted synchronous buck converter benchmark, the SNN reduces lumped resistance error from $25.8\\%$ to $10.2\\%$ versus a feedforward baseline, within the $\\pm 10\\%$ manufacturing tolerance of passive components, at a projected ${\\sim}270\\times$ energy reduction on neuromorphic hardware. Persistent membrane states further enable degradation tracking and event-driven fault detection via a $+5.5$ percentage-point spike-rate jump at abrupt faults. With $93\\%$ spike sparsity, the architecture is suited for always-on deployment on Intel Loihi 2 or BrainChip Akida.",
+      "authors": [
+        "Hyeongmeen Baik",
+        "Hamed Poursiami",
+        "Maryam Parsa",
+        "Jinia Roy"
+      ],
+      "primary_category": "cs.NE",
+      "categories": [
+        "cs.NE",
+        "cs.LG",
+        "eess.SY"
+      ],
+      "published": "2026-04-17T05:34:53+00:00",
+      "link": "https://arxiv.org/pdf/2604.15714v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "SNN for parameter estimation in power converters and EMI-corrupted benchmarks",
+      "llm_evidence_cn": "用于电源转换器参数估计和EMI干扰基准的脉冲神经网络",
+      "llm_evidence": "用于电源转换器参数估计和EMI干扰基准的脉冲神经网络",
+      "canonical_evidence": "用于电源转换器参数估计和EMI干扰基准的脉冲神经网络",
+      "llm_tldr_en": "Uses Spiking Neural Networks for low-power health monitoring and parameter estimation in power converters.",
+      "llm_tldr_cn": "使用脉冲神经网络进行电源转换器的低功耗健康监测与参数估计。",
+      "llm_tldr": "使用脉冲神经网络进行电源转换器的低功耗健康监测与参数估计。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning applications for signal and power integrity analysis",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

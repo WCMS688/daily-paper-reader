@@ -1,0 +1,62 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.15642v1/fig-001.webp",
+      "caption": "Fig. 1: Categorization of representative LLM-based heuristic-generation frameworks into search-efficient, balanced, and high-QoR regimes. Each method is annotated by its core mechanism, showing how different approaches trade off search cost, generality, and optimization quality.",
+      "page": 1,
+      "index": 1,
+      "width": 510,
+      "height": 282
+    },
+    {
+      "url": "assets/figures/arxiv/2604.15642v1/fig-002.webp",
+      "caption": "TABLE I: Operational and Qualitative Comparison of Six LLM-Based Heuristic-Generation Frameworks",
+      "page": 2,
+      "index": 2,
+      "width": 1076,
+      "height": 454
+    },
+    {
+      "url": "assets/figures/arxiv/2604.15642v1/fig-003.webp",
+      "caption": "TABLE IV: PPA Comparison of Gate-Level Netlists Synthesized with Synopsys Design Compiler",
+      "page": 7,
+      "index": 3,
+      "width": 1070,
+      "height": 221
+    },
+    {
+      "url": "assets/figures/arxiv/2604.15642v1/fig-004.webp",
+      "caption": "Fig. 2: Two-phase HYPERHEURIST framework. Phase I discovers functionally correct RTL seeds using tool-in-the-loop simulation feedback. Phase II refines the seed via synthesis-driven PPA optimization under a strict correctness constraint.",
+      "page": 3,
+      "index": 4,
+      "width": 523,
+      "height": 310
+    },
+    {
+      "url": "assets/figures/arxiv/2604.15642v1/fig-005.webp",
+      "caption": "TABLE II: Eight RTL problem statements adopted from the RTLLLM [13] paper",
+      "page": 3,
+      "index": 5,
+      "width": 536,
+      "height": 283
+    },
+    {
+      "url": "assets/figures/arxiv/2604.15642v1/fig-006.webp",
+      "caption": "TABLE V: Correctness improvement of HYPERHEURIST over baseline RTL generation",
+      "page": 8,
+      "index": 6,
+      "width": 976,
+      "height": 260
+    },
+    {
+      "url": "assets/figures/arxiv/2604.15642v1/fig-007.webp",
+      "caption": "TABLE III: Syntax and Functional Correctness Comparison Across LLM-Based RTL Generation Frameworks",
+      "page": 4,
+      "index": 7,
+      "width": 529,
+      "height": 281
+    }
+  ]
+}

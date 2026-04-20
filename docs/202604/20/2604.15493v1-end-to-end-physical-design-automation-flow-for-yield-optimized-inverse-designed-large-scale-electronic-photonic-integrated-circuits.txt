@@ -1,0 +1,169 @@
+Title: End-to-End Physical Design Automation Flow for Yield-Optimized Inverse-Designed Large-Scale Electronic-Photonic Integrated Circuits
+
+URL Source: https://arxiv.org/pdf/2604.15493v1
+
+Published Time: Mon, 20 Apr 2026 00:12:37 GMT
+
+Number of Pages: 5
+
+Markdown Content:
+# End-to-End Physical Design Automation Flow for Yield-Optimized Inverse-Designed Large-Scale Electronic-Photonic Integrated Circuits 
+
+## Hongjian Zhou 
+
+hzhou144@asu.edu Arizona State University Tempe, Arizona, USA 
+
+## Haoyu Yang 
+
+haoyuy@nvidia.com NVIDIA Corp. Austin, Texas, USA 
+
+## Haoxing Ren 
+
+haoxingr@nvidia.com NVIDIA Corp. Austin, Texas, USA 
+
+## Joaquin Matres 
+
+jmatres@gdsfactory.com GDSFactory Mountain View, California, USA 
+
+## Jiaqi Gu 
+
+jiaqigu@asu.edu Arizona State University Tempe, Arizona, USA 
+
+Abstract 
+
+As AI systems scale to multi-chiplet and wafer-level architectures, the demand for ultra-high bandwidth and system scalability has out-paced the capabilities of electrical interconnects and computing units. Large-scale heterogeneous electronic-photonic integrated chiplets (EPICs) provide a promising solution, but their practical adoption is limited by the lack of a unified, fabrication-aware physical de-sign automation stack. At the same time, inverse-designed ultra-compact photonic devices offer orders-of-magnitude improvements in spatial and spectral density, yet remain constrained by insuffi-cient design-for-manufacturing support and yield optimization. In this work, we present OptoSynthesizer , an end-to-end physical de-sign automation flow for yield-optimized, inverse-designed EPICs. It integrates three key components across the physical design pipeline: (1) OptoSynthesizer -InvDes, a physical-AI-augmented, digital-twin-assisted photonic inverse design and photonics-aware inverse lithog-raphy framework; (2) OptoSynthesizer -Place, a GPU-accelerated routing-informed EPIC placer for large-scale routability-optimized layout; and (3) OptoSynthesizer -Route, a hierarchical curvy-aware waveguide router with global-planning-assisted electrical-optical co-routing. Together, these toolkits form a seamless flow from EPIC netlists to fabrication-ready, yield-robust GDS layouts. We demon-strate how this framework enables compact large-scale photonic ten-sor cores and high-bandwidth interconnect fabrics for heterogeneous EPIC platforms, providing a practical foundation for manufacturable large-scale EPICs in next-generation AI systems. 
+
+1 Introduction 
+
+The rapid growth of AI workloads [ 1], data-intensive computing [ 2 ], and high-bandwidth communications [ 3] is driving demand for scal-able and energy-efficient hardware. Electronic-photonic integrated circuits (EPICs) are promising platforms, combining mature electronic control with the high bandwidth, low latency, and massive paral-lelism of photonics. At the same time, inverse-designed ultra-compact photonic devices [ 4] offer orders-of-magnitude improvements in spa-tial and spectral density, making them attractive building blocks for large-scale programmable and application-specific EPIC systems. However, practical deployment remains limited by the lack of a 
+
+unified, fabrication-aware physical design automation stack . Current PIC design flows are fragmented across device synthesis, layout gener-ation, routing, and post-layout validation [ 5], with limited support for design-for-manufacturing and yield optimization. As a result, devices and circuits optimized in simulation often degrade after fabrication, especially inverse-designed devices with complex geometries that are highly sensitive to fabrication variation. Optimization targets:  
+
+> 1. Compact footprint 2. Low power (static/dynamic) 3. Performance: - low insertion loss - optical & thermal crosstalk - high SNR - phase matching - parasitics...
+> Physical synthesis
+> PDK
+> Device layout
+> Schematic Layout
+> Compact model
+> Arrange & connect devices
+
+Figure 1: PIC physical synthesis flow: from schematic and PDK-based device layouts to a final connected layout, targeting com-pact area, low power, and high performance. 
+
+To address this gap, an effective design flow should incorporate fabrication variations and nonideal physical effects, such as ther-mal crosstalk, electrical-photonic interaction, and packaging-induced variability, from the outset rather than treating them as post-design corrections, thereby supporting rapid prediction of fabrication yield and realistic system-level performance. To this end, we propose an end-to-end physical design automation framework for yield-optimized, inverse-designed large-scale EPICs. 
+
+➊ At the device level, the framework combines robust inverse de-sign with photonics-aware inverse lithography (ILT) to construct a robust inverse-designed PDK. ➋ At the circuit level, it integrates GPU-accelerated routing-informed placement, hierarchical curvy-aware waveguide routing, and global-planning-assisted metal routing for PIC layout generation. ➌ The flow is also compatible with GDSFac-tory [ 6 ] to support netlist export and post-layout simulation, enabling rapid evaluation and design-space exploration for large-scale EPIC systems in realistic settings. The rest of this paper is organized as follows. Section 2 reviews the background, Section 3 presents the proposed framework, and Section 4 demonstrates its capabilities through three examples. 
+
+2 Photonic Physical Synthesis Background 2.1 Device-level Inverse Design 
+
+Photonic inverse design formulates device synthesis as an optimiza-tion problem that starts from a target figure of merit (FoM), such as transmission and spectral response, and iteratively updates the device geometry using electromagnetic simulation and optimization algorithms, most commonly adjoint-based methods [ 7 ]. Compared with conventional manual design, which typically tunes a small num-ber of parameters within a predefined topology, inverse design can explore high-dimensional and non-intuitive design spaces, enabling much more compact and higher-performance devices for dense pho-tonic integration. However, despite its strong numerical advantages,    
+
+> arXiv:2604.15493v1 [physics.optics] 16 Apr 2026 Intended
+> design mask
+> Expected FoM =0.98
+> Fabricated
+> wafer image
+> Post -fab FoM =0.34
+> Fabrication
+> (EBL/DUV)
+> yield ↓↓
+
+Figure 2: Fabrication error causes severe performance and yield degradation on inverse-designed photonic components. Netlist OptoSynthesizer-Place OptoSynthesizer-Route Calibration 
+
+> OptoSynthesizer-InvDes
+> Fabrication Digital Twin
+> ILT + Inverse Design
+> Simulation
+
+Figure 3: Overview of the proposed fabrication-aware physical design flow OptoSynthesizer for inverse-designed PICs. 
+
+inverse-designed photonic devices often suffer from limited manufac-turability [ 8 ]. Their irregular subwavelength geometries are highly sensitive to fabrication variations [ 9– 12 ], such as lithography dis-tortion, etch bias, and linewidth variation, which can cause severe performance degradation and low yield after fabrication. Small errors in sensitivity-critical regions can dominate performance even when the overall pixel-wise error is small, as illustrated in Fig. 2. 
+
+2.2 Circuit-level Layout Design 
+
+Schematic-driven layout [ 13 ] remains the conventional PIC design flow as shown in Fig 1. Designers first specify circuit functionality and connectivity at the schematic level, and then manually translate the circuit into a physical layout. Unlike electrical interconnects, op-tical waveguides are highly geometry-sensitive, with direct impact on insertion loss, phase error, and overall circuit performance. As a result, layout generation usually requires careful planning of device placement, waveguide crossings, and path-length/phase matching. This process typically involves repeated iterations among schematic editing, interactive layout generation, and verification. While man-ageable for small circuits, such a manual flow becomes increasingly time-consuming and difficult to scale for large PICs with dense inter-connects and complex constraints. To improve scalability, many works [14–16] have explored layout automation for PICs, focusing mainly on PIC placement and waveg-uide routing. These methods aim to reduce manual effort by optimiz-ing congestion, crossings, and insertion loss. However, most existing approaches still focus on abstract planning and cannot directly gen-erate complete real GDS layouts. Their outputs often remain inter-mediate representations that require substantial manual refinement before tapeout. Bridging the gap between algorithmic optimization and real GDS-level physical realization remains a central challenge in PIC physical synthesis. 
+
+3 Proposed OptoSynthesizer Framework 
+
+PIC design has historically relied on expert-driven manual crafting and empirical trial-and-error, leading to slow iterations and limited design-time predictability of post-fabrication behavior, making it un-sustainable for large-scale inverse-designed PICs. We envision a new EPDA paradigm that replaces this workflow with rapid, automation-driven, and yield-native physical synthesis, in which manufacturabil-ity and circuit performance are treated as first-class design objectives from device generation to post-layout evaluation. To realize this vision, we construct a full-stack, end-to-end framework OptoSynthesizer 
+
+(Fig. 3) spanning ➊ yield-aware device inverse design with photonic inverse lithography flow for post-fabrication distortion prediction and compensation, ➋ automated PIC schematic-to-layout synthesis with photonics-specific placement and routing engines, and ➌ post-layout and post-fab circuit performance evaluation for yield-aware cross-layer co-design. This OptoSynthesizer flow establishes a foundation for a standardized and reproducible EPDA methodology for bench-marking and deploying yield-optimized large-scale inverse-designed PIC systems. We realize this workflow by integrating our EPDA tool-boxes [ 8, 17 –22 ] into a unified yield-driven framework for inverse design, automated physical synthesis, and yield-aware evaluation. 
+
+3.1 OptoSynthesizer -InvDes 
+
+OptoSynthesizer -InvDes provides foundries and designers with a workflow for creating compact, yield-optimized inverse-designed pho-tonic components. Its central goal is to transform inverse-designed de-vices from fabrication-fragile geometries into manufacturable, reusable circuit primitives. OptoSynthesizer -InvDes integrates two comple-mentary capabilities: fabrication-robust inverse design for robust-by-construction device synthesis, and photonics-aware inverse lithography for physical AI-enabled post-fab prediction and compensation. 
+
+3.1.1 Fabrication-Robust Inverse Design. When creating customized inverse-designed components, we build on MAPS [ 17 ], our developed open-source AI-augmented photonic inverse design infrastructure. In-stead of relying on heuristic minimum-feature-size control, curvature penalties, and simplified over/under-etch modeling, we incorporate differentiable fabrication modeling with variation sampling directly into the end-to-end inverse design loop [ 18 ]. This enables efficient optimization within a manufacturable design subspace, where device performance and fabrication robustness are co-optimized under pro-cess and operating variations. The resulting device layout, together with its port information and S-parameter model, is exported and pack-aged as a PDK cell. Our framework adopts a GDSFactory-compatible PDK format [ 6 , 23 ] to ensure broad interoperability with downstream EDPA ecosystems. 
+
+3.1.2 Photonics-aware Inverse Lithography. As a complementary flow for existing device designs, particularly inverse-designed components, fabrication correction is essential to maintain post-fabrication yield under E-beam lithography (EBL) and, even more critically, under DUV photolithography for high-volume manufacturing. Fabrication cor-rection is not simply geometric recovery, because small distortions in critical regions can induce large degradation in optical functional-ity [ 8, 24 ]. To address this, we introduce a new concept of photonics-aware inverse lithography (PA-ILT) and develop a framework PRISM [8], which learns a physics-augmented AI digital twin to model mask-to-wafer pattern transfer and inversely optimize masks guided by device sensitivity. The corrected layout can faithfully reproduce the intended behavior after manufacturing, even for complicated structures under 193nm DUV. The fabrication digital twin also provides a fast virtual fab surrogate to facilitate post-fab evaluation at the circuit level. 3.2 OptoSynthesizer -Place 
+
+A key challenge in PIC physical design is the strong coupling between placement and routing, since they jointly determine both PIC perfor-mance and routability . Device locations shape interconnect topology and path lengths, affecting insertion loss and crosstalk. Meanwhile, photonic routing is constrained by the directional, curvilinear, and area-intensive nature of optical waveguides, which require large bend radii and incur non-negligible crossing overhead. In addition, densely packed and orientation-sensitive photonic ports further limit port accessibility and routing space. These properties make routing-aware placement essential for compact and physically realizable PIC layouts. In Apollo [ 19 ], we address automated PIC placement through 
+
+routability optimization, designer-constrained optimization, and scal-able acceleration. To improve routability, Apollo introduces the PIC-specific cosWA wirelength model, which captures port orientation and bend-induced routing overhead, together with a routing-informed 
+
+net spacing model that preserves whitespace for crossings and dense port access. To satisfy designer intent, Apollo supports constraint optimization through conditional projection and cell inflation, en-abling automatic enforcement of alignment, regularity, and spacing constraints, thereby producing intuitive placement solutions. Built on a GPU-accelerated analytical engine, Apollo can efficiently opti-mize large-scale PIC layouts and generate highly routable placements, completing PICs with over 1,000 components in about 100 s . This significantly shortens turnaround time, enables exploration of more layout configurations such as chip area and spacing, and can also provide high-quality initial solutions or guidance for designers. 
+
+3.3 OptoSynthesizer -Route 
+
+Routing is one of the most time-consuming stages in PIC physical design, and the challenge grows rapidly with circuit scale. As the num-ber of optical and electrical interconnects increases, both waveguide and metal nets must be realized under tight physical constraints. PIC routing is especially resource-limited: optical routing is usually con-fined to a single silicon waveguide layer, while electrical routing often has access to only a few metal layers. In addition, electrical-optical interaction, such as metal-induced optical loss, and designer-specific spacing rules further complicate routing closure, making PIC routing both resource-constrained and highly application-dependent. The LiDAR -series PIC routing engine [ 20 – 22 ] spans LiDAR 1.0 to 
+
+LiDAR 3.0, extending routing automation from waveguides to metal wires in active PICs. For waveguide routing, LiDAR introduces a curvy-aware hierarchical A ★-based framework that supports different bend radii and spacing requirements while automatically planning routing resources for crossing insertion and port escape . By exploiting hierarchy, it also enables routing reuse for repeated modules, accelerating layout generation and producing nearly DRV-free real GDS layouts . In particular, it can complete detailed waveguide routing for a large-scale PIC with more than 8,000 nets in only 425 s [21 ]. In LiDAR 3.0, we further tackle metal routing in active PICs. Under limited metal-layer resources, it targets low-via, near-planar routing for millimeter-scale pin-to-I/O connections . It adopts a multi-stage global planning strategy: escape routing first moves pins and pads into blockage-free regions, and panel-based track assignment then provides guidance for detailed routing, leading to a 17 × speedup over conventional routers. 
+
+3.4 Closing the DSTCO Loop: Post-layout/fab Evaluation and Co-Optimization 
+
+This stage closes the device-technology-system co-optimization (DSTCO) loop by linking fabrication-aware device models, physical layout syn-thesis, and circuit-level performance evaluation. Existing PIC design flows still lack integrated support for post-layout extraction/simulation , and provide even less support for post-fabrication circuit evaluation . This gap is particularly limiting for inverse-designed and densely integrated PICs, whose performance is highly sensitive to physical layout and fabrication variation. Meanwhile, conventional flows usually treat layout-induced phase errors as problems to be resolved solely through stricter geometric matching, without consid-ering active calibration as a must-have degree of freedom for active PIC deployment . Our EPDA vision addresses both limitations by enabling not only layout- and fabrication-aware circuit evaluation , but also a more realistic design space in which physical layout and active calibration can be jointly considered .Specifically, OptoSynthesizer converts routed physical layouts into evaluable circuit abstractions by decomposing waveguide paths into standard photonic building blocks, such as bends, straight waveg-uides, and crossings, and reinserting them into the schematic as a post-layout netlist . These layout-extracted components are then annotated with post-fabrication (with optional ILT correction) S-parameter mod-els predicted by the fabrication digital twin. Before final circuit simu-lation, we further introduce a post-layout phase-calibration step ,in which active phase shifters are tuned on the extracted fabrication-aware netlist with injected thermal crosstalk to emulate realistic on-chip calibration conditions. The resulting fabrication-aware calibrated netlist is exported in a GDSFactory-compatible representation and simulated using its open-source plugins, such as SAX, to evaluate realistic circuit behavior after layout, fabrication, calibration, ther-mal crosstalk, and optional ILT correction. Coupled with our fast place-and-route engine, this capability enables rapid chip-level design space exploration with physically grounded feedback, e.g., density, robustness, and calibration overhead tradeoff analysis. This closes the loop for device-technology-system co-optimization (DSTCO), al-lowing device synthesis, fabrication correction, physical layout, and circuit behavior to be optimized cross-layer in a unified workflow. 
+
+4 Case Studies of OptoSynthesizer 
+
+4.1 Example 1: Robust Inverse-Designed Photonic PDK Construction 
+
+These examples are used to demonstrate the capability of our flow. In the first example, we demonstrate the significance of a robust inverse-designed PDK. Using MAPS [ 17 ], we first generate compact, high-performance inverse-designed photonic devices. Then, Virtual Fab [ 8 ] is used to generate post-fabrication data to train a physics-based Hopkins fabrication model [ 25 ], which can better capture the fabrication process and predict wafer patterns from mask layouts. Table 1 shows that several inverse-designed devices suffer severe per-formance degradation and near-zero yield under the 193 nm DUV process. In contrast, PRISM -based ILT effectively compensates fabri-cation distortion, substantially recovering device performance and improving yield to near 90%. Figure 4 further illustrates a represen-tative Y-branch example, showing that ILT reduces mask-to-wafer mismatch and better preserves the intended performance. 
+
+4.2 Example 2: Thermal-Aware Layout Feasibility Exploration 
+
+In this example, we use the proposed flow for early-stage design space exploration by rapidly generating placements and evaluating their per-formance and physical feasibility. In PIC, thermo-optic phase shifters are highly sensitive to nearby heat sources, making thermal crosstalk a key concern. Since Apollo can honor designer-specified constraints and generate placements within minutes, it is well-suited for this task. Mask Wafer Image Error Map 
+
+> Design w/o ILT
+> PRISM -based ILT
+> : Original design:0.487 0.295 0.484
+
+Figure 4: Y-branch comparison with and without PRISM-based inverse lithography under DUV process. ILT reduces mask-to-wafer mismatch and improves |𝑆 21 |2 from 0.295 to 0.484, close to the design target of 0.487. Table 1: Performance and yield improvement from photonic inverse lithography under 193 nm DUV process.                                                              
+
+> Device Ideal device erformance w/o ILT PRISM-based ILT Post-fab. Yield_90% Post-fab. Yield_90% Bending |𝑆 21 |2: 0.964 |𝑆 21 |2: 0.755 ±0.052 0% |𝑆 21 |2: 0.963 ±0.004 100% Crossing |𝑆 31 |2: 0.948 |𝑆 31 |2: 0.718 ±0.051 0% |𝑆 31 |2: 0.944 ±0.005 100% Optical diode |𝑆 21 |2: 0.948 |𝑆 21 |2: 0.384 ±0.011 0% |𝑆 21 |2: 0.886 ±0.069 85%
+> |𝑆 12 |2: 0.000 |𝑆 12 |2: 0.122 ±0.006 |𝑆 12 |2: 0.004 ±0.008 1-to-3 Splitter
+> |𝑆 21 |2: 0.332 |𝑆 21 |2: 0.089 ±0.026 0%
+> |𝑆 21 |2: 0.312 ±0.008 90% |𝑆 31 |2: 0.326 |𝑆 31 |2: 0.072 ±0.016 |𝑆 31 |2: 0.323 ±0.020
+> |𝑆 41 |2: 0.323 |𝑆 41 |2: 0.115 ±0.012 |𝑆 41 |2: 0.318 ±0.014 MDM |𝑆 21 |2: 0.933 |𝑆 21 |2:0.696 ±0.031 0% |𝑆 21 |2:0.929 ±0.010 98%
+> |𝑆 31 |2: 0.940 |𝑆 31 |2:0.430 ±0.071 |𝑆 31 |2:0.904 ±0.057 w/o constraints w/ left alignment w/ left alignment & y-center alignment
+> In fl ate thermal‑sensitive components to ensure suf fi cient spacing
+
+Figure 5: Proper placement constraints ensure high PIC layout quality on ADEPT_16 ×16 circuit. 
+
+By adjusting alignment constraints and halo settings, we can control device spacing and layout regularity as shown in Fig. 5. Here, we inflate heater sizes (halo) during placement to enforce extra spacing and study how different halo configurations affect thermal crosstalk and layout feasibility. The thermal crosstalk model follows [ 26 ]. And we further evaluate the output intensity/activation distribution error of the outputs by normalized MSE (NMSE) and the routability [ 19 ] of the placement result. Table 2 shows that, under a fixed design area, in-creasing the halo of phase shifters reduces thermal crosstalk. However, overly small or large halos degrade routability: small halos create local congestion, while large halos consume excessive whitespace and limit routing resources elsewhere. The distribution deviation of the output port power decreases as the halo size increases. This example shows that our flow enables efficient exploration of spacing configurations and tradeoffs among performance, area, and physical feasibility. 
+
+4.3 Example 3: Post-Layout PIC Circuit Performance Optimization 
+
+In the final example, we use a Clements_16 ×16 array [ 27 ] to demon-strate rapid netlist-to-layout generation with post-layout and post-fab 
+
+Table 2: Thermal crosstalk and routability of ADEPT_16 ×16 under different phase-shifter halo settings. 
+
+Phase shifter halo [h_x, h_y] [0, 0] [35, 15] [70, 30] [100, 45] Crosstalk Coef. Mean 2.02E-03 5.40E-04 3.93E-04 3.84E-04 Max 1.036 0.300 0.300 0.300 Distribution error (NMSE) 0.196 0.019 0.012 0.012 Routability 83.72% 100% 99% 94.98% 
+
+Table 3: Transmission and output distribution deviation (NMSE) of Clements_16 ×16 under different correction settings.             
+
+> Metrics Schematic Post-fab W/ ILT W/ ILT & Phase matching Total intensity 0.884 0.124 0.869 0.869 Distr. deviation 0.00 9.49E-01 1.36E+00 3.26E-04
+
+Figure 6: Visualization of OptoSynthesizer -generated complete PIC layout of Clements_16 ×16 .
+
+evaluation. Figure 6 shows the layout generated by our flow. As a representative coherent computing circuit, the Clements architecture is highly sensitive to fabrication variation and phase mismatch, and thus typically requires post-fabrication calibration. With our flow, cal-ibration can be considered together with layout optimization .In this experiment, we evaluate the total intensity of the output ports and the intensity distribution error. From Table 3, the post-fabrication circuit shows both severe power degradation and an in-correct output distribution. ILT can recover the transmission power, but the distribution remains incorrect due to phase mismatch. Only with additional phase matching can both be fully restored. In practice, achieving exact phase matching solely through routing is difficult, especially in dense layouts, since even a small phase adjustment may require only a tiny waveguide-length difference (e.g., on the order of 10 nm), which can be easily disrupted by process variation. Therefore, instead of relying only on geometric matching, our framework enables co-optimization of routing, placement, and post-fabrication calibra-tion to balance layout complexity, calibration overhead, and tuning power, while accelerating layout-aware performance evaluation. 
+
+5 Conclusion 
+
+This work presents OptoSynthesizer , a full-stack, yield-optimized EPDA framework for inverse-designed large-scale PICs. Moving be-yond the traditional manual and fabrication-unaware photonic de-sign paradigm, OptoSynthesizer unifies fabrication-robust inverse design, photonic-aware inverse lithography, automated schematic-to-layout physical synthesis, and post-layout/post-fabrication circuit evaluation into a single closed loop. Our case studies show that this framework can simultaneously improve device manufacturabil-ity, accelerate physical design turnaround, and enable more realis-tic layout- and calibration-aware circuit optimization. More broadly, 
+
+OptoSynthesizer establishes a foundation for standardized, repro-ducible, and yield-native EPDA, and points toward a new generation of device-technology-system co-optimization workflows for manufac-turable large-scale inverse-designed photonic systems. References 
+
+[1] Sufi R Ahmed, Reza Baghdadi, Mikhail Bernadskiy, Nate Bowman, Ryan Braid, Jim Carr, Chen Chen, Pietro Ciccarella, Matthew Cole, John Cooke, et al. Universal photonic artificial intelligence acceleration. Nature , 640(8058):368–374, 2025. [2] Hailong Zhou, Jianji Dong, Junwei Cheng, Wenchan Dong, Chaoran Huang, Yichen Shen, Qiming Zhang, Min Gu, Chao Qian, Hongsheng Chen, et al. Photonic ma-trix multiplication lights up photonic accelerator and beyond. Light: Science & Applications , 11(1):30, 2022. [3] Yvain Thonnart, Stéphane Bernabé, Jean Charbonnier, Christian Bernard, David Co-riat, César Fuguet, Pierre Tissier, Benoît Charbonnier, Stéphane Malhouitre, Damien Saint-Patrice, et al. Popstar: A robust modular optical noc architecture for chiplet-based 3d integrated systems. In DATE 2020-Design, Automation & Test in Europe Conference & Exhibition , pages 1456–1461. IEEE, 2020. [4] Momchil Minkov, Ian AD Williamson, Lucio C Andreani, Dario Gerace, Beicheng Lou, Alex Y Song, Tyler W Hughes, and Shanhui Fan. Inverse design of photonic crystals through automatic differentiation. Acs Photonics , 7(7):1729–1741, 2020. [5] Hongjian Zhou, Pingchuan Ma, and Jiaqi Gu. Toward intelligent electronic-photonic design automation for large-scale photonic integrated circuits: from device inverse design to physical layout generation. In Optical Design Automation , volume 13601, pages 69–78. SPIE, 2025. [6] Joaquin Matres et al. Gdsfactory. https://github.com/gdsfactory/gdsfactory, 2024. [7] Erfan Khoram, Xiaoping Qian, Ming Yuan, and Zongfu Yu. Controlling the minimal feature sizes in adjoint optimization of nanophotonic devices using b-spline surfaces. 
+
+Optics Express , 28(5):7060–7069, 2020. [8] Hongjian Zhou, Haoyu Yang, Nicholas Gangi, Tianle Xu, Rena Huang, and Jiaqi Gu. PRISM: Photonics-Informed Inverse Lithography for Manufacturable Inverse-Designed Photonic Integrated Circuits. arXiv preprint arXiv:2602.15762 , 2026. [9] Evan W Wang, David Sell, Thaibao Phan, and Jonathan A Fan. Robust design of topology-optimized metasurfaces. Optical Materials Express , 9(2):469–482, 2019. [10] Fengwen Wang, Jakob S Jensen, and Ole Sigmund. Robust topology optimization of photonic crystal waveguides with tailored dispersion properties. Journal of the Optical Society of America B , 28(3):387–397, 2011. [11] Mattias Schevenels, Boyan Stefanov Lazarov, and Ole Sigmund. Robust topology optimization accounting for spatially varying manufacturing errors. Computer Methods in Applied Mechanics and Engineering , 200(49-52):3613–3627, 2011. [12] Erez Gershnabel, Mingkun Chen, Chenkai Mao, Evan W Wang, Philippe Lalanne, and Jonathan A Fan. Reparameterization approach to gradient-based inverse design of three-dimensional nanophotonic devices. ACS Photonics , 10(4):815–823, 2022. [13] Lukas Chrostowski and Michael Hochberg. Silicon photonics design: from devices to systems . Cambridge University Press, 2015. [14] Yu-Kai Chuang, Kuan-Jung Chen, Kun-Lin Lin, Shao-Yun Fang, Bing Li, and Ulf Schlichtmann. Planaronoc: concurrent placement and routing considering crossing minimization for optical networks-on-chip. In Proceedings of the 55th Annual Design Automation Conference , pages 1–6, 2018. [15] Duo Ding, Yilin Zhang, Haiyu Huang, Ray T Chen, and David Z Pan. O-router: an optical routing framework for low power on-chip silicon nano-photonic integration. In Proceedings of the 46th annual design automation conference , pages 264–269, 2009. [16] Alexandre Truppel, Tsun-Ming Tseng, Davide Bertozzi, José Carlos Alves, and Ulf Schlichtmann. Psion: Combining logical topology and physical layout optimization for wavelength-routed onocs. In Proceedings of the 2019 International Symposium on Physical Design , pages 49–56, 2019. [17] Pingchuan Ma, Zhengqi Gao, Meng Zhang, Haoyu Yang, Mark Ren, Rena Huang, Duane S. Boning, and Jiaqi Gu. MAPS: Multi-Fidelity AI-Augmented Photonic Simulation and Inverse Design Infrastructure. In Proc. DATE , pages 1–6, 2025. doi: 10.23919/DATE64628.2025.10993033. [18] Pingchuan Ma, Zhengqi Gao, Amir Begovic, Meng Zhang, Haoyu Yang, Haoxing Ren, Rena Huang, Duane S. Boning, and Jiaqi Gu. BOSON −1: Understanding and Enabling Physically-Robust Photonic Inverse Design with Adaptive Variation-Aware Subspace Optimization. In 2025 Design, Automation & Test in Europe Conference (DATE) , 2025. [19] Hongjian Zhou, Haoyu Yang, Gangi Nicholas, Haoxing Ren, Huang Rena, and Jiaqi Gu. Apollo: Automated routing-informed placement for large-scale photonic integrated circuits. In International Conference on Computer-Aided Design (ICCAD) ,2025. [20] Hongjian Zhou, Keren Zhu, and Jiaqi Gu. LiDAR: Automated Curvy Waveguide Detailed Routing for Large-Scale Photonic Integrated Circuits. In Proceedings of the 2025 International Symposium on Physical Design , pages 64–72, 2025. [21] Hongjian Zhou, Haoyu Yang, Ziang Yin, Nicholas Gangi, Zhaoran Huang, Haoxing Ren, Joaquin Matres, and Jiaqi Gu. LiDAR 2.0: Hierarchical curvy waveguide detailed routing for large-scale photonic integrated circuits. IEEE TCAD , 2025. [22] Hongjian Zhou, Haoyu Yang, Nicholas Gangi, Bowen Liu, Meng Zhang, Haoxing Ren, Xu Wang, Rena Huang, and Jiaqi Gu. LiDAR 3.0: Photonics-aware planning-guided automated electrical routing for large-scale active photonic integrated circuits. In 
+
+Proc. ISPD , 2026. [23] Joaquin Matres, Simon Bilodeau, Niko Savola, Marc de Cea, Wai Kwan Yeung, Erman Timurdogan, Jan David Fischbach, Helge Gehring, Lucas Grosjean, Yannik Mahlau, Floris Laporte, Sebastian Goeldi, and Troy Tamas. GDSFactory: An open-source python library for chip design and simulation. In Proc. CLEO , Charlotte, NC, USA, May 2026. Optica Publishing Group / IEEE. Invited paper. [24] Junho Park, Taehan Kim, Mohammad Ali, and Di Liang. Interpretable geometry sensitivity for inverse design of integrated photonics. arXiv preprint arXiv:2510.22176 ,2026. URL https://arxiv.org/abs/2510.22176. [25] Shayak Banerjee, Zhuo Li, and Sani R Nassif. Iccad-2013 cad contest in mask optimization and benchmark suite. In 2013 IEEE/ACM International Conference on Computer-Aided Design (ICCAD) , pages 271–274. IEEE, 2013. [26] Ziang Yin, Nicholas Gangi, Meng Zhang, Jeff Zhang, Rena Huang, and Jiaqi Gu. SCATTER: algorithm-circuit co-sparse photonic accelerator with thermal-tolerant, power-efficient in-situ light redistribution. In Proc. ICCAD , pages 1–9, 2024. [27] William R. Clements, Peter C. Humphreys, Benjamin J. Metcalf, et al. Optimal Design for Universal Multiport Interferometers. Optica , 2018.

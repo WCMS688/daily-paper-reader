@@ -1,0 +1,54 @@
+{
+  "label": "2026-04-20",
+  "date": "2026-04-20",
+  "generated_at": "2026-04-20T19:49:23",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202604/20/2604.15493v1-end-to-end-physical-design-automation-flow-for-yield-optimized-inverse-designed-large-scale-electronic-photonic-integrated-circuits",
+      "section": "quick",
+      "title_en": "End-to-End Physical Design Automation Flow for Yield-Optimized Inverse-Designed Large-Scale Electronic-Photonic Integrated Circuits",
+      "authors": "Hongjian Zhou, Haoyu Yang, Haoxing Ren, Joaquin Matres, Jiaqi Gu",
+      "date": "2026-04-16",
+      "pdf": "https://arxiv.org/pdf/2604.15493v1",
+      "score": "7.0",
+      "evidence": "多芯片组和电光集成电路的物理设计自动化",
+      "tldr": "本研究针对大规模光电集成芯片（EPIC）缺乏统一制造感知物理设计流程的问题，提出了OptoSynthesizer端到端自动化框架。该框架集成了AI增强的逆向设计、GPU加速的布局工具及分层曲线感知布线器，实现了从网表到制造就绪布局的无缝衔接，显著提升了逆向设计器件的良率与系统布线效率，为下一代AI系统的大规模EPIC制造奠定了基础。",
+      "tags": "query:si-pi",
+      "abstract_en": "As AI systems scale to multi-chiplet and wafer-level architectures, the demand for ultra-high bandwidth and system scalability has outpaced the capabilities of electrical interconnects and computing units. Large-scale heterogeneous electronic-photonic integrated chiplets (EPICs) provide a promising solution, but their practical adoption is limited by the lack of a unified, fabrication-aware physical design automation stack. At the same time, inverse-designed ultra-compact photonic devices offer orders-of-magnitude improvements in spatial and spectral density, yet remain constrained by insufficient design-for-manufacturing support and yield optimization. In this work, we present OptoSynthesizer, an end-to-end physical design automation flow for yield-optimized, inverse-designed EPICs. It integrates three key components across the physical design pipeline: (1) OptoSynthesizer-InvDes, a physical-AI-augmented, digital-twin-assisted photonic inverse design and photonics-aware inverse lithography framework; (2) OptoSynthesizer-Place, a GPU-accelerated routing-informed EPIC placer for large-scale routability-optimized layout; and (3) OptoSynthesizer-Route, a hierarchical curvy-aware waveguide router with global-planning-assisted electrical-optical co-routing. Together, these toolkits form a seamless flow from EPIC netlists to fabrication-ready, yield-robust GDS layouts. We demonstrate how this framework enables compact large-scale photonic tensor cores and high-bandwidth interconnect fabrics for heterogeneous EPIC platforms, providing a practical foundation for manufacturable large-scale EPICs in next-generation AI systems.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/20/2604.15642v1-hyperheurist-a-simulated-annealing-based-control-framework-for-llm-driven-code-generation-in-optimized-hardware-design",
+      "section": "quick",
+      "title_en": "HYPERHEURIST: A Simulated Annealing-Based Control Framework for LLM-Driven Code Generation in Optimized Hardware Design",
+      "authors": "Shiva Ahir, Prajna Bhat, Alex Doboli",
+      "date": "2026-04-17",
+      "pdf": "https://arxiv.org/pdf/2604.15642v1",
+      "score": "6.0",
+      "evidence": "大模型驱动的硬件设计PPA（功耗、性能、面积）优化",
+      "tldr": "针对大语言模型（LLM）在生成寄存器传输级（RTL）硬件设计时难以兼顾功能正确性与PPA（功耗、性能、面积）优化的问题，本文提出HYPERHEURIST框架。该框架采用模拟退火算法作为控制核心，将LLM生成的代码视为中间候选方案，通过编译、仿真过滤及分阶段优化策略，显著提升了硬件设计的质量与稳定性。",
+      "tags": "query:si-pi",
+      "abstract_en": "Large Language Models (LLMs) have shown promising progress for generating Register Transfer Level (RTL) hardware designs, largely because they can rapidly propose alternative architectural realizations. However, single-shot LLM generation struggles to consistently produce designs that are both functionally correct and power-efficient. This paper proposes HYPERHEURIST, a simulated annealing-based control framework that treats LLM-generated RTL as intermediate candidates rather than final designs. The suggested system not only focuses on functionality correctness but also on Power-Performance-Area (PPA) optimization. In the first phase, RTL candidates are filtered through compilation, structural checks, and simulation to identify functionally valid designs. PPA optimization is restricted to RTL designs that have already passed compilation and simulation. Evaluated across eight RTL benchmarks, this staged approach yields more stable and repeatable optimization behavior than single-pass LLM-generated RTL.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/20/2604.15714v1-neuromorphic-parameter-estimation-for-power-converter-health-monitoring-using-spiking-neural-networks",
+      "section": "quick",
+      "title_en": "Neuromorphic Parameter Estimation for Power Converter Health Monitoring Using Spiking Neural Networks",
+      "authors": "Hyeongmeen Baik, Hamed Poursiami, Maryam Parsa, Jinia Roy",
+      "date": "2026-04-17",
+      "pdf": "https://arxiv.org/pdf/2604.15714v1",
+      "score": "6.0",
+      "evidence": "用于电源转换器参数估计和EMI干扰基准的脉冲神经网络",
+      "tldr": "本研究针对电源转换器健康监测对超低功耗（亚毫瓦级）的需求，提出了一种基于脉冲神经网络（SNN）的神经形态参数估计方法。该方法通过三层LIF神经元结合可微分ODE求解器，实现了物理一致性训练，并能有效处理受电磁干扰影响的数据。实验表明，该方案在显著降低能耗的同时，实现了高精度的参数估计与故障检测，为边缘侧实时监控提供了高效解决方案。",
+      "tags": "query:si-pi",
+      "abstract_en": "Always-on converter health monitoring demands sub-mW edge inference, a regime inaccessible to GPU-based physics-informed neural networks. This work separates spiking temporal processing from physics enforcement: a three-layer leaky integrate-and-fire SNN estimates passive component parameters while a differentiable ODE solver provides physics-consistent training by decoupling the ODE physics loss from the unrolled spiking loop. On an EMI-corrupted synchronous buck converter benchmark, the SNN reduces lumped resistance error from $25.8\\%$ to $10.2\\%$ versus a feedforward baseline, within the $\\pm 10\\%$ manufacturing tolerance of passive components, at a projected ${\\sim}270\\times$ energy reduction on neuromorphic hardware. Persistent membrane states further enable degradation tracking and event-driven fault detection via a $+5.5$ percentage-point spike-rate jump at abrupt faults. With $93\\%$ spike sparsity, the architecture is suited for always-on deployment on Intel Loihi 2 or BrainChip Akida.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
