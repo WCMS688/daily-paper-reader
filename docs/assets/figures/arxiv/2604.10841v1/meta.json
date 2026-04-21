@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.10841v1/fig-001.webp",
+      "caption": "Fig. 9. Representative PIC layout automation research milestones and trends.",
+      "page": 15,
+      "index": 1,
+      "width": 977,
+      "height": 578
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10841v1/fig-002.webp",
+      "caption": "Fig. 1. Physical advantages of photonic computing: ultra-low latency via RC-free propagation, high bandwidth density via multiplexing, and superior energy efficiency.",
+      "page": 2,
+      "index": 2,
+      "width": 524,
+      "height": 279
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10841v1/fig-003.webp",
+      "caption": "Fig. 2. System-level energy efficiency vs. compute density comparison between silicon-photonic accelerators and digital GPUs. The axes report effective energy efficiency (TOPS/W) and compute density (TOPS/mm2) under reported or derived system-level assumptions. GPU points correspond to NVIDIA V100 [45], A100 [46], H100 SXM [47], and B200 [48], using vendor-reported peak INT8 performance and die area. Photonic points are compiled from prior silicon-photonic accelerator works [23, 28, 29, 32, 42, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69] and are annotated to reflect which scaling dimensions each design emphasizes (area efficiency, energy efficiency, robustness at scale, and dynamic-workload capability, such as attention).",
+      "page": 4,
+      "index": 3,
+      "width": 962,
+      "height": 555
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10841v1/fig-004.webp",
+      "caption": "Fig. 3. SIMPHONY [33] cross-layer modeling framework for heterogeneous electronic-photonic AI systems. A modular PTC can be instantiated from different architecture families under a unified system interface. The framework maps NN operators into GEMM workloads, generates optics-specific dataflow, and evaluates end-to-end metrics using analyzers for memory traffic, area/floorplan, power/energy breakdown, and optical link budget.",
+      "page": 4,
+      "index": 4,
+      "width": 526,
+      "height": 415
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10841v1/fig-005.webp",
+      "caption": "Fig. 6. Photonic component inverse design flows. (1) Optimizationbased, (2) Generative, and (3) Hybrid methods.",
+      "page": 12,
+      "index": 5,
+      "width": 524,
+      "height": 234
+    }
+  ]
+}

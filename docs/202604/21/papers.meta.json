@@ -1,0 +1,54 @@
+{
+  "label": "2026-04-21",
+  "date": "2026-04-21",
+  "generated_at": "2026-04-21T20:35:28",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202604/21/2604.18445v1-autoppa-automated-circuit-ppa-optimization-via-contrastive-code-based-rule-library-learning",
+      "section": "quick",
+      "title_en": "AutoPPA: Automated Circuit PPA Optimization via Contrastive Code-based Rule Library Learning",
+      "authors": "Chongxiao Li, Pengwei Jin, Di Huang, Guangrun Sun, Husheng Han, Jianan Mu, Xinyao Zheng, Jiaguo Zhu, Shuyi Xing, Hanjun Wei, Tianyun Ma, Shuyao Cheng, Rui Zhang, Ying Wang, Zidong Du, Qi Guo, Xing Hu",
+      "date": "2026-04-20",
+      "pdf": "https://arxiv.org/pdf/2604.18445v1",
+      "score": "7.0",
+      "evidence": "通过对比代码规则库学习实现自动化的电路PPA优化",
+      "tldr": "针对RTL设计中PPA优化的效率问题，本文提出AutoPPA框架。该框架通过Explore-Evaluate-Induce（E2I）工作流，从生成的代码对中自动对比并抽象出优化规则，而非依赖人工总结。结合自适应多步搜索机制，AutoPPA能针对特定电路应用最有效的规则。实验证明其性能优于人工优化及SymRTLO、RTLRewriter等现有最先进方法。",
+      "tags": "query:si-pi",
+      "abstract_en": "Performance, power, and area (PPA) optimization is a fundamental task in RTL design, requiring a precise understanding of circuit functionality and the relationship between circuit structures and PPA metrics. Recent studies attempt to automate this process using LLMs, but neither feedback-based nor knowledge-based methods are efficient enough, as they either design without any prior knowledge or rely heavily on human-summarized optimization rules.   In this paper, we propose AutoPPA, a fully automated PPA optimization framework. The key idea is to automatically generate optimization rules that enhance the search for optimal solutions. To do this, AutoPPA employs an Explore-Evaluate-Induce ($E^2I$) workflow that contrasts and abstracts rules from diverse generated code pairs rather than manually defined prior knowledge, yielding better optimization patterns. To make the abstracted rules more generalizable, AutoPPA employs an adaptive multi-step search framework that adopts the most effective rules for a given circuit. Experiments show that AutoPPA outperforms both the manual optimization and the state-of-the-art methods SymRTLO and RTLRewriter.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/21/2604.10841v1-harnessing-photonics-for-machine-intelligence",
+      "section": "quick",
+      "title_en": "Harnessing Photonics for Machine Intelligence",
+      "authors": "Hanqing Zhu, Shupeng Ning, Hongjian Zhou, Ziang Yin, Ray T. Chen, Jiaqi Gu, David Z. Pan",
+      "date": "2026-04-12",
+      "pdf": "https://arxiv.org/pdf/2604.10841v1",
+      "score": "6.0",
+      "evidence": "多Chiplet架构的跨层系统分析与设计自动化",
+      "tldr": "本文综述了集成光子学在人工智能加速领域的应用，探讨了其如何通过光学带宽和并行性突破后摩尔时代的计算瓶颈。文章从电路与系统视角出发，提出了跨层系统分析与全栈设计自动化的框架，并强调了电子-光子协同设计自动化（EPDA）在实现可扩展、高效能光子机器学习系统中的核心作用。",
+      "tags": "query:si-pi",
+      "abstract_en": "The exponential growth of machine-intelligence workloads is colliding with the power, memory, and interconnect limits of the post-Moore era, motivating compute substrates that scale beyond transistor density alone. Integrated photonics is emerging as a candidate for artificial intelligence (AI) acceleration by exploiting optical bandwidth and parallelism to reshape data movement and computation. This review reframes photonic computing from a circuits-and-systems perspective, moving beyond building-block progress toward cross-layer system analysis and full-stack design automation. We synthesize recent advances through a bottleneck-driven taxonomy that delineates the operating regimes and scaling trends where photonics can deliver end-to-end sustained benefits. A central theme is cross-layer co-design and workload-adaptive programmability to sustain high efficiency and versatility across evolving application domains at scale. We further argue that Electronic-Photonic Design Automation (EPDA) will be pivotal, enabling closed-loop co-optimization across simulation, inverse design, system modeling, and physical implementation. By charting a roadmap from laboratory prototypes to scalable, reproducible electronic-photonic ecosystems, this review aims to guide the CAS community toward an automated, system-centric era of photonic machine intelligence.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/21/2604.16088v1-characterization-of-real-communication-patterns-and-congestion-dynamics-in-hpc-interconnection-networks",
+      "section": "quick",
+      "title_en": "Characterization of Real Communication Patterns and Congestion Dynamics in HPC Interconnection Networks",
+      "authors": "Miguel Sánchez de La Rosa, Gabriel Gomez-Lopez, Alejandro Baviera, Jose Duro, Francisco J. andújar, Jesus Escudero-Sahuquillo, Pedro J. Garcia, Francisco J. Alfaro, Maria E. Gomez, Julio Sahuquillo, José L. Sánchez, Francisco J. Quiles",
+      "date": "2026-04-17",
+      "pdf": "https://arxiv.org/pdf/2604.16088v1",
+      "score": "6.0",
+      "evidence": "互连网络中通信模式的表征与建模",
+      "tldr": "本研究针对高性能计算（HPC）中互连网络因通信需求增加而导致的拥塞问题，提出了一种基于VEF Traces框架的通信模式表征与建模方法。通过扩展该框架，研究者能够直接从追踪数据或模拟中分析网络拥塞动态。通过对NEST、GROMACS、LAMMPS和PATMOS等典型应用的分析，识别了在特定集体操作下可能出现的拥塞场景，为优化超算网络设计提供了重要参考。",
+      "tags": "query:si-pi",
+      "abstract_en": "The interconnection network is a key component of Supercomputers and Data centers, and its design must cope with the increasing communication demands of current applications and services; otherwise, it may become a system bottleneck. The most challenging network design issues are the topology, routing algorithm, flow control, and power efficiency. However, even the most efficient interconnection networks may suffer severe performance degradation due to congestion, especially under specific network traffic patterns generated by communication operations in high-performance computing~(HPC), deep learning training, or online data-intensive services. In this context, characterizing and modeling these communication operations and the network traffic patterns they generate is a fundamental challenge for studying their impact on network performance. This paper presents a methodology, based primarily on the VEF Traces framework, to characterize, model, and simulate the communication patterns of representative computing- and data-intensive applications. More precisely, we have extended the VEF traces framework with tools that enable us to characterize network congestion, either directly from VEF traces or via simulations. We have analyzed a set of VEF traces obtained from runs of NEST, GROMACS, LAMMPS, and PATMOS on several Supercomputers. In these studies, we identify potential congestion scenarios that arise in realistic network configurations when certain collective operations are performed.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
