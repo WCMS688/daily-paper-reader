@@ -1,0 +1,54 @@
+{
+  "label": "2026-04-22",
+  "date": "2026-04-22",
+  "generated_at": "2026-04-22T20:44:01",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202604/22/2604.18764v1-chico-agent-an-llm-agent-for-the-cross-layer-optimization-of-25d-and-3d-chiplet-based-systems",
+      "section": "deep",
+      "title_en": "CHICO-Agent: An LLM Agent for the Cross-layer Optimization of 2.5D and 3D Chiplet-based Systems",
+      "authors": "Qihang Wu, Aman Arora, Vidya A. Chhabria",
+      "date": "2026-04-20",
+      "pdf": "https://arxiv.org/pdf/2604.18764v1",
+      "score": "9.0",
+      "evidence": "用于2.5D和3D Chiplet系统跨层优化的LLM智能体",
+      "tldr": "针对2.5D/3D芯粒系统设计中跨层优化复杂度高、设计空间巨大的挑战，本文提出了CHICO-Agent。这是一个基于大语言模型（LLM）的优化框架，通过持久化知识库捕捉参数趋势，并采用多智能体协作流进行探索。实验表明，该方法在降低系统成本方面优于模拟退火算法，并能为设计者提供可解释的决策依据。",
+      "tags": "query:si-pi",
+      "abstract_en": "The rapid growth of large language models (LLMs) and AI workloads has pushed monolithic silicon to its reticle and economic limits, accelerating the adoption of 2.5D/3D chiplet systems. However, these systems increase design complexity by requiring co-design across multiple levels of the computing stack, including application, architecture, chip, and package. The resulting design space is highly combinatorial, with trade-offs among latency, energy, area, and cost. To address this challenge, we propose CHICO-Agent, an LLM-driven optimization framework for 2.5D/3D chiplet-based systems. CHICO-Agent maintains a persistent knowledge base to capture parameter-outcome trends and coordinates exploration through an admin-field multi-agent workflow. Compared with a simulated-annealing baseline, CHICO-Agent finds lower-cost configurations and provides an interpretable audit trail for designers.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/22/2604.18806v1-a-ppa-driven-3d-ic-partitioning-selection-framework-with-surrogate-models",
+      "section": "deep",
+      "title_en": "A PPA-Driven 3D-IC Partitioning Selection Framework with Surrogate Models",
+      "authors": "Shang Wang, Shuai Liu, Owen Randall, Matthew E. Taylor",
+      "date": "2026-04-20",
+      "pdf": "https://arxiv.org/pdf/2604.18806v1",
+      "score": "8.5",
+      "evidence": "基于代理模型的3D-IC分区选择框架，用于PPA优化",
+      "tldr": "针对3D-IC网表划分中代理目标与真实PPA指标不一致的问题，本文提出了一种名为DOPP的PPA驱动划分选择框架。该框架利用代理模型和D-最优实验设计，在仅评估少量候选方案的情况下，显著提升了拥塞、线长、时序和功耗等关键指标。实验表明，DOPP在保持较低评估成本的同时，实现了优于Open3DBench的PPA表现，为3D-IC设计优化提供了高效的新路径。",
+      "tags": "query:si-pi",
+      "abstract_en": "3D-IC netlist partitioning is commonly optimized using proxy objectives, while final PPA is treated as a costly evaluation rather than an optimization signal. This proxy-driven paradigm makes it difficult to reliably translate additional PPA evaluations into better PPA outcomes. To bridge this gap, we present DOPP (D-Optimal PPA-driven partitioning selection), an approach that bridges the gap between proxies and true PPA metrics. Across eight 3D-IC designs, our framework improves PPA over Open3DBench (average relative improvements of 9.99% congestion, 7.87% routed wirelength, 7.75% WNS, 21.85% TNS, and 1.18% power). Compared with exhaustive evaluation over the full candidate set, DOPP achieves comparable best-found PPA while evaluating only a small fraction of candidates, substantially reducing evaluation cost. By parallelizing evaluations, our method delivers these gains while maintaining wall-clock runtime comparable to traditional baselines.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/22/2604.18909v1-chiplight-cross-layer-optimization-of-chiplet-design-with-optical-interconnects-for-llm-training",
+      "section": "deep",
+      "title_en": "ChipLight: Cross-Layer Optimization of Chiplet Design with Optical Interconnects for LLM Training",
+      "authors": "Kangbo Bai, Zhantong Zhu, Yifan Ding, Tianyu Jia",
+      "date": "2026-04-20",
+      "pdf": "https://arxiv.org/pdf/2604.18909v1",
+      "score": "8.5",
+      "evidence": "采用光互连的Chiplet设计跨层优化",
+      "tldr": "针对大规模LLM训练中的通信瓶颈，本文提出ChipLight，一种结合芯粒（Chiplet）与光互连（OI）技术的跨层多目标设计优化方法。该方法通过抽象复杂的集群架构模型，协同优化芯粒架构、并行训练策略及光互连网络拓扑，并结合黑盒与白盒方法进行设计空间探索。实验表明，ChipLight显著提升了训练效率，为未来训练集群的设计提供了重要见解。",
+      "tags": "query:si-pi",
+      "abstract_en": "In large-scale distributed LLM training, communication between devices becomes the key performance bottleneck. Chiplet technology can integrate multiple dies into a package to scale-up node performance with higher bandwidth. Meanwhile, optical interconnect (OI) technology offers long-reach, high-bandwidth links, making it well suited for scale-out networks. The combination of these two technologies has the potential to overcome communication bottlenecks within and across packages. In this work, we present ChipLight, a cross-layer multi-objective design and optimization method for training clusters leveraging chiplet and OI. We first abstract an architecture model for such complex clusters, co-optimizing chiplet architecture, training parallel strategy, and OI network topology. Based on such models, we tailor the design space exploration flow by combining both black-box and white-box methodologies. Evaluated by our experimental results, ChipLight achieves significantly improved training efficiency and provides valuable design insights for the development of future training clusters.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

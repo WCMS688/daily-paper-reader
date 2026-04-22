@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.18806v1/fig-001.webp",
+      "caption": "TABLE IV: Recovery of true top-ranked candidates under different D-optimal design thresholds T . For each design, we report the coreset size |K|, Pred@10 (true top-10 ranks contained in the surrogate top-10 predictions), and Eval@10 (true top-10 ranks contained in the evaluated set K∪{top-10 surrogate predictions}). For bp_quad, all candidates satisfy ω(ci) < 8×10−3, so no data is reported for T = 10−2 and T = 8× 10−3.",
+      "page": 6,
+      "index": 1,
+      "width": 1050,
+      "height": 234
+    },
+    {
+      "url": "assets/figures/arxiv/2604.18806v1/fig-002.webp",
+      "caption": "Fig. 1: In the DOPP pipeline, search generates a proxy-diverse candidate set, D-optimal selects an informative coreset, a surrogate model is fit to the labeled coreset to rank candidates, and the best PPA solution is selected from the evaluated set.",
+      "page": 2,
+      "index": 2,
+      "width": 1076,
+      "height": 212
+    },
+    {
+      "url": "assets/figures/arxiv/2604.18806v1/fig-003.webp",
+      "caption": "TABLE V: PPA comparison across eight 3D-IC designs between Open3DBench, an exhaustive oracle that evaluates all candidates (i.e., without D-optimal coreset selection), and DOPP (our framework). We report congestion (Cong), routed wirelength (rWL), timing (WNS/TNS), and power, together with total CPU time and wall-clock runtime in hours. “Eval Times” logs the number of PPA evaluations required. “Avg Imprv” summarizes the average relative improvement of DOPP over Open3DBench on the reported PPA metrics.",
+      "page": 7,
+      "index": 3,
+      "width": 946,
+      "height": 660
+    },
+    {
+      "url": "assets/figures/arxiv/2604.18806v1/fig-004.webp",
+      "caption": "Fig. 2: Proxy-space candidate sets under two archive strategies on bp_multi. Left: vanilla multi-objective archive that keeps only non-dominated solutions, producing a small proxy frontier (47 candidates). Right: grid-based proxy archive that retains at most one proxy-competitive representative per grid cell, yielding a much denser and more diverse set (257 candidates), including solutions behind the frontier. Points are colored by PPA composite cost (lower is better), and numeric labels denote the candidate’s rank under this cost.",
+      "page": 3,
+      "index": 4,
+      "width": 1076,
+      "height": 329
+    },
+    {
+      "url": "assets/figures/arxiv/2604.18806v1/fig-005.webp",
+      "caption": "Fig. 4: Median composite cost with min-max error bars over 5 seeds on multi_bp. Each dot shows the median composite cost over 5 random seeds, and each error bar spans the minimum and maximum composite cost across the 5 runs. For the random baseline, the eight points correspond to evaluating randomly sampled subsets containing 5%, 10%, 20%, 30%, 40%, 50%, 60%, 100% of the full candidate set. The last error bar of the random coincides with the exhaustive. DOPP, Open3DBench, and Exhaustive are shown for comparison.",
+      "page": 8,
+      "index": 5,
+      "width": 529,
+      "height": 350
+    },
+    {
+      "url": "assets/figures/arxiv/2604.18806v1/fig-006.webp",
+      "caption": "Fig. 3: Best PPA found by DOPP versus evaluation budget across eight designs. Each subplot shows the PPA composite cost of the best solution found by DOPP (i.e., the best among all evaluated candidates) as a function of the number of PPA evaluations (x-axis). Lower composite cost indicates better PPA. Each point corresponds to evaluating the top 1%, 5%, 10%, 20%, 30%, 40%, 50%, 60%, 100% of candidates, selected by sorting candidates in descending order of their ω(ci). We enforce a minimum coreset size of 10, so for smaller designs like bp_fe, some percentages map to the same evaluation count and fewer distinct points are shown.",
+      "page": 8,
+      "index": 6,
+      "width": 529,
+      "height": 848
+    }
+  ]
+}

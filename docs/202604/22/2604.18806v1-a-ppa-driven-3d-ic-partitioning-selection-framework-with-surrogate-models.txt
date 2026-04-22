@@ -1,0 +1,308 @@
+Title: A PPA-Driven 3D-IC Partitioning Selection Framework with Surrogate Models
+
+URL Source: https://arxiv.org/pdf/2604.18806v1
+
+Published Time: Wed, 22 Apr 2026 00:13:43 GMT
+
+Number of Pages: 9
+
+Markdown Content:
+# A PPA-Driven 3D-IC Partitioning Selection Framework with Surrogate Models 
+
+Shang Wang 1, Shuai Liu 1, Owen Randall 1, Matthew E. Taylor 1,2
+
+> 1
+
+University of Alberta, Canada 
+
+> 2
+
+Alberta Machine Intelligence Institute (Amii), Canada 
+
+{shang8,shuai14,davidowe,mtaylor3 }@ualberta.ca 
+
+Abstract —3D-IC netlist partitioning is commonly optimized using proxy objectives, while final PPA is treated as a costly evaluation rather than an optimization signal. This proxy-driven paradigm makes it difficult to reliably translate additional PPA evaluations into better PPA outcomes. To bridge this gap, we present DOPP (D-Optimal PPA-driven partitioning selection), an approach that bridges the gap between proxies and true PPA met-rics. Across eight 3D-IC designs, our framework improves PPA over Open3DBench (average relative improvements of 9.99% congestion, 7.87% routed wirelength, 7.75% WNS, 21.85% TNS, and 1.18% power). Compared with exhaustive evaluation over the full candidate set, DOPP achieves comparable best-found PPA while evaluating only a small fraction of candidates, sub-stantially reducing evaluation cost. By parallelizing evaluations, our method delivers these gains while maintaining wall-clock runtime comparable to traditional baselines. 
+
+Index Terms —3D IC Partitioning, Linear regression, D-optimal design, Power Performance Area (PPA) 
+
+I. I NTRODUCTION 
+
+3D integrated circuits (3D-ICs) have emerged as a promis-ing way to continue performance scaling by vertically stacking multiple dies and leveraging dense vertical interconnections. While 3D integration can shorten critical interconnections and improve integration density, it also introduces new design chal-lenges [1]. In 3D-IC design flow [2]–[5], netlist partitioning is a critical early-stage decision that assigns modules or cells to different tiers from a gate-level netlist. Existing 3D-IC partitioning approaches generally fall into two categories. First, traditional methods typically rely on graph/hypergraph partitioning [6]–[11], simulated anneal-ing [12], [13], and heuristics [14]–[17] to iteratively optimize proxy objectives such as cut size, area balance, etc. Second, machine learning methods [18], [19] often improve partition-ing quality by incorporating richer task-related information into the model. Both categories iteratively update solutions at the front-end of the flow to optimize proxy metrics, while the final physical metrics of interest, PPA (performance, power, and area), are typically obtained during evaluation, rather than being used as a learning or optimization signal. However, the success of supervised learning often depends on having a large amount of labeled data, which is difficult to obtain given that PPA evaluation is expensive. Recent work [20]–[22] has explored training surrogate models (i.e., computationally efficient approximations of complex physical simulations) to generalize over different chips, replacing ex-pensive PPA evaluations, but their effectiveness is limited by data scarcity, the inherent complexity of chip data, and large differences between designs, leading to unreliable generaliza-tion. Motivated by these challenges, we propose a budget-efficient framework that enables direct PPA-driven selection for 3D-IC partitioning. Our goal is to maximize the final PPA metrics by selecting the most informative candidates for evaluation, while reducing the number of times evaluating PPA where we must invoke the full 3D backend implementation. A key observation is that when the optimization loop is not explicitly coupled with PPA, increasing compute budget tends to yield better performance in the proxy space, but does not reliably translate into PPA gains. Therefore, the central question we address is: how can we allocate a small number of expensive PPA evaluations so that additional compute budget can be converted into consistent improvements in PPA metrics? 
+
+To address this, we propose DOPP (D-Optimal PPA-driven Partitioning selection), illustrated in Fig. 1, to explicitly align early-stage proxy optimization with true PPA metrics. DOPP first employs an annealing-based search to generate a diverse set of candidates near the Pareto frontier. Then a coreset (i.e., a subset of all the candidates) is constructed to cover the most informative candidates. Next, DOPP evaluates PPA values by running full physical simulations on the coreset, which are later used to fit a local surrogate model on PPA scores. The PPA scores predicted by the surrogate model are used to rank the full candidate set. Lastly, DOPP evaluates a small set of top-ranked candidates, obtaining PPA values. The final solution is chosen among the union of the coreset and the surrogate’s top-ranked candidates. DOPP effectively learns a surrogate from the candidate set with modest computational resources, identifying solutions with high-performing PPA metrics. Our empirical results show DOPP effectively bridges the proxy-to-PPA gap; furthermore, it contributes a flexible selection methodology that enables users to retrieve solutions tailored to their specific PPA pref-erences. 
+
+> arXiv:2604.18806v1 [cs.LG] 20 Apr 2026
+
+Fig. 1: In the DOPP pipeline, search generates a proxy-diverse candidate set, D-optimal selects an informative coreset, a surrogate model is fit to the labeled coreset to rank candidates, and the best PPA solution is selected from the evaluated set. II. F RAMEWORK 
+
+We adopt the 3D-IC design workflow and evaluation frame-work provided by Open3DBench [23] throughout this work. Open3DBench provides the first fully open-source-tool-based 3D backend implementation and PPA evaluation benchmark targeting face-to-face (F2F) hybrid-bonded 3D-ICs. In Open3DBench, partitioning is studied under a memory-on-logic setting: all logic cells are assigned to the bottom tier, while memory blocks are distributed between the top and bottom tiers. Partitions are explored using simulated annealing (SA) under a fixed search budget. The SA objective is a fixed weighted combination of (i) cross-tier cut size and, representing the total number of vertical interconnections; and (ii) inter-tier area utilization imbalance, which measures the area disparity between tiers. Our framework, DOPP, operates in two stages: Diverse Candidate Set Generation (Section II-A) and Local Surro-gate Modeling with D-Optimal Design (Section II-B). Unlike Open3DBench and prior work that target a single proxy-optimal solution, DOPP generates a diverse candidate pool and retrieves the best PPA solution tailored to user preferences with modest evaluation cost. 
+
+A. Diverse Candidate Set Generation 
+
+To ultimately select a high quality design, we first require a candidate set covering solutions with strong PPA performance. We assume that proxy metrics are a useful but imperfect indicator of PPA: proxies and PPA are roughly positively correlated, yet a proxy-optimal solution is not necessarily PPA optimal. Therefore, we generate a diverse set of candidates with good proxy metric values to increase the chance of finding candidates with strong PPA performance. We build upon the simulated annealing procedure and extend it to a multi-objective setting by maintaining a grid-based Pareto archive over the proxy space. Over the full annealing tra-jectory, we explore many candidate moves, and the set of solutions retained in the grid-based archive constitutes the final candidate set. We adopt a grid-based archive for two reasons: (i) the proxy Pareto frontier alone can be small and concentrated, limiting diversity across trade-off regions, and (ii) candidates that are dominated in proxy space can still achieve strong PPA and should not be discarded, seeing Fig. 2. Concretely, we log-normalize the proxy objectives and discretize them into a fixed 2D grid, keeping at most one representative candidate per grid cell. Within each cell, we maintain a non-dominated representative by replacing the stored solution if a new candidate is at least as good in both proxy metrics. This archive retains not only Pareto optimal solutions but also a subset of proxy metric dominated, yet still competitive, solutions. Section III-A empirically validates the misalignment assumption between proxy and PPA and analyzes how the grid resolution affects candidate diversity and downstream PPA performance. PPA quality is summarized by an aggregated PPA composite cost. Let C denote the candidate set and let mk(c) be the kth 
+
+PPA metric of candidate c ∈ C for k ∈ { 1, ..., K }, where K is the total number of PPA metrics. We map each mk(c) in C to a normalized metric ˜mk(c) using min-max scaling as follows: 
+
+˜mk(c) = mk(c) − min c′∈C mk(c′)max c′∈C mk(c′) − min c′∈C mk(c′) . (1) The PPA composite cost SP P A is then defined as the ℓ2-norm of the normalized metric vector ˜m(c) = [ ˜ mk(c)] Kk=1 ∈ RK :
+
+SPPA (c) = ∥ ˜m(c)∥2 =
+
+vuut KX
+
+> k=1
+
+˜mk(c)2. (2) Smaller SPPA indicates better overall PPA. 
+
+B. Local Surrogate Model and D-Optimal Design 
+
+After generating a candidate set C with size N = |C| ,we aim to identify the best PPA solution. A naive approach is to evaluate all candidates and pick the best among them. However, evaluating PPA is expensive. To reduce the PPA evaluation costs, we learn a local surrogate that linearly maps a candidate’s feature vector to its predicted PPA, reducing the number of PPA evaluations. Concretely, given a feature map 
+
+ϕ : C → Rd, we model the PPA composite cost SPPA of each candidate c ∈ C as 
+
+SPPA (c) = ϕ(c)⊤θ⋆ + ε(c),
+
+where θ⋆ ∈ Rd is an underlying model parameter and ε :
+
+C → R is the misspecification error. Although SPPA (·) is generally nonlinear, our setting is effectively tabular over the finite candidate set induced by our search, hence the name “local surrogate”. Because of this, we build a linear model with Fig. 2: Proxy-space candidate sets under two archive strategies on bp_multi . Left: vanilla multi-objective archive that keeps only non-dominated solutions, producing a small proxy frontier (47 candidates). Right: grid-based proxy archive that retains at most one proxy-competitive representative per grid cell, yielding a much denser and more diverse set (257 candidates), including solutions behind the frontier. Points are colored by PPA composite cost (lower is better), and numeric labels denote the candidate’s rank under this cost. 
+
+N dimensions, assigning a dedicated feature to every single candidate. This would allow the model to act as a perfect look-up table, memorizing the exact PPA score for each design and resulting in zero misspecification error ( ε = 0 ). In practice, we trade off feature dimension d and misspecification error 
+
+ε: smaller d generally reduces the number of expensive PPA evaluations, but may increase ε. To be more specific, we adopt a set of manually designed features (e.g., normalized cut size, normalized area imbalance; see Section III-B for details) with 
+
+d ≪ N .Following [24], we leverage a result in optimal design theory that shows one is able to fit a “good enough” surrogate with a small proportion of the candidate set. The intuition is that the amount of independent information available for estimating a surrogate is governed primarily by the feature dimension d, rather than the size of candidate set N : In Rd,any set of linearly independent vectors has a cardinality of at most d. Consequently, large candidate sets residing in Rd
+
+often contain substantial redundancy when N ≫ d.For example, suppose the candidate set contains 100 can-didates where {ϕ(ci)}99  
+
+> i=1
+
+are contained in a small ball 
+
+Bρ(c1) := {b ∈ Rd : ∥b − ϕ(c1)∥ ≤ ρ} centered at ϕ(c1) where ρ > 0 is the radius. The last candidate, 
+
+ϕ(c100 ), is far from this ball: min x∈B ρ(c1) ∥x − ϕ(c100 )∥ ≫ 
+
+ρ. Because the first 99 candidates are close in the fea-ture space compared to their distance to ϕ(c100 ), natu-rally one would like to construct the coreset K to be 
+
+{ϕ(c1), ϕ (c100 )}. We then perform a weighted least squares (WLS) on {(ϕ(c1), S PPA (c1)) , (ϕ(c100 ), S PPA (c100 )) } with more weights assigned to ϕ(c1). We use WLS rather than ordi-nary least squares because ϕ(c1) and ϕ(c100 ) represent varying proportions of the underlying data distribution; weighing c1
+
+more heavily ensures the surrogate model accurately captures the dense region. Consequently, in order to reduce expensive PPA evaluations, we select a small but informative coreset K := {cj }nj=1 ⊆ C 
+
+using D-optimal design [24]. The D-optimal design is an optimization problem where the output is a non-negative weight function 
+
+ω : C → [0 , 1] such that 
+
+> N
+
+X
+
+> i=1
+
+ω(ci) = 1 .
+
+We construct the coreset K by keeping the candidates whose corresponding weights exceed a threshold T ≥ 0:
+
+K(T ) := {ci : ω(ci) > T } ,
+
+and then perform weighted least squares to fit a local surrogate that maps the candidate features ϕ(c) to the PPA composite cost SPPA (c):
+
+ˆθK(T ) := arg min 
+
+> θ∈Rd
+
+X 
+
+> c∈K (T)
+
+ω(c) ·
+
+
+
+ϕ(c)⊤θ − SPPA (c)
+
+2
+
+.
+
+The solution to D-optimal design ω ensures that the result-ing WLS solution ˆθK(T ) enjoys the following property [24]: 
+
+max  
+
+> c∈C
+
+|SPPA (c) − ϕ(c)⊤ ˆθK(0) | ≤ (1 + √d)E,
+
+where E = max c∈C |ε(c)|.The above result is a worst-case bound, i.e., no matter how one chooses the candidate set, the resulting WLS so-lution would never have a misspecification error larger than 
+
+(1 + √d)E. Kiefer and Wolfowitz [24] showed that there always exists a coreset K⋆ such that |K ⋆| ≤ d(d+1) 2 , which is the worst case smallest coreset. Finding such a coreset requires solving an exact D-optimal design problem, which is NP-hard [25]. Nevertheless, Our experiments show that the cardinality of the selected coreset is still significantly smaller than that of the candidate set. Due to numerical issues, it is rarely the case to obtain a weight function ω where the weights of the TABLE I: Statistics of the eight designs. Freq. represents the clock frequency of the design. Macros are large memory/IP blocks, cells are standard logic gates, and nets are the wire connections between them.                                     
+
+> Designs # Macro Net Cell Freq. (MHz) ariane133 132 204K 168K 250.0 ariane136 136 209K 171K 333.3 black parrot 24 359K 307K 500.0 bp be 10 66K 51K 1250.0 bp fe 11 43K 33K 555.6 bp multi 26 179K 152K 1250.0 bp quad 220 1448K 1135K 384.6 swerv wrapper 28 117K 98K 500.0
+
+“discarded” ones are pushed completely to 0. Hence, we tune the threshold T for selecting the coreset (see Section III-D). We calculated the PPA of the candidates in the coreset and fit the surrogate, which is then used to score and rank the full candidate set. Since small approximation errors can change the ordering among near-optimal solutions, we do not expect the surrogate’s top-1 prediction (i.e., the single candidate it estimates to have the best PPA score) to coincide with the true best candidate. We therefore evaluate the surrogate’s top-
+
+K predictions that are not already covered by the coreset as a verification step (with K = 10 in our experiments; see Section III-C). The candidate with the best PPA score is chosen among all evaluated candidates. III. E XPERIMENTS 
+
+We evaluate DOPP on all eight 3D-IC designs provided by Open3DBench. Following its methodology, we partition only memory blocks and assign all logic cells to the bottom tier. We employ the full Open3DBench 3D-IC flow and PPA evaluation toolchain (i.e., we use the same PDK, configurations, and tools), and use the Open3DBench partitioning algorithm as our baseline. A summary of the designs are listed in Table I. All experiments were conducted on HPC resources. Each evaluation ran on Intel Xeon Gold 6448Y CPU nodes, with an allocation of 4 physical CPU cores and 32 GB of memory. 
+
+A. Candidate Set Generation 
+
+Fig. 2 illustrates why we adopt a grid-based proxy archive. In Fig. 2 (left), the standard multi-objective archive keeps only non-dominated solutions, yielding a relatively small and concentrated proxy frontier. Because the estimate of PPA from proxy metrics may not be straightforward, this can be overly restrictive: proxy-dominated solutions may still achieve strong PPA, but would be discarded if we retain only the frontier. In Fig. 2 (right), our grid-based archive retains a much more diverse set of proxy-competitive candidates by keeping at most one representative per proxy grid cell, including solutions behind the global Pareto frontier. Crucially, after evaluating PPA across this archive, we observe that many of the top-ranked PPA candidates actually reside behind the frontier, which proves our assumption that proxy metrics and true PPA are indeed misaligned. To populate this archive, we employ a standard simulated annealing (SA) algorithm as our search algorithm to generate candidates. As the SA naturally explores the design space, the grid-based archive operates alongside it as a selective filter, preserving the diverse and competitive candidates encountered to construct our candidate set C. The grid granularity is a tunable hyper-parameter that directly controls the size of the proxy archive: a finer grid (i.e., smaller cell size) leads to more bins per proxy objective, thereby preserving more candidates. In Table III, we vary the grid granularity to generate candidate sets of different sizes. Larger candidate sets can increase the chance of containing stronger PPA solutions, but with the same feature construction, they also make a surrogate model more challenging to find the best one, as discussed in Section III-C (see table III). 
+
+B. Feature Construction 
+
+For each candidate c, we construct a feature vector ϕ(c) ∈
+
+Rd for a surrogate model. The features combine proxy-based partition statistics and hierarchy-aware cohesion signals. Note that the total feature dimension d varies across different chip designs (as shown in Table II). While the number of proxy-based features is fixed across all designs (seven features, F1
+
+to F7), the number of hierarchy cohesion features depends on the number of logical hierarchy clusters present in a specific design. In all cases, d ≪ N .
+
+Proxy-based features. Let cut size denote the number of inter-tier nets (cut nets), num nets the total number of nets, 
+
+A1, A 2 the memory block areas on the two tiers, and M1, M 2
+
+the numbers of memory blocks on the two tiers. We use: 
+
+F1 = cut size num nets , F 2 = |A1 − A2|
+
+A1 + A2
+
+, F 3 = |M1 − M2|
+
+M1 + M2
+
+.
+
+We further summarize cut-net connectivity by statistics of cut degree: 
+
+F4 − F7 = {min, max, mean, std } of cut-net degree. 
+
+Hierarchy cohesion features. We add hierarchy-aware features to capture structural fragmentation across tiers. For each logical hierarchy cluster h defined in a netlist, let Sh be the number of logic cells, and let Mh, 1 and Mh, 2 denote the numbers of memory blocks assigned to the lower and upper tiers, respectively, with Mh = Mh, 1 + Mh, 2. Since logic cells are fixed on the bottom tier, we define the lower-tier cohesion score 
+
+coh (h) = ShMh, 1 +  Mh, 1
+
+> 2
+
+
+
+ShMh +  Mh
+
+> 2
+
+ .
+
+Higher values indicate stronger cohesion (less cross-tier frag-mentation), while lower values indicate stronger segmentation. 
+
+C. Local Surrogate 
+
+Table II summarizes the performance of the local surrogate using our manually constructed feature map ϕ. Since our goal is to identify the best PPA solution (rather than predict exact PPA values), we report Pred@10 which true top-10 PPA candidates are included in the surrogate’s top-10 predictions. Exact top-1 prediction is a stringent requirement for an approx-imate local surrogate. This supports our strategy of addition-ally evaluating the top-K surrogate-predicted candidates. On these eight designs, the surrogate’s top-1 prediction matches the true top-1 only for ariane136 and bp_multi . For most designs, the true top-1 is still included in the surrogate’s top-10 predictions, helping to justify our selection of K = 10 .TABLE II: Local surrogate quality on candidate sets. |C| is the number of candidates and d is the number of features. For swerv_wrapper , none of the true top-10 candidates appears in the surrogate top-10; the best of any of the top 10 surrogate-predicted candidates is only the 13th best according to the true PPA.                            
+
+> Designs |C| dPred@10
+> ariane133 258 77 1,5,10
+> ariane136 152 56 1,2,3,4,6,8
+> black_parrot 248 25 1
+> bp_be 81 15 2,3,6,9
+> bp_fe 64 15 1,3,4,6,9
+> bp_multi 256 25 1,8,10
+> bp_quad 492 173 10
+> swerv_wrapper 263 20 /
+
+Table III studies how candidate sets’ size |C| affects sur-rogate ranking when using the same feature map ϕ. As |C| 
+
+increases, the recovered true ranks in the surrogate top-10 degrade substantially. This indicates that, under our current feature map ϕ, the induced linear model becomes harder to fit accurately over a larger and typically more diverse candidate set, leading to larger ranking errors. This performance drop indicates that our fixed feature map ϕ lacks the expressivity needed to capture the increased diversity of a larger candi-date set. Consequently, the linear model underfits, leading to larger ranking errors. This trend reflects a limitation of the chosen feature map rather than an inherent limitation of local surrogates: with a more expressive feature map, a linear model could remain accurate even on larger candidate sets. However, the right-most column of Table III shows that enlarging |C| improves the best PPA solution available for selection. Together, these results highlight a practical trade-off: larger candidate sets increase the chance of containing better PPA solutions, but they also place higher demands on feature design to maintain reliable surrogate ranking. 
+
+D. D-optimal design 
+
+Table IV studies the effect of the D-optimal design threshold 
+
+T on coreset size |K| and recovery quality. Pred@10 mea-sures the ranking quality of the surrogate fitted from the D-optimal coreset. By contrast, Eval@10 measures the true top-10 ranks covered by all evaluated candidates, i.e., the union of the coreset and the additionally evaluated top-10 surrogate predictions. Since the ultimate goal of the framework is to find the best-PPA candidate, Eval@10 is the true measure of our framework’s success. We report Pred@10 only as a TABLE III: Local surrogate quality on different candidate sets size. The last column reports the PPA metrics for the candidate that achieved the best (lowest) PPA composite cost: congestion (%), routed wirelength (m), WNS (ns), TNS (ns), and power (W).                  
+
+> Designs |C| dPred@10 Best found PPA in C
+> bp_multi 101 25 1,2,3,4,6,9,10 0.1151, 3.43, -6.80, -8061.23, 1.025
+> bp_multi 256 25 1,8,10 0.1142, 3.40, -6.86, -7672.30, 1.024
+> bp_multi 916 25 40.1117, 3.35, -6.64, -8039.76, 1.021
+
+supplementary metric to help understand the surrogate model’s underlying performance. A smaller threshold T generally leads to a larger coreset (i.e., the coreset size |K| increases). This is expected, since lowering T relaxes the selection criterion and allows more candidates to satisfy the threshold and enter the coreset. For Eval@10 , lower thresholds lead to stronger coverage of the true top-10 set. This trend is intuitive because a larger coreset directly evaluates more candidates and therefore has a higher chance of containing strong PPA solutions, and addi-tionally provides more labeled data for fitting the surrogate, which can improve the quality of the additionally evaluated top-10 predictions. For example, on black_parrot , the covered true ranks improve from 3, 8, 10 at T = 1 × 10 −2
+
+to almost the full true top-10 at T = 1 × 10 −3. Similar behavior can also be observed on ariane133 , ariane136 ,
+
+bp_multi and bp_quad .For Pred@10 , while a lower threshold expands the coreset and provides more training data, its impact on Pred@10 is inconsistent. For example, on bp_be , the surrogate achieves its strongest prediction recovery at T = 1 × 10 −2 and become slightly worse as the coreset grows. A related phenomenon appears on bp_quad : although fitting on all candidates only recovers rank 10 (see Table II), the surrogate trained on the D-optimal coreset at T = 1 × 10 −3 recovers the true rank-2 candidate. Overall, these cases suggest that Pred@10 depends not only on the number of labeled candidates, but also on the feature representation and the specific subset selected for training. Therefore we conclude that enlarging the coreset does not guarantee improved prediction recovery. We draw two conclusions from the results presented in Table IV. First, although Pred@10 does not admit a mono-tonic improvement with larger coresets, and in general has no guarantee of perfectly recovering the true top-ranked can-didates, the empirical results show that DOPP is still able to select relatively strong PPA solutions from the generated candidate set across all eight designs. Second, the quality of the final solution selected by DOPP is positively related to the evaluation budget: as more candidates are evaluated through a larger coreset, Eval@10 becomes stronger. This indicates that DOPP can effectively convert additional evaluation com-pute into improved final PPA performance, which is a major strength of our framework. Figure 3 further substantiates the second finding above by directly visualizing the relationship between evaluation budget TABLE IV: Recovery of true top-ranked candidates under different D-optimal design thresholds T . For each design, we report the coreset size |K| , Pred@10 (true top-10 ranks contained in the surrogate top-10 predictions), and Eval@10 (true top-10 ranks contained in the evaluated set K∪{ top-10 surrogate predictions }). For bp_quad , all candidates satisfy ω(ci) < 8×10 −3,so no data is reported for T = 10 −2 and T = 8 × 10 −3.                                                                                                                                    
+
+> Design |C| T= 1 ×10 −2T= 8 ×10 −3T= 5 ×10 −3T= 1 ×10 −3
+> |K| Pred@10 Eval@10 |K| Pred@10 Eval@10 |K| Pred@10 Eval@10 |K| Pred@10 Eval@10
+> ariane133 258 20 1,5 1,5 45 /1-3,5,10 96 41-5,10 157 1,5,2,10 1-6,8-10
+> ariane136 152 50 11-8 63 1-4,6 1-8 92 1-4 1-8 114 1-4,6,8 1-10
+> black_parrot 248 44 10 3,8,10 57 10 3,8,10 77 5,10 3,5-7,8,10 114 1,9,10 1,3-6,9-10
+> bp_be 81 32 2,3,6,8,10 2-4,6,8,10 35 3,6,10 3,4,6,8,10 35 3,6,10 3,4,6,8,10 37 3,6,10 3,4,6,8,10
+> bp_fe 64 36 2-6,9 1-6,9 36 2-6,9 1-6,9 37 2-6,9 1-6,9 39 2-6,9 1-6,9
+> bp_multi 256 44 10 3,8,10 56 10 3,8,10 74 5,10 3,5-6,8,10 102 5,10 3,5-6,8,10
+> bp_quad 492 //////25 /2348 22-9
+> swerv_wrapper 263 44 /6,10 51 /6,10 60 /6,10 73 /6,10
+
+and the best solution obtained by DOPP. For the majority of the designs, increasing the number of evaluated candidates generally reduces the final PPA composite cost, showing that allocating more evaluations consistently improves the best PPA solution selected from the evaluated set. A notable exception is ariane133 , where the cost curve remains flat; this occurs because our framework successfully identifies the best-performing candidate even within the smallest initial evaluation budget. 
+
+E. Overall performance evaluation 
+
+Table V compares the Open3DBench baseline, and an exhaustive oracle that evaluates all candidates without coreset selection on eight 3D-IC designs, and DOPP. For all designs except bp_quad , we set T = 1 × 10 −2 when constructing the coreset to further reduce the evaluation budget. For 
+
+bp_quad , we instead use T = 5 × 10 −3, since all weights are below 1 × 10 −2.Across all designs, DOPP consistently improves PPA over Open3DBench, achieving average gains of 9.99% in Cong, 
+
+7.87% in rWL, 7.75% in WNS, 21 .83% in TNS, and 1.18% in power. Compared with the exhaustive oracle, DOPP achieves near-oracle PPA while requiring substantially fewer PPA evaluations, showing that coreset selection can significantly reduce evaluation cost without compromising solution quality. Table V also highlights a key difference in how PPA evaluations are used. Prior proxy-driven methods, including Open3DBench, guide the search using proxy objectives rather than PPA, and are not designed to leverage additional PPA evaluations to improve the search or the final selection. In contrast, DOPP explicitly uses PPA evaluations for training and selection, allocating extra (parallel) PPA evaluations to better identify high-quality solutions. With sufficient paral-lel resources, wall-clock runtime remains comparable to the baseline, while total CPU time increases with the number of evaluations. To further examine robustness under stochasticity, Fig. 4 and Table VI report the multiple seeds results on bp_multi .The random baseline exhibits a clear trend: as the number of evaluations increases, its median composite cost gradually improves and its error bars shrink, since evaluating a larger random subset increases the chance of including a high quality candidate and reduces seed to seed variability; at 100% eval-uation, it coincides with the exhaustive result by definition. However, this also shows that random selection becomes reliable only when the evaluation budget is very large. In contrast, DOPP achieves performance close to the exhaustive oracle using a much lower number of evaluations, while maintaining a small performance range across all 5 seeds. This indicates that DOPP is robust to the stochasticity introduced by SA in candidate generation, consistently identifying high quality candidates rather than depending on favorable random runs. Although the exhaustive oracle also attains strong and stable performance, it requires evaluating the full candidate set, making its computational cost prohibitively expensive. Table VI further shows that this stability on bp_multi also carries over to the underlying PPA metrics across all 5 seeds, providing additional evidence of DOPP’s robustness. Table VII highlights an important strength of DOPP: it supports final solution selection according to user-preferred PPA metrics. Because DOPP is a PPA-driven framework, it naturally enables preference-based retrieval in the final PPA space. This is particularly useful in practice when different designers prioritize different objectives, such as timing, routing quality, or power (depending on downstream design needs). In contrast, proxy-driven methods such as Open3DBench do not directly optimize for user-specified final PPA preferences. Although such methods can bias solution generation by chang-ing the weights of their internal proxy objectives, it is difficult to translate a desired final-PPA target into the appropriate proxy weights because the relationship between proxies and final PPA is indirect and often mismatched. For example, Open3DBench selects solutions based on fixed weights over proxies such as cut size and area imbalance. If a designer instead wants a timing-preferred or power-preferred solution, it is not clear how the weights between cut size and area imbalance should be adjusted to reliably realize that final PPA preference. In practice, this typically requires repeated attempts guided by heuristics or human experience. In contrast, DOPP can directly select the corresponding solution according to the user’s desired PPA trade-off, without relying on proxy-TABLE V: PPA comparison across eight 3D-IC designs between Open3DBench, an exhaustive oracle that evaluates all candidates (i.e., without D-optimal coreset selection), and DOPP (our framework). We report congestion (Cong), routed wirelength (rWL), timing (WNS/TNS), and power, together with total CPU time and wall-clock runtime in hours. “Eval Times” logs the number of PPA evaluations required. “Avg Imprv” summarizes the average relative improvement of DOPP over Open3DBench on the reported PPA metrics.                                                                                                                                                                                                       
+
+> Designs Methods Cong (%) rWL (m) WNS (ns) TNS (ns) Power (W) Eval Times CPU time(h) Wall time(h) Avg Imprv
+> ariane133
+> Open3DBench 0.120 5.62 -1.253 -2630.37 0.358 10.41 0.41 8.17% Exhaustive 0.115 5.44 -1.127 -2035.89 0.355 258 105.60 0.41
+> DOPP 0.115 5.44 -1.127 -2035.89 0.355 20 7.98 0.41
+> ariane136
+> Open3DBench 0.127 5.90 -2.269 -6122.30 0.469 10.47 0.47 13.05% Exhaustive 0.111 5.33 -1.849 -4793.43 0.456 152 72.23 0.49
+> DOPP 0.111 5.33 -1.849 -4793.43 0.456 50 23.33 0.49
+> black_parrot
+> Open3DBench 0.201 7.78 -5.840 -3009.20 0.374 10.75 0.75 12.65% Exhaustive 0.186 7.37 -5.263 -1446.89 0.371 248 184.98 0.75
+> DOPP 0.193 7.79 -5.290 -1522.02 0.372 44 32.86 0.75
+> bp_be
+> Open3DBench 0.173 2.41 -0.809 -93.06 0.144 10.15 0.15 7.00% Exhaustive 0.149 2.19 -0.746 -67.56 0.141 81 12.20 0.15
+> DOPP 0.150 2.19 -0.832 -80.01 0.142 32 4.82 0.15
+> bp_fe
+> Open3DBench 0.127 1.30 -1.314 -890.39 0.283 10.22 0.22 7.19% Exhaustive 0.126 1.28 -1.222 -659.69 0.281 64 14.22 0.23
+> DOPP 0.126 1.28 -1.222 -659.69 0.281 36 8.09 0.23
+> bp_multi
+> Open3DBench 0.137 3.95 -7.272 -8975.67 1.045 10.24 0.24 9.92% Exhaustive 0.114 3.40 -6.868 -7672.30 1.024 256 60.23 0.24
+> DOPP 0.113 3.39 -6.547 -8442.17 1.024 44 10.35 0.24
+> bp_quad
+> Open3DBench 0.137 40.37 -1.710 -26833.40 1.837 12.63 2.65 10.77% Exhaustive 0.121 36.56 -1.388 -20831.30 1.818 492 1294.55 2.95
+> DOPP 0.122 36.71 -1.506 -21264.40 1.816 25 72.61 2.95
+> swerv_wrapper
+> Open3DBench 0.186 4.11 -1.144 -957.92 0.235 10.76 0.76 9.25% Exhaustive 0.155 3.43 -1.138 -819.66 0.232 263 200.28 0.79
+> DOPP 0.155 3.44 -1.167 -819.72 0.233 60 33.53 0.78
+> Avg Imprv 9.99% 7.87% 7.75% 21.85% 1.18%
+
+TABLE VI: Multi-seed comparison (5 seeds) on bp_multi . Each cell reports the median [min, max] of the final selected solution’s PPA metrics across seeds. For the random baseline, in each seed, we randomly sample and evaluate the exact same number of candidates as DOPP, and then select the candidate with the best overall PPA from that random subset. 
+
+Method Cong (%) rWL (m) WNS (ns) TNS (ns) Power (W) 
+
+Open3DBench 0.134 [0.128, 0.136] 3.88 [3.76, 3.94] -7.278 [-8.023, -7.155] -9104.05 [-10507.5, -8975.67] 1.040 [1.039, 1.044] 
+
+DOPP 0.113 [0.112, 0.113] 3.35 [3.33, 3.41] -6.629 [-6.954, -6.546] -8093.23 [-8156.17, -8069.89] 1.024 [1.024, 1.026] 
+
+Exhaustive 0.112 [0.110, 0.113] 3.31 [3.29, 3.35] -6.581 [-6.634, -6.482] -7947.23 [-8039.17, -7850.89] 1.021 [1.018, 1.021] 
+
+Random 0.112 [0.110, 0.123] 3.39 [3.33, 3.48] -6.851 [-7.054, -6.322] -8478.23 [-9088.17, -8214.89] 1.025 [1.019, 1.027] 
+
+weight tuning. As shown on ariane133 (Table VII), DOPP successfully retrieves solutions optimized for the user’s priority whether that is timing, routing, power, or a balanced improvement across all metrics. Crucially, for any given preference, DOPP selects the single best candidate tailored to that goal, rather than outputting a batch of trade-off candidates. This confirms that DOPP seamlessly adapts to diverse, user-defined design preferences. IV. C ONCLUSION 
+
+DOPP is a PPA-driven selection framework for 3D-IC netlist partitioning that closes the gap between proxy-based search and expensive final PPA evaluation. Starting from a proxy-diverse candidate set, DOPP uses D-optimal design to select an informative set of candidates to evaluate, fits a local surrogate to rank the remaining candidates, and verifies a small set of top predictions before selecting the final solution. Across eight Open3DBench designs, DOPP consistently improves final PPA over the Open3DBench baseline while maintaining comparable wall-clock runtime through paral-lel evaluation. Compared with exhaustive evaluation, DOPP Fig. 3: Best PPA found by DOPP versus evaluation budget across eight designs. Each subplot shows the PPA com-posite cost of the best solution found by DOPP (i.e., the best among all evaluated candidates) as a function of the number of PPA evaluations (x-axis). Lower composite cost indicates better PPA. Each point corresponds to evaluating the top 1% , 5% , 10% , 20% , 30% , 40% , 50% , 60% , 100% of candi-dates, selected by sorting candidates in descending order of their ω(ci). We enforce a minimum coreset size of 10, so for smaller designs like bp_fe , some percentages map to the same evaluation count and fewer distinct points are shown. achieves comparable solution quality while evaluating only a small fraction of the candidate set, substantially reducing evaluation cost. Additional experiments further show that increasing the evaluation budget generally improves the final selected solution, demonstrating that DOPP can effectively translate extra expensive evaluations into better PPA outcomes. Because DOPP operates directly in the true PPA space, it also supports flexible final selection under different designer 
+
+Fig. 4: Median composite cost with min-max error bars over 5 seeds on multi_bp . Each dot shows the median composite cost over 5 random seeds, and each error bar spans the minimum and maximum composite cost across the 5 runs. For the random baseline, the eight points cor-respond to evaluating randomly sampled subsets containing 
+
+5% , 10% , 20% , 30% , 40% , 50% , 60% , 100% of the full candi-date set. The last error bar of the random coincides with the exhaustive. DOPP, Open3DBench, and Exhaustive are shown for comparison. TABLE VII: Comparison under different user-defined final PPA preferences on ariane133 . The timing-focused case only considers WNS (ns) and TNS (ns) , the routing-focused case only considers Cong (%) and rWL (m) , the power-focused case only considers power (W) , and the balanced case considers all PPA metrics jointly. Open3DBench does not support directly adjusting the final PPA preferences to retrieve the corresponding solutions, whereas DOPP can adapt its final selection accordingly.                                                   
+
+> Preference Method Cong rWL WNS TNS Power
+> Timing Open3DBench 0.120 5.62 -1.253 -2630.37 0.358 DOPP 0.114 5.44 -1.127 -2035.89 0.354 Routing Open3DBench 0.120 5.62 -1.253 -2630.37 0.358 DOPP 0.110 5.27 -1.231 -2570.80 0.355 Power Open3DBench 0.120 5.62 -1.253 -2630.37 0.358 DOPP 0.114 5.45 -1.123 -2358.42 0.349 Balanced Open3DBench 0.120 5.62 -1.253 -2630.37 0.358 DOPP 0.115 5.44 -1.127 -2035.89 0.355
+
+preferences over congestion, routed wirelength, timing, and power. More broadly, this work shows that backend PPA evaluation need not remain a passive end-of-flow validation step. When used selectively and systematically, it can serve as an effective optimization signal for practical, budget-aware 3D-IC design. Despite these gains, DOPP remains dependent on the quality of the generated candidate set and the expressiveness of the manually designed features used by the local surrogate; perfor-mance drops as the candidate set grows in size and diversity. Future work will investigate richer surrogate representations, more adaptive surrogate modeling strategies, and extensions to broader 3D-IC partitioning scenarios. ACKNOWLEDGMENT 
+
+Part of this work has taken place in the Intelligent Robot Learning (IRL) Lab at the University of Alberta, which is supported in part by research grants from Alberta Innovates; Alberta Machine Intelligence Institute (Amii); a Canada CI-FAR AI Chair, Amii; Digital Research Alliance of Canada; Mitacs; and the National Science and Engineering Research Council (NSERC). REFERENCES [1] Yuxuan Zhao, Lancheng Zou, and Bei Yu. Physical design for advanced 3D ICs: Challenges and solutions. In Proceedings of the 2025 Interna-tional Symposium on Physical Design , 2025. [2] Kyungwook Chang, Saurabh Sinha, Brian Cline, Raney Southerland, Michael Doherty, Greg Yeric, and Sung Kyu Lim. Cascade2D: A design-aware partitioning approach to monolithic 3D IC with 2D commercial tools. In Proceedings of the 35th International Conference on Computer-Aided Design, ICCAD 2016, Austin, TX, USA, November 7-10, 2016 ,2016. [3] Bon Woong Ku, Kyungwook Chang, and Sung Kyu Lim. Compact-2D: A physical design methodology to build commercial-quality face-to-face-bonded 3D ICs. In Proceedings of the 2018 International Symposium on Physical Design , 2018. [4] Shreepad Panth, Kambiz Samadi, Yang Du, and Sung Kyu Lim. Shrunk-2-D: A physical design methodology to build commercial-quality mono-lithic 3-D ICs. IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems , 36(10):1716–1724, 2017. [5] Sai Surya Kiran Pentapati, Kyungwook Chang, Vassilios Gerousis, Rwik Sengupta, and Sung Kyu Lim. Pin-3D: A physical synthesis and post-layout optimization flow for heterogeneous monolithic 3D ICs. In 
+
+Proceedings of the 39th International Conference on Computer-Aided Design , 2020. [6] Brian W. Kernighan and Shen Lin. An efficient heuristic procedure for partitioning graphs. Bell Syst. Tech. J. , 49(2):291–307, 1970. [7] Charles M. Fiduccia and Robert M. Mattheyses. A linear-time heuristic for improving network partitions. In Proceedings of the 19th Design Automation Conference, DAC ’82, Las Vegas, Nevada, USA, June 14-16, 1982 , 1982. [8] Andrew E. Caldwell, Andrew B. Kahng, and Igor L. Markov. Improved algorithms for hypergraph bipartitioning. In Proceedings of ASP-DAC 2000, Asia and South Pacific Design Automation Conference 2000, Yokohama, Japan , 2000. [9] Cristinel Ababei, Yan Feng, Brent Goplen, Hushrav Mogal, Tianpei Zhang, Kia Bazargan, and Sachin S. Sapatnekar. Placement and routing in 3D integrated circuits. IEEE Des. Test Comput. , 22(6):520–531, 2005. [10] Sebastian Schlag, Tobias Heuer, Lars Gottesb¨ uren, Yaroslav Akhremtsev, Christian Schulz, and Peter Sanders. High-quality hypergraph partition-ing. ACM Journal of Experimental Algorithmics , 27:1–39, 2023. [11] Alexander Graening, Puneet Gupta, Andrew B Kahng, Bodhisatta Pra-manik, and Zhiang Wang. ChipletPart: Scalable cost-aware partitioning for 2.5D systems. arXiv e-prints , 2025. [12] Peter JM Van Laarhoven and Emile HL Aarts. Simulated annealing. In 
+
+Simulated Annealing: Theory and Applications . Springer, 1987. [13] Sandro Sawicki, Gustavo Wilke, Marcelo Johann, and Ricardo Reis. A cells and I/O pins partitioning refinement algorithm for 3D VLSI circuits. In 2009 16th IEEE International Conference on Electronics, Circuits and Systems-(ICECS 2009) , pages 852–855. IEEE, 2009. [14] Sai Pentapati, Lingjun Zhu, Lennart Bamberg, Da Eun Shim, Alberto Garc´ ıa-Ortiz, and Sung Kyu Lim. A logic-on-memory processor-system design with monolithic 3-D technology. IEEE Micro , 39(6):38–45, 2019. [15] Eunsol Jeong, Taewhan Kim, and Heechun Park. PPA-Aware tier partitioning for 3D IC placement with ILP formulation. In Proceedings of the 30th Asia and South Pacific Design Automation Conference, ASPDAC 2025, Tokyo, Japan, January 20-23, 2025 , 2025. [16] Shreepad Panth, Kambiz Samadi, Yang Du, and Sung Kyu Lim. Placement-driven partitioning for congestion mitigation in monolithic 3D IC designs. In International Symposium on Physical Design, ISPD’14, Petaluma, CA, USA, March 30 - April 02, 2014 , 2014. [17] Sandeep Kumar Samal, Deepak Nayak, Motoi Ichihashi, Srinivasa Banna, and Sung Kyu Lim. Tier partitioning strategy to mitigate BEOL degradation and cost issues in monolithic 3D ICs. In Proceedings of the 35th International Conference on Computer-Aided Design, ICCAD 2016, Austin, TX, USA, November 7-10, 2016 , 2016. [18] Yi-Chen Lu, Sai Surya Kiran Pentapati, Lingjun Zhu, Kambiz Samadi, and Sung Kyu Lim. TP-GNN: A graph neural network framework for tier partitioning in monolithic 3D ICs. In 2020 57th ACM/IEEE Design Automation Conference (DAC) , 2020. [19] Donggyu Kim, Minjae Kim, Junseok Hur, Jakang Lee, Jinoh Cho, and Seokhyeong Kang. TA3D: Timing-aware 3D IC partitioning and placement by optimizing the critical path. In Proceedings of the 2024 ACM/IEEE International Symposium on Machine Learning for CAD ,2024. [20] Yuxiang Zhao, Xun Jiang, Qiang Xu, Runsheng Wang, Yibo Lin, et al. DeepLayout: Learning neural representations of circuit placement layout. In Forty-second International Conference on Machine Learning ,2025. [21] Sai Surya Kiran Pentapati, Bon Woong Ku, and Sung Kyu Lim. ML-Based wire RC prediction in monolithic 3D ICs with an application to full-chip optimization. In ISPD ’21: International Symposium on Physical Design, Virtual Event, USA, March 22-24, 2021 , 2021. [22] Zizheng Guo, Mingjie Liu, Jiaqi Gu, Shuhan Zhang, David Z. Pan, and Yibo Lin. A timing engine inspired graph neural network model for pre-routing slack prediction. In DAC ’22: 59th ACM/IEEE Design Automation Conference, San Francisco, California, USA, July 10 - 14, 2022 , 2022. [23] Yunqi Shi, Chengrui Gao, Wanqi Ren, Siyuan Xu, Ke Xue, Mingxuan Yuan, Chao Qian, and Zhi-Hua Zhou. Open3DBench: Open-source benchmark for 3D-IC backend implementation and PPA evaluation. 
+
+arXiv preprint arXiv:2503.12946 , 2025. [24] J. Kiefer and Jacob Wolfowitz. The equivalence of two extremum problems. Canadian Journal of Mathematics , 12:363 – 366, 1960. [25] William J Welch. Algorithmic complexity: three NP-hard problems in computational statistics. Journal of Statistical Computation and Simulation , 15(1):17–25, 1982.
