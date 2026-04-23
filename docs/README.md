@@ -6,32 +6,29 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-22
-- 运行时间：2026-04-22 20:43:49 UTC
+- 最新运行日期：2026-04-23
+- 运行时间：2026-04-23 20:21:58 UTC
 - 运行状态：成功
-- 本次总论文数：3
-- 精读区：3
-- 速读区：0
+- 本次总论文数：2
+- 精读区：0
+- 速读区：2
 
 ### 今日简报（AI）
-今日深度解析 AI 驱动的 3D 芯片设计前沿，重点涵盖 LLM Agent 协同优化与 3D-IC 自动化分区技术。
-核心成果展示了 CHICO-Agent 在 Chiplet 跨层优化中的卓越潜力，以及代理模型对 3D-IC PPA 评估效率的显著提升。
-推荐关注大模型与 EDA 工具的深度融合，探索如何利用 AI 突破复杂三维集成电路的设计瓶颈。
-- 详情：[/202604/22/README](/202604/22/README)
+今日探索 AI 赋能的硬件自动化设计与量子计算底层控制的前沿突破。
+重点关注结合模拟退火算法提升大模型生成硬件代码的质量，以及低温电子学中自旋输运的谷态感知优化。
+建议关注自动化芯片设计与量子比特精密控制领域的跨界技术融合。
+- 详情：[/202604/23/README](/202604/23/README)
 
 ### 精读区论文标签
-1. [CHICO-Agent: An LLM Agent for the Cross-layer Optimization of 2.5D and 3D Chiplet-based Systems](/202604/22/2604.18764v1-chico-agent-an-llm-agent-for-the-cross-layer-optimization-of-25d-and-3d-chiplet-based-systems)  
-   标签：评分：9.0/10、query:si-pi
-   evidence：用于2.5D和3D Chiplet系统跨层优化的LLM智能体
-2. [A PPA-Driven 3D-IC Partitioning Selection Framework with Surrogate Models](/202604/22/2604.18806v1-a-ppa-driven-3d-ic-partitioning-selection-framework-with-surrogate-models)  
-   标签：评分：8.5/10、query:si-pi
-   evidence：基于代理模型的3D-IC分区选择框架，用于PPA优化
-3. [ChipLight: Cross-Layer Optimization of Chiplet Design with Optical Interconnects for LLM Training](/202604/22/2604.18909v1-chiplight-cross-layer-optimization-of-chiplet-design-with-optical-interconnects-for-llm-training)  
-   标签：评分：8.5/10、query:si-pi
-   evidence：采用光互连的Chiplet设计跨层优化
+- 本次无精读推荐。
 
 ### 速读区论文标签
-- 本次无速读推荐。
+1. [HYPERHEURIST: A Simulated Annealing-Based Control Framework for LLM-Driven Code Generation in Optimized Hardware Design](/202604/23/2604.15642v1-hyperheurist-a-simulated-annealing-based-control-framework-for-llm-driven-code-generation-in-optimized-hardware-design)  
+   标签：评分：6.0/10、query:si-pi
+   evidence：大语言模型驱动的低功耗硬件设计代码生成
+2. [Valley-Aware Optimal Control of Spin Shuttling Using Cryogenic Integrated Electronics](/202604/23/2604.20482v1-valley-aware-optimal-control-of-spin-shuttling-using-cryogenic-integrated-electronics)  
+   标签：评分：6.0/10、query:si-pi
+   evidence：低温电路与电子噪声的协同仿真框架
 
 
 <div class="dpr-home-promo-card">

@@ -1,0 +1,39 @@
+{
+  "label": "2026-04-23",
+  "date": "2026-04-23",
+  "generated_at": "2026-04-23T20:22:09",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202604/23/2604.15642v1-hyperheurist-a-simulated-annealing-based-control-framework-for-llm-driven-code-generation-in-optimized-hardware-design",
+      "section": "quick",
+      "title_en": "HYPERHEURIST: A Simulated Annealing-Based Control Framework for LLM-Driven Code Generation in Optimized Hardware Design",
+      "authors": "Shiva Ahir, Prajna Bhat, Alex Doboli",
+      "date": "2026-04-17",
+      "pdf": "https://arxiv.org/pdf/2604.15642v1",
+      "score": "6.0",
+      "evidence": "大语言模型驱动的低功耗硬件设计代码生成",
+      "tldr": "针对大语言模型（LLM）在生成硬件描述语言（RTL）时难以兼顾功能正确性与功耗性能面积（PPA）优化的问题，本文提出了 HYPERHEURIST 框架。该框架引入模拟退火算法，将 LLM 生成的代码视为中间候选方案，通过编译、结构检查和仿真进行分阶段筛选，并在确保功能正确的基础上进行 PPA 优化。实验表明，该方法在 8 个 RTL 基准测试中表现出比单次生成更强的稳定性和优化能力。",
+      "tags": "query:si-pi",
+      "abstract_en": "Large Language Models (LLMs) have shown promising progress for generating Register Transfer Level (RTL) hardware designs, largely because they can rapidly propose alternative architectural realizations. However, single-shot LLM generation struggles to consistently produce designs that are both functionally correct and power-efficient. This paper proposes HYPERHEURIST, a simulated annealing-based control framework that treats LLM-generated RTL as intermediate candidates rather than final designs. The suggested system not only focuses on functionality correctness but also on Power-Performance-Area (PPA) optimization. In the first phase, RTL candidates are filtered through compilation, structural checks, and simulation to identify functionally valid designs. PPA optimization is restricted to RTL designs that have already passed compilation and simulation. Evaluated across eight RTL benchmarks, this staged approach yields more stable and repeatable optimization behavior than single-pass LLM-generated RTL.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/23/2604.20482v1-valley-aware-optimal-control-of-spin-shuttling-using-cryogenic-integrated-electronics",
+      "section": "quick",
+      "title_en": "Valley-Aware Optimal Control of Spin Shuttling Using Cryogenic Integrated Electronics",
+      "authors": "Pau Dietz Romero, Nermine Chaabani, Lammert Duipmans, Alessandro David, Felix Motzoi, Stefan van Waasen, Lotte Geck",
+      "date": "2026-04-22",
+      "pdf": "https://arxiv.org/pdf/2604.20482v1",
+      "score": "6.0",
+      "evidence": "低温电路与电子噪声的协同仿真框架",
+      "tldr": "本研究针对硅基自旋量子比特长程耦合中的能谷分裂和低温控制电路限制，提出了一种能谷感知的优化控制方案。通过结合失序能谷图与晶体管级电路仿真的协同仿真框架，设计了全集成的低温穿梭信号发生器，并利用噪声感知优化算法调整电路参数。该方案在极低功耗下实现了高保真度的电子穿梭，为可扩展量子架构提供了实用的能谷失序缓解策略。",
+      "tags": "query:si-pi",
+      "abstract_en": "Electron shuttling is emerging as a key mechanism for enabling long-range coupling in scalable spin-qubit architectures. Bringing shuttling waveform generation into the cryostat can improve scalability, but imposes strict area and power constraints on the control electronics. Concurrently, shuttling in Si/SiGe is further limited by a spatially varying valley splitting that induces spin--valley mixing and degrades coherence. Here, we make three contributions that address these limitations jointly: (i) an end-to-end co-simulation framework that combines disorder-informed valley maps with transistor-level cryogenic circuit simulations including electronic noise; (ii) a fully integrated cryogenic shuttling-signal generator tailored to velocity modulation, enabling period-wise waveform shaping through discrete circuit settings stored in on-chip memory; and (iii) a noise-aware optimization procedure that tunes only these implementable circuit controls, using one of four discrete resistor settings per period, to generate high-fidelity shuttling sequences. Across simulated valley and noise realizations in our co-simulation framework, the optimized velocity-modulation waveforms improve transport performance, achieving an average shuttling fidelity of $99.99 \\pm 0.007\\%$ at $v_{\\mathrm{avg}} = 20~\\mathrm{m\\,s^{-1}}$ over a distance of $10~μ\\mathrm{m}$, while maintaining active analog power consumption in the tens of $μ\\mathrm{W}$ during shuttling. This validates on-chip storage and replay of optimized control settings as a practical strategy to mitigate valley disorder in scalable shuttling architectures.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

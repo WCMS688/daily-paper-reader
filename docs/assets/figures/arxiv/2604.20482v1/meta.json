@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.20482v1/fig-001.webp",
+      "caption": "FIG. 4. Analytical waveforms illustrating the effect of discrete resistor-ladder settings on ramp shaping and the resulting shuttling-velocity modulation (variations exaggerated",
+      "page": 6,
+      "index": 1,
+      "width": 454,
+      "height": 318
+    },
+    {
+      "url": "assets/figures/arxiv/2604.20482v1/fig-002.webp",
+      "caption": "FIG. 3. Schematic of the programmable RC network driving the gate capacitance Cgate. A selectable capacitor bank (Cu) and resistor ladder (Ru) set the ramp time constant τ , while control switches enable DC refresh and controlled ramp generation using Vbias, Vref , Vup, and Vdown.",
+      "page": 6,
+      "index": 2,
+      "width": 412,
+      "height": 564
+    },
+    {
+      "url": "assets/figures/arxiv/2604.20482v1/fig-003.webp",
+      "caption": "TABLE IV. Mean computational resource requirements for the Genetic Algorithm (GA) optimization across five different valley maps. In this example, a netlist without parasitic effects and without electrical noise was optimized. All runs were performed on a dual-socket AMD EPYC 9354 system (64 physical cores total), running Linux, using the same parallelization settings for all velocities.",
+      "page": 14,
+      "index": 3,
+      "width": 526,
+      "height": 238
+    },
+    {
+      "url": "assets/figures/arxiv/2604.20482v1/fig-004.webp",
+      "caption": "FIG. 1. End-to-end co-simulation workflow used to optimize and validate shuttling operations. The cryogenic signal generator is simulated at transistor level (Cadence Spectre) to obtain gate voltages V (k) e (t) for electronic-noise realization k. The waveforms are mapped to a shuttling trajectory x (k) qd (t) and used to simulate spin–valley dynamics, yielding the final spin purity P (k) s (tf ). An optimizer updates period-wise control parameters (one discrete configuration per signal period) to maximize J .",
+      "page": 3,
+      "index": 4,
+      "width": 1077,
+      "height": 682
+    },
+    {
+      "url": "assets/figures/arxiv/2604.20482v1/fig-005.webp",
+      "caption": "FIG. 9. Simplified layout of a single shuttling-signal phase generator in a 22 nm FDSOI CMOS technology. The fourphase shuttling generator consists of four identical phase cells. The configurable capacitor bank (Cu in Fig. 3) dominates the area at ≈ 2600 µm2 per phase generation, followed by the switch network (≈ 340 µm2) and resistor ladder (Ru, ≈ 140 µm2). The total area is ≈ 3080 µm2 per phase cell. The shared digital logic is excluded because its area does not scale with the number of output phases.",
+      "page": 12,
+      "index": 5,
+      "width": 487,
+      "height": 277
+    },
+    {
+      "url": "assets/figures/arxiv/2604.20482v1/fig-006.webp",
+      "caption": "FIG. 10. Validation of orbital confinement and trajectory extraction used in the co-simulation workflow. (a) Representative four-phase gate-voltage waveforms Ve(t) that generate the traveling electrostatic potential during one normalized period t/T . (b) Corresponding orbital energy splitting along the shuttling trajectory, confirming that the dot remains strongly confined. (c) Dot-position mapping error δx(t) between the fast phasor-based extraction of xqd(t) (Eqs. B3) and a reference mapping obtained by tracking the minimum of the electrostatic potential in a COMSOL simulation, showing only few-nanometer deviations with peaks during rapid waveform transitions.",
+      "page": 12,
+      "index": 6,
+      "width": 458,
+      "height": 385
+    }
+  ]
+}

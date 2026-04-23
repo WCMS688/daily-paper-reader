@@ -1,0 +1,584 @@
+Title: Valley-Aware Optimal Control of Spin Shuttling Using Cryogenic Integrated Electronics
+
+URL Source: https://arxiv.org/pdf/2604.20482v1
+
+Published Time: Thu, 23 Apr 2026 00:52:18 GMT
+
+Number of Pages: 16
+
+Markdown Content:
+# Valley-Aware Optimal Control of Spin Shuttling Using Cryogenic Integrated Electronics 
+
+Pau Dietz Romero, 1, 6, ∗ Nermine Chaabani, 2, 3, † Lammert Duipmans, 1
+
+Alessandro David, 2 Felix Motzoi, 2, 3 Stefan van Waasen, 1, 4, 6 and Lotte Geck 1, 5, 6 
+
+> 1
+
+Integrated Computing Architectures (PGI-4), Forschungszentrum J¨ ulich, 52425 J¨ ulich, Germany 
+
+> 2
+
+Quantum Control (PGI-8), Forschungszentrum J¨ ulich, 52425 J¨ ulich, Germany 
+
+> 3
+
+Institute for Theoretical Physics, University of Cologne, 50937 Cologne, Germany 
+
+> 4
+
+Faculty of Engineering, Communication Systems, University of Duisburg-Essen, 47057 Duisburg, Germany 
+
+> 5
+
+System Engineering for Quantum Computing, RWTH Aachen University, 52056 Aachen, Germany 
+
+> 6
+
+IceCirc GmbH, 41844, Wegberg, Germany 
+
+Electron shuttling is emerging as a key mechanism for enabling long-range coupling in scalable spin-qubit architectures. Bringing shuttling waveform generation into the cryostat can improve scalability, but imposes strict area and power constraints on the control electronics. Concurrently, shuttling in Si/SiGe is further limited by a spatially varying valley splitting that induces spin–valley mixing and degrades coherence. Here, we make three contributions that address these limitations jointly: (i) an end-to-end co-simulation framework that combines disorder-informed valley maps with transistor-level cryogenic circuit simulations including electronic noise; (ii) a fully integrated cryogenic shuttling-signal generator tailored to velocity modulation, enabling period-wise waveform shaping through discrete circuit settings stored in on-chip memory; and (iii) a noise-aware opti-mization procedure that tunes only these implementable circuit controls, using one of four discrete resistor settings per period, to generate high-fidelity shuttling sequences. Across simulated valley and noise realizations in our co-simulation framework, the optimized velocity-modulation wave-forms improve transport performance, achieving an average shuttling fidelity of 99 .99 ± 0.007% at 
+
+vavg = 20 m s −1 over a distance of 10 μm, while maintaining active analog power consumption in the tens of μW during shuttling. This validates on-chip storage and replay of optimized control settings as a practical strategy to mitigate valley disorder in scalable shuttling architectures. 
+
+I. INTRODUCTION A. Scalable spin qubit architectures and the role of shuttling 
+
+Semiconducting spin qubits offer a route to scalable, fault-tolerant quantum computing by combining elec-trical controllability and readout [1] with mature com-plementary metal–oxide–semiconductor (CMOS) fabri-cation techniques that enable integration with control electronics [2–5]. Proposed scalable architectures, such as the SpinBus architecture [6] and the spiderweb array [7], pursue mod-ular designs in which qubit units are arranged in sparse planar grids to enable scalable two-dimensional layouts. However, placing qubits in such sparse layouts requires coherent coupling over micrometer-scale distances be-tween qubit sites. Due to the no-cloning theorem [8], quantum information must be transferred either through sequences of swap gates or by physically transporting the qubit. The latter, commonly referred to as shut-tling, is employed in semiconductor spin-qubit [9–13], neutral-atom [14–16] and trapped-ion [17–19] platforms. In conveyor-mode shuttling [9, 11, 20, 21], the electron        
+
+> ∗p.dietz.romero@fz-juelich.de
+> †n.chaabani@fz-juelich.de; The first two authors contributed equally to this work.
+
+spin qubit is confined in a gate-defined electrostatic po-tential minimum within a Si/SiGe heterostructure. Peri-odic, phase-shifted gate voltages generate this traveling electrostatic potential, thereby confining and transport-ing the qubit over the shuttling channel [3, 22]. Fur-thermore, high-fidelity single-qubit gates can be realized with optimized shuttling control in dedicated manipula-tion zones equipped with a micro-magnet, where the elec-tron is oscillated to drive electric-dipole spin resonance (EDSR) [23]. In experimental demonstrations, conveyor-mode shut-tling has been benchmarked at high performance us-ing waveform generation at room temperature. Xue et al. [11] report a charge shuttling fidelity of 99 .7 ± 0.3 % in a Si/SiGe conveyor device. De Smet et al. [9] demon-strated spin-coherent shuttling with a fidelity of 99 .54 ±
+
+0.05 %. Struck et al. [10] investigated spin coherence dur-ing conveyor-mode shuttling in a Si/SiGe heterostructure by separating and recombining an entangled electron pair prepared in a singlet–triplet (ST 0) state. While these results validate conveyor-mode shuttling experimentally, scalable architectures motivate shifting waveform gener-ation to integrated cryogenic electronics. 
+
+> arXiv:2604.20482v1 [quant-ph] 22 Apr 2026
+
+2 
+
+> B. Cryogenic control electronics for scalable shuttling
+
+Semiconductor heterostructures for spin qubits can be manufactured with commercial CMOS processes [24], opening the perspective of lithographically scaling qubits together with integrated circuitry. Integrating con-trol electronics in close proximity to semiconductor spin qubits at the millikelvin stage reduces the number of in-terconnects and feedthroughs entering the cryostat, re-placing them with microfabricated interconnects [4]. Due to their smaller footprint compared to bond pads, such interconnects reduce wiring density and help alleviate the fan-out problem. Moreover, reducing the number of ca-bles limits passive thermal links to higher temperature stages and avoids power dissipation in attenuators that would otherwise heat the coldest stages of the dilution refrigerator [3]. In trapped ion quantum computing, the integration of digital-to-analog converters (DACs) for shuttling oper-ations has been demonstrated [25–27], typically relying on high-resolution, high-bandwidth waveform generation with power dissipation levels that are incompatible with operation at the millikelvin stage of dilution refrigerators. Thus integrated electronics for spin qubits operating at mK require tailored, co-designed circuitry that minimizes both circuit area and power consumption [4]. These constraints motivate alternative approaches to shuttling-signal generation that avoid high-resolution, high-bandwidth waveform synthesis. One approach to improving the power and area efficiency of shuttling-signal generation is to relax the requirement for ideal sinusoidal waveforms, which are typically generated by room-temperature arbitrary waveform generators (AWGs) in current experiments [9, 20]. Instead, the cryo-genic generation of periodic, smooth but non-sinusoidal waveforms has been proposed and simulated, achieving power consumption on the order of a few microwatts per signal [28, 29], compatible with millikelvin operation.  
+
+> C. Valley-aware shuttling with cryogenic electronics
+
+Nagai et al. [28] proposed a cryogenic shuttling sig-nal generator based on a discrete switch matrix and low-pass filtering, enabling signal generation at mil-likelvin temperatures. Their analysis assumes a uniform and sufficiently large valley splitting, whereas realistic Si/SiGe heterostructures often exhibit significant spatial variations in valley splitting due to interface disorder [12, 30, 31]. One of the central challenges for electron shuttling in Si/SiGe heterostructures is the strong spatial variation of the valley splitting along the shuttling path, i.e., the en-ergy separation between the two lowest conduction-band valleys. Random alloy disorder at the Si/SiGe interface leads to a broad distribution of valley splittings, includ-ing a significant fraction of regions with valley splittings below 20 μeV. Because the two valley eigenstates are associated with different effective g factors and therefore different spin-precession frequencies, this coupling leads to spin–valley entanglement during transport, resulting in dephasing and loss of spin purity. A range of practi-cal device-level strategies has been proposed to enhance the valley-splitting magnitude [32, 33]. Yet spatial fluc-tuations along the shuttling path can remain, so comple-mentary control strategies are needed during transport. Several control strategies to mitigate valley-induced er-rors during shuttling have been proposed [31], including velocity-modulation approaches [12]. However, the prac-tical integration of such strategies with realistic cryogenic control electronics remains largely unexplored. While the work of Nagai et al. [28] proposed and ana-lyzed cryogenic shuttling signal generation using discrete component approaches under idealized assumptions on the valley landscape, the combined impact of realistic valley disorder and electronic non-idealities has not yet been investigated. In particular, the interplay between spatially varying valley splitting and circuit-level noise is expected to play a critical role in determining shuttling fidelity in scalable architectures based on integrated cryo-genic electronics. In this work, we close this gap with a hardware-embedded, valley-aware optimal-control approach for spin shuttling in which the control variables are de-fined by an integrated cryogenic circuit. We develop an end-to-end co-simulation framework that combines disorder-informed valley maps with transistor-level cryo-genic circuit simulations, including electronic noise, and optimize shuttling waveforms under hardware-realizable constraints. A central contribution is an integrated cryogenic signal generator for shuttling, tailored to en-able velocity modulation: it generates the phase-shifted traveling-wave shuttling drive and enables period-wise ramp shaping via compact, discrete circuit settings, avoiding high-resolution DAC synthesis and continuous waveform streaming into the cryostat. To the best of our knowledge, such a joint treatment of valley disorder, cir-cuit non-idealities, and hardware-embedded optimal con-trol within an integrated cryogenic shuttling signal chain has not been reported previously.  
+
+> II. CO-SIMULATION METHODOLOGY
+
+This work employs an end-to-end co-simulation frame-work to study and optimize spin qubit shuttling in Si/SiGe heterostructures under realistic cryogenic-electronics constraints. Its purpose is to enable a system-level assessment of shuttling fidelity that simultaneously accounts for valley disorder, electronic non-idealities, and hardware-embedded control. The workflow comprises four stages: (i) transistor-level simulation of the cryogenic signal generator, (ii) extrac-tion of the effective shuttling trajectory from the gate-3                               
+
+> IC input hardware configu-ration of waveform
+> Circuit simula-tion transistor-level, incl. noise
+> →electrode waveforms V(k)
+> e(t)
+> Trajectory extraction
+> V(k)
+> e(t)→x(k)
+> qd (t)
+> Spin–valley dynamics master equation with H(x(k)
+> qd (t))
+> →ρ(k)(t)→ P (k)
+> s(tf)
+> Device valley disorder map ∆( xqd )
+> Cost function Jover
+> Nnoise realizations
+> Optimizer updates per-period waveform to maximize J
+> Repeated for each electronic-noise realization
+> k= 1 , . . . , N noise
+> FIG. 1. End-to-end co-simulation workflow used to optimize and validate shuttling operations. The cryogenic signal generator is simulated at transistor level ( Cadence Spectre ) to obtain gate voltages V(k)
+> e(t) for electronic-noise realization k. The waveforms are mapped to a shuttling trajectory x(k)
+> qd (t) and used to simulate spin–valley dynamics, yielding the final spin purity P(k)
+> s(tf). An optimizer updates period-wise control parameters (one discrete configuration per signal period) to maximize J.
+
+voltage waveforms, (iii) evaluation of the resulting spin– valley dynamics during transport, and (iv) optimiza-tion of the hardware control parameters. A schematic overview is shown in Fig. 1. In the first stage, the cryogenic shuttling signal genera-tor described in Subsec. IV B is simulated at the transis-tor level, with electronic noise optionally enabled. This produces time-dependent voltage waveforms V (k) 
+
+> e
+
+(t) ap-plied to the gate electrodes. The co-simulation is per-formed in batches of Nnoise simulations that employ dif-ferent noise realizations k = 1 , . . . , N noise to capture non-deterministic waveform variations due to electronic noise. In the second stage, the simulated gate voltages are mapped to a noise-dependent trajectory x(k) 
+
+> qd
+
+(t) of the moving quantum dot along the shuttling channel as de-scribed in Subsec. IV D. This trajectory determines how the electron samples the spatially varying valley land-scape during transport and therefore defines the time dependence of the spin–valley Hamiltonian. In the third stage, the extracted trajectory determines how the disorder-informed valley map ∆( xqd ) is sam-pled, which in turn defines the spin–valley dynamics during shuttling. The resulting time-dependent Hamil-tonian governs the evolution of the joint spin–valley system, which is simulated using an open-system de-scription. From the resulting density matrix, figures of merit such as the final spin purity and the shuttling fi-delity are obtained, allowing the quantification of resid-ual spin–valley entanglement and decoherence induced during transport. The valley-disorder model, Hamilto-nian, and open-system dynamics are described in detail in Subsecs. III A–III C. In the final stage, the control parameters of the cryo-genic signal generator are optimized using the method described in Sec. V. The optimization is generally per-formed in the presence of electronic noise to reflect the experimentally relevant environment, although the noise can be disabled for controlled analysis or exploration of deterministic effects. The resulting control sequences are then evaluated over multiple noise realizations to quan-tify their robustness against non-deterministic waveform fluctuations. Importantly, the optimization acts directly on hardware-compatible control parameters, enabling op-timal control at the level of the integrated cryogenic elec-tronics rather than through idealized waveforms. The end-to-end co-simulation workflow presented here builds on the framework introduced by Dietz Romero et al. [34]. In contrast to approaches that embed quantum-dynamics models directly into circuit simulators using 4equivalent circuits [35–37], our implementation couples 
+
+Cadence Spectre to a Python-based qubit model via the Python interface pyspectre [38]. This separation avoids the overhead of translating quantum dynamics into elec-tronic circuit representations and facilitates interdisci-plinary collaboration by preserving native abstractions for both electronic engineers and quantum physicists.   
+
+> III. PHYSICAL MODEL A. Valley disorder along the shuttling trajectory
+
+A single electron is confined within a quantum dot and moved along the shuttling trajectory xqd , thus sampling various regions of the Si/SiGe heterostructure interface. The atomic-scale variation of the interface becomes an intrinsic source of static disorder, leading to a position-dependent intervalley coupling ∆( xqd ) defined as ∆( xqd ) = ∆ r (xqd ) + i ∆i(xqd ), (1) The local valley splitting, which represents the local en-ergy separation between the two valley eigenstates, is de-fined as 
+
+Ev (xqd ) ≡ 2|∆( xqd )|, (2) following the convention in [12]. Ideally, the electron should remain in a single val-ley eigenstate during shuttling. However, in regions where the valley splitting Ev (xqd ) becomes small, rapid changes in the local valley eigenbasis and enhanced non-adiabaticity can induce unwanted non-adiabatic transi-tions and generate population in the excited valley state. In the presence of a valley-dependent modulation on the electron g-factor, valley dynamics can imprint additional phases and entangle spin and valley degrees of freedom, thereby leaking the spin state during shuttling. The val-ley maps used in this work are simulated, and the effect of material disorder is included using the alloy-diffusion model following the statistics reported in [30].  
+
+> B. Time-dependent spin–valley Hamiltonian
+
+We follow the spin–valley model of [12]. The qubit is encoded in the spin state of the electron. The spin and the valley states form a four-level system, and the total system Hamiltonian is defined as: 
+
+H(t) = HS + HV (xqd (t)) + HV S (xqd (t)) . (3) The spin Hamiltonian corresponds to the Zeeman split-ting Ez in an external magnetic field Bz :
+
+HS = EZ
+
+2 σz , EZ = ¯ g μ B Bz . (4) where ¯ g is the average Land´ e g-factor of the electron, σz
+
+is the Pauli operator acting on the spin subspace and μB
+
+is the Bohr magneton. The valley contribution to the Hamiltonian is given by the complex intervalley coupling evaluated at the dot position xqd (t), 
+
+HV (xqd (t)) = ∆ r (xqd (t)) τx + ∆ i(xqd (t)) τy , (5) where τx and τy are Pauli operators acting in the valley subspace. The position-dependent complex intervalley coupling ∆( xqd ) has recently been mapped experimen-tally with nanometer resolution via conveyor-mode shut-tling of entangled spin pairs in a Si/SiGe device [39], pro-viding direct microscopic access to the valley landscape entering HV .The valley–spin coupling arises from valley-dependent 
+
+g-factors and is given by 
+
+HV S (xqd (t)) = − κz ˜τz (xqd (t)) ⊗ σz , κz = 14
+
+δg g EZ ,
+
+(6) where the rotated valley Pauli operator defines the local valley quantization axis: ˜τz (xqd (t)) = ∆r (xqd (t)) τx + ∆ i(xqd (t)) τy
+
+|∆( xqd (t)) | . (7)  
+
+> C. Open-system dynamics
+
+We model the open-system dynamics during shuttling using a Markovian Lindblad master equation with a val-ley relaxation time T1,v :˙ρ(t) = − i
+
+ℏ
+
+h
+
+H(xqd (t)) , ρ (t)
+
+i
+
++ 1
+
+T1,v 
+
+D[˜ τ−(xqd (t))]  ρ(t) (8) The Lindblad dissipator is defined as 
+
+D[L]( ρ) = LρL † − 12
+
+L†L, ρ . (9) Here ˜ τ−(xqd (t)) denotes the valley relaxation operator ex-pressed in the local valley eigenbasis at position xqd (t). In the following simulations, we assume that the spin dephasing is not relevant for the timescales of the exper-iment and assume a long valley lifetime T1,v of 1 ms. Following Langrock et al. [22], we assume that the electron remains in the orbital ground state during shut-tling. This is supported by the orbital splitting Eorb (t) = 
+
+E1(t) − E0(t), which remains above 1 meV along the en-tire trajectory, as shown in Appendix Fig. 10. Definitions of the fidelity and spin-purity metrics used to quantify shuttling performance are provided in Ap-pendix C. 5  
+
+> IV. CRYOGENIC SIGNAL GENERATOR A. Design goals and interface to the qubit
+
+The cryogenic signal generator presented in this work is designed for operation at the millikelvin stage, where power dissipation, circuit area, and wiring density are strongly constrained. The circuit generates four phase-shifted periodic gate-voltage waveforms to realize conveyor-mode shuttling. We target wiring schemes as in the SpinBus architecture [6], where every fourth shut-tling gate is electrically connected, reducing the number of independent control signals and enabling a four-phase traveling-wave drive. Fig. 2 summarizes the resulting interface between the integrated circuit, the shuttling gates, and the valley landscape sampled during trans-port. Assuming a gate pitch lpitch = 100 nm and a four-phase connection scheme, one signal period advances the traveling potential by 4 lpitch . Therefore, for a targeted average shuttling velocity vavg , the required waveform frequency is 
+
+f = vavg 
+
+4 lpitch 
+
+. (10) The signal generator enables period-wise programma-bility of the waveform shape while keeping the period 
+
+T = 1 /f fixed, providing a hardware control parame-ter for shaping the velocity profile within each period without changing the average phase-advance rate set by 
+
+f . Our parametrization requires only one configuration word per signal period and does not require streaming data to the chip during shuttling thanks to an on-chip memory. For example, a shuttling distance of 10 μmin a four-phase wiring scheme (translation per period = 4 lpitch ) with lpitch = 100 nm requires the optimization of 10 μm/(4 · 100 nm) = 25 configuration words. The fixed clocking and fixed period further simplify timing constraints for the cryogenic electronics.  
+
+> B. Circuit architecture and control
+
+Fig. 3 shows a single signal-phase generator based on a programmable resistor–capacitor (RC) network. The circuit produces a periodic gate-voltage waveform by al-ternately charging and discharging the effective capaci-tive load, generating controlled exponential rise and fall ramps. The analog supply voltages Vup and Vdown are supplied from room temperature and define the upper and lower charging rails of the ramp generator. Two additional room-temperature bias inputs, Vbias and Vref ,reset the capacitor to a defined voltage during initializa-tion prior to shuttling, while the digital control logic is powered by Vdd and driven by an external clock. Each period consists of a ramp-up phase and a ramp-down phase. Because four phase-shifted shuttling signals                
+
+> FIG. 2. Schematic of the integrated cryogenic shuttling sig-nal generator and a Si/SiGe shuttling channel. Four phase-shifted periodic gate voltages (indicated) drive overlapping electrostatic potentials that convey aquantum dot (QD) that confines and transports an electron spin qubit. The plot overlay shows the valley landscape along an illustrative 1μm segment of the shuttling channel: local valley split-ting Ev(xqd ) = 2 |∆( xqd )|(blue) extracted from a synthetic, disorder-informed valley map, and the corresponding spatial variation of the imaginary part ∆ i(xqd ) (yellow).
+
+are produced, the period is discretized into four clock steps, giving fclk = 4 f . For typical operating points with 
+
+vavg = 4–20 m s −1 (Eq. (10)), this corresponds to clock frequencies of 40–200 MHz. By biasing the capacitor to Vbias , the waveform is generated around a DC level set by Vbias , enabling symmetric voltage swings ( Vbias −
+
+A, V bias + A) rather than (0 , 2A) for a given amplitude 
+
+A.The elements Cu form a digitally selectable capaci-tor bank and Ru a digitally selectable resistor ladder. Together with Cgate , they define the RC time constant shaping the rising and falling ramps. The resistor ladder provides the primary control knob for waveform-shape optimization. A configuration word is applied once per period by the state machine, selecting one of four dis-crete, hardware-realizable resistor-ladder configurations. During shuttling, the DC-refresh switches remain open, while the ramp up and ramp down switches alternately realize the charge and discharge phases. Further circuit details are given in Appendix A.  
+
+> C. Integrated circuit simulation
+
+The cryogenic shuttling-signal generator was designed in a 22 nm CMOS fully depleted silicon-on-insulator (FD-SOI) technology and simulated in Cadence Spectre us-ing an extracted netlist of the integrated circuit design. To approximate cryogenic operation, the standard room-temperature transistor models of the process design kit (PDK) are replaced, where available, by a cryogenic FDSOI transistor model library proposed by Chava et al. [40]. The electrode waveforms V (k) 
+
+> e
+
+(t) are obtained from noise-enabled transient simulations. Because validated 6
+
+FIG. 3. Schematic of the programmable RC network driving the gate capacitance Cgate . A selectable capacitor bank ( Cu)and resistor ladder ( Ru) set the ramp time constant τ , while control switches enable DC refresh and controlled ramp gen-eration using Vbias , Vref , Vup , and Vdown .
+
+cryogenic noise models are unavailable, the resulting noise levels should be interpreted as an approximate proxy for millikelvin operation. Further details of the transient Spectre simulations are provided in Appendix G. 
+
+D. Mapping gate voltages to the qubit trajectory 
+
+The effective RC constant can be updated at the start of each period by selecting one of a finite set of resistor settings (four values in this work). Consequently, the di-mensionless RC time constant τ (t) is piecewise constant over successive signal periods, 
+
+τ (t) = 2πR pCT , pT ≤ t < (p + 1) T, p = 0 , 1, 2, . . . 
+
+(11) where Rp denotes the resistor value selected for period p.The integrated circuit produces four phase-shifted gate voltages. Each electrode e ∈ { 1, . . . , 4} is associated with a fixed phase offset ϕe,
+
+ϕe = 0.25 , 0.75 , 1.25 , 1.75 π, (12) and a phase 
+
+ψe(t) =   2πT t + ϕe
+
+ mod 2 π. (13) The shuttling signal consists of an exponentially rising and falling waveform within each period, which can be analytically approximated by 
+
+ˆVe(t) = 
+
+
+
+−A + 2 A
+
+
+
+1 − e−ψe(t)/τ (t)
+
+
+
+, 0 ≤ ψe(t) < π A − 2A
+
+
+
+1 − e−(ψe(t)−π)/τ (t)
+
+
+
+, π ≤ ψe(t) < 2π. 
+
+(14) 
+
+This analytical model illustrates how the discrete resistor-ladder settings shape the ramps through the time constant τ (t) (Eq. (11)). As shown in Fig. 4, varying τ
+
+modifies the exponential rise and fall of the normalized gate voltage ˆVe(t)/A while keeping the period T fixed. The trajectory xqd (t) is obtained by tracking the min-imum of the traveling electrostatic potential in COM-SOL , which captures discretization effects of the gate electrodes but is too costly to repeat for the thousands of waveform realizations required by the optimal-control loop. We therefore use a phasor-projection method as a fast approximation to extract xqd (t); this approach is defined and validated in Appendix B. The corresponding shuttling velocity is computed by differentiating the trajectory, v(t) = ˙ xqd (t). All configu-rations preserve the same net phase advance per period, and therefore the same average velocity vavg , while redis-tributing the instantaneous velocity within each period. 
+
+FIG. 4. Analytical waveforms illustrating the effect of dis-crete resistor-ladder settings on ramp shaping and the re-sulting shuttling-velocity modulation (variations exaggerated for clarity). Top: one gate voltage phase ˆVe(t) normalized to the amplitude A, plotted versus normalized time t/T for four discrete RC configurations (different time constants τ ; cf. Eqs. (11) and (14)). Bottom: corresponding shuttling veloc-ity v(t) = ˙ xqd (t) extracted from the qubit trajectory xqd (t). Smaller τ produces steeper ramps and higher velocity peaks, while larger τ yields smoother ramps and reduced peak veloc-ity. The horizontal line indicates the average velocity vavg .7 
+
+> V. OPTIMIZATION OF CONTROL
+
+We implement controlled velocity modulation dur-ing shuttling, closely following the approach previously demonstrated for ideal signal generators [12]. By reshap-ing the trajectory xqd (t) and thus the time dependence of H(t), velocity modulation controls both the residence time in regions of small valley splitting Ev (xqd ), which affects non-adiabatic valley excitation, and the accumu-lated spin phase induced by the valley-dependent g-factor term HV S (xqd ). In the optimization loop, the final spin purity Ps(tf )serves as the base optimization metric because it di-rectly quantifies residual spin–valley entanglement and is cheaper to evaluate than the full shuttling fidelity. In the noise-free case, the objective is to maximize Ps(tf )directly, whereas in the noise-aware case the objective is extended to promote robustness across noise realizations. The shuttling fidelity F is reported separately as a valida-tion metric to assess phase-stable transport in the rotat-ing frame, consistent with experimental benchmarking. The definitions of the spin-purity and shuttling-fidelity metrics can be found in Appendix C. We optimize the discrete RC sequence with a genetic algorithm (GA) based on the Pygad Python package [41]. The shuttling time is divided into periods, and each pe-riod is assigned one of four hardware-available resistor-ladder settings. We exploit population-level paralleliza-tion to reduce wall-clock time. The GA parameters are listed in Tab. I. The optimization can be performed either with or without electronic noise. Noise-aware optimization re-flects the experimentally relevant operating environment, whereas noise-free optimization is useful for controlled analysis of deterministic effects.  
+
+> A. Noise-free signal optimization
+
+With electronic noise disabled, we run the GA to deter-mine a deterministic trajectory. The optimizer evaluates the cost function J = Ps(tf ). Maximizing J promotes a high final-state purity and therefore minimizes informa-tion leakage into the valley states. After each generation, the algorithm updates the sequence of per-period resis-tance configurations, corresponding to one resistor-ladder setting for each shuttling period.  
+
+> B. Optimization under cryogenic noise
+
+In the noise-aware case, we optimize the RC sequence while explicitly incorporating the noise model, using the spin purity defined in Appendix C as the base optimiza-tion metric. For a set of noise realizations, the objective is 
+
+Jnoise = Ps(tf ) − λσ σPs (tf ), (15) where Ps(tf ) and σPs (tf ) denote the mean and standard deviation of the final spin purity across noise realizations, and λσ controls the robustness penalty. The second term suppresses solutions that are overly sensitive to individ-ual noise instances and thereby promotes more uniform performance. 
+
+> TABLE I. Parameters for the GA optimization under cryo-genic noise
+
+Parameter name Value 
+
+Number of generations 50 Number of populations 12 Number of parents 2Mutation probability 0.3 Crossover uniform Elitism 1Parent selection tournament  
+
+> VI. RESULTS
+
+We apply the end-to-end co-simulation workflow of Sec. II to hardware-level optimal control of a cryogenic shuttling signal generator. Specifically, we examine how electronic noise limits shuttling fidelity, how this sen-sitivity depends on the average shuttling velocity, and whether period-wise ramp shaping can improve perfor-mance.  
+
+> A. Noise-induced dispersion of spin purity
+
+Fig. 5 shows representative spin-purity traces P(k) 
+
+> s
+
+(t)for unoptimized shuttling over 10 μm at an average ve-locity vavg = 5 m s −1. The dispersion is evaluated over 
+
+Nnoise = 50 independent shot-to-shot electronic-noise re-alizations obtained from transistor-level circuit simula-tions, where each trace corresponds to a distinct noisy waveform. Slow-drift correlations are neglected, so the analysis probes robustness to independent shot-to-shot noise realizations rather than long-timescale drift in the control hardware. The resulting spread in P(k) 
+
+> s
+
+(t) shows that neglecting electronic noise can lead to overly opti-mistic performance estimates, highlighting the sensitiv-ity of valley-dependent spin dynamics to noise-induced waveform variations.  
+
+> B. Influence of shuttling velocity on noise robustness
+
+As described in Subsec. IV C, the foundry PDK used in this work provides device and noise models only down to approximately 230 K. The cryogenic noise behavior of the complete circuit therefore cannot be fully validated in 8           
+
+> FIG. 5. Noise-induced purity dispersion at an average shut-tling velocity of vavg = 5 m s −1over a shuttling distance of 10 μm with an ambient temperature of 230 K. The dispersion is evaluated over Nnoise = 50 independent electronic-noise realizations (shot-to-shot) obtained from transistor-level sim-ulations in Cadence Spectre (including noisy circuit compo-nents). Five representative purity traces P(k)
+> s(t) are shown for clarity. The control sequence is unoptimized (constant re-sistor configuration).
+
+the cryogenic simulation setup, and absolute predictions of circuit-noise-limited shuttling performance remain un-certain. We therefore assess robustness to stochastic shot-to-shot waveform fluctuations using a proxy cryo-genic noise model that does not capture slow temporal drift or fully validated millikelvin circuit noise. To gauge the sensitivity of the results to this limitation, electrode waveforms are generated with Cadence Spectre under sev-eral proxy-noise configurations by varying the PDK tem-perature parameter and applying a noise-scaling factor in the transient simulations, after which the resulting shot-to-shot dispersion in shuttling fidelity is quantified. Due to self-heating effects in the electronics [42], the effective noise temperature is not expected to reach the refrigerator base temperature. For thermal (Johnson– Nyquist) noise, the power spectral density scales linearly with absolute temperature, so reducing the effective tem-perature from 230 K to 25 K yields a reduction factor of 25 /230 ≈ 0.1. To emulate this reduction while keep-ing the ambient temperature within the PDK-supported range, we scale the noise sources in the noisy transient simulations to 10% of their nominal level. This ap-proximation is plausible because the performance disper-sion is predominantly driven by noise components above 
+
+∼ 1 MHz, as further investigated in Appendix F, where thermal noise is expected to dominate and to be strongly reduced at cryogenic temperatures. To probe sensitivity to uncertain cryogenic noise mod-eling, we compare three proxy configurations: (i) an ambient-temperature setting at 300 K as a conserva-tive worst case, (ii) the lowest ambient temperature sup-ported by the PDK at T ≈ 230 K, and (iii) a lower-noise proxy intended to mimic cryogenic operation with self-heating, implemented by using the same ambient setting 
+
+T ≈ 230 K together with a noise-scaling factor of 0 .1. Fig. 6 summarizes the shot-to-shot dispersion of the shuttling fidelity under injected electronic noise. Across all proxy configurations, the dependence on the average shuttling velocity vavg is the dominant trend: the stan-dard deviation of the fidelity σF decreases rapidly with increasing vavg and approaches a saturation regime near 20 m s −1.The strong suppression of dispersion at higher shut-tling velocities is consistent with a reduced time window for noise-induced phase accumulation and spin–valley entanglement during transport. This picture suggests a motional-narrowing-like mechanism, where faster mo-tion effectively increases the valley population fluctua-tions, which then approach a steady state with an av-erage occupation. Importantly, the observed saturation above ∼ 20 m s −1 is in qualitative agreement with re-cent experimental results by De Smet et al. , who re-port a pronounced reduction of the phase-flip probability that saturates for shuttling velocities above ∼ 20 m s −1
+
+(see Fig. 3(d) [9]). Although our simulations rely on a proxy-noise model, this qualitative correspondence sug-gests that increasing vavg improves noise robustness in long-distance spin transport. Increasing vavg , however, requires higher shuttling-signal frequencies, which tend to increase instantaneous power dissipation and tighten power constraints on the cryogenic electronics. We therefore select vavg =20 m s −1 as the operating point for subsequent noise-aware optimization, since it lies near the dispersion sat-uration.            
+
+> FIG. 6. Influence of the average shuttling velocity vavg on the standard deviation σFof the shuttling fidelity, evaluated over
+> Nnoise = 50 independent electronic-noise realizations (shot-to-shot) for a shuttling distance of 10 μm. The shuttling signals are generated with Cadence Spectre using a netlist without parasitic extraction. The shuttling sequence is not optimized and is controlled by a fixed resistor sequence. Several noise proxy configurations are compared to explore the sensitivity of
+> σFto uncertain cryogenic noise modeling, alongside a noise-free reference.
+> C. Shuttling optimal control
+
+This work next investigates how hardware-embedded shuttling control can (i) compensate deterministic errors 9arising from valley disorder and (ii) maintain robust per-formance in the presence of stochastic electronic noise. Fig. 7 summarizes the shuttling error 1 − F for four representative average shuttling velocities (5–20 m s −1). During this initial optimization stage, electrical noise is disabled such that run-to-run variations reflect numeri-cal variability only (typical standard deviations < 10 −6). The genetic algorithm (GA) is terminated once the target threshold ¯Ps(tf ) > 0.9999 is reached. Across five valley-disorder realizations, the optimized velocity modulation consistently suppresses the shuttling error relative to the constant-resistor baseline, demon-strating that valley-induced errors can be compensated within the constraints of the control parameterization. In the absence of additional stochastic noise sources, the resulting spin-state fidelities approach levels commonly assumed for fault-tolerant operation. Higher shuttling velocities substantially reduce the op-timization effort. As summarized in Tab. IV in the Ap-pendix, the GA requires many more generations to reach the target threshold at vavg = 10 m s −1, whereas at 
+
+vavg = 20 m s −1 convergence is reached within 1–4 gen-erations. Together with the hardware bandwidth con-straints and the observed saturation of dispersion sup-pression at high velocity (Sec. VI B), this motivates se-lecting vavg = 20 m s −1 as the operating point for the subsequent shuttling control.      
+
+> FIG. 7. Benchmark of hardware-embedded shuttling control against a constant-resistor baseline with electrical noise dis-abled. Markers report the ensemble mean over 50 repeated co-simulation runs for each of five valley maps, for a 10 μmshuttle at vavg = 5–20 m s −1.
+
+The shuttling control is then re-optimized using the GA at vavg = 20 m s −1 with electrical transient noise en-abled. Fig. 8 compares the optimized resistor sequence with the unoptimized constant-resistor baseline under a cryogenic-noise proxy implemented in Cadence Spectre .For a fair paired comparison, the optimized and unopti-mized protocols were evaluated for each valley-map re-alization using the same set of Nnoise = 100 indepen-dent electronic-noise realizations. The optimized proto-col consistently reduces the shuttling error and produces a tighter distribution of fidelities across all valley maps. At a noise scale of 0 .1, the optimized protocol achieves an average valley-wise fidelity of 99 .99 ± 0.007%, com-pared to 99 .78 ±0.06% for the unoptimized baseline. Fur-thermore, 79% of optimized shuttling operations reach the target threshold 1 − F = 10 −4 across the five val-ley maps, compared to 12% for the unoptimized proto-col, indicating that under the assumed cryogenic noise conditions the control strategy retains substantial ben-efit even in the presence of stochastic electronic noise. Notably, these improvements are achieved despite the strongly quantized control space, in which each signal period can only take one of four resistor configurations.            
+
+> FIG. 8. Shuttling error 1 −Ffor five valley-map realiza-tions comparing the unoptimized constant-resistor baseline (orange) with the optimized control (blue) under a cryogenic-noise proxy. All electronic simulations were run at an ambient temperature of 230 K (within the characterized range of the PDK), and the noise amplitude was reduced by a factor of 10 using the noise-scale parameter. Each point corresponds to one of Nnoise = 100 independent noise realizations obtained from transient analyses in Cadence Spectre . The dashed red line indicates the target threshold 1 −F= 10 −4.
+
+While noise-aware optimal control confirms robust im-provements in the fidelity, the dispersion of the excited-valley population remains comparatively large. As quan-tified by the standard deviation σpv (tf ) (see Appendix C), the final excited-valley population pv (tf ) exhibits only a weak dependence on vavg within the present model (Tab. II). This suggests that electronic noise induces largely uncontrolled redistribution in the valley state dur-ing long-distance transport, such that the present control strategy primarily enhances spin coherence rather than stabilizing a unique valley state.           
+
+> TABLE II. Final excited-valley population pv(tf) as a func-tion of average shuttling velocity vavg .Values are reported as mean ±standard deviation over Nnoise =50 indepen-dent electronic-noise realizations for an optimized shuttling sequence, validated using the co-simulation framework.
+
+vavg (m s −1) pv (tf )5 0.4405 ± 0.2925 10 0.4219 ± 0.2961 15 0.5688 ± 0.2811 20 0.5775 ± 0.2561 10  
+
+> D. Power dissipation of the cryogenic shuttling generator
+
+The analog power consumption is extracted from tran-sient Cadence Spectre simulations including device and interconnect parasitics. Tab. III summarizes the active analog power dissipation Pa drawn from the supply rails 
+
+Vup and Vdown in Fig. 3 as a function of the average shut-tling velocity vavg .The observed μW-level dissipation is consistent with predominantly capacitive switching. The effective switched capacitance is set by the series combination of the capacitor bank, parasitic capacitances, and the gate/-electrode capacitance, and is therefore expected to be much closer to Cgate ≈ 1 pF than to the capacitor-bank value of approximately 10 pF. Using the repetition fre-quency f based on Eq. (10), and a peak-to-peak voltage 
+
+Vpp = 200 mV, the expected scaling P ∝ Ceq V 2pp f is consistent with the trend in Tab. III. The digital switching of the state machine is not in-cluded in the analog signal-generation power and is ex-pected to add an overhead that does not scale linearly with the analog power.           
+
+> TABLE III. Active analog power dissipation Paof the four-phase shuttling signal generator versus average shuttling ve-locity vavg .The shuttling duration tshuttle corresponds to a qubit cell-to-cell distance of 10 μm, assuming tshuttle =10 μm/v avg .
+
+vavg (m s −1) Pa (μW) tshuttle (μs) 5 2.6 2.00 10 5.0 1.00 15 7.8 0.67 20 9.8 0.50  
+
+> VII. DISCUSSION
+
+Non-deterministic electronic noise is a central limita-tion for high-fidelity spin shuttling because it introduces shot-to-shot variability in the spin–valley evolution and therefore reduces the average shuttling fidelity. Our re-sults show that hardware-embedded optimization can re-cover high performance in the presence of circuit noise and spatially varying valley landscapes, underscoring the need to treat control electronics and qubit dynamics as a coupled system.  
+
+> A. Comparison with prior theoretical and experimental work
+
+Nagai et al. [28] report shuttling fidelities approach-ing 99 .9% at an average velocity of 10 m s −1 in a theo-retical study focused on cryogenic waveform generation. Their analysis assumes an idealized valley environment with a constant valley splitting of 200 μeV and does not explicitly include electronic noise from the control cir-cuitry. Our work establishes a framework incorporating disorder-informed valley landscapes and transistor-level circuit non-idealities, enabling a hardware-embedded, noise-aware assessment of shuttling performance under cryogenic electronics constraints. Recent experimental progress by De Smet et al. [9] demonstrates high-fidelity single-spin shuttling in silicon using a two-tone conveyor-mode approach. By employing eight sinusoidal control signals, they achieve a shuttling fidelity of 99 .54 ± 0.03% over a distance of 10 μm, corre-sponding to a shuttling velocity of about 54 m s −1. The observed saturation of phase-error probabilities above ve-locities of roughly 20 m s −1 is in qualitative agreement with our simulation results. This agreement is consistent with the interpretation that increasing shuttling velocity reduces the effective interaction time with low-frequency noise sources and thereby improves robustness against electronic noise. Losert et al. [43] provide a useful outlook for the sce-nario in which alloy disorder effectively randomizes the valley degree of freedom: they show that high-fidelity single-qubit operations can still be achieved through pulse-level control. This suggests a potential route to mitigating the valley-population randomization observed in our shuttling simulations.  
+
+> B. System-level scalability
+
+Cryogenic waveform generation reduces the number of high-bandwidth analog lines routed from room tempera-ture, alleviating cryostat cabling constraints and reduc-ing analog fan-out [4]. Sharing clock distribution, digital interfaces, and supply rails across many signal genera-tors further reduces wiring overhead and the associated thermal links to warmer cryostat stages. The circuit in this work also enables a calibration-and-replay workflow: for each shuttling lane, the period-wise RC configuration sequence can be calibrated in a closed loop, stored in on-chip memory, and replayed by an in-ternal state machine. This avoids continuous streaming of high-rate waveform samples into the cryostat during shuttling. By comparison, many DAC-based shuttling demonstrations require streaming of sample data, even when the DACs are operated cryogenically [25–27]. The active analog power dissipation per qubit during shuttling is non-negligible at the millikelvin stage. How-ever, the duty cycle estimated in Appendix E reduces the average dissipation and sets an upper bound on the achievable time-multiplexing factor. If the mK power budget remains limiting, mitigation options include op-erating qubits at warmer cryostat stages [3] or parti-tioning the shuttling signal chain [28] to move the most power-intensive waveform synthesis away from the mix-ing chamber. 11  
+
+> VIII. CONCLUSION
+
+We have demonstrated valley-aware high-fidelity elec-tron shuttling with integrated cryogenic control electron-ics using a co-simulation framework that combines val-ley disorder, circuit noise, and hardware-level optimal control. By coupling transistor-level circuit simulations to spin–valley dynamics, this work provides an exper-imentally relevant assessment of shuttling fidelity. We find that electronic noise reduces the average shuttling fidelity and introduces substantial statistical dispersion, underscoring the importance of noise-aware hardware op-timization. Because the present study relies on proxy cryogenic noise modeling, the reported noise robustness should be understood as evidence of feasibility rather than a fully predictive millikelvin hardware assessment. Our results identify ultra-low-power cryogenic CMOS electronics as a promising platform for shuttling con-trol, as the circuitry can directly implement velocity-modulation-based optimal control with active analog power consumption during shuttling at levels compatible with millikelvin operation. Overall, these findings sup-port integrated cryogenic electronics as a promising route toward scalable shuttling-based spin-qubit architectures with embedded valley-aware control over micrometer-scale transport distances. 
+
+> ACKNOWLEDGMENTS
+
+The authors thank Prof. Hendrik Bluhm (PGI-11), Ak-shay Menon Pazhedath (PGI-8) and Lea Schreckenberg (PGI-4) for valuable discussions that contributed to the interpretation of the results. They also thank Ivonne Pa-junk (PGI-4) for assistance with the graphics and Mario Schl¨ osser (PGI-4) for helpful feedback on the manuscript. The authors further acknowledge funding from Ger-many’s Excellence Strategy through the Cluster of Ex-cellence Matter and Light for Quantum Computing (ML4Q2), EXC 2004/2 – 390534769; from the Federal Ministry of Education and Research (BMBF) within the framework programme “Quantum technologies –from basic research to market” (project QSolid, Grant No. 13N16149); and from the European flagship project OpenSuperQPlus100 (Grant Agreement No. 101113946, HORIZON-CL4-2022-QUANTUM-01-SGA). 
+
+> COMPETING INTERESTS
+
+P.D.R., L.D., and L.G. are named as inventors on a patent application related to the integrated cryogenic shuttling signal generator presented in this work. P.D.R., L.G., and S.v.W. are founders and shareholders of IceCirc GmbH. The remaining authors declare no competing in-terests. 
+
+> DATA AVAILABILITY
+
+The data that support the findings of this study are available from the corresponding authors upon request. 
+
+> AUTHOR CONTRIBUTIONS
+
+P.D.R. developed the co-simulation framework and the concept of controlled velocity modulation using discrete hardware settings. A.D. developed the qubit model and the Python library for the qubit dynamics. L.D. de-signed the integrated circuit. N.C. developed the opti-mizer. N.C. and P.D.R. performed the simulations and optimization studies. L.G., S.v.W., and F.M. provided scientific guidance and supervision. 
+
+> Appendix A: Electronic circuit details
+
+The layout shown in Fig. 9 is replicated four times to generate four 90 ◦ phase-shifted shuttling signals. The capacitor bank dominates the footprint: an effective ca-pacitance of order 10 pF is used to reduce sensitivity to process variations and to suppress kT /C -type reset noise during initialization ( σV ∝ pkT /C ). The capaci-tor bank was over-dimensioned, providing a large safety margin and reducing the impact of noise. We assume that, in future, the capacitance could be reduced by one order of magnitude. The actual tolerable noise limit is unknown and must be determined experimentally. The four-phase signal generator occupies 
+
+≈ 12 ,300 μm2, far exceeding the ≈ 100 μm2 Spin-Bus qubit-cell target [6]; per-cell integration would therefore require ≳ 100 × area reduction. While switch/-transistor area can be reduced by scaling to smaller technology nodes, the capacitor bank dominates the footprint, so higher capacitance density is the primary lever. Deep-trench and related pore/trench decoupling capacitors can provide substantially higher density than planar MOS options, with reported footprint reductions of order ∼ 8× for comparable capacitance [44, 45]. At higher shuttling velocity, the duty cycle can de-crease (e.g., to ∼ 1/5), implying an idealized time-multiplexing upper bound of ∼ 5 shuttling lanes per sig-nal generator (cf. Appendix E). 
+
+> Appendix B: Trajectory extraction + COMSOL validation
+
+To extract the traveling-wave phase from the four gate voltages, we construct the complex phasor 
+
+z(t) = 
+
+> 4
+
+X
+
+> e=1
+
+Ve(t) e−jϕ e , (B1) 12 
+
+FIG. 9. Simplified layout of a single shuttling-signal phase generator in a 22 nm FDSOI CMOS technology. The four-phase shuttling generator consists of four identical phase cells. The configurable capacitor bank ( Cu in Fig. 3) dominates the area at ≈ 2600 μm2 per phase generation, followed by the switch network ( ≈ 340 μm2) and resistor ladder ( Ru,
+
+≈ 140 μm2). The total area is ≈ 3080 μm2 per phase cell. The shared digital logic is excluded because its area does not scale with the number of output phases. 
+
+and compute the continuous phase evolution as the un-wrapped argument 
+
+θ(t) = unwrap   arg z(t). (B2) The quantum-dot position is obtained by mapping the accumulated phase θ(t) to the spatial period L of the traveling potential: 
+
+xqd (t) = L
+
+2π θ(t), xqd (0) = 0 . (B3) Here L is set by the electrode pitch and the connection periodicity (e.g., L = 4 lpitch for a four-phase connection scheme). The phasor-based extraction agrees with the COMSOL 
+
+reference to within a few nanometers, as shown in Fig. 10, while reducing the computation time by approximately three orders of magnitude. 
+
+Appendix C: Metrics 
+
+Unless stated otherwise, all reported means and stan-dard deviations are computed over an ensemble of 
+
+Nnoise electronic-noise realizations. Each realization 
+
+k = 1 , . . . , N noise corresponds to an independent noise-enabled transient circuit simulation, which produces a unique noisy electrode waveform V (k) 
+
+> e
+
+(t). This wave-form is propagated through the electrode-to-trajectory mapping to obtain x(k)qd (t) and is subsequently used in the spin–valley dynamics, yielding a final joint state 
+
+ρ(k)(tf ). Throughout the results presented here, the valley-disorder realization (valley map) is held fixed un-less explicitly noted. 
+
+FIG. 10. Validation of orbital confinement and trajectory extraction used in the co-simulation workflow. (a) Represen-tative four-phase gate-voltage waveforms Ve(t) that generate the traveling electrostatic potential during one normalized pe-riod t/T . (b) Corresponding orbital energy splitting along the shuttling trajectory, confirming that the dot remains strongly confined. (c) Dot-position mapping error δx (t) between the fast phasor-based extraction of xqd (t) (Eqs. B3) and a refer-ence mapping obtained by tracking the minimum of the elec-trostatic potential in a COMSOL simulation, showing only few-nanometer deviations with peaks during rapid waveform transitions. 
+
+1. Spin purity 
+
+Let tf be the final time of the shuttling sequence. We compute the spin purity over a set of noise seeds where each trajectory returns a noise-influenced final state ρ(k)(tf ). The average density matrix over the set of trajectories is then computed as: ¯ρ(tf ) = 1
+
+Nnoise 
+
+> Nnoise
+
+X
+
+> k=1
+
+ρ(k)(tf ) (C1) To obtain the spin state, we compute the partial trace over the valley of the average density matrix ¯ ρ(tf ): ¯ρs(tf ) = Tr V [¯ ρ(tf )] (C2) The final spin purity is computed from the noise-averaged density matrix as: ¯Ps(tf ) = Tr ¯ρs(tf )2 (C3) A reduction of ¯Ps(t) indicates residual spin–valley en-tanglement and incoherent mixing after tracing out the valley subsystem. 13  
+
+> 2. Excited valley state population
+
+The quantity pv (tf ) measures the residual occupation of the excited valley state at the final quantum dot posi-tion. Let 
+
+ρv (tf ) = Tr s[ρ(tf )] (C4) be the reduced valley density matrix, and |e(xqd (tf )) ⟩ the local excited-valley eigenstate. The excited-valley popu-lation is defined as 
+
+pv (tf ) = ⟨e(xqd (tf )) | ρv (tf ) |e(xqd (tf )) ⟩ . (C5) A nonzero population in the excited valley state in-dicates a non-adiabatic evolution in the valley sub-space leading to leakage and dephasing of the spin state through spin–valley coupling.  
+
+> 3. Shuttling fidelity
+
+We define the fidelity F as the mean state fidelity with respect to a reference (“center”) state on the Bloch sphere. The center state is obtained from a test ensemble of 50 final states generated using previously unseen noise realizations and the optimized RC sequence that defines the shuttling trajectory. We then transform each final state into a frame rotating with the spin in the valley groundstate, defined by 
+
+U (t) = exp 
+
+
+
+− i
+
+ℏ Heff t
+
+
+
+(C6) where Heff is: 
+
+Heff = HS + γσ z (C7) where γ = − 12 
+
+> δg g
+
+|Bz | μB coming from the Zeeman term as described in [12]. Then the unrotated density matrices of the states ρi
+
+are obtained in the following way: 
+
+ρ (unrotated)  
+
+> i
+
+= U †(ti) ρi U (ti) (C8) The Bloch components of these states are extracted using expectation values of the Pauli operators as follows: 
+
+ri = Re 
+
+h
+
+Tr 
+
+
+
+ρ(unrotated)  
+
+> i
+
+σ
+
+i 
+
+, σ = ( σx, σ y , σ z ).
+
+(C9) From these coordinates, a mean center state is com-puted: 
+
+rcenter = 1
+
+Nnoise 
+
+> Nnoise
+
+X
+
+> i=1
+
+ri. = ( xcenter , y center , z center ).
+
+(C10) This vector is then mapped to a pure quantum state on the Bloch sphere: 
+
+θ = arccos( zcenter ), ϕ = atan2( ycenter , x center )(C11) 
+
+|ψcenter ⟩ =
+
+ cos( θ/ 2) 
+
+eiϕ sin( θ/ 2) 
+
+
+
+(C12) where θ is the polar angle, and ϕ is the azimuthal angle. The fidelity between each noise-influenced final state and the center state is computed: 
+
+Fi = ⟨ψcenter |ρ (unrotated)  
+
+> i
+
+|ψcenter ⟩ (C13) and an average fidelity over the point cloud is then de-fined as 
+
+F = 1
+
+Nnoise Nnoise X
+
+> i=1
+
+Fi (C14) In this way, the fidelity is a measure of the ensemble coherence, quantifying how tightly the final states cluster around their mean Bloch-sphere direction. 
+
+> Appendix D: GA optimizer details
+
+The computational effort required for the Genetic Al-gorithm (GA) optimization decreases systematically with increasing shuttling velocity vavg , as can be seen in Tab. IV. At low velocities ( vavg ≤ 10 m s −1), convergence to a spin purity of ¯Ps(tf ) > 0.9999 requires substantially more generations, consistent with a more challenging op-timization landscape; increasing vavg leads to markedly faster convergence. This trend cannot be attributed solely to simulation runtime. Since the simulator employs a fixed time grid, slower shuttling implies longer trajectories and thus more transient time steps, so the per-evaluation cost increases approximately linearly as vavg decreases. Yet the wall-clock time per GA generation varies only weakly across the velocities studied, indicating that the dominant con-tribution is the increased number of generations required at low vavg .Among the accessible operating points, vavg =20 m s −1 is the most efficient case considered here. Across five independent valley disorder realizations, the target objective is reached within 1–4 generations (mean 2 .2generations), corresponding to a mean wall-clock opti-mization time of ≈ 0.15 h. Shuttling velocities above 20 m s −1 are not achievable with the signal generator pre-sented in this work. 14   
+
+> TABLE IV. Mean computational resource requirements for the Genetic Algorithm (GA) optimization across five differ-ent valley maps. In this example, a netlist without parasitic effects and without electrical noise was optimized. All runs were performed on a dual-socket AMD EPYC 9354 system (64 physical cores total), running Linux, using the same par-allelization settings for all velocities.
+
+Velocity (vavg )(m s −1)
+
+Avg. Generations to Converge Avg. Opt. Time (hours) 
+
+5 16.0 0.90 10 13.8 0.58 15 2.8 0.18 20 2.2 0.15 
+
+> Appendix E: Shuttling duty cycle estimation
+
+To contextualize the per-qubit dissipation at the sys-tem level, we estimate shuttling activity within a surface-code cycle. Following the Spiderweb processor architec-ture [7], the cycle time is 
+
+tSC = 22 tshuttle + 14 t1q + 8 t2q + treadout ≈ 28 .2 μs, (E1) using timing assumptions [6] with t1q ≈ 200 ns, t2q ≈
+
+80 ns, and treadout ≈ 10 μs [46]. For shuttling over 10 μmat vavg = 20 m s −1, tshuttle ≈ 500 ns, yielding the shut-tling duty cycle 
+
+Dshuttle ≈ 22 tshuttle 
+
+tSC 
+
+≈ 0.39 . (E2) 
+
+> Appendix F: Noise analysis details
+
+To identify which noise frequencies contribute most strongly to spin-purity dispersion, we perform a noise-band sweep using transient-noise simulations of the cryo-genic signal generator. Fig. 11 shows the standard devia-tion of the purity σPs (tf ) for a 10 μm shuttling operation at vavg = 5, 12, and 20 m s −1, corresponding to shuttling-signal frequencies of 12.5, 30, and 50 MHz, respectively (cf. Eq. (10)). For each noise band between 100 kHz and 1 GHz, we evaluate σPs (tf ) over Nnoise = 50 indepen-dent electronic-noise realizations (shot-to-shot) obtained from Cadence Spectre simulations by enabling device noise only within the selected frequency interval. The results show that the dispersion of the final spin purity increases with the activated noise frequency and is sub-stantially reduced at higher shuttling velocities, consis-tent with increased robustness of faster transport against circuit-noise-induced waveform fluctuations. The Spectre-based transient-noise simulations include internal device-noise sources as shaped by the circuit transfer function at the chosen operating point. Conse-quently, Fig. 11 should not be interpreted as a device-independent “universal” sensitivity curve of the spin– valley dynamics, but rather as a circuit-specific break-down of how noise contributions from different frequency ranges in the present cryogenic shuttling signal generator translate into run-to-run dispersion.               
+
+> FIG. 11. Standard deviation of the final spin purity, σPs(tf), as a function of the applied noise frequency band for conveyor-mode shuttling over 10 μm. Results are shown for average shuttling velocities vavg = 5, 12, and 20 m s −1. For each band,
+> σPs(tf) is evaluated over Nnoise = 50 independent electronic-noise realizations (shot-to-shot) obtained from Cadence Spec-tre simulations in which device noise is enabled only within the indicated frequency interval. Light segments denote log-arithmic sub-band values, while thick bars indicate decade-averaged results.
+> Appendix G: Electronic simulation details
+
+For the transient circuit simulations we use the follow-ing Spectre analysis instruction: 
+
+> tran <name> stop=<time> method=gear2only strobeperiod=100p maxstep=100p reltol=1e-5 vabstol=1n iabstol=1p noisefmax=10G noisefmin=1 noiseseed=<seed> noise_scale=0.1
+
+Here, stop sets the total simulated time horizon, while 
+
+method=gear2only enforces a second-order Gear integration scheme that is robust for stiff mixed-signal dynamics. The parameters maxstep=100p and 
+
+strobeperiod=100p (both 100 ps) bound and sample the transient solution on a fine, uniform time grid: 
+
+maxstep prevents the solver from taking larger adaptive steps, and strobeperiod ensures waveform outputs are recorded at deterministic, evenly spaced instants. Tight error controls are imposed via reltol=1e-5 together with absolute voltage and current tolerances vabstol=1n 
+
+and iabstol=1p , limiting numerical jitter and improv-ing reproducibility across runs. Finally, device-noise is enabled over noisefmin=1 –noisefmax=10G with a
+
+noiseseed that is set individually per noise realiza-tion. Using such small time steps is essential when the resulting electrode waveforms are coupled into the quantum-dynamical system: a fixed, sufficiently fine temporal discretization yields deterministic sampling of the control Hamiltonian, avoids solver-dependent variations in the time grid, and thereby suppresses spurious non-determinism (i.e., numerical noise) in the 15 simulated quantum evolution that could otherwise arise purely from adaptive-step interpolation artifacts. The overall noise scaling is set to 0.1. The PDK is evaluated at its characterized ambient temperature of T ≈ 230 K, and we use the noise scale parameter to approximate the reduced thermal noise expected under cryogenic operation by scaling the noise amplitude down by a factor of ten. 
+
+[1] E. Kawakami, P. Scarlino, D. R. Ward, F. R. Braakman, D. E. Savage, M. G. Lagally, M. Friesen, S. N. Copper-smith, M. A. Eriksson, and L. M. K. Vandersypen, Na-ture Nanotechnology 9, 666 (2014). [2] X. Xue, B. Patra, J. P. G. van Dijk, N. Samkharadze, S. Subramanian, A. Corna, B. Paquelet Wuetz, C. Jeon, F. Sheikh, E. Juarez-Hernandez, B. P. Esparza, H. Ram-purawala, B. Carlton, S. Ravikumar, C. Nieva, S. Kim, H.-J. Lee, A. Sammak, G. Scappucci, M. Veldhorst, F. Sebastiano, M. Babaie, S. Pellerano, E. Charbon, and L. M. K. Vandersypen, Nature 593 , 205 (2021). [3] L. M. K. Vandersypen, H. Bluhm, J. S. Clarke, A. S. Dzurak, R. Ishihara, A. Morello, D. J. Reilly, L. R. Schreiber, and M. Veldhorst, npj Quantum Information 
+
+3, 34 (2017). [4] L. Geck, A. Kruth, H. Bluhm, S. v. Waasen, and S. Heinen, Quantum Science and Technology 5, 015004 (2019). [5] M. Volmer, T. Struck, A. Sala, B. Chen, M. Oberl¨ ander, T. Offermann, R. Xue, L. Visser, J.-S. Tu, S. Trel-lenkamp, L. Cywi´ nski, H. Bluhm, and L. R. Schreiber, npj Quantum Information 10 , 1 (2024). [6] M. K¨ unne, A. Willmes, M. Oberl¨ ander, C. Gorjaew, J. D. Teske, H. Bhardwaj, M. Beer, E. Kammerloher, R. Ot-ten, I. Seidler, R. Xue, L. R. Schreiber, and H. Bluhm, Nature Communications 15 , 4977 (2024). [7] J. M. Boter, J. P. Dehollain, J. P. van Dijk, Y. Xu, T. Hensgens, R. Versluis, H. W. Naus, J. S. Clarke, M. Veldhorst, F. Sebastiano, and L. M. Vandersypen, Physical Review Applied 18 , 024053 (2022). [8] W. K. Wootters and W. H. Zurek, Nature 299 , 802 (1982). [9] M. De Smet, Y. Matsumoto, A.-M. J. Zwerver, L. Try-puten, S. L. de Snoo, S. V. Amitonov, S. R. Katiraee-Far, A. Sammak, N. Samkharadze, O. G¨ ul, R. N. M. Wasser-man, E. Greplov´ a, M. Rimbach-Russ, G. Scappucci, and L. M. K. Vandersypen, Nature Nanotechnology 20 , 866 (2025). [10] T. Struck, M. Volmer, L. Visser, T. Offermann, R. Xue, J.-S. Tu, S. Trellenkamp, L. Cywi´ nski, H. Bluhm, and L. R. Schreiber, Nature Communications 15 , 1325 (2024). [11] R. Xue, M. Beer, I. Seidler, S. Humpohl, J.-S. Tu, S. Trel-lenkamp, T. Struck, H. Bluhm, and L. R. Schreiber, Na-ture Communications 15 , 2296 (2024). [12] A. David, A. M. Pazhedath, L. R. Schreiber, T. Calarco, H. Bluhm, and F. Motzoi, Long distance spin shuttling enabled by few-parameter velocity optimization (2024), arXiv:2409.07600 [quant-ph]. [13] F. van Riggelen-Doelman, C.-A. Wang, S. L. de Snoo, W. I. L. Lawrie, N. W. Hendrickx, M. Rimbach-Russ, A. Sammak, G. Scappucci, C. D´ eprez, and M. Veldhorst, Nature Communications 15 , 5716 (2024). [14] C. Cicali, M. Calzavara, E. Cuestas, T. Calarco, R. Zeier, and F. Motzoi, Physical Review Applied 24 , 024070 (2025). [15] S. Hwang, H. Hwang, K. Kim, A. Byun, K. Kim, S. Jeong, M. P. Soegianto, and J. Ahn, Optica Quantum 
+
+3, 64 (2025). [16] S. H. Hauck and V. M. Stojanovic, Enhanced shortcuts to adiabaticity for coherent atom transport in a fam-ily of two-dimensional dynamical optical lattices (2026), arXiv:2511.10472 [quant-ph]. [17] S. An, D. Lv, A. del Campo, and K. Kim, Nature Com-munications 7, 12999 (2016). [18] W. K. Hensinger, S. Olmschenk, D. Stick, D. Hucul, M. Yeo, M. Acton, L. Deslauriers, C. Monroe, and J. Rabchuk, Applied Physics Letters 88 , 034101 (2006). [19] V. Kaushal, B. Lekitsch, A. Stahl, J. Hilder, D. Pijn, C. Schmiegelow, A. Bermudez, M. M¨ uller, F. Schmidt-Kaler, and U. Poschinger, AVS Quantum Science 2,014101 (2020). [20] I. Seidler, T. Struck, R. Xue, N. Focke, S. Trellenkamp, H. Bluhm, and L. R. Schreiber, npj Quantum Informa-tion 8, 1 (2022). [21] L. Ermoneit, B. Schmidt, T. Koprucki, J. Fuhrmann, T. Breiten, A. Sala, N. Ciroth, R. Xue, L. Schreiber, and M. Kantner, Optimal Control of Conveyor-Mode Spin-Qubit Shuttling in a Si/SiGe Quantum Bus in the Pres-ence of Charged Defects (2023). [22] V. Langrock, J. A. Krzywda, N. Focke, I. Seidler, L. R. Schreiber, and L. Cywi´ nski, PRX Quantum 4, 020305 (2023). [23] A. M. Pazhedath, A. David, M. Oberl¨ ander, M. M. M¨ uller, T. Calarco, H. Bluhm, and F. Motzoi, Physical Review Applied 24 , 034029 (2025). [24] A. M. J. Zwerver, T. Kr¨ ahenmann, T. F. Watson, L. Lampert, H. C. George, R. Pillarisetty, S. A. Bojarski, P. Amin, S. V. Amitonov, J. M. Boter, R. Caudillo, D. Correas-Serrano, J. P. Dehollain, G. Droulers, E. M. Henry, R. Kotlyar, M. Lodari, F. L¨ uthi, D. J. Michalak, B. K. Mueller, S. Neyens, J. Roberts, N. Samkharadze, G. Zheng, O. K. Zietz, G. Scappucci, M. Veldhorst, L. M. K. Vandersypen, and J. S. Clarke, Nature Elec-tronics 5, 184 (2022). [25] A. Meyer, P. J. Ritter, M. Neumann, P. Toth, S. Ha-lama, J. Repp, M. Brandl, B. Hampel, M. Schilling, and V. Issakov, IEEE Transactions on Instrumentation and Measurement 74 , 1 (2025). [26] M. Sieberer, in Proc. 2024 IEEE European Solid-State Electronics Research Conf. (ESSERC) (2024) pp. 480– 483. [27] J. Stuart, R. Panock, C. Bruzewicz, J. Sedlacek, R. Mc-Connell, I. Chuang, J. Sage, and J. Chiaverini, Physical Review Applied 11 , 024010 (2019). [28] R. Nagai, T. Takemoto, Y. Wachi, and H. Mizuno, Phys-ical Review Applied 24 , 064021 (2025). [29] L. Duipmans, S. V. Waasen, and L. Geck, Pulse Generation for Spin-Qubit Control Us-ing Adiabatic Charging (2025), techRxiv, 16 
+
+10.36227/techrxiv.176231736.66174866/v1. [30] B. Paquelet Wuetz, M. P. Losert, S. Koelling, L. E. A. Stehouwer, A.-M. J. Zwerver, S. G. J. Philips, M. T. Madzik, X. Xue, G. Zheng, M. Lodari, S. V. Amitonov, N. Samkharadze, A. Sammak, L. M. K. Vandersypen, R. Rahman, S. N. Coppersmith, O. Moutanabbir, M. Friesen, and G. Scappucci, Nature Communications 
+
+13 , 7730 (2022). [31] M. P. Losert, M. Oberl¨ ander, J. D. Teske, M. Volmer, L. R. Schreiber, H. Bluhm, S. Coppersmith, and M. Friesen, PRX Quantum 5, 040322 (2024). [32] M. P. Losert, M. A. Eriksson, R. Joynt, R. Rahman, G. Scappucci, S. N. Coppersmith, and M. Friesen, Phys-ical Review B 108 , 125405 (2023). [33] A. Thayil, L. Ermoneit, L. R. Schreiber, T. Koprucki, and M. Kantner, Optimization of Si/SiGe Heterostructures for Large and Robust Valley Splitting in Silicon Qubits (2025), arXiv:2512.18064 [cond-mat]. [34] P. Dietz Romero, C. Toprak, L. Duipmans, S. Van Waasen, and L. Geck, in Proc. 2025 21st Int. Conf. on Synthesis, Modeling, Analysis and Sim-ulation Methods, and Applications to Circuits Design (SMACD) (2025) pp. 1–4. [35] M. Borgarino, Electronics 11 , 526 (2022). [36] L. Peri, A. Gomez-Saiz, C. J. B. Ford, and M. F. Gonzalez-Zalba, npj Quantum Information 11 , 194 (2025). [37] B. Gys, F. A. Mohiyaddin, R. Acharya, R. Li, K. De Greve, G. Gielen, B. Govoreanu, I. P. Radu, and F. Catthoor, in Proc. 2021 IEEE 51st European Solid-State Device Research Conf. (ESSDERC) (2021) pp. 63– 66. [38] Y. Uhlmann, PySpectre (2026), original-date: 2022-09-29T16:28:41Z. [39] M. Volmer, T. Struck, A. Sala, J.-S. Tu, S. Trellenkamp, D. D. Esposti, G. Scappucci, L. Cywi´ nski, H. Bluhm, and L. R. Schreiber, Mapping g-factors and complex in-tervalley coupling in Si/SiGe by conveyor-mode shuttling (2026), arXiv:2603.01844 [quant-ph]. [40] P. Chava, H. Alius, J. Buehler, A. R. Cabrera-Galicia, C. Degenhardt, T. Gneiting, M. Harff, T. Heide, P. Ja-vorka, M. Kessler, M. Lederer, S. Lehmann, M. Si-mon, M. Su, P. Vliex, S. V. Waassen, C. Witt, and D. Zetzsche, Evaluation of cryogenic model li-braries for FDSOI CMOS transistors (2025), techRxiv, 10.36227/techrxiv.176162139.98868081/v1. [41] A. F. Gad, Multimedia Tools and Applications 83 , 58029 (2024). [42] A. Coskun and J. Bardin, in Proc. 2014 IEEE MTT-S Int. Microwave Symp. (IMS) (2014) pp. 1–4. [43] M. P. R. Losert, U. G¨ ung¨ ord¨ u, S. N. Coppersmith, M. Friesen, and C. Tahan, The effects of alloy disorder on strongly-driven flopping mode qubits in Si/SiGe (2025), arXiv:2512.19658 [cond-mat]. [44] C. Pei, R. Booth, H. Ho, N. Kusaba, X. Li, M. Brodsky, P. Parries, H. Shang, R. Divakaruni, and S. Iyer, in Proc. 2008 9th Int. Conf. on Solid-State and Integrated-Circuit Technology (2008) pp. 1146–1149. [45] F. Roozeboom, J. Klootwijk, J. Verhoeven, E. v. d. Heuvel, W. Dekkers, S. Heil, H. v. Hemmen, R. v. d. Sanden, E. Kessels, F. L. Cornec, L. Guiraud, D. Chevrie, C. Bunel, F. Murray, H. Kim, and D. Blin, ECS Trans-actions 3, 173 (2007). [46] H. Fuketa, I. Akita, T. Ishikawa, H. Koike, and T. Mori, in Proc. 2022 IEEE Symp. on VLSI Technology and Cir-cuits (VLSI) (2022) pp. 234–235.

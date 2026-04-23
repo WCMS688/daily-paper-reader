@@ -1,0 +1,98 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-23T20:21:26.195108+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.15642v1",
+      "source": "arxiv",
+      "title": "HYPERHEURIST: A Simulated Annealing-Based Control Framework for LLM-Driven Code Generation in Optimized Hardware Design",
+      "abstract": "Large Language Models (LLMs) have shown promising progress for generating Register Transfer Level (RTL) hardware designs, largely because they can rapidly propose alternative architectural realizations. However, single-shot LLM generation struggles to consistently produce designs that are both functionally correct and power-efficient. This paper proposes HYPERHEURIST, a simulated annealing-based control framework that treats LLM-generated RTL as intermediate candidates rather than final designs. The suggested system not only focuses on functionality correctness but also on Power-Performance-Area (PPA) optimization. In the first phase, RTL candidates are filtered through compilation, structural checks, and simulation to identify functionally valid designs. PPA optimization is restricted to RTL designs that have already passed compilation and simulation. Evaluated across eight RTL benchmarks, this staged approach yields more stable and repeatable optimization behavior than single-pass LLM-generated RTL.",
+      "authors": [
+        "Shiva Ahir",
+        "Prajna Bhat",
+        "Alex Doboli"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR",
+        "cs.AI"
+      ],
+      "published": "2026-04-17T02:39:20+00:00",
+      "link": "https://arxiv.org/pdf/2604.15642v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "LLM-driven code generation for power-efficient hardware design",
+      "llm_evidence_cn": "大语言模型驱动的低功耗硬件设计代码生成",
+      "llm_evidence": "大语言模型驱动的低功耗硬件设计代码生成",
+      "canonical_evidence": "大语言模型驱动的低功耗硬件设计代码生成",
+      "llm_tldr_en": "Proposes HYPERHEURIST, a framework using LLMs and simulated annealing to optimize hardware PPA.",
+      "llm_tldr_cn": "提出HYPERHEURIST框架，利用大模型和模拟退火算法优化硬件功耗、性能和面积。",
+      "llm_tldr": "提出HYPERHEURIST框架，利用大模型和模拟退火算法优化硬件功耗、性能和面积。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.20482v1",
+      "source": "arxiv",
+      "title": "Valley-Aware Optimal Control of Spin Shuttling Using Cryogenic Integrated Electronics",
+      "abstract": "Electron shuttling is emerging as a key mechanism for enabling long-range coupling in scalable spin-qubit architectures. Bringing shuttling waveform generation into the cryostat can improve scalability, but imposes strict area and power constraints on the control electronics. Concurrently, shuttling in Si/SiGe is further limited by a spatially varying valley splitting that induces spin--valley mixing and degrades coherence. Here, we make three contributions that address these limitations jointly: (i) an end-to-end co-simulation framework that combines disorder-informed valley maps with transistor-level cryogenic circuit simulations including electronic noise; (ii) a fully integrated cryogenic shuttling-signal generator tailored to velocity modulation, enabling period-wise waveform shaping through discrete circuit settings stored in on-chip memory; and (iii) a noise-aware optimization procedure that tunes only these implementable circuit controls, using one of four discrete resistor settings per period, to generate high-fidelity shuttling sequences. Across simulated valley and noise realizations in our co-simulation framework, the optimized velocity-modulation waveforms improve transport performance, achieving an average shuttling fidelity of $99.99 \\pm 0.007\\%$ at $v_{\\mathrm{avg}} = 20~\\mathrm{m\\,s^{-1}}$ over a distance of $10~μ\\mathrm{m}$, while maintaining active analog power consumption in the tens of $μ\\mathrm{W}$ during shuttling. This validates on-chip storage and replay of optimized control settings as a practical strategy to mitigate valley disorder in scalable shuttling architectures.",
+      "authors": [
+        "Pau Dietz Romero",
+        "Nermine Chaabani",
+        "Lammert Duipmans",
+        "Alessandro David",
+        "Felix Motzoi",
+        "Stefan van Waasen",
+        "Lotte Geck"
+      ],
+      "primary_category": "quant-ph",
+      "categories": [
+        "quant-ph",
+        "cond-mat.mes-hall",
+        "physics.ins-det"
+      ],
+      "published": "2026-04-22T12:14:16+00:00",
+      "link": "https://arxiv.org/pdf/2604.20482v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "co-simulation framework for cryogenic circuit and electronic noise",
+      "llm_evidence_cn": "低温电路与电子噪声的协同仿真框架",
+      "llm_evidence": "低温电路与电子噪声的协同仿真框架",
+      "canonical_evidence": "低温电路与电子噪声的协同仿真框架",
+      "llm_tldr_en": "Presents a co-simulation framework for cryogenic integrated electronics including electronic noise and power constraints.",
+      "llm_tldr_cn": "提出一种包含电子噪声和功耗约束的低温集成电路协同仿真框架。",
+      "llm_tldr": "提出一种包含电子噪声和功耗约束的低温集成电路协同仿真框架。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Advanced modeling and optimization techniques for SI/PI in high speed systems",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
