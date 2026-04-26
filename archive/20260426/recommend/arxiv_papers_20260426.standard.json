@@ -1,0 +1,130 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-26T20:09:06.956632+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.20519v1",
+      "source": "arxiv",
+      "title": "Node-reduction through Joint Optimization of Input and Readout Layers in Photonic Reservoir Equalization",
+      "abstract": "Photonic reservoir computing is a machine learning paradigm in which a recurrent neural network remains fixed while only the output weights are trained. This makes it a well-suited approach for high-speed signal equalisation in optical communication systems, offering a trainable, low-power, and low-complexity solution. However, achieving strong performance typically requires relatively large network sizes, as learning is confined to the output layer. To address this, we investigate the role of trainable input mappings alongside conventional output weight optimisation. Across a range of short- and mid-reach IM/DD transmission scenarios, reaching up to 200 km for a 28 GBd NRZ signal, improvements of over two orders of magnitude in BER are achieved. This enables halving the network size while maintaining comparable performance. Furthermore, we show that this approach effectively extends the memory of the reservoir, resulting in over three orders of magnitude improvement in memory-intensive tasks. These results also show that starting at 16 nodes a performance of at least one to two magnitudes better than both a complexity matched FFE and a Volterra filter of second order are reached.",
+      "authors": [
+        "Ruben Van Assche",
+        "Sarah Masaad",
+        "Peter Bienstman"
+      ],
+      "primary_category": "physics.optics",
+      "categories": [
+        "physics.optics"
+      ],
+      "published": "2026-04-22T13:00:24+00:00",
+      "link": "https://arxiv.org/pdf/2604.20519v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Machine learning for high-speed signal equalization in optical communication systems",
+      "llm_evidence_cn": "用于光通信系统中高速信号均衡的机器学习方法",
+      "llm_evidence": "用于光通信系统中高速信号均衡的机器学习方法",
+      "canonical_evidence": "用于光通信系统中高速信号均衡的机器学习方法",
+      "llm_tldr_en": "Optimizes photonic reservoir computing for high-speed signal equalization in optical systems.",
+      "llm_tldr_cn": "优化光子储备池计算，用于光通信系统中的高速信号均衡。",
+      "llm_tldr": "优化光子储备池计算，用于光通信系统中的高速信号均衡。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.19334v1",
+      "source": "arxiv",
+      "title": "Silicon Aware Neural Networks",
+      "abstract": "Recent work in the machine learning literature has demonstrated that deep learning can train neural networks made of discrete logic gate functions to perform simple image classification tasks at very high speeds on CPU, GPU and FPGA platforms. By virtue of being formed by discrete logic gates, these Differentiable Logic Gate Networks (DLGNs) lend themselves naturally to implementation in custom silicon - in this work we present a method to map DLGNs in a one-to-one fashion to a digital CMOS standard cell library by converting the trained model to a gate-level netlist. We also propose a novel loss function whereby the DLGN can optimize the area, and indirectly power consumption, of the resulting circuit by minimizing the expected area per neuron based on the area of the standard cells in the target standard cell library. Finally, we also show for the first time an implementation of a DLGN as a silicon circuit in simulation, performing layout of a DLGN in the SkyWater 130nm process as a custom hard macro using a Cadence standard cell library and performing post-layout power analysis. We find that our custom macro can perform classification on MNIST with 97% accuracy 41.8 million times a second at a power consumption of 83.88 mW.",
+      "authors": [
+        "Sebastian Fieldhouse",
+        "Kea-Tiong Tang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "eess.IV"
+      ],
+      "published": "2026-04-21T11:06:27+00:00",
+      "link": "https://arxiv.org/pdf/2604.19334v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.5,
+      "llm_evidence_en": "Machine learning for optimizing power consumption and area in silicon circuits",
+      "llm_evidence_cn": "利用机器学习优化硅电路的功耗与面积",
+      "llm_evidence": "利用机器学习优化硅电路的功耗与面积",
+      "canonical_evidence": "利用机器学习优化硅电路的功耗与面积",
+      "llm_tldr_en": "Maps neural networks to CMOS logic gates and optimizes area and power via a novel loss function.",
+      "llm_tldr_cn": "将神经网络映射到CMOS逻辑门，并通过新型损失函数优化面积和功耗。",
+      "llm_tldr": "将神经网络映射到CMOS逻辑门，并通过新型损失函数优化面积和功耗。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.19100v1",
+      "source": "arxiv",
+      "title": "Automated Synthesis of Hardware-implementable Analog Circuits for Constrained Optimization",
+      "abstract": "This paper presents an automated software toolchain for synthesizing hardware-implementable analog circuits that solve constrained optimization problems. The proposed toolchain supports nonlinear objective functions with linear and quadratic constraints. It maps optimization variables to capacitor voltages, implementing dynamics that enforce Karush-Kuhn-Tucker conditions using operational amplifiers, resistors, capacitors, diodes, and analog multipliers. From high-level problem descriptions in AMPL or MPS, the toolchain generates a SPICE netlist for the analog circuit, simulates it, and verifies that the solutions converge. The projected settling time of the analog circuit depends on circuit parameters, gain-bandwidth product, and slew-rate limits of operational amplifiers, and leverages the inherent parallelism of analog circuits. The proposed toolchain successfully generates circuits with up to 10,000 variables and demonstrates large scalability improvements, achieving up to a 1,000X increase in solvable problem size over prior analog hardware demonstrations. Simulation studies further show that the automatically synthesized circuits converge to optimal solutions, achieving more than a 200X speedup compared to IPOPT, a state-of-the-art digital interior-point solver.",
+      "authors": [
+        "Sachin Khoja",
+        "Kamlesh Sawant",
+        "Palak Jain",
+        "Sairaj Dhople",
+        "Jason Poon"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-04-21T05:26:02+00:00",
+      "link": "https://arxiv.org/pdf/2604.19100v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Automated synthesis of analog circuits for constrained optimization and SPICE netlist generation",
+      "llm_evidence_cn": "用于约束优化和SPICE网表生成的模拟电路自动综合",
+      "llm_evidence": "用于约束优化和SPICE网表生成的模拟电路自动综合",
+      "canonical_evidence": "用于约束优化和SPICE网表生成的模拟电路自动综合",
+      "llm_tldr_en": "Automates synthesis of analog circuits for optimization, generating SPICE netlists relevant to circuit design.",
+      "llm_tldr_cn": "自动综合用于优化的模拟电路，生成与电路设计相关的SPICE网表。",
+      "llm_tldr": "自动综合用于优化的模拟电路，生成与电路设计相关的SPICE网表。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Advanced modeling and optimization techniques for SI/PI in high speed systems",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

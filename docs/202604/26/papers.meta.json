@@ -1,0 +1,54 @@
+{
+  "label": "2026-04-26",
+  "date": "2026-04-26",
+  "generated_at": "2026-04-26T20:09:45",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202604/26/2604.20519v1-node-reduction-through-joint-optimization-of-input-and-readout-layers-in-photonic-reservoir-equalization",
+      "section": "quick",
+      "title_en": "Node-reduction through Joint Optimization of Input and Readout Layers in Photonic Reservoir Equalization",
+      "authors": "Ruben Van Assche, Sarah Masaad, Peter Bienstman",
+      "date": "2026-04-22",
+      "pdf": "https://arxiv.org/pdf/2604.20519v1",
+      "score": "7.0",
+      "evidence": "用于光通信系统中高速信号均衡的机器学习方法",
+      "tldr": "针对光通信信号均衡中光储备池计算（RC）通常仅训练输出层导致网络规模较大的问题，本文提出了一种联合优化输入映射和输出层权重的策略。在IM/DD传输场景下，该方法显著降低了误码率（BER），在保持性能的同时将网络节点数减半，并有效扩展了储备池的记忆能力，性能优于传统的FFE和二阶Volterra滤波器。",
+      "tags": "query:si-pi",
+      "abstract_en": "Photonic reservoir computing is a machine learning paradigm in which a recurrent neural network remains fixed while only the output weights are trained. This makes it a well-suited approach for high-speed signal equalisation in optical communication systems, offering a trainable, low-power, and low-complexity solution. However, achieving strong performance typically requires relatively large network sizes, as learning is confined to the output layer. To address this, we investigate the role of trainable input mappings alongside conventional output weight optimisation. Across a range of short- and mid-reach IM/DD transmission scenarios, reaching up to 200 km for a 28 GBd NRZ signal, improvements of over two orders of magnitude in BER are achieved. This enables halving the network size while maintaining comparable performance. Furthermore, we show that this approach effectively extends the memory of the reservoir, resulting in over three orders of magnitude improvement in memory-intensive tasks. These results also show that starting at 16 nodes a performance of at least one to two magnitudes better than both a complexity matched FFE and a Volterra filter of second order are reached.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/26/2604.19334v1-silicon-aware-neural-networks",
+      "section": "quick",
+      "title_en": "Silicon Aware Neural Networks",
+      "authors": "Sebastian Fieldhouse, Kea-Tiong Tang",
+      "date": "2026-04-21",
+      "pdf": "https://arxiv.org/pdf/2604.19334v1",
+      "score": "6.5",
+      "evidence": "利用机器学习优化硅电路的功耗与面积",
+      "tldr": "本研究提出了一种将可微分逻辑门网络（DLGN）直接映射到数字CMOS标准单元库的方法，实现了神经网络到硬件电路的一对一转换。通过引入感知硅片面积的损失函数，模型能在训练中协同优化电路面积与功耗。实验在SkyWater 130nm工艺下实现了定制宏模块，在MNIST任务上达到97%准确率，且具备极高的推理速度和能效比。",
+      "tags": "query:si-pi",
+      "abstract_en": "Recent work in the machine learning literature has demonstrated that deep learning can train neural networks made of discrete logic gate functions to perform simple image classification tasks at very high speeds on CPU, GPU and FPGA platforms. By virtue of being formed by discrete logic gates, these Differentiable Logic Gate Networks (DLGNs) lend themselves naturally to implementation in custom silicon - in this work we present a method to map DLGNs in a one-to-one fashion to a digital CMOS standard cell library by converting the trained model to a gate-level netlist. We also propose a novel loss function whereby the DLGN can optimize the area, and indirectly power consumption, of the resulting circuit by minimizing the expected area per neuron based on the area of the standard cells in the target standard cell library. Finally, we also show for the first time an implementation of a DLGN as a silicon circuit in simulation, performing layout of a DLGN in the SkyWater 130nm process as a custom hard macro using a Cadence standard cell library and performing post-layout power analysis. We find that our custom macro can perform classification on MNIST with 97% accuracy 41.8 million times a second at a power consumption of 83.88 mW.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/26/2604.19100v1-automated-synthesis-of-hardware-implementable-analog-circuits-for-constrained-optimization",
+      "section": "quick",
+      "title_en": "Automated Synthesis of Hardware-implementable Analog Circuits for Constrained Optimization",
+      "authors": "Sachin Khoja, Kamlesh Sawant, Palak Jain, Sairaj Dhople, Jason Poon",
+      "date": "2026-04-21",
+      "pdf": "https://arxiv.org/pdf/2604.19100v1",
+      "score": "6.0",
+      "evidence": "用于约束优化和SPICE网表生成的模拟电路自动综合",
+      "tldr": "本研究开发了一种自动化软件工具链，用于合成可硬件实现的模拟电路以解决约束优化问题。该工具链支持非线性目标函数及线性、二次约束，通过将优化变量映射为电容电压并利用运算放大器等元件实现KKT条件。该方法支持高达10,000个变量的大规模问题，相比传统数字求解器IPOPT实现了200倍以上的加速，显著提升了模拟硬件在优化计算中的可扩展性和效率。",
+      "tags": "query:si-pi",
+      "abstract_en": "This paper presents an automated software toolchain for synthesizing hardware-implementable analog circuits that solve constrained optimization problems. The proposed toolchain supports nonlinear objective functions with linear and quadratic constraints. It maps optimization variables to capacitor voltages, implementing dynamics that enforce Karush-Kuhn-Tucker conditions using operational amplifiers, resistors, capacitors, diodes, and analog multipliers. From high-level problem descriptions in AMPL or MPS, the toolchain generates a SPICE netlist for the analog circuit, simulates it, and verifies that the solutions converge. The projected settling time of the analog circuit depends on circuit parameters, gain-bandwidth product, and slew-rate limits of operational amplifiers, and leverages the inherent parallelism of analog circuits. The proposed toolchain successfully generates circuits with up to 10,000 variables and demonstrates large scalability improvements, achieving up to a 1,000X increase in solvable problem size over prior analog hardware demonstrations. Simulation studies further show that the automatically synthesized circuits converge to optimal solutions, achieving more than a 200X speedup compared to IPOPT, a state-of-the-art digital interior-point solver.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,38 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.20519v1/fig-001.webp",
+      "caption": "Fig. 4: Median BER versus reservoir size. The jointly optimized configurations, particularly IR-all, improve much more rapidly with node count than the readout-only variants, indicating that trainable optical encoding increases the usefulness of additional reservoir nodes in this operating regime.",
+      "page": 7,
+      "index": 1,
+      "width": 540,
+      "height": 406
+    },
+    {
+      "url": "assets/figures/arxiv/2604.20519v1/fig-002.webp",
+      "caption": "Fig. 3: Median BER versus fiber length at (a) 0 and (b) 15 dBm launch power and 30 dB receiver OSNR for an 8-node jointly optimized reservoir, an 8-node readout-only reservoir, and a 16-node readout-only reservoir. The jointly optimized 8-node variant consistently improves on the 8-node readout-only variant and, over a useful short-to-intermediate-length regime, approaches the BER range of the 16-node readoutonly variant.",
+      "page": 7,
+      "index": 2,
+      "width": 898,
+      "height": 337
+    },
+    {
+      "url": "assets/figures/arxiv/2604.20519v1/fig-003.webp",
+      "caption": "Fig. 1: Optical communications setup. Upper and lower paths respectively show the setups with and without the photonic reservoir. The lower path is used for contextual baseline comparisons. CW: continuous wave. OOK: on-off keying. OSNR: optical signal-to-noise ratio.",
+      "page": 3,
+      "index": 3,
+      "width": 892,
+      "height": 293
+    },
+    {
+      "url": "assets/figures/arxiv/2604.20519v1/fig-004.webp",
+      "caption": "Fig. 2: Schematic overview of the four-port reservoir computing architecture. An input signal u gets transmitted to a trainable input layer with weights win. This input is used in a fixed, random reservoir, here configured in the four-port architecture. Finally the states from the reservoir are extracted and recombined into an output y by being transmitted through a trainable output layer with weights wout.",
+      "page": 4,
+      "index": 4,
+      "width": 850,
+      "height": 309
+    }
+  ]
+}

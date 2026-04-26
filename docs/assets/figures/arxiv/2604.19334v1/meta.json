@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.19334v1/fig-001.webp",
+      "caption": "TABLE III: Performance Analysis",
+      "page": 4,
+      "index": 1,
+      "width": 943,
+      "height": 306
+    },
+    {
+      "url": "assets/figures/arxiv/2604.19334v1/fig-002.webp",
+      "caption": "Fig. 3: DLGN laid out in SkyWater 130nm as a hard macro",
+      "page": 4,
+      "index": 2,
+      "width": 420,
+      "height": 648
+    },
+    {
+      "url": "assets/figures/arxiv/2604.19334v1/fig-003.webp",
+      "caption": "Fig. 2: Training dynamics across five values of δ. Models are initialized with random unique connections, 6 LogicLayers each with 64,000 neurons (a) Training accuracy and (b) average cell area measured every 1,000 iterations over 200,000 training steps.",
+      "page": 3,
+      "index": 3,
+      "width": 468,
+      "height": 662
+    },
+    {
+      "url": "assets/figures/arxiv/2604.19334v1/fig-004.webp",
+      "caption": "Fig. 1: Concept of DLGN for image classification, from [2]",
+      "page": 2,
+      "index": 4,
+      "width": 506,
+      "height": 344
+    },
+    {
+      "url": "assets/figures/arxiv/2604.19334v1/fig-005.webp",
+      "caption": "TABLE I: Mapping of logic gate functions to SkyWater 130 nm Cadence standard cells",
+      "page": 2,
+      "index": 5,
+      "width": 524,
+      "height": 431
+    }
+  ]
+}

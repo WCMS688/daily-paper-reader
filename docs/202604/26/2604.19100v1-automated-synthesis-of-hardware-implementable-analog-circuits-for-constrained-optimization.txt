@@ -1,0 +1,422 @@
+Title: Automated Synthesis of Hardware-implementable Analog Circuits for Constrained Optimization
+
+URL Source: https://arxiv.org/pdf/2604.19100v1
+
+Published Time: Wed, 22 Apr 2026 00:43:54 GMT
+
+Number of Pages: 7
+
+Markdown Content:
+# Automated Synthesis of Hardware-implementable Analog Circuits for Constrained Optimization 
+
+Sachin Khoja, Kamlesh Sawant, Palak Jain, Sairaj Dhople, Jason Poon 
+
+Abstract —This paper presents an automated software toolchain for synthesizing hardware-implementable analog cir-cuits that solve constrained optimization problems. The pro-posed toolchain supports nonlinear objective functions with linear and quadratic constraints. It maps optimization vari-ables to capacitor voltages, implementing dynamics that enforce Karush–Kuhn–Tucker conditions using operational amplifiers, resistors, capacitors, diodes, and analog multipliers. From high-level problem descriptions in AMPL or MPS, the toolchain generates a SPICE netlist for the analog circuit, simulates it, and verifies that the solutions converge. The projected settling time of the analog circuit depends on circuit parameters, gain-bandwidth product, and slew-rate limits of operational amplifiers, and leverages the inherent parallelism of analog circuits. The proposed toolchain successfully generates circuits with up to 
+
+10 ,000 variables and demonstrates large scalability improve-ments, achieving up to a 1,000 × increase in solvable problem size over prior analog hardware demonstrations. Simulation studies further show that the automatically synthesized circuits converge to optimal solutions, achieving more than a 200 ×
+
+speedup compared to IPOPT, a state-of-the-art digital interior-point solver. 
+
+Index Terms —Analog computing, constrained optimization, neuromorphic computing, SPICE. 
+
+I. I NTRODUCTION 
+
+Constrained optimization is central to modern computa-tional science, with applications in electronic design automa-tion (EDA), machine learning, real-time logistics planning, operations and control of critical infrastructure, and financial modeling [1]–[5]. The solution of these problems is largely automated through iterative discrete-time algorithms running on conventional von Neumann architectures. However, as the scale and complexity of problems grow, with Moore’s Law slowing down, and the end of Dennard scaling, digital solvers face significant challenges. The computational over-head and power consumption associated with solving large-scale optimization problems are becoming prohibitive, creating a bottleneck for many high-performance applications, such as real-time model predictive control (MPC) [6]–[10]. Prior art has demonstrated that electronic analog comput-ing is a viable alternative, leveraging the energy-minimizing properties of analog circuits to find optimal solutions. This approach potentially offers faster and more efficient compu-tation than conventional digital solvers, making it particu-larly attractive for real-time optimization applications, such as MPC [7], [11]. The concept of using analog circuits to solve optimization problems dates back to the seminal work on Hop-field networks, which demonstrated how a system’s dynamics could be engineered to converge to a minimum of an energy function [12]. This was later extended to nonlinear program-ming, establishing a direct mapping between mathematical optimization constructs and analog circuit elements [13], [14]. Recently, several optimization methods and control algorithms, such as gradient-based dynamics and MPC, have been realized with analog circuits [8]–[10], [15]–[17]. Despite these conceptual advances and proof-of-concept demonstrations, the practical application of analog optimiza-tion solvers has been limited by the reliance on the manual design of the networks of analog circuits. This bespoke, labor-intensive process requires domain expertise and is not scalable, restricting the complexity of problems that can be addressed. Recent work has explored solving optimization problems using analog circuits, but most of these studies focus on behavioral modeling of the analog circuits for simulation rather than producing designs intended for physical implementation [18]– [20]. To date, to the best of the authors’ knowledge, most physical hardware implementations used to solve constrained optimization problems are manually designed and have been limited to small-scale problems, typically around ten vari-ables [8], [15], [21]–[25]. Prior work has also demonstrated rapid prototyping of constrained linear–quadratic optimal con-trol using Field-Programmable Analog Arrays (FPAAs), show-ing that reconfigurable analog hardware can implement MPC algorithms with microsecond-level solution times. However, these demonstrations target a few tens of variables and require manual mapping of the control dynamics to FPAA blocks, so scalability remains limited [8], [26]. Broadly, scalability barriers have prevented the widespread adoption of analog computing for optimization, as the manual effort required for circuit design far outweighs the potential performance benefits for all but the smallest of problems. This paper introduces a software toolchain that automates the synthesis of analog circuits for constrained optimization problems featuring nonlinear objective functions with linear and quadratic constraints. Our approach overcomes the limita-tions of previous work by providing a software toolchain for generating and verifying analog circuits that solve constrained optimization problems from high-level problem descriptions. Given a problem specification in a standard format such as AMPL or MPS, the proposed toolchain automatically gener-ates a SPICE netlist. This netlist can then be simulated to validate the convergence of the large-scale circuit design to the optimal solution of the optimization problem. This paper demonstrates the synthesis and verification of analog optimization circuits capable of solving dense problems 
+
+with up to 500 variables and sparse problems with up to 
+
+> arXiv:2604.19100v1 [eess.SY] 21 Apr 2026
+
+10 ,000 variables. In this context, “dense” refers to optimization problems in which most variables interact with many others, whereas “sparse” problems are those in which each variable interacts with only a limited subset of others. These results represent a 1,000 × increase in solvable problem complexity over prior hardware demonstrations. Simulation studies further show that the automatically synthesized circuits converge to optimal solutions, achieving more than a 200 × speedup relative to digital solvers such as Interior Point Optimizer (IPOPT) [27]. The main contributions of this work are as follows:  
+
+> •
+
+Introduction of an automated toolchain for synthesizing hardware-implementable analog circuits that solve con-strained optimization problems directly from high-level problem descriptions.  
+
+> •
+
+Demonstration and verification of scalable circuit designs for large-scale problems (up to 10 ,000 variables), over-coming the scalability limits of prior physical analog circuit implementations. The remainder of this paper is organized as follows. Sec-tion II describes the methodology utilized for synthesizing analog circuits for solving constrained optimization problems. Section III provides an overview of the proposed toolchain. Section IV summarizes the numerical results, and Section V concludes the paper. II. M ETHODOLOGY 
+
+In this section, we introduce the general constrained opti-mization problem, outline the methodology for synthesizing analog circuits to solve it, and present an illustrative circuit example. 
+
+A. Mapping Optimization Problems to Analog Circuits 
+
+To map optimization problems to analog circuits, we rely on the foundational principle that variables involved in math-ematical optimization formulations can be directly associated with the physical quantities of an analog circuit (i.e., voltages and currents). We consider the following general constrained optimization problem in N variables, M inequality constraints, and P equality constraints: 
+
+minimize 
+
+> x∈RN
+
+f (x), (1a) 
+
+subject to gi(x) ≥ 0, ∀ i ∈ { 1, . . . , M }, (1b) 
+
+hj (x) = 0 , ∀ j ∈ { 1, . . . , P }, (1c) where x = x1 · · · xN
+
+⊤ ∈ RN is the vector of optimiza-tion variables and f : RN → R is the objective function. The constraint function, g : RN → RM collects inequality constraints and h : RN → RP collects equality constraints. The objective and constraint functions are assumed to be continuously differentiable. Problems with box constraints 
+
+xL ≤ x ≤ xU can be reformulated in the inequality form by expressing them as x − xL ≥ 0 and xU − x ≥ 0.The Lagrangian L(x, λ, μ ) : RN × RM × RP → R for this problem is 
+
+L(x, λ, μ ) = f (x) + λ⊤g(x) + μ⊤h(x),
+
+where λ = λ1 · · · λM
+
+⊤ ∈ RM and μ =
+
+μ1 · · · μP
+
+⊤ ∈ RP are the Lagrange multipliers (dual variables). The gradient of the Lagrangian with respect to the optimization variable is 
+
+∇xL(x, λ, μ ) = ∇f (x) + 
+
+> M
+
+X
+
+> i=1
+
+λi∇gi(x) + 
+
+> P
+
+X
+
+> j=1
+
+μj ∇hj (x).
+
+Here, ∇f (x) = ∂∂x f (x) ∈ RN , ∇gi(x) = ∂∂x gi(x) ∈ RN ,and ∇hj (x) = ∂∂x hj (x) ∈ RN denote the gradients of the objective function, the i-th inequality constraints, and the j-th equality constraints, respectively, all with respect to x.The analog circuit implements the following dynamics, which drive the optimization variables in the direction of the negative gradient of the Lagrangian while enforcing feasibility for gi(x) and hj (x):
+
+dx
+
+dt = −γ∇xL(x, λ, μ ), (2) where γ > 0 is a scalar parameter. Each optimization variable 
+
+xk is represented by a node voltage vk, and its value at any time is given by the voltage at that node. We illustrate this process with a circuit example in Section II-B. For more details on the synthesis of these circuits for optimization problems, we refer readers to prior work [14], [17], [24], [25], [28]. At steady state, pertinent circuit voltages v correspond to the optimization variables x, and together with the dual vari-ables λ, μ satisfy the Karush–Kuhn–Tucker (KKT) conditions, which are first-order necessary conditions for optimality when constraint qualification holds [29, Chapter 12]: 
+
+∇xL(x⋆, λ ⋆, μ ⋆) = 0 , (Stationarity) 
+
+g(x⋆) ≥ 0, h (x⋆) = 0 , (Primal feasibility) 
+
+λ⋆ ≤ 0, (Dual feasibility) 
+
+λ⋆ ◦ g(x⋆) = 0 , (Complementary slackness) 
+
+(3) where ◦ denotes the element-wise product. The solution x⋆ ∈
+
+RN is globally optimal when the optimization problem (1) is convex, while in the nonconvex case it represents a KKT stationary point. With any network involving dynamics of the form we con-sider, stability is an important consideration. These dynamics can be analyzed using control-theoretic tools such as Lyapunov stability theory and the Kalman-Yakubovich-Popov (KYP) lemma, to establish conditions for global asymptotic and exponential stability [14], [17], [28], [30], [31]. 
+
+B. Analog Circuit Example 
+
+To illustrate mapping optimization problems to analog cir-cuits, we consider the following optimization problem based Fig. 1. Circuit schematic for the augmented Lagrangian method to solve the optimization problem in (4). Similarly, the primal-dual and penalty methods can be implemented by short-circuiting Rρ and Cρ, respectively. Component values are R◦ = Rlim = Rγ = 10 kΩ , Rρ = 100 kΩ , Cρ = 10 nF , and  
+
+> Cγ= 100 nF .
+
+on [32]: 
+
+minimize  
+
+> x∈R2
+
+f (x) = 12 (8 x21 + 4 x1x2 + 10 x22)+ 1 .5x1 − 2x2 + 4 , (4a) 
+
+subject to g(x) : x1 − 2x2 + 6 ≥ 0, (4b) 
+
+1 − x21 − x22 ≥ 0,x1 ≥ 0,x2 ≥ 0,h(x) : 2x1 + x2 − 2 = 0 . (4c) Figure 1 shows the analog realization of (4), adopted from the analog circuit in [14], [17]. The node voltages 
+
+v1 and v2 correspond to the optimization variables 
+
+x1 and x2. Operational amplifier (op-amp) stages labeled ∇f (v), ∇gi(v), and ∇hj (v) generate the partial derivatives of the objective function, the i-th inequality constraints, and j-th equality constraints, respectively. For the problem in (4), the gradients are: 
+
+∇f (v) = 8v1 + 2 v2 + 1 .5 2v1 + 10 v2 − 2⊤ , ∇g1(v) =
+
+1 −2⊤ , ∇g2(v) = −2v1 −2v2
+
+⊤ , ∇g3(v) =
+
+1 0⊤ , ∇g4(v) = 0 1⊤, and ∇h(v) = 2 1⊤.The dual variables λi for the inequality constraints are implemented as auxiliary nodes. An op-amp stage with diode feedback effectively applies the element-wise min(0 , z ) oper-ation, yielding zero when the inequality constraint is satisfied (gi(v) ≥ 0) and otherwise passing its input z. The dual vari-ables μj for the equality constraints are realized in the same way, but without the op-amp stage having diode feedback, since the optimal solution must satisfy the equality constraint exactly. The dynamics of these dual variables are governed by the op-amp stage containing Rρ and Cρ: with both Rρ and 
+
+Cρ present, the circuit implements an Augmented Lagrangian method, short-circuiting Rρ yields a Primal-dual method, while short-circuiting Cρ recovers a Penalty method [17]. The op-amp stages configured as integrators, with capac-itors Cγ connected to v1 and v2, integrate the net currents generated by the circuit blocks implementing ∇f (v), ∇gi(v),and ∇hj (v), realizing the dynamics in (2): 
+
+dv
+
+dt = − 1
+
+Rγ Cγ
+
+∇xL(v, λ, μ ),
+
+where v = v1 v2
+
+⊤.At equilibrium, the input currents to the op-amp integrators vanish, causing the capacitor Cγ voltages to remain constant. In steady-state, the circuit variables, v, together with the dual variables, λ and μ, satisfy the KKT conditions in (3). Thus, the steady-state voltages v1 and v2 correspond to the globally optimal solution of the optimization problem (4). III. T OOLCHAIN OVERVIEW 
+
+This section presents the overall flow of the proposed toolchain. Figure 2 illustrates the general flow: the user pro-vides a high-level problem description in a standard optimiza-tion format (AMPL/MPS). The toolchain then automatically synthesizes an analog circuit netlist. The process is imple-mented in two steps as summarized below. 
+
+A. Problem Translation and Circuit Synthesis 
+
+The toolchain first parses the input file and converts the mathematical expressions into an internal symbolic represen-tation. It then automatically synthesizes a SPICE netlist by mapping these symbolic elements to circuit templates from a predefined library. This stage performs the translation from an abstract optimization problem to a circuit description. The output is a text-based netlist that specifies components (e.g., op-amps, resistors, and multipliers) and their interconnections. While the ngspice circuit simulator is used for veri-fication, the synthesized circuits are intended for physical realization rather than simulation alone. The SPICE netlist serves as an implementation-ready specification that can be mapped to a schematic and layout using standard analog building blocks (e.g., op-amps, resistors, and capacitors) and subsequently prototyped on a printed circuit board (PCB) or as an application-specific integrated circuit (ASIC). Step 1:           
+
+> AMPL/MPS problem input and parser engine
+> Step 2: Problem definition builder
+> Step 3: Solver registry and template engine
+> Step 3a:
+> Penalty Method
+> Step 3b: Primal-Dual Method
+> Step 3c: Augmented Lagrangian Method
+> Step 4: SPICE netlist generation
+> Step 5: ngspice simulation
+> Step 5a: Tran-sient analysis
+> Step 5b: Conver-gence monitoring
+> Step 6: Results processing and solution output Fig. 2. Overview of the automated software toolchain flow.
+
+Standard electronic components such as op-amps, diodes, multipliers, resistors, and capacitors suffice to realize quadratic objective functions with linear and quadratic constraints. To ensure scalability to general nonlinear optimization problems, complex functions are abstracted in simulation via behavioral voltage sources that support arbitrary mathematical expres-sions (e.g., sin ). These sources can be replaced by dedicated analog macro-circuits (e.g., translinear multipliers or switched-capacitor circuits) if the synthesized circuit is intended to be fully analog, or by hybrid analog-digital circuit elements (e.g., digital-to-analog converter (DAC)/analog-to-digital converter (ADC) interfaces or microcontrollers) when a mixed-signal implementation is desired [24], [25]. 
+
+B. Simulation and Verification 
+
+The generated netlist is passed to an industry-standard SPICE simulator ( ngspice ). A transient analysis is per-formed, allowing the circuit’s voltages, which represent the optimization variables, to evolve and settle at an equilibrium point that satisfies the KKT conditions (3). The final steady-state voltages, which represent the optimal values of the optimization variables, are then extracted and reported as the solution. The convergence time obtained from the simulation also provides an estimate of the solution time for the corre-sponding physical analog or hybrid (analog/digital) circuits. The analog optimization toolchain consists of the following software modules, shown in Fig. 2, which illustrate the steps for analog circuit synthesis: 1) Parser Engine (Step 1). Extracts the optimization prob-lem from the AMPL/MPS file format and processes it to obtain variables, constraints, and objective functions. Gradient information is generated via automatic differ-entiation, with hierarchical caching and multithreaded pipelines. 2) Problem Definition Builder (Step 2). Transforms the parsed problem into a structured intermediate repre-sentation for the subsequent template engine. Symbolic preprocessing, powered by a customized SymPy -based backend, computes exact constraint Jacobians and ob-jective gradients, ensuring solver-ready formulation. 3) Solver Registry and Methods (Step 3, 3a–3c). Includes several optimization methods that can be selected: [17]  
+
+> •
+
+Penalty Method (Step 3a) : Uses large gains as penalties for constraint enforcement; a steady-state error occurs when the optimal solution lies on an active constraint (fewest analog circuit components, steady-state error).  
+
+> •
+
+Primal-Dual Method (Step 3b) : Incorporates dual-variable dynamics to ensure convergence to the op-timal solution without steady-state error (no steady-state error, slower convergence).  
+
+> •
+
+Augmented Lagrangian (Step 3c) : Combines penalty terms and dual-variable dynamics to achieve faster convergence to the optimal solution without steady-state error (faster convergence without steady-state error, more analog circuit components). 4) Netlist Generation (Step 4). Selected solver formu-lations are translated into SPICE-compatible analog netlists through a Jinja2 -driven template synthesis framework, as outlined in Algorithm 1. This process provides a link between symbolic optimization models and circuit-level simulation, ensuring that mathematical abstractions are rendered into physically implementable analog circuits. 5) Simulation and Analysis (Steps 5–5b). Netlists are simulated using ngspice , including transient analysis (Step 5a) and convergence monitoring (Step 5b). 6) Results Processing and Solution Output (Step 6). 
+
+Simulation outputs are processed to extract variable values, compute convergence metrics, and produce val-idated solutions for the user. 
+
+C. Automated Synthesis Algorithm 
+
+We now present Algorithm 1, which synthesizes analog circuits for solving constrained optimization problems. The synthesis of analog optimization circuits maps the optimization problem into a SPICE-compatible netlist. The optimization variables xj are realized as node voltages vj , the objective Algorithm 1 Analog Netlist Synthesis 
+
+Require: Objective function f (x), optimization variables 
+
+{xj }, constraints {gi(x)}, {hj (x)}, method selection 
+
+M ∈ { Penalty, Primal-Dual, Augmented Lagrangian }
+
+Ensure: SPICE Netlist Nspice  
+
+> 1:
+
+Initialize template T , component list C ← ∅  
+
+> 2:
+
+for each variable xj do  
+
+> 3:
+
+Instantiate an inverting op-amp integrator with 
+
+(Rγ , C γ ) 
+
+> 4:
+
+Assign node voltage vj ↔ xj 
+
+> 5:
+
+end for  
+
+> 6:
+
+for each gradient term ∂f /∂x j do  
+
+> 7:
+
+Realize as a behavioral voltage source feeding the input summing node of the corresponding integrator  
+
+> 8:
+
+end for  
+
+> 9:
+
+for each constraint expression do  
+
+> 10:
+
+Accumulate the weighted terms of each constraint function gi(x) (or equality hj (x)) at the input of an op-amp stage  
+
+> 11:
+
+end for  
+
+> 12:
+
+for each inequality constraint gi(x) ≥ 0 do  
+
+> 13:
+
+if M = Penalty then  
+
+> 14:
+
+Configure the op-amp stage as an inverting ampli-fier with Rρ as the feedback resistor to set the penalty  
+
+> 15:
+
+else if M = Primal-Dual then  
+
+> 16:
+
+Configure the op-amp stage as an inverting inte-grator with capacitor Cρ 
+
+> 17:
+
+else if M = Augmented Lagrangian then  
+
+> 18:
+
+Configure the op-amp stage as an inverting stage, using a series combination of Rρ and Cρ in the feedback  
+
+> 19:
+
+end if  
+
+> 20:
+
+end for  
+
+> 21:
+
+for each inequality constraint gi(x) ≥ 0 do  
+
+> 22:
+
+Connect the output of the method-specific op-amp to an inverting op-amp with diode feedback  
+
+> 23:
+
+Feedback activated only when gi(x) < 0 
+
+> 24:
+
+end for  
+
+> 25:
+
+for each equality constraint hj (x) = 0 do  
+
+> 26:
+
+Omit the inverting op-amp stage with diode feedback  
+
+> 27:
+
+end for  
+
+> 28:
+
+for each constraint term in gi(x) or hj (x) do  
+
+> 29:
+
+if term is linear cij xj then  
+
+> 30:
+
+Instantiate inverting op-amp amplifier with gain cij  
+
+> 31:
+
+else  
+
+> 32:
+
+Instantiate a multiplier or other appropriate non-linear circuit  
+
+> 33:
+
+end if  
+
+> 34:
+
+end for  
+
+> 35:
+
+Assemble all components C into T , generate Nspice  
+
+> 36:
+
+return Nspice 
+
+function gradient ∇f (x) is implemented using behavioral volt-age sources, and the constraints {gi(x), h j (x)} are enforced through analog circuits, as illustrated in Fig. 1. 10 −1 10 0 10 1 10 2 
+
+> IPOPT Solver Convergence Time (ms)
+> 10 −1
+> 10 0
+> 10 1
+> 10 2
+> Analog Solver Convergence Time (ms)
+> y=x (Equal Time)
+> 100 200 300 400 500
+> Problem Size (N)
+> Fig. 3. Analog solver speed comparison with IPOPT solver.
+
+IV. N UMERICAL RESULTS 
+
+We evaluated the proposed toolchain on a set of benchmark problems to assess its performance. The simulations were performed on an Apple M3 Pro system with 16 GB of RAM, using ngspice v41 as the simulation backend. This study uses a benchmark set available at [33], based on standard AMPL model files [34]. We focused on convex problems to ensure that a global optimum exists, providing a fair basis for comparing the solution and computational speed of different solvers. The performance of the synthesized analog circuits was evaluated against IPOPT [35], a state-of-the-art interior-point solver, to provide a baseline for comparison with digital solvers. The primary performance metric for the analog solver is the convergence time from the SPICE transient analysis simulation (‘.TRAN’ analysis). This simulation time is used as a proxy for the physical settling time of a corresponding hardware implementation. For each problem, the total solution time for the analog circuit was recorded from the start of the transient analysis until the node voltages representing the optimization variables reached a steady state (settling to within 
+
+0.01% of their final value). Digital solver times were measured using the CPU time reported by IPOPT within the AMPL environment [36]. Figure 3 compares the computation time in milliseconds (ms) of the analog solver and IPOPT across varying problem sizes (number of optimization variables, N ). The logarithmic scale shows that, as problem complexity increases, the per-formance gap widens in favor of the analog solver. While IPOPT’s solution times exhibit the characteristic polynomial growth expected from interior-point methods, the analog solver maintains relatively consistent convergence times due to its inherent parallel operation. For problems with fewer than 
+
+100 variables, both methods perform comparably; however, beyond this threshold, the analog solver’s advantages become evident. For example, on a problem with 500 variables, 50 
+
+linear constraints, and 50 quadratic constraints, the synthesized Analog Solver IPOPT Solver Solver  
+
+> 10 −1
+> 10 0
+> 10 1
+> 10 2
+> Convergence Time (ms) Fig. 4. Distribution of convergence time of analog solver and IPOPT solver.
+
+analog circuit converged to a solution in 0.62 ms, whereas the IPOPT solver required 232 ms for the same problem—a speedup of approximately 370 ×.Figure 4 shows the distribution of convergence times, using box plots to illustrate the consistency of both approaches. The analog solver exhibits a tight distribution with minimal variance, indicating consistent performance across different problem instances. The median convergence time of 0.32 ms for the analog solver contrasts with IPOPT’s median of 31 ms, representing a 97 × improvement. The narrow interquartile range of the analog solver indicates timing predictability, which is important for real-time applications. This speedup was achieved without loss of solution ac-curacy. For the 500 -variable problem, the objective value obtained by the analog circuit ( −1489 .9999 ) deviated from the IPOPT solution ( −1489 .998 ) by less than 0.0001% , confirm-ing that the circuit’s steady-state equilibrium point corresponds to the problem’s mathematical optimum. This performance advantage stems from the inherent parallelism of the analog solver. The circuit’s continuous-time dynamics, which map directly to the KKT optimality conditions, allow all state variables to evolve simultaneously towards the solution. Figure 5 examines the trade-off between solution speed and accuracy. The analog solver achieves sub-millisecond convergence times while maintaining solution accuracy within 
+
+0.02% of the optimal values found by IPOPT (the accuracy of the analog solution is subject to component tolerances). The clustering of analog solver results in the lower-right region of the plot (fast convergence, high accuracy) underscores its suitability for applications requiring both speed and precision. This contrasts with the iterative nature of interior-point meth-ods, which at each iteration require solving a large system of linear equations and performing matrix factorizations, a computationally expensive process that scales poorly with problem size. Table I summarizes the comparison: the analog solver achieved a mean speedup of 161 .56 × and a maximum of 397 .2×, while maintaining a mean relative error of 0.02% 10 0 10 1 10 2 
+
+> Speedup Factor (IPOPT / Analog)
+> 0.00
+> 0.05
+> 0.10
+> 0.15
+> 0.20
+> Relative Error vs IPOPT (%)
+> Problem Size (N)
+> 100 200 300 400 500
+> No Speedup
+> Fig. 5. Analog solver speed-accuracy trade-off with IPOPT solver.
+
+and a median of 0.00% , indicating that, for most problems, the solution obtained from the analog solver is indistinguishable from the IPOPT solution. During the scalability analysis, we found that the main limitation was not in the synthesis flow, but in the com-putational limits of the ngspice simulator when handling the matrix factorization of very large netlists. Simulating a parallel analog circuit on a sequential digital computer requires solving a large matrix of circuit equations at each time step. The computational cost of this step grows nonlinearly with the number of circuit nodes and the density of their interconnections. In practice, the point at which the simulation becomes prohibitive also depends on the hardware used to run the simulator. For example, on an Apple MacBook M3 Pro with 16 GB of memory, simulation typically halts once the circuit reaches about 10 6 nodes. At this scale, representative problem instances include:  
+
+> •
+
+Sparse case: Roughly > 10 ,000 optimization variables with > 10 ,000 linear constraints, each involving about 
+
+1,000 variables.  
+
+> •
+
+Dense case: Approximately > 500 optimization variables with > 300 quadratic constraints and > 200 linear constraints, each coupling nearly all variables. Thus, both problem density and the total number of variables and constraints determine scalability limits. These observa-                    
+
+> TABLE I COMPARISON OF ANALOG SOLVER AND IPOPT S OLVER PERFORMANCE .
+> Metric Analog Solver IPOPT Solver
+> Mean Time (ms) 0.35 63 .27
+> Median Time (ms) 0.32 31 .00
+> Maximum Speedup 397 .2×-Mean Speedup 161 .56 ×-Median Speedup 135 .09 ×-Mean Relative Error (%) 0.02 -Median Relative Error (%) 0.00 -
+
+tions suggest that the synthesis methodology scales with problem size; however, the performance ceiling is imposed by the sequential nature of the verification tool. A physical analog solver implementation would not encounter this bottleneck and could handle large-scale optimization problems in real-time. V. C ONCLUSIONS & F UTURE WORK 
+
+This paper presents an automated software toolchain for synthesizing and verifying analog circuits that solve con-strained optimization problems. The toolchain demonstrates scalability by automatically generating SPICE netlists that can handle problems with thousands of variables, thereby over-coming the limitations of manual, hardware-based implemen-tations, which are limited to a few optimization variables. This software toolchain provides a foundation for the systematic design and prototyping of analog circuits to solve optimization problems of varying complexity for real-time optimization applications. Future work will focus on extending the toolchain to distributed simulation environments such as Xyce , and on advancing automated mapping strategies for deployment to physical hardware platforms, including FPAAs. REFERENCES [1] S. Boyd and L. Vandenberghe, Convex Optimization . Cambridge, UK: Cambridge University Press, 2004. [2] J. A. Taylor, S. V. Dhople, and D. S. Callaway, “Power systems without fuel,” Renewable and Sustainable Energy Reviews , vol. 57, pp. 1322– 1336, 2016. [3] J. R. R. A. Martins and A. Ning, Engineering Design Optimization .Cambridge: Cambridge University Press, 2021. [4] Y. Xia, Q. Liu, J. Wang, and A. Cichocki, “A survey of neurodynamic optimization,” IEEE Trans. Emerg. Top. Comput. Intell. , vol. 8, no. 4, pp. 2677–2696, 2024. [5] K. P. Kalinin, J. Gladrow, J. Chu, and et al., “Analog optical computer for AI inference and combinatorial optimization,” Nature , vol. 645, pp. 354–361, Sep. 2025. [6] P. Zometa, M. K¨ ogel, T. Faulwasser, and R. Findeisen, “Implementation aspects of model predictive control for embedded systems,” in Proc. Amer. Control Conf. , 2012, pp. 1205–1210. [7] P. Karamanakos, E. Liegmann, T. Geyer, and R. Kennel, “Model predictive control of power electronic systems: Methods, results, and challenges,” IEEE Open J. Ind. Appl. , vol. 1, pp. 95–114, 2020. [8] A. A. Adegbege and F. D. Moran, “Analog optimization circuit for embedded model predictive control,” IEEE Trans. Circuits Syst. I Reg. Papers , vol. 71, no. 9, pp. 4247–4260, 2024. [9] K. Sawant, R. Caverly, J. Poon, and S. Dhople, “Real-time model predictive control of a dc-dc buck converter,” in IEEE Energy Conversion Congress and Exposition , 2024, pp. 3990–3996. [10] S. Pirrera, L. Calogero, F. Gabriele, D. Regruto, A. Rizzo, and G. Setti, “A fully analog implementation of model predictive control with appli-cation to buck converters,” 2025. [11] S. Kouro, M. A. Perez, J. Rodriguez, A. M. Llor, and H. A. Young, “Model predictive control: MPC’s role in the evolution of power electronics,” IEEE Ind. Electron. Mag. , vol. 9, no. 4, pp. 8–21, 2015. [12] D. Tank and J. Hopfield, “Simple neural optimization networks: An A/D converter, signal decision circuit, and a linear programming circuit,” 
+
+IEEE Trans. Circuits Syst. , vol. 33, no. 5, pp. 533–541, 1986. [13] M. Kennedy and L. Chua, “Unifying the Tank and Hopfield linear programming circuit and the canonical nonlinear programming circuit of Chua and Lin,” IEEE Trans. Circuits Syst. , vol. 34, no. 2, pp. 210–214, 1987. [14] ——, “Neural networks for nonlinear programming,” IEEE Trans. Circuits Syst. , vol. 35, no. 5, pp. 554–562, 1988. [15] S. Vichik, “Quadratic and linear optimization with analog circuits,” Ph.D. dissertation, Univ. of California, Berkeley, CA, USA, 2015. [16] J. Wu, X. He, Y. Niu, T. Huang, and J. Yu, “Circuit implementation of proximal projection neural networks for composite optimization problems,” IEEE Trans. Ind. Electron. , vol. 71, no. 2, pp. 1948–1957, 2024. [17] K. Sawant, P. Seiler, M. R. Jovanovi´ c, J. Poon, and S. Dhople, “Real-time solution strategy for linearly constrained quadratic programs with proportional-integral control and variants,” in Proc. Amer. Control Conf. ,2025, pp. 910–917. [18] A. Agarwal, C. Fiscko, S. Kar, L. Pileggi, and B. Sinopoli, “An equivalent circuit workflow for unconstrained optimization,” 2023. [19] A. Agarwal and L. Pileggi, “An equivalent circuit approach to distributed optimization,” 2023. [20] S. P. Boyd, T. Parshakova, E. K. Ryu, and J. J. Suh, “Optimization algorithm design via electric circuits,” in Advances in Neural Informa-tion Processing Systems , A. Globerson, L. Mackey, D. Belgrave, A. Fan, U. Paquet, J. Tomczak, and C. Zhang, Eds., vol. 37. Curran Associates, Inc., 2024, pp. 68 013–68 081. [21] S. Vichik and F. Borrelli, “Solving linear and quadratic programs with an analog circuit,” Comput. Chem. Eng. , vol. 70, pp. 160–171, 2014. [22] R. M. Levenson and A. A. Adegbege, “Analog circuit for real-time optimization of constrained control,” in Proc. Amer. Control Conf. , 2016, pp. 6947–6952. [23] J. N. Bruno, F. D. Moran, H. I. Khajanchi, and A. A. Adegbege, “Analog solver for embedded model predictive control with application to quadruple tank system,” in Proc. Amer. Control Conf. , 2021, pp. 4680– 4685. [24] J. Poon, M. Sinha, S. V. Dhople, and J. Rivas-Davila, “Real-time selective harmonic minimization using a hybrid analog/digital computing method,” IEEE Trans. Power Electron. , vol. 37, no. 5, pp. 5078–5088, 2022. [25] K. Sawant, D. Nguyen, A. Liu, J. Poon, and S. Dhople, “A hybrid-computing solution to nonlinear optimization problems,” IEEE Trans. Circuits Syst. I Reg. Papers , pp. 1–14, 2024. [26] T. Skibik and A. A. Adegbege, “Rapid prototyping of constrained linear quadratic optimal control with field programmable analog array,” in 
+
+Proc. IEEE Conf. Decis. Control , 2018, pp. 1864–1869. [27] A. W¨ achter and L. T. Biegler, “On the implementation of an interior-point filter line-search algorithm for large-scale nonlinear programming,” 
+
+Mathematical Programming , vol. 106, no. 1, pp. 25–57, 2006. [28] G. Costantini, R. Perfetti, and M. Todisco, “Quasi-Lagrangian neural network for convex quadratic optimization,” IEEE Transactions on Neural Networks , vol. 19, no. 10, pp. 1804–1809, 2008. [29] J. Nocedal and S. J. Wright, Numerical Optimization , 2nd ed. New York: Springer, 2006. [30] M. Forti and A. Tesi, “New conditions for global stability of neural net-works with application to linear and quadratic programming problems,” 
+
+IEEE Trans. Circuits Syst. I: Fundam. Theory Appl. , vol. 42, no. 7, pp. 354–366, 1995. [31] A. A. Adegbege and M. Y. Kim, “Saddle-point convergence of con-strained primal-dual dynamics,” IEEE Control Systems Letters , vol. 5, no. 4, pp. 1357–1362, 2021. [32] I. Maros and C. M´ esz´ aros, “A repository of convex quadratic program-ming problems,” Optimization Methods and Software , vol. 11, no. 1-4, pp. 671–681, 1999. [33] “AMPL benchmarking files,” http://bit.ly/4gQ3z7Z. [34] “AMPL nonlinear programming models and data files,” https://plato.asu.edu/ftp/ampl-nlp-source/. [35] “IPOPT solver,” https://coin-or.github.io/Ipopt/. [36] “AMPL library,” https://amplpy.ampl.com/en/latest/.

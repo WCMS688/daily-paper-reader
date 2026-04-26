@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.19100v1/fig-001.webp",
+      "caption": "Fig. 3. Analog solver speed comparison with IPOPT solver.",
+      "page": 5,
+      "index": 1,
+      "width": 483,
+      "height": 329
+    },
+    {
+      "url": "assets/figures/arxiv/2604.19100v1/fig-002.webp",
+      "caption": "Fig. 2. Overview of the automated software toolchain flow.",
+      "page": 4,
+      "index": 2,
+      "width": 492,
+      "height": 671
+    },
+    {
+      "url": "assets/figures/arxiv/2604.19100v1/fig-003.webp",
+      "caption": "Fig. 4. Distribution of convergence time of analog solver and IPOPT solver.",
+      "page": 6,
+      "index": 3,
+      "width": 488,
+      "height": 329
+    },
+    {
+      "url": "assets/figures/arxiv/2604.19100v1/fig-004.webp",
+      "caption": "Fig. 5. Analog solver speed-accuracy trade-off with IPOPT solver.",
+      "page": 6,
+      "index": 4,
+      "width": 495,
+      "height": 319
+    },
+    {
+      "url": "assets/figures/arxiv/2604.19100v1/fig-005.webp",
+      "caption": "TABLE I COMPARISON OF ANALOG SOLVER AND IPOPT SOLVER PERFORMANCE.",
+      "page": 6,
+      "index": 5,
+      "width": 542,
+      "height": 227
+    },
+    {
+      "url": "assets/figures/arxiv/2604.19100v1/fig-006.webp",
+      "caption": "Fig. 1. Circuit schematic for the augmented Lagrangian method to solve the optimization problem in (4). Similarly, the primal-dual and penalty methods can be implemented by short-circuiting Rρ and Cρ, respectively. Component values are R◦ = Rlim = Rγ = 10 kΩ, Rρ = 100 kΩ, Cρ = 10 nF, and Cγ = 100 nF.",
+      "page": 3,
+      "index": 6,
+      "width": 529,
+      "height": 708
+    }
+  ]
+}
