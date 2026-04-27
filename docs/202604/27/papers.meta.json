@@ -1,0 +1,54 @@
+{
+  "label": "2026-04-27",
+  "date": "2026-04-27",
+  "generated_at": "2026-04-27T20:15:23",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202604/27/2604.19993v1-algorithm-and-hardware-co-design-for-efficient-complex-valued-uncertainty-estimation",
+      "section": "quick",
+      "title_en": "Algorithm and Hardware Co-Design for Efficient Complex-Valued Uncertainty Estimation",
+      "authors": "Zehuan Zhang, Mark Chen, He Li, Wayne Luk",
+      "date": "2026-04-21",
+      "pdf": "https://arxiv.org/pdf/2604.19993v1",
+      "score": "6.0",
+      "evidence": "用于硬件实现和不确定性估计的复值神经网络",
+      "tldr": "本研究针对复值神经网络（CVNN）无法量化预测不确定性的问题，首次提出了基于Dropout的贝叶斯复值神经网络（BayesCVNN）。通过算法与硬件协同设计，引入了自动搜索方法来优化实部与虚部的配置，并开发了定制化的FPGA加速器框架。该方案在提升模型性能的同时显著降低了硬件开销，相比GPU实现达到了4.5至13倍的加速，且功耗极低，为复值应用提供了高效的不确定性估计方案。",
+      "tags": "query:si-pi",
+      "abstract_en": "Complex-Valued Neural Networks (CVNNs) have significant advantages in handling tasks that involve complex numbers. However, existing CVNNs are unable to quantify predictive uncertainty. We propose, for the first time, dropout-based Bayesian Complex-Valued Neural Networks (BayesCVNNs) to enable uncertainty quantification for complex-valued applications, exhibiting broad applicability and efficiency for hardware implementation due to modularity. Furthermore, as the dual-part nature of complex values significantly broadens the design space and enables novel configurations based on layer-mixing and part-mixing, we introduce an automated search approach to effectively identify optimal configurations for both real and imaginary components. To facilitate deployment, we present a framework that generates customized FPGA-based accelerators for BayesCVNNs, leveraging a set of optimized building blocks. Experiments demonstrate the best configuration can be effectively found via the automated search, attaining higher performance with lower hardware costs compared with manually crafted models. The optimized accelerators achieve approximately 4.5x and 13x speedups on different models with less than 10% power consumption compared to GPU implementations, and outperform existing work in both algorithm and hardware aspects. Our code is publicly available at: https://github.com/zehuanzhang/BayesCVNN.git.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/27/2604.20497v1-maximum-q-factor-of-planar-inductors",
+      "section": "quick",
+      "title_en": "Maximum Q-factor of planar inductors",
+      "authors": "Mohamed Ismail Abdelrahman, Matteo Ciabattoni, Francesco Monticone",
+      "date": "2026-04-22",
+      "pdf": "https://arxiv.org/pdf/2604.20497v1",
+      "score": "6.0",
+      "evidence": "片上平面电感器的电磁分析与优化",
+      "tldr": "本研究针对射频集成电路中平面电感器受限于芯片面积的问题，利用严谨的电磁分析和凸优化技术，推导出了电感品质因数（Q值）随设计面积变化的理论上限。研究分析了欧姆损耗和辐射损耗的影响，并对比了现有先进设计与理论极限的差距，同时探讨了动量电感在提升性能方面的潜力，为高效紧凑型电感设计提供了理论指导。",
+      "tags": "query:si-pi",
+      "abstract_en": "On-chip inductor design plays a critical role in the advancement of radio-frequency integrated circuits (RFICs). Inductors typically occupy a substantial portion of the chip area as their performance metrics, namely, inductance density and Quality factor ($Q$-factor), are fundamentally tied to the available footprint, thereby limiting miniaturization. To better understand and quantify these limitations, we employ rigorous electromagnetic analysis together with convex optimization techniques to derive a fundamental bound on the maximum achievable $Q$-factor of electrically-small planar inductors as a function of the available design area. The analysis yields analytical expressions for the bound and, via modal analysis techniques, identifies and interprets operational regimes and scaling trends with respect to design area and material conductivity. The analysis accounts for both ohmic and radiation losses, with the latter becoming significant as the inductor size increases. A broad set of state-of-the-art inductor designs from the literature is evaluated against the established $Q$-factor upper bound, identifying designs that approach the theoretical limit as well as those with potential for further improvement. The study is extended to include the effect of kinetic inductance, which offers a promising avenue toward next-generation inductors with higher inductance densities and $Q$-factors. By establishing this benchmark, this work aims to guide and inspire the design of more efficient and compact planar inductors for high-performance RF systems.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/27/2604.21957v1-mambacsp-hybrid-attention-state-space-models-for-hardware-efficient-channel-state-prediction",
+      "section": "quick",
+      "title_en": "MambaCSP: Hybrid-Attention State Space Models for Hardware-Efficient Channel State Prediction",
+      "authors": "Aladin Djuhera, Haris Gacanin, Holger Boche",
+      "date": "2026-04-23",
+      "pdf": "https://arxiv.org/pdf/2604.21957v1",
+      "score": "6.0",
+      "evidence": "用于信道状态预测的机器学习",
+      "tldr": "针对现有基于Transformer的信道状态预测（CSP）模型计算开销大、难以在资源受限的无线设备上实时部署的问题，本文提出MambaCSP。该模型采用线性复杂度的Mamba状态空间模型替代传统LLM骨干，并引入轻量级补丁混合注意力层以增强长程依赖捕获能力。实验表明，MambaCSP在提升预测精度的同时，显著降低了显存占用并提高了推理速度，为未来无线网络提供了高效的AI原生预测方案。",
+      "tags": "query:si-pi",
+      "abstract_en": "Recent works have demonstrated that attention-based transformer and large language model (LLM) architectures can achieve strong channel state prediction (CSP) performance by capturing long-range temporal dependencies across channel state information (CSI) sequences. However, these models suffer from quadratic scaling in sequence length, leading to substantial computational cost, memory consumption, and inference latency, which limits their applicability in real-time and resource-constrained wireless deployments. In this paper, we investigate whether selective state space models (SSMs) can serve as a hardware-efficient alternative for CSI prediction. We propose MambaCSP, a hybrid-attention SSM architecture that replaces LLM-based prediction backbones with a linear-time Mamba model. To overcome the local-only dependencies of pure SSMs, we introduce lightweight patch-mixer attention layers that periodically inject cross-token attentions, helping with long-context CSI prediction. Extensive MISO-OFDM simulations show that MambaCSP improves prediction accuracy over LLM-based approaches by 9-12%, while delivering up to 3.0x higher throughput, 2.6x lower VRAM usage, and 2.9x faster inference. Our results demonstrate that hybrid state space architectures provide a promising direction for scalable and hardware-efficient AI-native CSI prediction in future wireless networks.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

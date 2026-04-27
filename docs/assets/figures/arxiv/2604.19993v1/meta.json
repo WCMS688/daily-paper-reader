@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.19993v1/fig-001.webp",
+      "caption": "Figure 2: Overview of the Framework.",
+      "page": 4,
+      "index": 1,
+      "width": 960,
+      "height": 342
+    },
+    {
+      "url": "assets/figures/arxiv/2604.19993v1/fig-002.webp",
+      "caption": "Table 1: Results on different datasets (R, I, and B represent inserting dropout layers into real, imaginary and both parts).",
+      "page": 5,
+      "index": 2,
+      "width": 1075,
+      "height": 192
+    }
+  ]
+}

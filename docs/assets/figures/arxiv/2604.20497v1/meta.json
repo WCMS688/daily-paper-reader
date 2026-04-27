@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.20497v1/fig-001.webp",
+      "caption": "Fig. 4. Numerical results for the generalized bound, Qm max, which also accounts for the contribution of kinetic inductance, plotted for a square design area with ka = 1/1000 considering a metal of conductivity σ0 = 2 × 108 S/m. The numerical bound (blue curve) exceeds the predictions of the analytical limit for conventional metals (4) (dashed black) in the regime where kinetic inductance becomes significant (ωτ > 1). In contrast, the modified analytical limit (9) (dashed red) is a valid upper bound for the Q-factor in both the magnetic inductance-dominated region (ωτ < 1) and the kinetic inductance-dominated region (ωτ > 1). The inset shows the numerical solution for the optimal current distribution, after including the kinetic inductance contribution (the normalized plot looks the same for any ωτ in the small ka regime) .",
+      "page": 6,
+      "index": 1,
+      "width": 528,
+      "height": 315
+    }
+  ]
+}

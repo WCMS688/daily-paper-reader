@@ -1,0 +1,133 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-27T20:14:31.389509+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.19993v1",
+      "source": "arxiv",
+      "title": "Algorithm and Hardware Co-Design for Efficient Complex-Valued Uncertainty Estimation",
+      "abstract": "Complex-Valued Neural Networks (CVNNs) have significant advantages in handling tasks that involve complex numbers. However, existing CVNNs are unable to quantify predictive uncertainty. We propose, for the first time, dropout-based Bayesian Complex-Valued Neural Networks (BayesCVNNs) to enable uncertainty quantification for complex-valued applications, exhibiting broad applicability and efficiency for hardware implementation due to modularity. Furthermore, as the dual-part nature of complex values significantly broadens the design space and enables novel configurations based on layer-mixing and part-mixing, we introduce an automated search approach to effectively identify optimal configurations for both real and imaginary components. To facilitate deployment, we present a framework that generates customized FPGA-based accelerators for BayesCVNNs, leveraging a set of optimized building blocks. Experiments demonstrate the best configuration can be effectively found via the automated search, attaining higher performance with lower hardware costs compared with manually crafted models. The optimized accelerators achieve approximately 4.5x and 13x speedups on different models with less than 10% power consumption compared to GPU implementations, and outperform existing work in both algorithm and hardware aspects. Our code is publicly available at: https://github.com/zehuanzhang/BayesCVNN.git.",
+      "authors": [
+        "Zehuan Zhang",
+        "Mark Chen",
+        "He Li",
+        "Wayne Luk"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR",
+        "cs.LG"
+      ],
+      "published": "2026-04-21T21:06:00+00:00",
+      "link": "https://arxiv.org/pdf/2604.19993v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Complex-valued neural networks for hardware implementation and uncertainty estimation",
+      "llm_evidence_cn": "用于硬件实现和不确定性估计的复值神经网络",
+      "llm_evidence": "用于硬件实现和不确定性估计的复值神经网络",
+      "canonical_evidence": "用于硬件实现和不确定性估计的复值神经网络",
+      "llm_tldr_en": "Introduces Bayesian Complex-Valued Neural Networks for uncertainty quantification in complex-valued tasks.",
+      "llm_tldr_cn": "引入了贝叶斯复值神经网络，用于复值应用中的不确定性量化。",
+      "llm_tldr": "引入了贝叶斯复值神经网络，用于复值应用中的不确定性量化。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.20497v1",
+      "source": "arxiv",
+      "title": "Maximum Q-factor of planar inductors",
+      "abstract": "On-chip inductor design plays a critical role in the advancement of radio-frequency integrated circuits (RFICs). Inductors typically occupy a substantial portion of the chip area as their performance metrics, namely, inductance density and Quality factor ($Q$-factor), are fundamentally tied to the available footprint, thereby limiting miniaturization. To better understand and quantify these limitations, we employ rigorous electromagnetic analysis together with convex optimization techniques to derive a fundamental bound on the maximum achievable $Q$-factor of electrically-small planar inductors as a function of the available design area. The analysis yields analytical expressions for the bound and, via modal analysis techniques, identifies and interprets operational regimes and scaling trends with respect to design area and material conductivity. The analysis accounts for both ohmic and radiation losses, with the latter becoming significant as the inductor size increases. A broad set of state-of-the-art inductor designs from the literature is evaluated against the established $Q$-factor upper bound, identifying designs that approach the theoretical limit as well as those with potential for further improvement. The study is extended to include the effect of kinetic inductance, which offers a promising avenue toward next-generation inductors with higher inductance densities and $Q$-factors. By establishing this benchmark, this work aims to guide and inspire the design of more efficient and compact planar inductors for high-performance RF systems.",
+      "authors": [
+        "Mohamed Ismail Abdelrahman",
+        "Matteo Ciabattoni",
+        "Francesco Monticone"
+      ],
+      "primary_category": "physics.optics",
+      "categories": [
+        "physics.optics"
+      ],
+      "published": "2026-04-22T12:31:07+00:00",
+      "link": "https://arxiv.org/pdf/2604.20497v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Electromagnetic analysis and optimization of on-chip planar inductors",
+      "llm_evidence_cn": "片上平面电感器的电磁分析与优化",
+      "llm_evidence": "片上平面电感器的电磁分析与优化",
+      "canonical_evidence": "片上平面电感器的电磁分析与优化",
+      "llm_tldr_en": "Derives fundamental bounds for the Q-factor of planar inductors using electromagnetic analysis and convex optimization.",
+      "llm_tldr_cn": "利用电磁分析和凸优化技术推导了平面电感器品质因数的根本限制。",
+      "llm_tldr": "利用电磁分析和凸优化技术推导了平面电感器品质因数的根本限制。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Power integrity and PDN modeling optimization",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.21957v1",
+      "source": "arxiv",
+      "title": "MambaCSP: Hybrid-Attention State Space Models for Hardware-Efficient Channel State Prediction",
+      "abstract": "Recent works have demonstrated that attention-based transformer and large language model (LLM) architectures can achieve strong channel state prediction (CSP) performance by capturing long-range temporal dependencies across channel state information (CSI) sequences. However, these models suffer from quadratic scaling in sequence length, leading to substantial computational cost, memory consumption, and inference latency, which limits their applicability in real-time and resource-constrained wireless deployments. In this paper, we investigate whether selective state space models (SSMs) can serve as a hardware-efficient alternative for CSI prediction. We propose MambaCSP, a hybrid-attention SSM architecture that replaces LLM-based prediction backbones with a linear-time Mamba model. To overcome the local-only dependencies of pure SSMs, we introduce lightweight patch-mixer attention layers that periodically inject cross-token attentions, helping with long-context CSI prediction. Extensive MISO-OFDM simulations show that MambaCSP improves prediction accuracy over LLM-based approaches by 9-12%, while delivering up to 3.0x higher throughput, 2.6x lower VRAM usage, and 2.9x faster inference. Our results demonstrate that hybrid state space architectures provide a promising direction for scalable and hardware-efficient AI-native CSI prediction in future wireless networks.",
+      "authors": [
+        "Aladin Djuhera",
+        "Haris Gacanin",
+        "Holger Boche"
+      ],
+      "primary_category": "cs.IT",
+      "categories": [
+        "cs.IT",
+        "cs.AI",
+        "cs.LG",
+        "eess.SP"
+      ],
+      "published": "2026-04-23T10:05:33+00:00",
+      "link": "https://arxiv.org/pdf/2604.21957v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "machine learning for channel state prediction",
+      "llm_evidence_cn": "用于信道状态预测的机器学习",
+      "llm_evidence": "用于信道状态预测的机器学习",
+      "canonical_evidence": "用于信道状态预测的机器学习",
+      "llm_tldr_en": "Proposes MambaCSP, a hardware-efficient SSM for wireless channel state prediction.",
+      "llm_tldr_cn": "提出了MambaCSP，一种用于无线信道状态预测的高效硬件架构。",
+      "llm_tldr": "提出了MambaCSP，一种用于无线信道状态预测的高效硬件架构。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
