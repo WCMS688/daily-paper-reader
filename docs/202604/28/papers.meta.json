@@ -1,0 +1,69 @@
+{
+  "label": "2026-04-28",
+  "date": "2026-04-28",
+  "generated_at": "2026-04-28T20:55:13",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202604/28/2604.20178v1-design-space-exploration-for-reram-based-architectures-to-address-scaling-non-idealities",
+      "section": "quick",
+      "title_en": "Design Space Exploration for ReRAM-based Architectures to Address Scaling Non-idealities",
+      "authors": "Ching-Yi Lin, Sahil Shah",
+      "date": "2026-04-22",
+      "pdf": "https://arxiv.org/pdf/2604.20178v1",
+      "score": "7.5",
+      "evidence": "对信号路径寄生效应建模并进行系统频率优化",
+      "tldr": "本研究针对基于ReRAM的存内计算架构在扩展规模时面临的寄生效应与外围电路功耗平衡难题，提出了一种高效的设计空间探索框架。该框架通过少量晶体管级仿真提取关键参数，无需详尽仿真即可预测任意架构的性能，从而优化阵列大小、ADC分辨率和系统频率。实验证明，该方法能在严格功耗和误差约束下显著提升能效比，为高性能存内计算设计提供了实用指南。",
+      "tags": "query:si-pi",
+      "abstract_en": "ReRAM-based in-memory computing (IMC) architectures are promising candidates for energy-efficient matrix-vector multiplication. While scaling the size of ReRAM arrays allows for the amortization of power-hungry peripheral circuits like DACs and ADCs, it simultaneously introduces more parasitic along the signal path. Because of these challenges, current design methodologies often lack practical guidelines to balance these effects at early design stage, forcing designers to rely on time-consuming, iterative transistor-level simulations.   In this work, we propose a comprehensive framework for design space exploration that enables the selection of optimal array size, ADC resolution, and system frequency without requiring exhaustive simulations. The framework utilizes a specialized testbench to extract parameters from a limited set of representative transistor-level simulations. These parameters are then used to accurately predict the performance of arbitrary architectures. We demonstrate the effectiveness of this framework through two realistic design cases aimed at maximizing energy efficiency (TOPs/s/W). The results show that the framework successfully identifies optimal architectural configurations under strict power and error constraints, providing an efficient path for high-performance IMC design.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/28/2604.17858v1-joint-phase-noise-and-off-grid-channel-estimation-for-afdm-systems-via-sparse-bayesian-learning",
+      "section": "quick",
+      "title_en": "Joint Phase Noise and Off-Grid Channel Estimation for AFDM Systems via Sparse Bayesian Learning",
+      "authors": "You Xu, Huaijin Zhang, Lixia Xiao, Guanghua Liu, Zilong Liu",
+      "date": "2026-04-20",
+      "pdf": "https://arxiv.org/pdf/2604.17858v1",
+      "score": "6.5",
+      "evidence": "高速通信系统的信道估计与降噪",
+      "tldr": "提出一种用于联合相位噪声和信道估计的稀疏贝叶斯学习方法。",
+      "tags": "query:si-pi",
+      "abstract_en": "In practical affine frequency division multiplexing (AFDM) systems, the intricate coupling of oscillator phase noise (PN) and off-grid fractional shifts traps conventional estimators in a severe high-SNR error floor. To address these challenges, we propose a joint PN and channel estimation method based on sparse Bayesian learning (JPNCE-SBL). Specifically, a reduced-rank subspace projection is first introduced to capture the dominant eigen-energy of the Wiener PN process. Concurrently, a dynamic grid evolution strategy is designed to iteratively eliminate off-grid errors without requiring computationally prohibitive global grid densification. Both components are integrated into a unified Expectation-Maximization (EM) framework, where the channel and PN estimates are jointly updated at each iteration to prevent error propagation. Simulation results demonstrate that JPNCE-SBL significantly outperforms existing benchmarks in both NMSE and BER, closely approaching the perfect channel state information case under practical PN conditions.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/28/2604.20916v1-analogmaster-large-language-model-based-automated-analog-ic-design-framework-from-image-to-layout",
+      "section": "quick",
+      "title_en": "AnalogMaster: Large Language Model-based Automated Analog IC Design Framework from Image to Layout",
+      "authors": "Xian Rong Qin, Yong Zhang, Ying Hu, Tao Su, Bo-Wen Jia, Ning Xu",
+      "date": "2026-04-22",
+      "pdf": "https://arxiv.org/pdf/2604.20916v1",
+      "score": "6.0",
+      "evidence": "从图像到布局的自动化模拟集成电路设计框架",
+      "tldr": "本研究针对模拟集成电路设计自动化中工具链破碎、人工干预多等挑战，提出了基于大语言模型的全流程自动化框架AnalogMaster。该框架实现了从电路原理图图像到网表生成、参数优化、布局及布线的端到端转换。通过引入联合推理机制和自增强提示工程，AnalogMaster在多种复杂电路上表现优异，显著提升了设计效率，为全栈模拟IC设计自动化建立了实用的新范式。",
+      "tags": "query:si-pi",
+      "abstract_en": "Design automation has the potential to substantially improve the efficiency of analog integrated circuit (IC) design. However, existing algorithms and tools typically focus on individual stages, such as device sizing, placement, or routing, and still require significant manual intervention to complete the full design flow. While large language models (LLMs) have recently demonstrated remarkable success in automating digital IC design workflows, these advances cannot be directly transferred to analog IC design. Key challenges include strongly coupled performance metrics, the predominance of unstructured circuit schematic images, and the fact that most prior approaches address only isolated stages of the analog design process, limiting their ability to capture end-to-end performance impact. To address these challenges, we propose AnalogMaster, an extensible, LLM-based framework that enables end-to-end automation of analog IC design through a unified pipeline spanning circuit image-to-netlist generation, parameter optimization, placement, and routing. AnalogMaster integrates a joint reasoning mechanism that leverages in-context learning and intent reasoning to achieve accurate and robust image-to-netlist conversion. A parameter search agent integrating self-enhanced prompt engineering and context truncation is developed for effective device sizing and downstream physical design. Experimental evaluations on 15 representative circuits with varying levels of complexity demonstrate strong and consistent performance across multiple models. In particular, GPT-5 achieves success rates of 92.9% and 99.9% on Pass@1 and Pass@5, respectively. These results validate the effectiveness and robustness of the proposed framework and establish a practical paradigm for applying LLMs to full-stack analog IC design automation.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/28/2604.23658v1-flowplace-flow-matching-for-chip-placement",
+      "section": "quick",
+      "title_en": "FlowPlace: Flow Matching for Chip Placement",
+      "authors": "Peng Xie, Ke Xue, Yunqi Shi, Ruo-Tong Chen, Chengrui Gao, Siyuan Xu, Chenjian Ding, Mingxuan Yuan, Chao Qian",
+      "date": "2026-04-26",
+      "pdf": "https://arxiv.org/pdf/2604.23658v1",
+      "score": "6.0",
+      "evidence": "用于芯片布局和物理设计优化的生成模型",
+      "tldr": "针对芯片布局中生成式模型存在的采样慢、重叠多及预训练数据质量低等问题，本文提出FlowPlace。该方法利用掩码引导生成合成数据，采用流匹配技术实现高效训练并引入先验知识，结合硬约束采样确保布局无重叠。实验证明其在PPA指标上表现优异，采样速度提升10-50倍且实现了零重叠。",
+      "tags": "query:si-pi",
+      "abstract_en": "Chip placement plays an important role in physical design. While generative models like diffusion models offer promising learning-based solutions, current methods have the following limitations: they use random synthetic data for pre-training, require long sampling times, and often result in overlaps due to their dependence on gradient-based solvers during the sampling process. To overcome these issues, we propose FlowPlace, which features mask-guided synthetic data generation, flow-based efficient training with flexible prior injection, and hard constraint sampling for overlap-free layouts. Experiments on OpenROAD and ICCAD 2015 benchmarks show FlowPlace achieves better PPA metrics, 10-50$\\times$ faster sampling efficiency, and zero overlaps.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

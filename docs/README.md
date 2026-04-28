@@ -6,32 +6,35 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-27
-- 运行时间：2026-04-27 20:15:11 UTC
+- 最新运行日期：2026-04-28
+- 运行时间：2026-04-28 20:54:48 UTC
 - 运行状态：成功
-- 本次总论文数：3
+- 本次总论文数：4
 - 精读区：0
-- 速读区：3
+- 速读区：4
 
 ### 今日简报（AI）
-今日聚焦硬件高效的算法协同设计，涵盖了复数域不确定性估计、电感优化及信道预测前沿。
-重点关注 Mamba 模型在信道预测中的硬件加速应用，以及复数域不确定性估计的软硬协同优化方案。
-建议普通读者关注状态空间模型（SSM）在通信物理层及低功耗硬件环境下的落地潜力。
-- 详情：[/202604/27/README](/202604/27/README)
+今日聚焦 ReRAM 架构优化、AFDM 通信增强及大模型驱动的模拟电路自动化设计。
+核心看点在于 ReRAM 缩放非理想性的设计空间探索，以及 AnalogMaster 框架如何实现从图像到版图的端到端模拟 IC 自动生成。
+建议关注 AI 与芯片设计的深度融合，特别是大模型在简化复杂模拟电路流程中的突破性应用。
+- 详情：[/202604/28/README](/202604/28/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Algorithm and Hardware Co-Design for Efficient Complex-Valued Uncertainty Estimation](/202604/27/2604.19993v1-algorithm-and-hardware-co-design-for-efficient-complex-valued-uncertainty-estimation)  
+1. [Design Space Exploration for ReRAM-based Architectures to Address Scaling Non-idealities](/202604/28/2604.20178v1-design-space-exploration-for-reram-based-architectures-to-address-scaling-non-idealities)  
+   标签：评分：7.5/10、query:si-pi
+   evidence：对信号路径寄生效应建模并进行系统频率优化
+2. [Joint Phase Noise and Off-Grid Channel Estimation for AFDM Systems via Sparse Bayesian Learning](/202604/28/2604.17858v1-joint-phase-noise-and-off-grid-channel-estimation-for-afdm-systems-via-sparse-bayesian-learning)  
+   标签：评分：6.5/10、query:si-pi
+   evidence：高速通信系统的信道估计与降噪
+3. [AnalogMaster: Large Language Model-based Automated Analog IC Design Framework from Image to Layout](/202604/28/2604.20916v1-analogmaster-large-language-model-based-automated-analog-ic-design-framework-from-image-to-layout)  
    标签：评分：6.0/10、query:si-pi
-   evidence：用于硬件实现和不确定性估计的复值神经网络
-2. [Maximum Q-factor of planar inductors](/202604/27/2604.20497v1-maximum-q-factor-of-planar-inductors)  
+   evidence：从图像到布局的自动化模拟集成电路设计框架
+4. [FlowPlace: Flow Matching for Chip Placement](/202604/28/2604.23658v1-flowplace-flow-matching-for-chip-placement)  
    标签：评分：6.0/10、query:si-pi
-   evidence：片上平面电感器的电磁分析与优化
-3. [MambaCSP: Hybrid-Attention State Space Models for Hardware-Efficient Channel State Prediction](/202604/27/2604.21957v1-mambacsp-hybrid-attention-state-space-models-for-hardware-efficient-channel-state-prediction)  
-   标签：评分：6.0/10、query:si-pi
-   evidence：用于信道状态预测的机器学习
+   evidence：用于芯片布局和物理设计优化的生成模型
 
 
 <div class="dpr-home-promo-card">

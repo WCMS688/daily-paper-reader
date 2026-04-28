@@ -1,0 +1,126 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.20916v1/fig-001.webp",
+      "caption": "Figure 6: Intent reasoning process for netlist synthesis, which demonstrates how intent reasoning extracts the correct components from three incorrect netlist results and combines them to form a fully accurate netlist.",
+      "page": 11,
+      "index": 1,
+      "width": 568,
+      "height": 464
+    },
+    {
+      "url": "assets/figures/arxiv/2604.20916v1/fig-002.webp",
+      "caption": "Figure 9: Comparison of circuit element detection in different datasets. (a) Circuit image from the dataset used in MasaCHAI(Bhandari et al., 2024a). (b) Wire-only image derived from the dataset in (a). (c) Circuit image from our dataset. (d) Wire-only image derived from our dataset.",
+      "page": 15,
+      "index": 2,
+      "width": 843,
+      "height": 229
+    },
+    {
+      "url": "assets/figures/arxiv/2604.20916v1/fig-003.webp",
+      "caption": "Figure 4: A prompt guiding the MLLM to follow the CoT approach for sequentially analyzing a circuit image and extracting a netlist. The diagram illustrates the step-by-step process the model follows to identify components, analyze terminal connectivity, and generate the netlist from the circuit image.",
+      "page": 10,
+      "index": 3,
+      "width": 859,
+      "height": 515
+    },
+    {
+      "url": "assets/figures/arxiv/2604.20916v1/fig-004.webp",
+      "caption": "Figure 8: Comparison before and after context truncation. This diagram demonstrates the process of removing redundant historical tool messages and retaining only the most relevant information, such as the TODO list and the latest tool message.",
+      "page": 14,
+      "index": 4,
+      "width": 648,
+      "height": 216
+    },
+    {
+      "url": "assets/figures/arxiv/2604.20916v1/fig-005.webp",
+      "caption": "Table 4: Main Results. We evaluated the task completion performance of the AnalogMaster framework using four models, namely Qwen-VL-Max, GLM-4.5V, GPT-4o-mini, and GPT-5, respectively.",
+      "page": 18,
+      "index": 5,
+      "width": 750,
+      "height": 471
+    },
+    {
+      "url": "assets/figures/arxiv/2604.20916v1/fig-006.webp",
+      "caption": "Figure 10: Full execution example of the proposed AnalogMaster framework. (a) Original circuit image. (b) Annotated circuit image with identified components and nodes. (c) Generated netlist based on joint reasoning. (d) Parameter space configuration based on the agent. (e) Initial placement of components. (f) Final placement of components after SA. (g) Final layout after routing using A*.",
+      "page": 18,
+      "index": 6,
+      "width": 775,
+      "height": 410
+    },
+    {
+      "url": "assets/figures/arxiv/2604.20916v1/fig-007.webp",
+      "caption": "Figure 1: Workflows of AnalogMaster: The circuit image, preprocessed via YOLO-based detection and connectivity analysis, is converted into a netlist using the proposed joint reasoning mechanism. A parameter search agent compresses the device parameter space, followed by BO for sizing, SA for placement, and A* for routing—enabling a fully automated design flow.",
+      "page": 8,
+      "index": 7,
+      "width": 773,
+      "height": 512
+    },
+    {
+      "url": "assets/figures/arxiv/2604.20916v1/fig-008.webp",
+      "caption": "Figure 2: The process flow for circuit image analysis. (a) Original circuit image. (b) YOLO-based detection of components in the circuit. (c) Text detection using OCR to identify labeled components. (d) Wire-only image extracted from the circuit. (e) Electrical regions extraction showing nodes and their connections. (f) Annotated circuit image with labeled nodes and components.",
+      "page": 8,
+      "index": 8,
+      "width": 515,
+      "height": 291
+    },
+    {
+      "url": "assets/figures/arxiv/2604.20916v1/fig-009.webp",
+      "caption": "Table 5: Performance comparison of MasaCHAI and AnalogMaster under Qwen-VL-Max and GLM-4.6V.",
+      "page": 19,
+      "index": 9,
+      "width": 750,
+      "height": 492
+    },
+    {
+      "url": "assets/figures/arxiv/2604.20916v1/fig-010.webp",
+      "caption": "Table 6: Performance Comparison of Component Recognition Accuracy (%)",
+      "page": 19,
+      "index": 10,
+      "width": 979,
+      "height": 196
+    },
+    {
+      "url": "assets/figures/arxiv/2604.20916v1/fig-011.webp",
+      "caption": "Figure 7: Illustration of context compression using an LLM. The diagram shows how raw context is summarized into a compressed context, enabling more efficient processing and reasoning.",
+      "page": 12,
+      "index": 11,
+      "width": 781,
+      "height": 315
+    },
+    {
+      "url": "assets/figures/arxiv/2604.20916v1/fig-012.webp",
+      "caption": "Figure 3: Overview of the Joint Reasoning workflow. Three heterogeneous inputs are processed via parallel MLLM reasoning branches, followed by multi-branch result synthesis to generate accurate netlists. Compact contextual information is further extracted to facilitate downstream Bayesian optimization.",
+      "page": 9,
+      "index": 12,
+      "width": 750,
+      "height": 459
+    },
+    {
+      "url": "assets/figures/arxiv/2604.20916v1/fig-013.webp",
+      "caption": "Table 1: Comparison of Recent LLM-based Methods for Analog IC Design",
+      "page": 5,
+      "index": 13,
+      "width": 968,
+      "height": 365
+    },
+    {
+      "url": "assets/figures/arxiv/2604.20916v1/fig-014.webp",
+      "caption": "Table 3: Benchmark Description. All circuit task descriptions with varying difficulty levels are listed herein. The difficulty is categorized into three levels:Easy, Medium, and Difficult.",
+      "page": 16,
+      "index": 14,
+      "width": 535,
+      "height": 541
+    },
+    {
+      "url": "assets/figures/arxiv/2604.20916v1/fig-015.webp",
+      "caption": "Table 2: Parameter of traing YOLO",
+      "page": 16,
+      "index": 15,
+      "width": 421,
+      "height": 335
+    }
+  ]
+}

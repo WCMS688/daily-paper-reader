@@ -1,0 +1,30 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.20178v1/fig-001.webp",
+      "caption": "Fig. 4: (a-b) RMSE distribution for a smaller 64×64 array and a larger 256×256 array. (c) Normalized RMSE as a function of normalized array size. The consistency of curves demonstrates the same error distribution for various array size N",
+      "page": 3,
+      "index": 1,
+      "width": 525,
+      "height": 399
+    },
+    {
+      "url": "assets/figures/arxiv/2604.20178v1/fig-002.webp",
+      "caption": "Fig. 5: (a) RMSE-vs-size in different ADC resolution (b) RMSE-vs-resolution in different array size N",
+      "page": 3,
+      "index": 2,
+      "width": 498,
+      "height": 323
+    },
+    {
+      "url": "assets/figures/arxiv/2604.20178v1/fig-003.webp",
+      "caption": "Fig. 2: Testbench setup: (a) Each input DAC sequentially applies a triangular wave, and each output ADC collects the aggregated current (b) The reference current is obtained from an isolated, parasitic-free ReRAM cell with the same input (c) Transient current response for different locations within the array",
+      "page": 2,
+      "index": 3,
+      "width": 524,
+      "height": 316
+    }
+  ]
+}
