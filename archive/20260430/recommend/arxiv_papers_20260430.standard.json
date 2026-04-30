@@ -1,0 +1,187 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-30T20:10:58.972206+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.26438v1",
+      "source": "arxiv",
+      "title": "CONCERTO : Optimization of readout electronics",
+      "abstract": "The CONCERTO millimeter-wave spectral-imaging instrument was deployed on the Atacama Pathfinder EXperiment (APEX), where it acquired science data between April 2021 and May 2023. The instrument features two focal-plane arrays, each composed of 2400 Microwave Kinetic Inductance Detectors (MKIDs). Each array is divided into six feedlines containing 400 MKIDs each, with each feedline read out by a dedicated FPGA-based board, KID_READOUT. The next-generation instrument aims to double the detector count per feedline, increasing it from 400 to 800 MKIDs. Achieving this requires a substantial scaling of the readout architecture and poses two key challenges for KID_READOUT: maintaining readout signal integrity and constraining firmware resource usage, as a direct upscaling of the existing design would exceed the available FPGA capacity. To overcome these limitations, we developed a Python-based, cycle-and bit-accurate digital twin of the full FPGA digital signal processing chain. This model enabled a detailed investigation of internal signal behavior and provided quantitative guidance for firmware optimization. Leveraging these insights, we identified the source of two spurs present in CONCERTO data and significantly reduced their amplitudes. At the same time, we achieved substantial reductions in firmware resource usage-39.0%pt in LUTs, 20.3%pt in flip-flops, and 28.98%pt in DSP slices-without degrading readout performance. The resulting architecture supports more than 800 MKIDs per feedline on the same hardware platform while preserving readout signal quality, offering a scalable and resource-efficient solution for future high-resolution millimeter-wave astronomical instruments.",
+      "authors": [
+        "Mounir Abdkrimi",
+        "Olivier Rossetto",
+        "Olivier Bourrion",
+        "Christophe Hoarau",
+        "Christophe Vescovi"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP"
+      ],
+      "published": "2026-04-29T08:49:31+00:00",
+      "link": "https://arxiv.org/pdf/2604.26438v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 7.5,
+      "llm_evidence_en": "maintaining readout signal integrity in FPGA-based electronics",
+      "llm_evidence_cn": "在基于FPGA的电子设备中维护读取信号完整性",
+      "llm_evidence": "在基于FPGA的电子设备中维护读取信号完整性",
+      "canonical_evidence": "在基于FPGA的电子设备中维护读取信号完整性",
+      "llm_tldr_en": "Optimizes readout electronics for millimeter-wave imaging while addressing signal integrity challenges.",
+      "llm_tldr_cn": "优化毫米波成像读取电路，同时解决信号完整性挑战。",
+      "llm_tldr": "优化毫米波成像读取电路，同时解决信号完整性挑战。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Signal integrity analysis for high-speed interconnects",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.23204v1",
+      "source": "arxiv",
+      "title": "Adaptive Spatial-Temporal Graph Learning-Enabled Short-Term Voltage Stability Assessment against Time-Varying Topological Conditions",
+      "abstract": "The emerging deep learning (DL) technology has recently exhibited great potential in data-driven short-term voltage stability (SVS) assessment of complex power grids. However, without sufficient attention to the time-varying topological structures of today's power grids, the majority of existing DL-based SVS assessment schemes could experience severe performance degradation in practice. To address this drawback, this paper proposes an adaptive spatial-temporal graph learning-enabled SVS assessment approach that can adapt well to various topological changes. First, considering the time-varying topological conditions of a given power grid, an adaptive graph representation matrix is automatically learned to effectively capture the complicated spatial correlations between individual buses within the grid. Then, to help better capture regional SVS features for subsequent learning processes, the adaptive graph representation matrix is properly adjusted by introducing a spatial attention mechanism. Further, with post-fault system trajectory data linked together via attention-based graph representation, a residual spatiotemporal graph convolutional network is carefully built with Optuna-based optimization to deeply mine system-wide spatiotemporal features and thus achieve structure-adaptive SVS assessment. Numerical test results on two representative sub-systems of a realistic provincial power grid in South China demonstrate the efficacy of the proposed approach under various changing topological conditions.",
+      "authors": [
+        "Chao Deng",
+        "Lipeng Zhu",
+        "Chang Liu",
+        "Hefeng Zhai",
+        "Baoye Tian",
+        "Zexiang Zhu",
+        "Jiayong Li",
+        "Cong Zhang"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-04-25T08:29:27+00:00",
+      "link": "https://arxiv.org/pdf/2604.23204v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Adaptive spatial-temporal graph learning for voltage stability assessment in power grids",
+      "llm_evidence_cn": "用于电网电压稳定性评估的自适应时空图学习",
+      "llm_evidence": "用于电网电压稳定性评估的自适应时空图学习",
+      "canonical_evidence": "用于电网电压稳定性评估的自适应时空图学习",
+      "llm_tldr_en": "Applies adaptive graph learning to assess short-term voltage stability in complex power grid topologies.",
+      "llm_tldr_cn": "应用自适应图学习来评估复杂电网拓扑中的短期电压稳定性。",
+      "llm_tldr": "应用自适应图学习来评估复杂电网拓扑中的短期电压稳定性。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.26821v1",
+      "source": "arxiv",
+      "title": "Exploring the Efficiency of 3D-Stacked AI Chip Architecture for LLM Inference with Voxel",
+      "abstract": "To overcome the well-known memory bottleneck of AI chips, 3D stacked architectures that employ advanced packaging technology with high-density through-silicon vias (TSVs) pins have proven to be a promising solution. The 3D-stacked AI chip enables ultra-high memory bandwidth between compute and memory by stacking numerous DRAM banks atop many AI cores in a distributed manner. However, it is not easy to explore the efficiency of the 3D-stacked AI chip, due to its unique distributed nature. And we need to carefully consider multiple intertwined factors that range from upper-level computing paradigm to machine learning (ML) compiler optimizations, and to the underlying hardware architecture.   In this paper, we develop Voxel, a fast and compiler-aware end-to-end simulation framework to facilitate exploring the efficiency of 3D-stacked AI chips for large language model (LLM) inference. Voxel enables the software/hardware co-exploration by employing a programming interface that allows ML compilers to customize the model execution plans. After validating the results of Voxel with an emulator on real silicon, we thoroughly examine the impact and correlation of different aspects of 3D-stacked AI chips, including state-of-the-art compute paradigms, tile-to-core mapping, tensor-to-bank mapping, NoC topologies and link bandwidth, DRAM bank bandwidth, per-core SRAM capacity, and energy/thermal constraints. Our findings disclose that the end-to-end efficiency of a 3D stacked AI chip not only is determined by the cooperative function of these factors, but also significantly depends on the mappings from tiles to AI core and DRAM banks. We report our findings throughout the paper, with the expectation that they will shed light on the development of the 3D-stacked AI chip ecosystem. We will open source Voxel and our study results for public research.",
+      "authors": [
+        "Yiqi Liu",
+        "Noelle Crawford",
+        "Michael Wang",
+        "Jilong Xue",
+        "Jian Huang"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR",
+        "cs.DC"
+      ],
+      "published": "2026-04-29T15:48:46+00:00",
+      "link": "https://arxiv.org/pdf/2604.26821v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "3D stacked architectures with high-density through-silicon vias (TSVs) pins",
+      "llm_evidence_cn": "采用高密度硅通孔（TSV）引脚的3D堆叠架构",
+      "llm_evidence": "采用高密度硅通孔（TSV）引脚的3D堆叠架构",
+      "canonical_evidence": "采用高密度硅通孔（TSV）引脚的3D堆叠架构",
+      "llm_tldr_en": "Develops Voxel to explore the efficiency of 3D-stacked AI chips using advanced packaging and TSV technology.",
+      "llm_tldr_cn": "开发了Voxel，用于探索采用先进封装和TSV技术的3D堆叠AI芯片的效率。",
+      "llm_tldr": "开发了Voxel，用于探索采用先进封装和TSV技术的3D堆叠AI芯片的效率。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "SI/PI analysis for 2.5D 3D and Chiplet packaging",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.26103v1",
+      "source": "arxiv",
+      "title": "AMMA: A Multi-Chiplet Memory-Centric Architecture for Low-Latency 1M Context Attention Serving",
+      "abstract": "All current LLM serving systems place the GPU at the center, from production-level attention-FFN disaggregation to NVIDIA's Rubin GPU-LPU heterogeneous platform. Even academic PIM/PNM proposals still treat the GPU as the central hub for cross-device communication. Yet the GPU's compute-rich architecture is fundamentally mismatched with the memory-bound nature of decode-phase attention, inflating serving latency while wasting power and die area on idle compute units. The problem is compounded as reasoning and agentic workloads push context lengths toward one million tokens, making attention latency the primary user-facing bottleneck.   To address these inefficiencies, we present AMMA, a multi-chiplet, memory-centric architecture for low-latency long-context attention. AMMA replaces GPU compute dies with HBM-PNM cubes, roughly doubling the available memory bandwidth to better serve memory-bound attention workloads. To translate this bandwidth into proportional performance gains, we introduce (i) a logic-die microarchitecture that fully exploits per-cube internal bandwidth for decode attention under a minimal power and area budget, (ii) a two-level hybrid parallelism scheme, and (iii) a reordered collective flow that reduces intra-chip die-to-die communication overhead. We further conduct a design-space exploration over per-cube compute power and intra-chip D2D link bandwidth, providing actionable guidance for hardware designers. Evaluations show that AMMA achieves 15.5X lower attention latency and 6.9X lower energy consumption compared with the NVIDIA H100.",
+      "authors": [
+        "Zhongkai Yu",
+        "Haotian Ye",
+        "Chenyang Zhou",
+        "Ohm Rishabh Venkatachalam",
+        "Zaifeng Pan",
+        "Zhengding Hu",
+        "Junsung Kim",
+        "Won Woo Ro",
+        "Po-An Tsai",
+        "Shuyi Pei",
+        "Yangwook Kang",
+        "Yufei Ding"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR",
+        "cs.AI",
+        "cs.DC",
+        "cs.LG"
+      ],
+      "published": "2026-04-28T20:36:50+00:00",
+      "link": "https://arxiv.org/pdf/2604.26103v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Multi-chiplet architecture and cross-device communication for memory-bound workloads",
+      "llm_evidence_cn": "针对内存受限工作负载的多芯粒架构和跨设备通信",
+      "llm_evidence": "针对内存受限工作负载的多芯粒架构和跨设备通信",
+      "canonical_evidence": "针对内存受限工作负载的多芯粒架构和跨设备通信",
+      "llm_tldr_en": "AMMA is a multi-chiplet architecture designed to reduce latency in memory-centric LLM serving.",
+      "llm_tldr_cn": "AMMA是一种多芯粒架构，旨在降低以内存为中心的LLM推理延迟。",
+      "llm_tldr": "AMMA是一种多芯粒架构，旨在降低以内存为中心的LLM推理延迟。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "SI/PI analysis for 2.5D 3D and Chiplet packaging",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.26438v1/fig-001.webp",
+      "caption": "Figure 8: SINAD and SFDR as functions of number of iterations for different bit widths.",
+      "page": 11,
+      "index": 1,
+      "width": 673,
+      "height": 392
+    },
+    {
+      "url": "assets/figures/arxiv/2604.26438v1/fig-002.webp",
+      "caption": "Figure 4: Block diagram of the three measurement setups. Colored paths indicate the feedback routes specific to each setup.",
+      "page": 7,
+      "index": 2,
+      "width": 895,
+      "height": 234
+    },
+    {
+      "url": "assets/figures/arxiv/2604.26438v1/fig-003.webp",
+      "caption": "Figure 7: Comparison of measured amplitude and phase noise PSDs using Setup 3, between the original firmware (a) and the proposed modified firmware (b).",
+      "page": 10,
+      "index": 3,
+      "width": 877,
+      "height": 691
+    },
+    {
+      "url": "assets/figures/arxiv/2604.26438v1/fig-004.webp",
+      "caption": "Figure 1: Overview of the instrumentation chain.",
+      "page": 3,
+      "index": 4,
+      "width": 804,
+      "height": 288
+    },
+    {
+      "url": "assets/figures/arxiv/2604.26438v1/fig-005.webp",
+      "caption": "Figure 11: Comparison of the measured amplitude and phase noise PSDs using the CONCERTO instrument, between the original firmware ((a) and (b)) and the optimized firmware ((c) and (d)). A representative tone from each of the 10 frequency bands is shown.",
+      "page": 18,
+      "index": 5,
+      "width": 890,
+      "height": 864
+    },
+    {
+      "url": "assets/figures/arxiv/2604.26438v1/fig-006.webp",
+      "caption": "Figure 9: Comparison of the measured amplitude and phase noise PSDs using Setup 3 (see Fig. 4), between (a) the original 10-bit, 10-iteration CORDIC firmware, and (b) the proposed modified firmware using a 6-bit, 3-iteration configuration. Both implementing the 65,520 samples solution. A representative tone from each of the 10 frequency bands is shown.",
+      "page": 13,
+      "index": 6,
+      "width": 877,
+      "height": 686
+    },
+    {
+      "url": "assets/figures/arxiv/2604.26438v1/fig-007.webp",
+      "caption": "Figure 5: Comparison of measured amplitude and phase noise PSD using Setup 1, between the original firmware (a) and the proposed modified firmware (b). A representative tone from each of the 10 frequency bands is shown.",
+      "page": 8,
+      "index": 7,
+      "width": 877,
+      "height": 673
+    },
+    {
+      "url": "assets/figures/arxiv/2604.26438v1/fig-008.webp",
+      "caption": "Table 2: FPGA resource utilization for the entire readout firmware, evaluating different bit width and iteration configurations of the CORDIC implementation.",
+      "page": 12,
+      "index": 8,
+      "width": 546,
+      "height": 508
+    },
+    {
+      "url": "assets/figures/arxiv/2604.26438v1/fig-009.webp",
+      "caption": "Figure 6: Comparison of measured amplitude and phase noise PSDs using Setup 2, between the original firmware (a) and the proposed modified firmware (b).",
+      "page": 9,
+      "index": 9,
+      "width": 877,
+      "height": 674
+    },
+    {
+      "url": "assets/figures/arxiv/2604.26438v1/fig-010.webp",
+      "caption": "Figure 10: Comparison of the measured amplitude and phase noise PSDs using Setup 3 (see Fig. 4), between (a) the DDC approach and (b) the proposed square-wave demodulation approach. Both implementations use the 6 bits, 3 iterations CORDIC configuration and the 65,520 samples solution. A representative tone from each of the 10 frequency bands is shown.",
+      "page": 16,
+      "index": 10,
+      "width": 877,
+      "height": 703
+    }
+  ]
+}

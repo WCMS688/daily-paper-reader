@@ -1,0 +1,69 @@
+{
+  "label": "2026-04-30",
+  "date": "2026-04-30",
+  "generated_at": "2026-04-30T20:11:58",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202604/30/2604.26438v1-concerto--optimization-of-readout-electronics",
+      "section": "quick",
+      "title_en": "CONCERTO : Optimization of readout electronics",
+      "authors": "Mounir Abdkrimi, Olivier Rossetto, Olivier Bourrion, Christophe Hoarau, Christophe Vescovi",
+      "date": "2026-04-29",
+      "pdf": "https://arxiv.org/pdf/2604.26438v1",
+      "score": "7.5",
+      "evidence": "在基于FPGA的电子设备中维护读取信号完整性",
+      "tldr": "CONCERTO毫米波光谱成像仪旨在将其MKID探测器密度翻倍。为解决FPGA资源限制和信号完整性挑战，研究团队开发了基于Python的数字孪生模型，对DSP链进行精确模拟。通过该模型优化固件，成功消除了数据杂散并大幅降低了硬件资源占用，实现了在同一硬件平台上支持每条馈线超过800个探测器，为未来高分辨率天文仪器提供了高效扩展方案。",
+      "tags": "query:si-pi",
+      "abstract_en": "The CONCERTO millimeter-wave spectral-imaging instrument was deployed on the Atacama Pathfinder EXperiment (APEX), where it acquired science data between April 2021 and May 2023. The instrument features two focal-plane arrays, each composed of 2400 Microwave Kinetic Inductance Detectors (MKIDs). Each array is divided into six feedlines containing 400 MKIDs each, with each feedline read out by a dedicated FPGA-based board, KID_READOUT. The next-generation instrument aims to double the detector count per feedline, increasing it from 400 to 800 MKIDs. Achieving this requires a substantial scaling of the readout architecture and poses two key challenges for KID_READOUT: maintaining readout signal integrity and constraining firmware resource usage, as a direct upscaling of the existing design would exceed the available FPGA capacity. To overcome these limitations, we developed a Python-based, cycle-and bit-accurate digital twin of the full FPGA digital signal processing chain. This model enabled a detailed investigation of internal signal behavior and provided quantitative guidance for firmware optimization. Leveraging these insights, we identified the source of two spurs present in CONCERTO data and significantly reduced their amplitudes. At the same time, we achieved substantial reductions in firmware resource usage-39.0%pt in LUTs, 20.3%pt in flip-flops, and 28.98%pt in DSP slices-without degrading readout performance. The resulting architecture supports more than 800 MKIDs per feedline on the same hardware platform while preserving readout signal quality, offering a scalable and resource-efficient solution for future high-resolution millimeter-wave astronomical instruments.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/30/2604.26821v1-exploring-the-efficiency-of-3d-stacked-ai-chip-architecture-for-llm-inference-with-voxel",
+      "section": "quick",
+      "title_en": "Exploring the Efficiency of 3D-Stacked AI Chip Architecture for LLM Inference with Voxel",
+      "authors": "Yiqi Liu, Noelle Crawford, Michael Wang, Jilong Xue, Jian Huang",
+      "date": "2026-04-29",
+      "pdf": "https://arxiv.org/pdf/2604.26821v1",
+      "score": "7.0",
+      "evidence": "采用高密度硅通孔（TSV）引脚的3D堆叠架构",
+      "tldr": "针对AI芯片面临的内存瓶颈，本文探讨了利用3D堆叠架构提升大语言模型（LLM）推理效率的潜力。研究团队开发了名为Voxel的快速、编译器感知的端到端仿真框架，支持软硬件协同探索。通过在真实芯片仿真器上验证，Voxel深入分析了计算范式、数据映射、片上网络及能效约束等因素对性能的影响，揭示了映射策略在3D堆叠芯片生态中的关键作用。",
+      "tags": "query:si-pi",
+      "abstract_en": "To overcome the well-known memory bottleneck of AI chips, 3D stacked architectures that employ advanced packaging technology with high-density through-silicon vias (TSVs) pins have proven to be a promising solution. The 3D-stacked AI chip enables ultra-high memory bandwidth between compute and memory by stacking numerous DRAM banks atop many AI cores in a distributed manner. However, it is not easy to explore the efficiency of the 3D-stacked AI chip, due to its unique distributed nature. And we need to carefully consider multiple intertwined factors that range from upper-level computing paradigm to machine learning (ML) compiler optimizations, and to the underlying hardware architecture.   In this paper, we develop Voxel, a fast and compiler-aware end-to-end simulation framework to facilitate exploring the efficiency of 3D-stacked AI chips for large language model (LLM) inference. Voxel enables the software/hardware co-exploration by employing a programming interface that allows ML compilers to customize the model execution plans. After validating the results of Voxel with an emulator on real silicon, we thoroughly examine the impact and correlation of different aspects of 3D-stacked AI chips, including state-of-the-art compute paradigms, tile-to-core mapping, tensor-to-bank mapping, NoC topologies and link bandwidth, DRAM bank bandwidth, per-core SRAM capacity, and energy/thermal constraints. Our findings disclose that the end-to-end efficiency of a 3D stacked AI chip not only is determined by the cooperative function of these factors, but also significantly depends on the mappings from tiles to AI core and DRAM banks. We report our findings throughout the paper, with the expectation that they will shed light on the development of the 3D-stacked AI chip ecosystem. We will open source Voxel and our study results for public research.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/30/2604.23204v1-adaptive-spatial-temporal-graph-learning-enabled-short-term-voltage-stability-assessment-against-time-varying-topological-conditions",
+      "section": "quick",
+      "title_en": "Adaptive Spatial-Temporal Graph Learning-Enabled Short-Term Voltage Stability Assessment against Time-Varying Topological Conditions",
+      "authors": "Chao Deng, Lipeng Zhu, Chang Liu, Hefeng Zhai, Baoye Tian, Zexiang Zhu, Jiayong Li, Cong Zhang",
+      "date": "2026-04-25",
+      "pdf": "https://arxiv.org/pdf/2604.23204v1",
+      "score": "6.0",
+      "evidence": "用于电网电压稳定性评估的自适应时空图学习",
+      "tldr": "针对电力系统拓扑结构动态变化导致暂态电压稳定性（SVS）评估性能下降的问题，本文提出一种自适应时空图学习方法。该方法通过自动学习图表示矩阵并引入空间注意力机制，有效捕捉母线间的复杂空间相关性。结合残差时空图卷积网络与Optuna优化，实现了对系统时空特征的深度挖掘。在实际省级电网子系统上的测试表明，该方法在多种拓扑变化下均具有优异的评估性能和鲁棒性。",
+      "tags": "query:si-pi",
+      "abstract_en": "The emerging deep learning (DL) technology has recently exhibited great potential in data-driven short-term voltage stability (SVS) assessment of complex power grids. However, without sufficient attention to the time-varying topological structures of today's power grids, the majority of existing DL-based SVS assessment schemes could experience severe performance degradation in practice. To address this drawback, this paper proposes an adaptive spatial-temporal graph learning-enabled SVS assessment approach that can adapt well to various topological changes. First, considering the time-varying topological conditions of a given power grid, an adaptive graph representation matrix is automatically learned to effectively capture the complicated spatial correlations between individual buses within the grid. Then, to help better capture regional SVS features for subsequent learning processes, the adaptive graph representation matrix is properly adjusted by introducing a spatial attention mechanism. Further, with post-fault system trajectory data linked together via attention-based graph representation, a residual spatiotemporal graph convolutional network is carefully built with Optuna-based optimization to deeply mine system-wide spatiotemporal features and thus achieve structure-adaptive SVS assessment. Numerical test results on two representative sub-systems of a realistic provincial power grid in South China demonstrate the efficacy of the proposed approach under various changing topological conditions.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/30/2604.26103v1-amma-a-multi-chiplet-memory-centric-architecture-for-low-latency-1m-context-attention-serving",
+      "section": "quick",
+      "title_en": "AMMA: A Multi-Chiplet Memory-Centric Architecture for Low-Latency 1M Context Attention Serving",
+      "authors": "Zhongkai Yu, Haotian Ye, Chenyang Zhou, Ohm Rishabh Venkatachalam, Zaifeng Pan, Zhengding Hu, Junsung Kim, Won Woo Ro, Po-An Tsai, Shuyi Pei, Yangwook Kang, Yufei Ding",
+      "date": "2026-04-28",
+      "pdf": "https://arxiv.org/pdf/2604.26103v1",
+      "score": "6.0",
+      "evidence": "针对内存受限工作负载的多芯粒架构和跨设备通信",
+      "tldr": "针对大语言模型在处理百万级长文本时，传统以GPU为中心的架构因计算资源冗余和内存带宽受限导致推理延迟高的问题，本文提出了AMMA架构。AMMA采用以内存为中心的多芯粒设计，利用HBM-PNM立方体替代传统计算芯片，通过逻辑芯片微架构、两级混合并行方案及重排的集合通信流程，显著提升了内存带宽利用率。该架构在实现极低延迟的同时大幅降低了功耗，为长文本注意力机制服务提供了高效的硬件解决方案。",
+      "tags": "query:si-pi",
+      "abstract_en": "All current LLM serving systems place the GPU at the center, from production-level attention-FFN disaggregation to NVIDIA's Rubin GPU-LPU heterogeneous platform. Even academic PIM/PNM proposals still treat the GPU as the central hub for cross-device communication. Yet the GPU's compute-rich architecture is fundamentally mismatched with the memory-bound nature of decode-phase attention, inflating serving latency while wasting power and die area on idle compute units. The problem is compounded as reasoning and agentic workloads push context lengths toward one million tokens, making attention latency the primary user-facing bottleneck.   To address these inefficiencies, we present AMMA, a multi-chiplet, memory-centric architecture for low-latency long-context attention. AMMA replaces GPU compute dies with HBM-PNM cubes, roughly doubling the available memory bandwidth to better serve memory-bound attention workloads. To translate this bandwidth into proportional performance gains, we introduce (i) a logic-die microarchitecture that fully exploits per-cube internal bandwidth for decode attention under a minimal power and area budget, (ii) a two-level hybrid parallelism scheme, and (iii) a reordered collective flow that reduces intra-chip die-to-die communication overhead. We further conduct a design-space exploration over per-cube compute power and intra-chip D2D link bandwidth, providing actionable guidance for hardware designers. Evaluations show that AMMA achieves 15.5X lower attention latency and 6.9X lower energy consumption compared with the NVIDIA H100.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
