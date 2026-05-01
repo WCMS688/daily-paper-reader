@@ -1,0 +1,54 @@
+{
+  "label": "2026-05-01",
+  "date": "2026-05-01",
+  "generated_at": "2026-05-01T21:25:42",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202605/01/2604.26153v1-rag-enhanced-kernel-based-heuristic-synthesis-rkhs-a-structured-methodology-using-large-language-models-for-hardware-design",
+      "section": "quick",
+      "title_en": "RAG-Enhanced Kernel-Based Heuristic Synthesis (RKHS): A Structured Methodology Using Large Language Models for Hardware Design",
+      "authors": "Shiva Ahir, Alex Doboli",
+      "date": "2026-04-28",
+      "pdf": "https://arxiv.org/pdf/2604.26153v1",
+      "score": "7.0",
+      "evidence": "大语言模型驱动的 EDA 布局布线启发式算法合成",
+      "tldr": "现代电子设计自动化（EDA）中的启发式算法设计依赖专家经验。本文提出RKHS框架，利用大语言模型（LLM）系统性地合成可重用的优化启发式算法。该方法结合了检索增强生成（RAG）、紧凑的内核启发式模板以及受迭代自我反馈启发的LLM驱动优化循环。在高级综合（HLS）的列表调度任务中，RKHS将平均调度长度缩短了11%，且仅增加1.3倍运行开销，展示了其在EDA优化问题中的通用性。",
+      "tags": "query:si-pi",
+      "abstract_en": "Heuristic design upholds modern electronic design automation (EDA) tools, yet crafting effective placement, routing, and scheduling strategies entails substantial expertise. We study how large language models (LLMs) can systematically synthesize reusable optimization heuristics beyond one-shot code generation. We propose RAG-Enhanced Kernel-Based Heuristic Synthesis (RKHS), which integrates retrieval-augmented generation (RAG), compact kernel heuristic templates, and an LLM-driven refinement loop inspired by iterative self-feedback. Applied to latency-minimizing list scheduling in high-level synthesis (HLS), a prototype reduces average schedule length by up to 11 percent over a baseline scheduler with only 1.3x runtime overhead, and the structured retrieval-synthesis loop generalizes to other EDA optimization problems.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/01/2604.27597v1-waveform-relaxation-for-fieldcircuit-coupled-daes-with-generalized-capacitances",
+      "section": "quick",
+      "title_en": "Waveform Relaxation for Field/Circuit Coupled DAEs with Generalized Capacitances",
+      "authors": "Idoia Cortes Garcia, Jonas Pade",
+      "date": "2026-04-30",
+      "pdf": "https://arxiv.org/pdf/2604.27597v1",
+      "score": "7.0",
+      "evidence": "场/电路耦合系统与广义电容建模",
+      "tldr": "本研究针对场路耦合系统中集总参数模型精度不足的问题，探讨了波形松弛协同仿真技术。由于耦合系统属于微分代数方程（DAE）类型，存在收敛性风险。本文提出了一种适用于包含广义电容的高指数场路耦合系统的拓扑收敛准则，该准则涵盖了多种场系统结构，并通过数值模拟验证了其有效性。",
+      "tags": "query:si-pi",
+      "abstract_en": "Field/circuit coupling is a common approach when a lumped representation of a certain electrotechnical device is not accurate enough. To exploit existing code and underlying properties of the coupled systems, cosimulation techniques such as waveform relaxation can be used. The coupled system is of differential-algebraic type, which can potentially lead to divergence. This paper presents a novel, sufficient topological convergence criterion for field/circuit coupled systems of higher index containing a generalized capacitance. Hereby, the criterion holds for a full range of field systems whose structure can be classified as a generalized capacitance. Finally, the theoretical results are supported by numerical simulations.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/01/2604.23071v1-oscillation-with-negative-impedance",
+      "section": "quick",
+      "title_en": "Oscillation with Negative Impedance",
+      "authors": "Taeju Lee",
+      "date": "2026-04-24",
+      "pdf": "https://arxiv.org/pdf/2604.23071v1",
+      "score": "6.0",
+      "evidence": "包含RLC组件的负阻抗电路分析",
+      "tldr": "本研究针对检测与遥测中的振荡应用，对基于交叉耦合跨导对实现的负阻抗振荡现象进行了理论分析。研究发现负阻抗包含负电阻、负电感和负电容，其中负电阻提供能量维持谐振。通过结合无源RLC元件，可实现对谐振频率的有效调制。本文利用小信号模型和传递函数，系统阐明了主动与被动电路组合下的振荡机制，为相关电路设计提供了理论指导。",
+      "tags": "query:si-pi",
+      "abstract_en": "Oscillation and frequency modulation have been leveraged for applications in detection (or sensing), data processing, and telemetry. This work provides a theoretical analysis of oscillation phenomena with negative impedance implemented using a cross-coupled transconductance pair. The negative impedance can consist not only of a negative resistance but also of a negative inductance and a negative capacitance, where the negative resistance supplies energy to the inductance and capacitance, causing oscillation at a resonant frequency. Also, the resonant frequency can be modulated by combining with passive components such as a resistor, an inductor, and a capacitor. In this work, a comprehensive circuit analysis employing small-signal models and transfer functions is performed to understand the oscillation phenomena and resonant frequencies arising from a combination of active and passive RLC circuits, in which the active RLC circuit is modeled as a negative impedance and implemented using a cross-coupled transconductance pair.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

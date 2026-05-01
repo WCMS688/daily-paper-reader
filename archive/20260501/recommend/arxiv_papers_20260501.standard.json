@@ -1,0 +1,125 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-05-01T21:06:30.156634+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.26153v1",
+      "source": "arxiv",
+      "title": "RAG-Enhanced Kernel-Based Heuristic Synthesis (RKHS): A Structured Methodology Using Large Language Models for Hardware Design",
+      "abstract": "Heuristic design upholds modern electronic design automation (EDA) tools, yet crafting effective placement, routing, and scheduling strategies entails substantial expertise. We study how large language models (LLMs) can systematically synthesize reusable optimization heuristics beyond one-shot code generation. We propose RAG-Enhanced Kernel-Based Heuristic Synthesis (RKHS), which integrates retrieval-augmented generation (RAG), compact kernel heuristic templates, and an LLM-driven refinement loop inspired by iterative self-feedback. Applied to latency-minimizing list scheduling in high-level synthesis (HLS), a prototype reduces average schedule length by up to 11 percent over a baseline scheduler with only 1.3x runtime overhead, and the structured retrieval-synthesis loop generalizes to other EDA optimization problems.",
+      "authors": [
+        "Shiva Ahir",
+        "Alex Doboli"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR",
+        "cs.IR"
+      ],
+      "published": "2026-04-28T22:29:41+00:00",
+      "link": "https://arxiv.org/pdf/2604.26153v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "LLM-driven heuristic synthesis for EDA placement and routing",
+      "llm_evidence_cn": "大语言模型驱动的 EDA 布局布线启发式算法合成",
+      "llm_evidence": "大语言模型驱动的 EDA 布局布线启发式算法合成",
+      "canonical_evidence": "大语言模型驱动的 EDA 布局布线启发式算法合成",
+      "llm_tldr_en": "Introduces RKHS, using LLMs to synthesize optimization heuristics for hardware design and EDA tools.",
+      "llm_tldr_cn": "引入 RKHS，利用大语言模型为硬件设计和 EDA 工具合成优化启发式算法。",
+      "llm_tldr": "引入 RKHS，利用大语言模型为硬件设计和 EDA 工具合成优化启发式算法。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.23071v1",
+      "source": "arxiv",
+      "title": "Oscillation with Negative Impedance",
+      "abstract": "Oscillation and frequency modulation have been leveraged for applications in detection (or sensing), data processing, and telemetry. This work provides a theoretical analysis of oscillation phenomena with negative impedance implemented using a cross-coupled transconductance pair. The negative impedance can consist not only of a negative resistance but also of a negative inductance and a negative capacitance, where the negative resistance supplies energy to the inductance and capacitance, causing oscillation at a resonant frequency. Also, the resonant frequency can be modulated by combining with passive components such as a resistor, an inductor, and a capacitor. In this work, a comprehensive circuit analysis employing small-signal models and transfer functions is performed to understand the oscillation phenomena and resonant frequencies arising from a combination of active and passive RLC circuits, in which the active RLC circuit is modeled as a negative impedance and implemented using a cross-coupled transconductance pair.",
+      "authors": [
+        "Taeju Lee"
+      ],
+      "primary_category": "physics.ins-det",
+      "categories": [
+        "physics.ins-det"
+      ],
+      "published": "2026-04-24T23:54:50+00:00",
+      "link": "https://arxiv.org/pdf/2604.23071v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "circuit analysis of negative impedance with RLC components",
+      "llm_evidence_cn": "包含RLC组件的负阻抗电路分析",
+      "llm_evidence": "包含RLC组件的负阻抗电路分析",
+      "canonical_evidence": "包含RLC组件的负阻抗电路分析",
+      "llm_tldr_en": "Analyzes oscillation and negative impedance using small-signal models and RLC components.",
+      "llm_tldr_cn": "利用小信号模型和RLC组件分析振荡与负阻抗现象。",
+      "llm_tldr": "利用小信号模型和RLC组件分析振荡与负阻抗现象。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "PDN impedance modeling and decoupling capacitor design",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.27597v1",
+      "source": "arxiv",
+      "title": "Waveform Relaxation for Field/Circuit Coupled DAEs with Generalized Capacitances",
+      "abstract": "Field/circuit coupling is a common approach when a lumped representation of a certain electrotechnical device is not accurate enough. To exploit existing code and underlying properties of the coupled systems, cosimulation techniques such as waveform relaxation can be used. The coupled system is of differential-algebraic type, which can potentially lead to divergence. This paper presents a novel, sufficient topological convergence criterion for field/circuit coupled systems of higher index containing a generalized capacitance. Hereby, the criterion holds for a full range of field systems whose structure can be classified as a generalized capacitance. Finally, the theoretical results are supported by numerical simulations.",
+      "authors": [
+        "Idoia Cortes Garcia",
+        "Jonas Pade"
+      ],
+      "primary_category": "math.NA",
+      "categories": [
+        "math.NA"
+      ],
+      "published": "2026-04-30T08:48:45+00:00",
+      "link": "https://arxiv.org/pdf/2604.27597v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Field/circuit coupled systems and generalized capacitances modeling",
+      "llm_evidence_cn": "场/电路耦合系统与广义电容建模",
+      "llm_evidence": "场/电路耦合系统与广义电容建模",
+      "canonical_evidence": "场/电路耦合系统与广义电容建模",
+      "llm_tldr_en": "Presents a convergence criterion for field/circuit coupled systems with generalized capacitances.",
+      "llm_tldr_cn": "提出了具有广义电容的场/电路耦合系统的收敛准则。",
+      "llm_tldr": "提出了具有广义电容的场/电路耦合系统的收敛准则。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Advanced modeling and optimization techniques for SI/PI in high speed systems",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

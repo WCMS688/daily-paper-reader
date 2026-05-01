@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.27597v1/fig-001.webp",
+      "caption": "Fig. 1: Convergent (first) and divergent (second) circuit couplings. The circuits and toy values for the parameters (R = 1Ω, L1 = 5H, L2 = 2H, C = 1F) are based on examples of [9].",
+      "page": 7,
+      "index": 1,
+      "width": 619,
+      "height": 281
+    },
+    {
+      "url": "assets/figures/arxiv/2604.27597v1/fig-002.webp",
+      "caption": "Fig. 2: Evolution of voltage across generalized capacitance of monolithic vmono and co-simulated vkf , k = 1, . . . , 8 solutions for convergent (left) and divergent (right) circuits in Figure 1.",
+      "page": 7,
+      "index": 2,
+      "width": 715,
+      "height": 296
+    }
+  ]
+}
