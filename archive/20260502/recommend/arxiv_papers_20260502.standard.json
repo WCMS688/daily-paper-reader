@@ -1,0 +1,102 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-05-02T19:38:41.189354+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.22234v1",
+      "source": "arxiv",
+      "title": "GR-Evolve: Design-Adaptive Global Routing via LLM-Driven Algorithm Evolution",
+      "abstract": "Modern ASIC design is becoming increasingly complex, driving up design costs while limiting productivity gains from existing EDA tools. Despite decades of progress, current tools rely on fixed heuristics and offer limited control via tool hyperparameters, requiring extensive manual tuning to achieve an acceptable quality of results (QoR). While prior work has explored learning-based optimization and design-specific hyperparameter tuning, these approaches operate within the constraints of static tool algorithm implementations and do not adapt the underlying algorithms to individual designs. To address this limitation, we introduce the concept of design-adaptive EDA tooling, in which the internal algorithms of EDA tools are automatically specialized to the characteristics of a given design. We instantiate this paradigm through GR-Evolve, a code evolution framework that leverages an agentic large language model (LLM) to iteratively modify global routing source code using QoR-driven feedback. The framework equips the LLM with persistent contextual knowledge of open-source global routers along with an integrated toolchain for QoR evaluation within the OpenROAD infrastructure. We evaluate GR-Evolve across seven benchmark designs across three technology nodes and demonstrate up to 8.72% reduction in post-detailed-routing wirelength over existing baseline routers, highlighting the potential of LLM-driven EDA code evolution for design-adaptive global routing.",
+      "authors": [
+        "Taizun Jafri",
+        "Vidya A. Chhabria"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR"
+      ],
+      "published": "2026-04-24T05:18:51+00:00",
+      "link": "https://arxiv.org/pdf/2604.22234v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "LLM-driven algorithm evolution for design-adaptive EDA tooling and global routing",
+      "llm_evidence_cn": "大模型驱动的算法演进用于设计自适应EDA工具和全局布线",
+      "llm_evidence": "大模型驱动的算法演进用于设计自适应EDA工具和全局布线",
+      "canonical_evidence": "大模型驱动的算法演进用于设计自适应EDA工具和全局布线",
+      "llm_tldr_en": "Introduces design-adaptive EDA tooling using LLMs to specialize algorithms like global routing for ASIC design.",
+      "llm_tldr_cn": "引入大模型驱动的自适应EDA工具，针对特定ASIC设计优化全局布线等算法。",
+      "llm_tldr": "引入大模型驱动的自适应EDA工具，针对特定ASIC设计优化全局布线等算法。",
+      "llm_tags": [
+        "query:si-pi:composite"
+      ],
+      "matched_query_tag": "query:si-pi:composite",
+      "matched_query_text": "Papers central to 板级、封装级、芯片级信号完整性与电源完整性（SI/PI）相关论文检索，涵盖高速互连、建模、PDN优化及机器学习应用。, especially work that connects or combines: Power integrity and PDN modeling optimization; Signal integrity analysis for high-speed interconnects; SerDes DDR and HBM channel modeling and simulation; PDN impedance modeling and decoupling capacitor design; SI/PI analysis for 2.5D 3D and Chiplet packaging; Machine learning methods for SI/PI analysis and optimization; Advanced modeling and optimization techniques for SI/PI in high speed systems; Machine learning applications for signal and power integrity analysis; SI/PI challenges and solutions for Chiplet and 3D heterogeneous integration; High speed channel characterization for SerDes and HBM interfaces.",
+      "matched_requirement_id": "req-composite-si-pi",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.26103v2",
+      "source": "arxiv",
+      "title": "AMMA: A Multi-Chiplet Memory-Centric Architecture for Low-Latency 1M Context Attention Serving",
+      "abstract": "All current LLM serving systems place the GPU at the center, from production-level attention-FFN disaggregation to NVIDIA's Rubin GPU-LPU heterogeneous platform. Even academic PIM/PNM proposals still treat the GPU as the central hub for cross-device communication. Yet the GPU's compute-rich architecture is fundamentally mismatched with the memory-bound nature of decode-phase attention, inflating serving latency while wasting power and die area on idle compute units. The problem is compounded as reasoning and agentic workloads push context lengths toward one million tokens, making attention latency the primary user-facing bottleneck.   To address these inefficiencies, we present AMMA, a multi-chiplet, memory-centric architecture for low-latency long-context attention. AMMA replaces GPU compute dies with HBM-PNM cubes, roughly doubling the available memory bandwidth to better serve memory-bound attention workloads. To translate this bandwidth into proportional performance gains, we introduce (i) a logic-die microarchitecture that fully exploits per-cube internal bandwidth for decode attention under a minimal power and area budget, (ii) a two-level hybrid parallelism scheme, and (iii) a reordered collective flow that reduces intra-chip die-to-die communication overhead. We further conduct a design-space exploration over per-cube compute power and intra-chip D2D link bandwidth, providing actionable guidance for hardware designers. Evaluations show that AMMA achieves 15.5X lower attention latency and 6.9X lower energy consumption compared with the NVIDIA H100.",
+      "authors": [
+        "Zhongkai Yu",
+        "Haotian Ye",
+        "Chenyang Zhou",
+        "Ohm Rishabh Venkatachalam",
+        "Zaifeng Pan",
+        "Zhengding Hu",
+        "Junsung Kim",
+        "Won Woo Ro",
+        "Po-An Tsai",
+        "Shuyi Pei",
+        "Yangwook Kang",
+        "Yufei Ding"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR",
+        "cs.AI",
+        "cs.DC",
+        "cs.LG"
+      ],
+      "published": "2026-04-28T20:36:50+00:00",
+      "link": "https://arxiv.org/pdf/2604.26103v2",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Multi-chiplet architecture for memory-centric attention serving",
+      "llm_evidence_cn": "用于以内存为中心的注意力服务的多元件架构",
+      "llm_evidence": "用于以内存为中心的注意力服务的多元件架构",
+      "canonical_evidence": "用于以内存为中心的注意力服务的多元件架构",
+      "llm_tldr_en": "Presents AMMA, a multi-chiplet architecture designed to reduce latency and power in LLM serving.",
+      "llm_tldr_cn": "提出AMMA，一种旨在降低大模型推理延迟和功耗的Chiplet架构。",
+      "llm_tldr": "提出AMMA，一种旨在降低大模型推理延迟和功耗的Chiplet架构。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "SI/PI analysis for 2.5D 3D and Chiplet packaging",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "label": "2026-05-02",
+  "date": "2026-05-02",
+  "generated_at": "2026-05-02T19:39:35",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202605/02/2604.22234v1-gr-evolve-design-adaptive-global-routing-via-llm-driven-algorithm-evolution",
+      "section": "quick",
+      "title_en": "GR-Evolve: Design-Adaptive Global Routing via LLM-Driven Algorithm Evolution",
+      "authors": "Taizun Jafri, Vidya A. Chhabria",
+      "date": "2026-04-24",
+      "pdf": "https://arxiv.org/pdf/2604.22234v1",
+      "score": "6.0",
+      "evidence": "大模型驱动的算法演进用于设计自适应EDA工具和全局布线",
+      "tldr": "针对现代ASIC设计中EDA工具依赖固定启发式算法且需大量人工调优的问题，本文提出GR-Evolve框架。该框架利用大语言模型（LLM）驱动的代码进化机制，根据设计反馈自动迭代修改全局布线器的源代码，实现设计自适应的EDA工具。实验表明，该方法在多个工艺节点上显著降低了布线长度，展示了LLM在EDA算法演进中的潜力。",
+      "tags": "query:si-pi",
+      "abstract_en": "Modern ASIC design is becoming increasingly complex, driving up design costs while limiting productivity gains from existing EDA tools. Despite decades of progress, current tools rely on fixed heuristics and offer limited control via tool hyperparameters, requiring extensive manual tuning to achieve an acceptable quality of results (QoR). While prior work has explored learning-based optimization and design-specific hyperparameter tuning, these approaches operate within the constraints of static tool algorithm implementations and do not adapt the underlying algorithms to individual designs. To address this limitation, we introduce the concept of design-adaptive EDA tooling, in which the internal algorithms of EDA tools are automatically specialized to the characteristics of a given design. We instantiate this paradigm through GR-Evolve, a code evolution framework that leverages an agentic large language model (LLM) to iteratively modify global routing source code using QoR-driven feedback. The framework equips the LLM with persistent contextual knowledge of open-source global routers along with an integrated toolchain for QoR evaluation within the OpenROAD infrastructure. We evaluate GR-Evolve across seven benchmark designs across three technology nodes and demonstrate up to 8.72% reduction in post-detailed-routing wirelength over existing baseline routers, highlighting the potential of LLM-driven EDA code evolution for design-adaptive global routing.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/02/2604.26103v2-amma-a-multi-chiplet-memory-centric-architecture-for-low-latency-1m-context-attention-serving",
+      "section": "quick",
+      "title_en": "AMMA: A Multi-Chiplet Memory-Centric Architecture for Low-Latency 1M Context Attention Serving",
+      "authors": "Zhongkai Yu, Haotian Ye, Chenyang Zhou, Ohm Rishabh Venkatachalam, Zaifeng Pan, Zhengding Hu, Junsung Kim, Won Woo Ro, Po-An Tsai, Shuyi Pei, Yangwook Kang, Yufei Ding",
+      "date": "2026-04-28",
+      "pdf": "https://arxiv.org/pdf/2604.26103v2",
+      "score": "6.0",
+      "evidence": "用于以内存为中心的注意力服务的多元件架构",
+      "tldr": "针对大语言模型在处理百万级长文本时面临的注意力机制延迟瓶颈，本文提出了一种名为AMMA的多芯粒以内存为中心的架构。AMMA通过将GPU计算芯粒替换为HBM-PNM立方体，并结合逻辑芯粒微架构、混合并行方案及优化的通信流程，显著提升了内存带宽利用率。该研究为长文本推理提供了高效的硬件设计方案，大幅降低了推理延迟与功耗。",
+      "tags": "query:si-pi",
+      "abstract_en": "All current LLM serving systems place the GPU at the center, from production-level attention-FFN disaggregation to NVIDIA's Rubin GPU-LPU heterogeneous platform. Even academic PIM/PNM proposals still treat the GPU as the central hub for cross-device communication. Yet the GPU's compute-rich architecture is fundamentally mismatched with the memory-bound nature of decode-phase attention, inflating serving latency while wasting power and die area on idle compute units. The problem is compounded as reasoning and agentic workloads push context lengths toward one million tokens, making attention latency the primary user-facing bottleneck.   To address these inefficiencies, we present AMMA, a multi-chiplet, memory-centric architecture for low-latency long-context attention. AMMA replaces GPU compute dies with HBM-PNM cubes, roughly doubling the available memory bandwidth to better serve memory-bound attention workloads. To translate this bandwidth into proportional performance gains, we introduce (i) a logic-die microarchitecture that fully exploits per-cube internal bandwidth for decode attention under a minimal power and area budget, (ii) a two-level hybrid parallelism scheme, and (iii) a reordered collective flow that reduces intra-chip die-to-die communication overhead. We further conduct a design-space exploration over per-cube compute power and intra-chip D2D link bandwidth, providing actionable guidance for hardware designers. Evaluations show that AMMA achieves 15.5X lower attention latency and 6.9X lower energy consumption compared with the NVIDIA H100.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

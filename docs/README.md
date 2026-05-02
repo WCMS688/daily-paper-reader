@@ -6,32 +6,29 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-05-01
-- 运行时间：2026-05-01 21:15:23 UTC
+- 最新运行日期：2026-05-02
+- 运行时间：2026-05-02 19:39:25 UTC
 - 运行状态：成功
-- 本次总论文数：3
+- 本次总论文数：2
 - 精读区：0
-- 速读区：3
+- 速读区：2
 
 ### 今日简报（AI）
-- 今日共生成 3 篇推荐（精读 0 篇，速读 3 篇）
-- 速读：《RAG-Enhanced Kernel-Based Heuristic Synthesis (RKHS): A Structured Methodology Using Large Language Models for Hardware Design》（7.0/10）, 《Waveform Relaxation for Field/Circuit Coupled DAEs with Generalized Capacitances》（7.0/10）, 《Oscillation with Negative Impedance》（6.0/10）
-- 这些结果覆盖了当下较热的方向，建议先看精读区论文的关键问题与方法。
-- 详情：[/202605/01/README](/202605/01/README)
+今日聚焦 AI 驱动的芯片设计优化与超长文本硬件加速，探索大模型在 EDA 与推理架构中的前沿应用。
+重点关注 LLM 驱动的全局布线算法演进，以及支持百万级上下文低延迟服务的 AMMA 多芯片架构。
+建议关注 AI 自动化设计工具及超长文本推理的硬件瓶颈突破。
+- 详情：[/202605/02/README](/202605/02/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [RAG-Enhanced Kernel-Based Heuristic Synthesis (RKHS): A Structured Methodology Using Large Language Models for Hardware Design](/202605/01/2604.26153v1-rag-enhanced-kernel-based-heuristic-synthesis-rkhs-a-structured-methodology-using-large-language-models-for-hardware-design)  
-   标签：评分：7.0/10、query:si-pi
-   evidence：大语言模型驱动的 EDA 布局布线启发式算法合成
-2. [Waveform Relaxation for Field/Circuit Coupled DAEs with Generalized Capacitances](/202605/01/2604.27597v1-waveform-relaxation-for-fieldcircuit-coupled-daes-with-generalized-capacitances)  
-   标签：评分：7.0/10、query:si-pi
-   evidence：场/电路耦合系统与广义电容建模
-3. [Oscillation with Negative Impedance](/202605/01/2604.23071v1-oscillation-with-negative-impedance)  
+1. [GR-Evolve: Design-Adaptive Global Routing via LLM-Driven Algorithm Evolution](/202605/02/2604.22234v1-gr-evolve-design-adaptive-global-routing-via-llm-driven-algorithm-evolution)  
    标签：评分：6.0/10、query:si-pi
-   evidence：包含RLC组件的负阻抗电路分析
+   evidence：大模型驱动的算法演进用于设计自适应EDA工具和全局布线
+2. [AMMA: A Multi-Chiplet Memory-Centric Architecture for Low-Latency 1M Context Attention Serving](/202605/02/2604.26103v2-amma-a-multi-chiplet-memory-centric-architecture-for-low-latency-1m-context-attention-serving)  
+   标签：评分：6.0/10、query:si-pi
+   evidence：用于以内存为中心的注意力服务的多元件架构
 
 
 <div class="dpr-home-promo-card">

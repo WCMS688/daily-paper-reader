@@ -1,0 +1,70 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.22234v1/fig-001.webp",
+      "caption": "Figure 4: Pareto fronts of the search space of all 15 router-design pairs in ASAP7. Selected router QoR is reported in Table 2.",
+      "page": 6,
+      "index": 1,
+      "width": 950,
+      "height": 925
+    },
+    {
+      "url": "assets/figures/arxiv/2604.22234v1/fig-002.webp",
+      "caption": "Table 2: QoRMetrics post GR and post DR of selected evolved router for ASAP7. Positive ΔWL denotes reduction.",
+      "page": 7,
+      "index": 2,
+      "width": 502,
+      "height": 469
+    },
+    {
+      "url": "assets/figures/arxiv/2604.22234v1/fig-003.webp",
+      "caption": "Figure 7: Base CUGR uses one sparse-grid configuration, while CUGR_AES evaluates multiple candidate grids per net and keeps the best-scoring route tree.",
+      "page": 10,
+      "index": 3,
+      "width": 516,
+      "height": 469
+    },
+    {
+      "url": "assets/figures/arxiv/2604.22234v1/fig-004.webp",
+      "caption": "Figure 5: Pareto fronts of the search space for 20 of the 21 router-design pairs in Nangate45 (NG45); SPR_BP is omitted (but can be found on our repository [10]). QoR metrics of the selected router for all 21 pairs are reported in Table 3.",
+      "page": 8,
+      "index": 4,
+      "width": 950,
+      "height": 1096
+    },
+    {
+      "url": "assets/figures/arxiv/2604.22234v1/fig-005.webp",
+      "caption": "Figure 3: Knowledge base and context provided to GR-Evolve.",
+      "page": 4,
+      "index": 5,
+      "width": 321,
+      "height": 400
+    },
+    {
+      "url": "assets/figures/arxiv/2604.22234v1/fig-006.webp",
+      "caption": "Table 4: QoRMetrics post GR and post DR of selected evolved router for SKY130HD. Positive ΔWL denotes reduction.",
+      "page": 9,
+      "index": 6,
+      "width": 502,
+      "height": 310
+    },
+    {
+      "url": "assets/figures/arxiv/2604.22234v1/fig-007.webp",
+      "caption": "Figure 6: Pareto fronts of the evolution search space for 8 of the 9 router-design pairs in SKY130HD; SPR_JPEG is omitted (but can be found on our repository [10]). QoR metrics for the selected routers are reported in Table 4.",
+      "page": 9,
+      "index": 7,
+      "width": 950,
+      "height": 467
+    },
+    {
+      "url": "assets/figures/arxiv/2604.22234v1/fig-008.webp",
+      "caption": "Table 3: QoRMetrics post GR and post DR of selected evolved router for Nangate45. Positive ΔWL denotes a reduction.",
+      "page": 9,
+      "index": 8,
+      "width": 502,
+      "height": 598
+    }
+  ]
+}
