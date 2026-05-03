@@ -6,29 +6,29 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-05-02
-- 运行时间：2026-05-02 19:39:25 UTC
+- 最新运行日期：2026-05-03
+- 运行时间：2026-05-03 19:54:08 UTC
 - 运行状态：成功
 - 本次总论文数：2
 - 精读区：0
 - 速读区：2
 
 ### 今日简报（AI）
-今日聚焦 AI 驱动的芯片设计优化与超长文本硬件加速，探索大模型在 EDA 与推理架构中的前沿应用。
-重点关注 LLM 驱动的全局布线算法演进，以及支持百万级上下文低延迟服务的 AMMA 多芯片架构。
-建议关注 AI 自动化设计工具及超长文本推理的硬件瓶颈突破。
-- 详情：[/202605/02/README](/202605/02/README)
+今日聚焦生成式模型在工程领域的跨界应用，涵盖 MIMO 信道估计与芯片布局优化。
+重点关注一致性模型（Consistency Models）提升通信效率，以及流匹配（Flow Matching）在自动化芯片设计中的潜力。
+建议关注生成式 AI 如何解决传统工程中的高维优化难题，探索跨学科的技术迁移。
+- 详情：[/202605/03/README](/202605/03/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [GR-Evolve: Design-Adaptive Global Routing via LLM-Driven Algorithm Evolution](/202605/02/2604.22234v1-gr-evolve-design-adaptive-global-routing-via-llm-driven-algorithm-evolution)  
+1. [Plug-and-Play Consistency Models for MIMO Channel Estimation](/202605/03/2604.23595v1-plug-and-play-consistency-models-for-mimo-channel-estimation)  
    标签：评分：6.0/10、query:si-pi
-   evidence：大模型驱动的算法演进用于设计自适应EDA工具和全局布线
-2. [AMMA: A Multi-Chiplet Memory-Centric Architecture for Low-Latency 1M Context Attention Serving](/202605/02/2604.26103v2-amma-a-multi-chiplet-memory-centric-architecture-for-low-latency-1m-context-attention-serving)  
+   evidence：使用即插即用一致性模型的MIMO信道估计
+2. [FlowPlace: Flow Matching for Chip Placement](/202605/03/2604.23658v1-flowplace-flow-matching-for-chip-placement)  
    标签：评分：6.0/10、query:si-pi
-   evidence：用于以内存为中心的注意力服务的多元件架构
+   evidence：用于物理设计中芯片布局优化的生成式人工智能
 
 
 <div class="dpr-home-promo-card">

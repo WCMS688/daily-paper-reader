@@ -1,0 +1,100 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-05-03T19:53:42.150581+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.23595v1",
+      "source": "arxiv",
+      "title": "Plug-and-Play Consistency Models for MIMO Channel Estimation",
+      "abstract": "Consistency models (CMs) learn a consistent mapping from multiple noise levels to the data endpoint and can therefore perform generative inference in one or a few steps. This property makes them attractive as learned priors for low-latency inverse problems. Multiple-input multiple-output (MIMO) channel estimation under limited pilot overhead can be formulated as a high-dimensional linear inverse problem with an explicit measurement matrix, where data consistency alone is often insufficient for stable angular-domain channel recovery. This paper applies the plug-and-play consistency model (PnP-CM) framework to pilot-aided MIMO channel estimation. The PnP-CM inference procedure enforces the pilot observation model in the data-consistency update and invokes a pretrained CM denoiser in the prior update, thereby recovering the angular-domain channel vector within a small number of outer iterations. Preliminary experiments validate the feasibility of using CMs as low-latency channel-estimation priors and show that adaptive parameter scheduling and cross-scenario robustness remain important directions for further improvement.",
+      "authors": [
+        "Jinlong Li",
+        "Peng Yang",
+        "Zehui Xiong",
+        "Xianbin Cao"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP"
+      ],
+      "published": "2026-04-26T08:08:51+00:00",
+      "link": "https://arxiv.org/pdf/2604.23595v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "MIMO channel estimation using plug-and-play consistency models",
+      "llm_evidence_cn": "使用即插即用一致性模型的MIMO信道估计",
+      "llm_evidence": "使用即插即用一致性模型的MIMO信道估计",
+      "canonical_evidence": "使用即插即用一致性模型的MIMO信道估计",
+      "llm_tldr_en": "Applies consistency models to MIMO channel estimation for stable angular-domain recovery under limited overhead.",
+      "llm_tldr_cn": "将一致性模型应用于MIMO信道估计，在有限开销下实现稳定的角域恢复。",
+      "llm_tldr": "将一致性模型应用于MIMO信道估计，在有限开销下实现稳定的角域恢复。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "High speed channel characterization for SerDes and HBM interfaces",
+      "matched_requirement_id": "req-10",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.23658v1",
+      "source": "arxiv",
+      "title": "FlowPlace: Flow Matching for Chip Placement",
+      "abstract": "Chip placement plays an important role in physical design. While generative models like diffusion models offer promising learning-based solutions, current methods have the following limitations: they use random synthetic data for pre-training, require long sampling times, and often result in overlaps due to their dependence on gradient-based solvers during the sampling process. To overcome these issues, we propose FlowPlace, which features mask-guided synthetic data generation, flow-based efficient training with flexible prior injection, and hard constraint sampling for overlap-free layouts. Experiments on OpenROAD and ICCAD 2015 benchmarks show FlowPlace achieves better PPA metrics, 10-50$\\times$ faster sampling efficiency, and zero overlaps.",
+      "authors": [
+        "Peng Xie",
+        "Ke Xue",
+        "Yunqi Shi",
+        "Ruo-Tong Chen",
+        "Chengrui Gao",
+        "Siyuan Xu",
+        "Chenjian Ding",
+        "Mingxuan Yuan",
+        "Chao Qian"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-04-26T11:25:17+00:00",
+      "link": "https://arxiv.org/pdf/2604.23658v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Generative AI for chip placement optimization in physical design",
+      "llm_evidence_cn": "用于物理设计中芯片布局优化的生成式人工智能",
+      "llm_evidence": "用于物理设计中芯片布局优化的生成式人工智能",
+      "canonical_evidence": "用于物理设计中芯片布局优化的生成式人工智能",
+      "llm_tldr_en": "Introduces FlowPlace, a flow-matching generative model for efficient and overlap-free chip placement.",
+      "llm_tldr_cn": "引入FlowPlace，一种用于高效且无重叠芯片布局的流匹配生成模型。",
+      "llm_tldr": "引入FlowPlace，一种用于高效且无重叠芯片布局的流匹配生成模型。",
+      "llm_tags": [
+        "query:si-pi:composite"
+      ],
+      "matched_query_tag": "query:si-pi:composite",
+      "matched_query_text": "Papers central to 板级、封装级、芯片级信号完整性与电源完整性（SI/PI）相关论文检索，涵盖高速互连、建模、PDN优化及机器学习应用。, especially work that connects or combines: Power integrity and PDN modeling optimization; Signal integrity analysis for high-speed interconnects; SerDes DDR and HBM channel modeling and simulation; PDN impedance modeling and decoupling capacitor design; SI/PI analysis for 2.5D 3D and Chiplet packaging; Machine learning methods for SI/PI analysis and optimization; Advanced modeling and optimization techniques for SI/PI in high speed systems; Machine learning applications for signal and power integrity analysis; SI/PI challenges and solutions for Chiplet and 3D heterogeneous integration; High speed channel characterization for SerDes and HBM interfaces.",
+      "matched_requirement_id": "req-composite-si-pi",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
