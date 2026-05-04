@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.05328v1/fig-001.webp",
+      "caption": "Figure 6. Perspectives on nucleation and growth models. a, Compact analytical nucleation and growth model should fulfill the task of fitting to polarization transients under time-varying voltage waveforms with intrinsic material parameters. The extracted parameters in turn should enable simulation of realistic circuit responses based on input arbitrary waveforms. b, DFNG model fit to experimental switching transients under time-dependent voltage waveform, fulfilling step I and II in (a). Reproduced from ref. 49. c, An example utilizing the recently developed DFNG model to generate a potentiation profile in a ferroelectric-based neuromorphic computing scheme, fulfilling step III and IV in (a). The simulation predicts that by varying the amplitude of each potentiation pulse, the linearity in multi-level operation is improved (blue) compared to constant amplitude (red).",
+      "page": 25,
+      "index": 1,
+      "width": 864,
+      "height": 966
+    },
+    {
+      "url": "assets/figures/arxiv/2604.05328v1/fig-002.webp",
+      "caption": "Figure 2. Quantification of errors in ideally assumed PUND measurements. a, Schematic of the measurement circuit with the actual voltage across the ferroelectric capacitor monitored. The voltage during P (𝑑𝑑𝑃𝑃) and U (𝑑𝑑𝑈𝑈) pulses can then be calculated by 𝑑𝑑𝑡𝑡𝑡𝑡𝑡𝑡 − 𝑑𝑑𝑏𝑏𝑡𝑡𝑡𝑡𝑡𝑡𝑡𝑡𝑏𝑏. b, Analysis performed on a 10-μm HZO capacitor. Notably, the P pulse and U pulse are not identical, leading to error in transient polarization calculated by conventional PUND methods. c,d, Supply voltagedependent (c) and capacitor-size-dependent (d) distortion of P pulse waveforms and errors in transient polarization.",
+      "page": 21,
+      "index": 2,
+      "width": 956,
+      "height": 1018
+    },
+    {
+      "url": "assets/figures/arxiv/2604.05328v1/fig-003.webp",
+      "caption": "Figure 3. Possible linear components embedded in the MFM structure. a,b, Equivalent circuit diagrams of the measured MFM structure when parasitic circuit components (parallel capacitor, series resistor and series inductor) (a) and material deficiencies (dead layer and leakage) (b) are present.",
+      "page": 22,
+      "index": 3,
+      "width": 1001,
+      "height": 339
+    },
+    {
+      "url": "assets/figures/arxiv/2604.05328v1/fig-004.webp",
+      "caption": "Figure 4. Behavior of constant voltage nucleation and growth models. a, Polarization transients simulated with KAI model (linear (left) and logarithm (right) time axes) by varying model parameters. b, Comparison of KAI model fit (orange) to polarization transients obtained by conventional (grey) and corrected PUND methods. c,d, Polarization transients simulated with NLS (c) and nucleation rate simulated by SNNG (d) models under variance of key model parameters.",
+      "page": 23,
+      "index": 4,
+      "width": 1054,
+      "height": 1041
+    },
+    {
+      "url": "assets/figures/arxiv/2604.05328v1/fig-005.webp",
+      "caption": "Figure 1. Idealities and realities of the PUND methodology in ferroelectric switching transient studies. a, An ideal measurement and analysis scheme commonly assumed in the literature. The voltage ramps to the set value instantaneously and the ferroelectric capacitor causes no distortion to the square pulse. The positive-up-negative-down (PUND) method is used to extract the ferroelectric switching current (IFE = IP - IU) and polarization transients (∆𝑑𝑑(𝑑𝑑) ). b, The polarization transients are then fit to a prevalent nucleation and growth model such as KAI or NLS",
+      "page": 19,
+      "index": 5,
+      "width": 1054,
+      "height": 1101
+    },
+    {
+      "url": "assets/figures/arxiv/2604.05328v1/fig-006.webp",
+      "caption": "Figure 5. Avrami exponent mystery. a, The NLS and SNNG models explain unphysical Avrami exponents via different mechanisms. By using a time-dependent nucleation rate, they capture the dynamic behavior of the exponent. b, A schematic of the alternative explanation for growth dimension lower than physical dimension. It happens when the elastic domain wall is deformed by disordered defects, and therefore the propagation does not follow the trajectory dictated by the physical dimension. c,d, Different pulses, either by rise time or amplitude, can produce distinct Avrami exponents even on the same ferroelectric capacitor. The Avrami exponent obtained by KAI model can exceed 4; When the polarization evolves with time-varying voltage, the dynamic",
+      "page": 24,
+      "index": 6,
+      "width": 752,
+      "height": 822
+    }
+  ]
+}

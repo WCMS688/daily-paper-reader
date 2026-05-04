@@ -1,0 +1,408 @@
+Title: Scattering-Matrix-Based Parametric Characterization of a Two-Port Bridged-T Network for Microstrip Filter Applications
+
+URL Source: https://arxiv.org/pdf/2604.18353v1
+
+Published Time: Tue, 21 Apr 2026 02:39:24 GMT
+
+Number of Pages: 17
+
+Markdown Content:
+# Scattering-Matrix-Based Parametric Characterization of a Two-Port Bridged-T Network for Microstrip Filter Applications 
+
+Naser Khatti Dizabadi a, ∗, Douglas Jussaume a
+
+> aDepartment of Electrical and Computer Engineering, The University of Tulsa, 800 S. Tucker Drive, Tulsa, 74104, OK, USA
+
+Abstract 
+
+The purpose of this study is to characterize a two-port Bridged-T network us-ing transmission (T) and scattering (S) matrices. Using mathematical derivations, scattering parameters including S11, S12, S21, and S22 have been derived from the T and S matrices to permit a detailed investigation of the network’s perfor-mance. As two of the most relevant parameters in the design of microstrip filters, both the magnitude and phase of S11 and S21 have been parametrically calculated after normalizing the frequency. Furthermore, when the inductors L1 and L2 are identical, all even coefficients of the numerator polynomial in the S11 transfer function are eliminated, leaving only the odd coefficients behind. Based on this feature, the bridged-T circuit is designed to operate as a high-pass filter. There-fore, the magnitude and phase of both S11 and S21 have been simulated for the designed filter with a corner frequency of 1 GHz. Simulation results performed by Keysight ADS show that S11 and S21 for the high-pass filter built upon the     
+
+> ∗Corresponding author
+> Email addresses: nak5300@utulsa.edu (Naser Khatti Dizabadi ),
+> douglas-jussaume@utulsa.edu (Douglas Jussaume)
+> Preprint submitted to arXiv April 21, 2026
+> arXiv:2604.18353v1 [cs.ET] 20 Apr 2026
+
+bridged-T network have sharp roll-off ratios of -30dB/GHz and -32dB/GHz re-spectively. 
+
+Keywords: Bridged-T, microstrip filters, T matrix, S matrix, two-port network 
+
+1. Introduction 
+
+High-frequency microstrip filters are widely used in the design and construc-tion of radio communication systems [1, 2, 3, 4, 5, 6, 7, 8]. The versatility of microstrip filters is derived from their ability to combine a variety of subsystems with unique transfer functions. This allows for the manipulation of the transfer function by strategically varying the geometric locations of the poles and zeros in a complex frequency plane. A bridged-T two-port network is one of the most commonly used subsystems in both low-frequency and high-frequency circuits. While several studies have examined the use of different bridged-T networks in the design of microstrip filters [9, 10, 11, 12, 13, 14, 15], this paper explores the characterization of a bridged-T network enhanced with a parallel LC resonator. This study aims to extract all components of the transmission and scattering matri-ces in order to provide a more comprehensive understanding of its behavior under a variety of circumstances. As a further step, we parametrically determine both the magnitude and phase of the critical scattering parameters, S11 and S21. These parameters are instru-mental in evaluating the quality of a microstrip filter. By introducing two identical inductors into the bridge section, we demonstrate that the bridged-T network can be transformed into an effective high-pass filter. In order to verify this finding, we meticulously designed and simulated a high-pass filter with a cutoff frequency of 1 GHz. A sharp roll-off is observed in the 2Figure 1: A two-port capacitive bridged-T network 
+
+simulation results, confirming the bridged-T network’s ability to act as a high-pass filter. Detailed explanations and simulation results follow, providing a comprehen-sive overview of the bridged-T network’s performance and its significance for high-pass filtering. 
+
+2. The Transmission and Scattering Matrices 
+
+Figure 1 shows a customary two-port Bridged-T network in which capacitor 
+
+C1 establishes a bridge connection between port one and port two, while the com-bination of the inductors L1 and L2, along with the parallel LC tank, create a T sub-network. The parallel LC tank, comprised of capacitor C2 and inductor L3,assumes the role of determining the resonance frequency within this circuit. To begin the analysis of the circuit depicted in Figure 1, the Laplace impedances of all components have been calculated and are presented in Equations (1) to (4). 3Figure 2: Laplace equivalent impedance of the bridged-T network 
+
+ZL1 = SL 1 (1) 
+
+ZL2 = SL 2 (2) 
+
+ZL3 = SL 3 (3) 
+
+ZL3C2 = 1 
+
+> 1
+> SL 3
+
++ SC 2
+
+(4) To see better, an illustration of the equivalent impedances of the components is provided in Figure 2. After applying a Y to ∆ conversion, as described in [16], to the circuit depicted in Figure 2, the bridged-T network has been transformed into a Π network, simpli-fying the analysis. This simplified Π network is illustrated in Figure 3 where Y1,4Figure 3: Laplace equivalent impedance of the bridged-T network 
+
+Y2, and Y3 are the equivalent admittances for each component in the Π network equated through the equations (5) to (7). 
+
+Y1 = 1
+
+SL 1 + L3(1+ L1 
+
+> L2)1+ S2C2L3
+
+(5) 
+
+Y2 = 1
+
+SL 2 + L3(1+ L2 
+
+> L1)1+ S2C2L3
+
+(6) 
+
+Y3 = 1 
+
+> 1
+> SC 1
+
++ S(L1 + L2) + L1L2( SL3 + S3C2) (7) According to [17], a transmission (or ABCD or T for short) matrix as equated in equation (8) can be directly derived from the admittances in a Π network. In this equation, A, B, C, and, D are the T matrix’s components and can be calculated through the converting equations (9) to (12). 5V1
+
+I1
+
+ =
+
+A BC D
+
+V2
+
+I2
+
+ (8) 
+
+A = 1 + Y2
+
+Y3
+
+(9) 
+
+B = 1
+
+Y3
+
+(10) 
+
+C = Y1 + Y2 + Y1Y2
+
+Y3
+
+(11) 
+
+D = 1 + Y1
+
+Y3
+
+(12) In accordance with [18], the conversion of the T matrix to the S matrix can be achieved using the following set of conversion formulas equated by equations (13) to (16). In these equations, Z0 represents the characteristic impedance of a typical transmission line. 
+
+S11 = A + B/Z o − CZ o − DA + B/Z o + CZ o + D (13) 
+
+S12 = 2( AD − BC )
+
+A + B/Z o + CZ o + D (14) 
+
+S21 = 2
+
+A + B/Z o + CZ o + D (15) 
+
+S22 = −A + B/Z o − CZ o + DA + B/Z o + CZ o + D (16) 6In the process of microstrip filter design, the parameters S21 and S11 assume considerable significance. Accordingly, we embark on the computation of the canonical forms of their respective transfer functions. To this end, the substitution of equations (9) through (12) into equations (13) through (16), followed by neces-sary simplifications, results in the formulation of a simplified version of the S11 transfer function, denoted as equation 17. 
+
+S11 = N0 + N1S + N2S2 + N3S3 + N4S4
+
+D0 + D1S + D2S2 + D3S3 + D4S4 + D5S5 (17) where coefficients N0, N1, N2, N3, N4, D0, D1, D2, D3, D4, and D5 are as follows: 
+
+N0 = C1L3Z20
+
+N1 = C1L3Z0(L1 − L2)
+
+N2 = ( C1 − L3Z20 )( L1 + L2) + C1(L1L2L3 − C2Z20 )
+
+N3 = C1C2Z0(L1 − L2)
+
+N4 = C2(C1L1L2 − Z20 (L1 + L2)) 
+
+D0 = C1L3Z20
+
+D1 = C1Z0(2 + L3(L1 + L2)) 
+
+D2 = ( C1 + L3Z20 )( L1 + L2) + C1(L1L2L3 + C2Z20 )
+
+D3 = ((2 + C1C2)( L1 + L2) + 2 L1L2L3)Z0
+
+D4 = C2(C1L1L2 + Z20 (L1 + L2)) 
+
+D5 = 2 L1L2C2Z0
+
+(18) Similarly, the simplified version of the S21 transfer function is expressed by equation 19. 7S21 = N ′
+
+> 1
+
+S + N ′
+
+> 3
+
+S3 + N ′
+
+> 5
+
+S5
+
+D0 + D1S + D2S2 + D3S3 + D4S4 + D5S5 (19) where coefficients N ′
+
+> 1
+
+, N ′
+
+> 3
+
+, and N ′ 
+
+> 5
+
+are: 
+
+N ′ 
+
+> 1
+
+= 2 C1Z0
+
+N ′ 
+
+> 3
+
+= 2 Z0(L1 + L2 + L1L2L3)
+
+N ′ 
+
+> 5
+
+= 2 C2L1L2Z0
+
+(20) Let’s say that the complex frequency, denoted as S, is equal to jω , where ω
+
+is the angular frequency. Additionally, in the design of a filter, the normalized angular frequency, denoted as Ω, is defined as the ratio of the angular frequency (ω) to the cut-off angular frequency ( ωc). With these definitions in place, the transfer functions of S11 and S21, as given by equations (17) and (19), can be reformulated in a normalized and complex form as follows: 
+
+S11 = αN + jβ N
+
+αD + jβ D
+
+(21) where the coefficients αN , βN , αD, and βD are obtained through the following parametric expressions: 
+
+αN = N0 − N2ω2 
+
+> c
+
+Ω2 + N4ω4 
+
+> c
+
+Ω4
+
+βN = N1ωcΩ − N3ω3 
+
+> c
+
+Ω3
+
+αD = D0 − D2ω2 
+
+> c
+
+Ω2 + D4ω4 
+
+> c
+
+Ω4
+
+βD = D1ωcΩ − D3ω3 
+
+> c
+
+Ω3 + D5ω5 
+
+> c
+
+Ω5
+
+(22) By using Equation (21), both the magnitude and phase of S11 can be calcu-lated as follows: 8|S11 | =
+
+s
+
+(αN )2 + ( βN )2
+
+(αD)2 + ( βD)2 (23) 
+
+∠S11 = tan −1( βN
+
+αN
+
+) − tan −1( βD
+
+αD
+
+) (24) In a similar manner, after normalizing the frequency and applying some sim-plifications, the complex form of the S21 transfer function can also be obtained as shown in Equation (25). 
+
+S21 = α′ 
+
+> N
+
++ jβ ′
+
+> N
+
+αD + jβ D
+
+(25) where the α′ 
+
+> N
+
+and β′ 
+
+> N
+
+denote the respective parametric real and imaginary components associated with the numerator in the complex representation of the S21 transfer function, as articulated below: 
+
+α′ 
+
+> N
+
+= 0 
+
+β′ 
+
+> N
+
+= N ′
+
+> 1
+
+ωcΩ − N ′
+
+> 3
+
+ω3 
+
+> c
+
+Ω3 + N ′
+
+> 5
+
+ω5 
+
+> c
+
+Ω5
+
+(26) Likewise, the magnitude and phase of the S21 in equation (25) can be deter-mined through the following calculations: 
+
+|S21 | = |β′ 
+
+> N
+
+|
+
+p(αD)2 + ( βD)2 (27) 
+
+∠S21 = ±π
+
+2 − tan −1( βD
+
+αD
+
+) (28) 
+
+3. Design and Simulation of A High-Pass Filter 
+
+In this section, a high-pass filter was designed based on the bridged-T circuit illustrated in Figure 1. In the design process, the inductors L1 and L2 were delib-9Figure 4: High pass filter performance using a bridged-T network 
+
+erately chosen to be identical, resulting in the elimination of all odd coefficients in the numerator of Equation (17), leaving only the even coefficients. By select-ing the component values as shown in Figure 4, the coefficients of the transfer functions for S11 and S21 were subsequently updated as shown in Equation (29). 
+
+αN ≈ 1 − 7428 .58 ω2 
+
+> c
+
+Ω2 + 156 .825 ω4 
+
+> c
+
+Ω4
+
+βN = 0 
+
+α′ 
+
+> N
+
+= 0 
+
+β′ 
+
+> N
+
+≈ 0.044 ωcΩ − 1102 .73 ω3 
+
+> c
+
+Ω3 + 16 .31 ω5 
+
+> c
+
+Ω5
+
+αD ≈ 1 − 7428 .61 ω2 
+
+> c
+
+Ω2 + 156 .826 ω4 
+
+> c
+
+Ω4
+
+βD ≈ 0.252 ωcΩ − 1102 .73 ω3 
+
+> c
+
+Ω3 + 16 .31 ω5 
+
+> c
+
+Ω5
+
+(29) where ωc is the corner frequency and Ω is the unitless normalized frequency for the designed high-pass filter. 10 Figure 5: S11 and S21 versus normalized frequency 
+
+After establishing the corner frequency at about 1 GHz, Figure 5 illustrates the simulated S11 and S21 responses of the designed high-pass filter in relation to the normalized frequency. The results depicted in Figure 5 demonstrate that the bridged-T configuration, with symmetrically equal inductances L1 and L2, functions effectively as a high-pass filter, exhibiting a discernible sharp roll-off at the specified corner frequency. To assess the congruence between the filter’s behavior and mathematical pre-dictions for both the magnitudes and phases of S11 and S21, Figures 6 and 7 illustrate these parameters with normalized frequency. 
+
+4. Conclusion 
+
+This study characterizes a two-port Bridged-T network using transmission (T) and scattering (S) matrix techniques. The derived scattering parameters (S11, 11 Figure 6: Magnitude and phase of S11 versus the normalized frequency 
+
+12 Figure 7: Magnitude and phase of S21 versus normalized frequency 
+
+13 S12, S21, and S22) enable a detailed exploration of the bridged-T network’s per-formance. Emphasizing the relevance of S11 and S21 in microstrip filter design, their magnitudes and phases are parametrically calculated after frequency normal-ization. Using this mathematical derivation, designers can alter the locations of the zeros for both S11 and S21 to improve the sharpness of the roll-off of their designed filters. In continuation of the discussion, the Bridged-T network served as an effective high-pass filter by eliminating even coefficients in the S11 transfer function through the use of identical L1 and L2. Validation through S-parameter simulation using Advanced Design System (ADS) confirms sharp roll-off ratios of -30 dB/GHz for S11 and -32 dB/GHz for S21. This work contributes valuable insights into RF circuit applications and microstrip filter design. 
+
+References 
+
+[1] P. Song, H. Hashemi, mm-wave mixer-first receiver with selective passive wideband low-pass filtering, IEEE Journal of Solid-State Circuits 56 (5) (2021) 1454–1463. doi:10.1109/JSSC.2021.3063726. [2] Y. Guan, Y. Wu, M. M. Tentzeris, A bidirectional absorptive common-mode filter based on interdigitated microstrip coupled lines for 5g “green” communications, IEEE Access 8 (2020) 20759–20769. doi:10.1109/ACCESS.2020.2968931. [3] N. N. Al-Areqi, N. Seman, T. A. Rahman, Parallel-coupled line bandpass filter design using different substrates for fifth generation wireless commu-nication applications, in: 2015 International Symposium on Antennas and Propagation (ISAP), 2015, pp. 1–4. 14 [4] S. Gagare, D. Thankachan, Design of csrr based tri band pass filter for rf communication, in: 2020 IEEE International Conference on Advances and Developments in Electrical and Electronics Engineering (ICADEE), 2020, pp. 1–4. doi:10.1109/ICADEE51157.2020.9368953. [5] M. Ali, F. Liu, A. Watanabe, P. M. Raj, V. Sundaram, M. M. Tentzeris, R. R. Tummala, Miniaturized high-performance filters for 5g small-cell applica-tions, in: 2018 IEEE 68th Electronic Components and Technology Confer-ence (ECTC), 2018, pp. 1068–1075. doi:10.1109/ECTC.2018.00164. [6] Y. Zhang, L. Gao, X. Y. Zhang, Compact quad-band band-pass filter for dcs/wlan/wimax/5g wi-fi application, IEEE Mi-crowave and Wireless Components Letters 25 (10) (2015) 645–647. doi:10.1109/LMWC.2015.2463227. [7] N. Khatti, M. Dousti, A low phase noise lc quadrature vco using impulse shaping based on gaussian pulse generator, Journal of Circuits, Systems and Computers 26 (4) (2017) 1750067. doi:10.1142/S0218126617500670. [8] N. Khatti Dizabadi, P. LoPresti, Closed-form formulas for designing ultra-low phase-noise cross-coupled dynamically body-biased only-nmos lcvcos (2026). arXiv:2603.25853, doi:10.48550/arXiv.2603.25853. [9] P.-S. Huang, H.-C. Lu, Broadband differential phase-shifter de-sign using bridged t-type bandpass network, IEEE Transactions on Microwave Theory and Techniques 62 (7) (2014) 1470–1479. doi:10.1109/TMTT.2014.2324540. 15 [10] C.-C. Huang, W.-T. Fang, Y.-S. Lin, Miniaturization of broadband stub bandpass filters using bridged-t coils, IEEE Access 6 (2018) 20164–20173. doi:10.1109/ACCESS.2018.2818938. [11] S. Lyu, X. Yin, Compact quad-band filter with bridged-t coil based on through-silicon vias technology, in: 2023 6th International Conference on Electronics Technology (ICET), 2023, pp. 438–441. doi:10.1109/ICET58434.2023.10211959. [12] R. Kumar, K. J. Vinoy, Design and implementation of high fre-quency and large group delay bridged-t all pass network, in: 2019 49th European Microwave Conference (EuMC), 2019, pp. 376–379. doi:10.23919/EuMC.2019.8910704. [13] C.-C. Huang, W.-T. Fang, Y.-S. Lin, Miniaturized wideband bandpass filter in ipd technology with passive equalizer to improve the flatness of insertion loss response, in: 2017 IEEE CPMT Symposium Japan (ICSJ), 2017, pp. 75–78. doi:10.1109/ICSJ.2017.8240092. [14] C.-H. Chan, Y.-S. Lin, Miniature common-mode rejection filter in silicon-based integrated passive device technology, in: 2019 International Sympo-sium on Electromagnetic Compatibility - EMC EUROPE, 2019, pp. 881– 884. doi:10.1109/EMCEurope.2019.8871654. [15] C.-Y. Hsiao, Y.-C. Huang, T.-L. Wu, An ultra-compact common-mode band-stop filter with modified-t circuits in integrated passive device (ipd) process, IEEE Transactions on Microwave Theory and Techniques 63 (11) (2015) 3624–3631. doi:10.1109/TMTT.2015.2481412. 16 [16] W. H. Hayt, J. E. Kemmerly, S. M. Durbin, Handy circuit analysis tech-niques, in: Engineering Circuit Analysis, McGraw-Hill, 2012, Ch. 5, p. 154. [17] D. M. Pozar, Microwave network analysis, in: Microwave engineering, Wi-ley, 2012, Ch. 4, p. 190. [18] D. M. Pozar, Microwave network analysis, in: Microwave engineering, Wi-ley, 2012, Ch. 4, p. 192. 17

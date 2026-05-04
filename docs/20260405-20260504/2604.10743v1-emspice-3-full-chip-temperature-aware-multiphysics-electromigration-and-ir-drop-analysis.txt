@@ -1,0 +1,585 @@
+Title: EMSpice 3: Full-chip Temperature-Aware Multiphysics Electromigration and IR-Drop Analysis
+
+URL Source: https://arxiv.org/pdf/2604.10743v1
+
+Published Time: Tue, 14 Apr 2026 01:24:30 GMT
+
+Number of Pages: 14
+
+Markdown Content:
+> 1
+
+# EMSpice 3: Full-chip Temperature-Aware Multiphysics Electromigration and IR-Drop Analysis 
+
+Haotian Lu Student Member, IEEE, Sheldon X.-D. Tan Fellow, IEEE 
+
+Abstract—In this work, we present EMSpice 3, a full-chip temperature-aware multiphysics framework for coupled electromigration (EM), thermomigration (TM), and IR-drop analysis of power-grid networks. EMSpice 3 combines ex-tracted power-grid netlists, a configurable parameter file, and optional chip-level thermal maps in a unified flow that supports temperature-aware immortality screening, transient EM/TM stress simulation with iterative resistance updates, and optional Monte Carlo lifetime analysis. To accelerate large-tree simulation, the framework integrates an extended rational Krylov reduction method into the transient solver with no error loss. It also seamlessly integrates with industry-standard Synopsys ICC and Fusion Compiler tools for practical full-chip studies. By incorporating realistic measured or simulated thermal maps directly into the reliability loop, EMSpice 3 enables map-aware EM sign-off and optimization rather than relying only on average-temperature assumptions. Experiments on six benchmark designs show that realistic spatial thermal maps materially affect EM reliability even when the average temperature is unchanged. For the RISC-V core, equal-average thermal profiles produce more than 70% spread in time to failure (TTF), while for the ARM Cortex-A logic core they produce nearly 50% spread, demonstrating that average tem-perature or peak temperature alone is insufficient for reliable sign-off. Across the six designs, the Krylov-accelerated solver consistently reduces runtime by about 1.18 ×–1.50 ×. Monte Carlo analysis further shows strong design dependence in variation sensitivity: under 20% variation in atomic diffusivity 
+
+κ(x) and critical stress, the RISC-V core exhibits about 25% TTF coefficient of variation, whereas the ARM Cortex-A logic core shows only about 0.03%. These results demonstrate that EMSpice 3 enables practical, map-aware, and workload-aware full-chip EM reliability assessment. Index Terms—Electromigration, IR-drop, Thermomigra-tion, Full-chip reliability 
+
+I. Introduction Electromigration (EM) remains a major reliability con-cern in advanced copper-based very-large-scale integration (VLSI) circuits as technology scaling continues to increase current density while shrinking interconnect dimensions. Traditional single-wire EM assessment methods, such as Black’s equation and Blech’s limit, are widely used in prac-tice but are known to be overly conservative when applied to complex interconnect networks. More recent physics-based EM-aware IR-drop analysis methods address this limitation by solving Korhonen’s equation directly, but many of them still neglect the impact of realistic temper-ature distributions on both EM degradation and IR-drop behavior. EM is driven by the momentum transfer from conduct-ing electrons to metal atoms. As atoms migrate away from the cathode, tensile stress builds there, while compressive stress accumulates near the anode. This stress gradient opposes the current-driven atomic flux through stress 
+
+Haotian Lu and Sheldon X.-D. Tan are with the Department of Electrical and Computer Engineering, University of California, Riverside, CA 92521 USA This work is supported in part by NSF grant under No.CCF-2007135 and in part by NSF grant CCF-2305437. 
+
+migration and continues to evolve until equilibrium is reached. If the tensile stress exceeds a critical threshold, void nucleation and subsequent growth occur, increasing wire resistance and eventually causing circuit failure. In addition to current-induced migration, temperature gradients caused by Joule heating or active devices can drive atomic transport from hot to cold regions, leading to thermomigration (TM). Classical EM models, such as those of Black [1] and Blech [2], are therefore limited for modern full-chip relia-bility analysis. Korhonen et al. [3] introduced a physics-based partial differential equation (PDE) model for stress evolution in interconnect wires, and a range of analytical and numerical methods have since been proposed to solve it. For example, Cook et al. [4] proposed FastEM, which first discretizes the PDE into linear time-invariant ordinary differential equations (ODEs) and then applies Krylov-subspace reduction to accelerate the computation. Chen et al. [5] developed analytical solutions that pro-vide further insight into stress evolution in interconnect structures. Most existing analytical and numerical solutions still overlook the impact of spatial temperature gradients. Recent studies show that thermomigration can be compa-rable in magnitude to electromigration [6], [7]. As power density, Joule heating, and thermal resistance continue to increase, these effects are expected to become even more significant [8]. Although temperature-aware EM analysis with Joule-heating effects has been studied [9], practical chip-level temperature maps are still rarely incorporated into full-chip EM reliability analysis. Although numerous numerical and analytical ap-proaches have been proposed for electromigration (EM) stress analysis, most methods still focus mainly on solv-ing Korhonen’s equation itself. In full-chip power grids, however, reliability depends on the coupled evolution of stress, void growth, resistance increase, and IR drop under realistic thermal fields. EMSpice [10] moved in this direction by integrating physics-based EM analysis into a practical Electronic Design Automation (EDA) flow. Yet two gaps remain important in practice. First, realistic chip-level temperature maps are not fully incorporated into the EM/IR-drop reliability loop, even though spatial hotspot alignment can strongly affect which trees fail and when. Second, existing flows provide limited guidance on when deterministic EM analysis is sufficient and when statistical EM analysis is required to capture variation-induced tail risk. In this paper, we present EMSpice 3, a full-chip ther-momigration (TM)-aware electromigration (EM) and IR-drop analysis framework for power-grid reliability assess-ment. The tool processes extracted power-grid netlists together with a YAML parameter file and, when avail-able, practical chip-level thermal maps. It supports temperature-aware immortality screening, transient mul-
+
+> arXiv:2604.10743v1 [cs.AR] 12 Apr 2026 2
+
+tiphysics simulation with iterative resistance updates, and optional Monte Carlo analysis for variation-aware lifetime estimation. Our numerical results show that realistic spatial temperature maps can change both the number of mortal trees and the network time to failure even when the average temperature is unchanged, and that sensitivity to process variation is strongly design-dependent. These observations motivate a more realistic, map-aware, and workload-aware EM sign-off flow. The key contributions of this work are summarized as follows:  
+
+> •
+
+We develop a full-chip TM-aware EM and IR-drop analysis framework that couples temperature-aware immortality screening, transient stress evolution, void-induced resistance updates, and repeated IR-drop recomputation on realistic power-grid trees. This allows EM reliability to be evaluated at the network level rather than on isolated wires.  
+
+> •
+
+We incorporate practical spatial temperature maps, including both Joule-heating-derived and measured chip temperature distributions, directly into the re-liability flow. The results show that average tem-perature alone is not sufficient: different thermal maps with the same mean temperature can produce substantially different mortal-tree counts and time-to-failure (TTF). In our case studies, equal-average thermal profiles lead to more than 70% TTF spread in the RISC-V design and nearly 50% spread in the ARM Cortex-A logic core design. Even peak temperature alone can be misleading when hotspots are not aligned with the most electrically stressed trees.  
+
+> •
+
+We integrate an extended rational Krylov accel-eration method into the transient solver for large interconnect trees and show how to choose the shift time for the EMSpice 3 flow. Across six benchmark designs, the Krylov path consistently reduces runtime by about 1.18 ×–1.50 ×, while the largest tested design completes in about 31.5 s with the accelerated flow.  
+
+> •
+
+We show that design sensitivity to process variation is strongly regime-dependent. Using Monte Carlo analysis, we observe that designs with only a small number of marginally mortal trees can exhibit large TTF spread, whereas designs dominated by deeply mortal trees behave almost deterministically. In our experiments, the RISC-V core shows about 25% TTF coefficient of variation under 20% variation in atomic diffusivity κ(x) and critical stress, while the ARM Cortex-A logic core shows only about 0.03%. This provides practical guidance on when statistical EM analysis is necessary and when deterministic analysis is sufficient.  
+
+> •
+
+We validate EMSpice 3 on six industrial-scale bench-mark designs and demonstrate that the temperature-aware screening flow avoids unnecessary transient simulation on less stressed designs while the combined framework remains practical for full-chip multiphysics EM sign-off studies. The structure of the paper is as follows: Section II discusses works related to our study. Section III pro-vides a detailed exploration of the physics underlying temperature-aware screening and the interplay between IR-drop, electromigration, and thermomigration. The overall framework of the proposed method is outlined in Section IV. Section V presents all numerical results from the case studies. The paper concludes with Section VI, summarizing our findings. II. Review of related works This section reviews prior work on electromigration, temperature modeling, and coupled EM/TM analysis, highlighting the gaps addressed by this work. Early EM studies relied primarily on empirical models such as those of Black [1] and Blech [2]. Although still widely used in industry, these models oversimplify modern interconnect behavior and do not account for network-level interactions or thermal effects under realistic oper-ating conditions. Korhonen et al. [3] introduced a physics-based PDE model for stress evolution in interconnect wires, enabling more accurate EM analysis at the segment level. As VLSI technology has advanced, however, it has become in-creasingly important to incorporate both electromigration and thermomigration, because power density and thermal resistance continue to rise in advanced ICs. The role of temperature in EM has historically been underestimated, and many models still fail to capture dynamic thermal conditions across an operating chip. Studies by Chen and Tan [7] and Abbasinasab et al. [6] highlight the importance of accurate temperature mod-eling for wire mortality and metal migration. Time-dependent thermal analysis for solids has long been studied in the heat-transfer literature [11]. More recent EM/TM work, including that of Kavousi and Chen [9] and Lamichhane [12], moves toward temperature-aware EM analysis, but practical chip-level thermal maps remain only partially integrated into the reliability loop. More recently, the open-source EM analysis tool PRO-TON was proposed in [13]. Like EMSpice, PROTON uses finite differences for stress analysis, but it relies on an external commercial simulator for IR-drop analysis and therefore does not capture the same integrated EM/IR-drop interaction. In addition, PROTON does not include an immortality screen to filter out EM-immune wires before transient simulation. Overall, while these tools offer more realistic EM analysis than classical empirical models, they still do not fully account for Joule heating and the resulting thermomigration effects in both screening and transient stress analysis. III. Multiphysics modeling for EM and IR drop analysis A. Temperature modeling The importance of temperature in electromigration (EM) analysis has historically been underestimated. As very-large-scale integration (VLSI) technology continues to scale, however, temperature has become a critical factor in metal migration [14], [6]. Accurate temperature mod-eling is therefore essential for realistic prediction of wire mortality and stress evolution. Starting from the first law of thermodynamics, the time-dependent thermal behavior in solids is described by the following equation [11]:      
+
+> ρmcp
+> ∂T ∂t +∇q=Q(1)
+
+Here, cp represents the specific heat capacity, ρm denotes the mass density, q = −k∇T is the heat flux defined by Fourier’s law, and Q = Qjh + Qconn encompasses the components of Joule heating and heat convection, where 
+
+Qjh = j2ρ and Qconn = k(T − T0)/Γ2. The thermal 3
+
+characteristic length, Γ, depends on the geometry and topology of the environment, and it is calculated as [6]:   
+
+> Γ2=tcu tILD
+> kcu
+> kILD
+> (2)
+
+In this context, tcu and kcu refer to the thickness and thermal conductivity of the wire, respectively, and tILD 
+
+and kILD refer to the thickness and conductivity of the dielectric. Under stationary conditions, Eq. (1) simplifies to:         
+
+> k∇2T−(j2ρ+k(T0−T)/Γ2) = 0 (3)
+
+Eq. (3) can be solved numerically by finite differences (FDM) or finite elements (FEM) to obtain the spatial temperature distribution. The temperature profile along a single wire, subject to boundary conditions T (−L/ 2) = T1
+
+and T (+ L/ 2) = T2, is given by [6], [15]:                  
+
+> T(x) = T0+Tm
+> [
+> 1−cos (x
+> Γ
+> )
+> cos (L
+> 2Γ
+> )]
+> +Tn
+> [
+> 1−sin (x
+> Γ
+> )
+> sin (L
+> 2Γ
+> )]
+> (4)
+
+Traditional approaches to temperature modeling in elec-tromigration analysis often rely on static values for boundary temperatures, T1 and T2, which fail to reflect the dynamic thermal landscapes of operational chips [9], [12]. This static assumption can lead to discrepancies between modeled and actual device behaviors under vary-ing operational conditions. In EMSpice 3, the one-time thermal-analysis stage keeps the physics model in Eq. (4) but computes the boundary conditions algorithmically for each tree rather than assuming a single global pair of endpoint temperatures. The implementation first loads the canonical thermal and material parameters from the YAML-backed parameter set, including the thermal char-acteristic length Γ, the boundary heat-loss parameter Γh,copper resistivity ρ, thermal conductivity κ, the ambient temperature T0, and the stress-grid sampling density nx.It then operates in one of two modes. If an external thermal CSV is provided, the tool reads the columns x, y, x1, and y1, selects the most informative temperature-like column, automatically interprets the temperatures as either Celsius or Kelvin, and chooses the coordinate scale that maximizes overlap with the via coordinates extracted from the power grid. The resulting endpoint temperatures are merged into a coordinate-to-temperature map by averaging duplicated entries. If no external thermal map is provided, the solver falls back to a Joule-heating-only mode with T0 as the reference boundary temperature. For each wire tree, EMSpice 3 next determines the traversal orientation, identifies which endpoints are con-strained by vias, and assigns via temperatures either from the external map or from the ambient reference. The remaining unconstrained nodes are solved in tridiagonal thermal blocks to obtain the tree endpoint temperatures. Numerical guards then clamp any nonphysical endpoint value below the ambient or mapped boundary floor. After the endpoints are available, the solver evaluates Eq. (4) along every branch using the solved endpoint temperatures and the local current density, thereby sam-pling a full temperature profile on the stress grid with 
+
+Nseg (nx − 1) + 1 points for a tree of Nseg branches. The final cached outputs are the per-tree endpoint tempera-tures, the sampled per-tree temperature profiles, and the orientation flags required by the downstream TM-aware screening and transient stress analysis. This workflow enables temperature-dependent EM analysis to reflect either measured thermal maps or internally generated Joule-heating profiles without assuming a uniform global temperature field. B. Steady-state-stress-based screening In EMSpice 3, the primary immortality screen is a one-shot steady-state stress analysis on the original netlist. This screening step is optional and is performed before the transient EM/TM simulation begins. Its purpose is not to declare failure directly, but to identify the wires and trees that require transient follow-up. As shown later in Section V, this screening approach does not account for the full interaction among trees over the entire EM aging process. As a result, it can identify only a subset of the truly immortal wires. Any wire that is not screened out still requires transient follow-up to determine its actual mortality. Even so, the screening remains useful in design exploration because it removes clearly immortal trees before the expensive transient stage. For the non-TM-aware case, the screening flow first extracts the trees from the original power-grid netlist and runs the IR-drop solve to obtain the branch current densities. The original tree geometry is then combined with these current densities to build the steady-state tree set. For each tree, EMSpice 3 solves the steady-state form of the stress equation and samples the resulting hydrostatic stress on the same branch-local stress grid used by the transient solver. A branch is classified as requiring transient follow-up when any finite sampled node stress on that branch exceeds the critical stress 
+
+σcrit . Otherwise, the branch is classified as immortal. A tree requires transient follow-up when at least one of its branches does; otherwise, the entire tree is screened out as immortal. For the TM-enabled case, the flow first performs the one-time thermal analysis described above. The result-ing temperature field is then used in the same steady-state stress solve, now with thermomigration-aware ma-trix stamping. The classification rule remains unchanged: branches and trees are screened according to whether their maximum finite steady-state stress exceeds σcrit . In this sense, the TM flow differs only in the thermal field that enters the steady-state stress solve; the screening output is still reported as immortal wires/trees and wires/trees that require transient analysis. This steady-state criterion is consistent with the im-plementation in EMSpice 3 because it directly measures the stress state that drives void nucleation, while avoiding the need to infer mortality from an intermediate voltage criterion. The screen therefore acts as a physics-based preclassification step that reduces the transient workload without labeling all non-immortal branches as already failed. C. IR-Drop in VLSI interconnects IR drop is increasingly important in modern designs because rising wire resistance degrades on-chip power delivery. As fabrication technologies shrink and current density increases, the dimensions of the power-carrying wires also decrease. In the context of EM analysis, which evolves over days or months, the electrical potential distribution can be treated as quasi-static [10]. It is 4
+
+therefore governed by the strong form of the Laplace equation:                       
+
+> ∇ ·
+> (1
+> ρ(ϕ)∇u
+> )
+> = 0 in ΩL(5)
+> u=guon ∂ΩL∩Γu(6) ⃗n·1
+> ρ(ϕ)∇u=gjon ∂ΩL∩Γj(7)
+
+where ρ(ϕ) represents the copper resistivity influenced by the phase field. Γu denotes boundaries with Dirichlet voltage conditions and gu is the imposed voltage source. Γj
+
+denotes boundaries with Neumann current-flux conditions and gj is the corresponding current-density source. For full-chip EM analysis, directly solving Eq. (5) is compu-tationally expensive. Instead, we assume uniform current density along each wire segment, extract a resistance network from the power-grid layout, and apply modified nodal analysis (MNA), which gives    
+
+> M(t)u(t) = P I (t)(8)
+
+Here, M (t) denotes the power-grid admittance matrix, which changes over time as wire resistances degrade due to EM. The matrix P ∈ Rb×p maps the p current sources 
+
+I(t) to the nodal-voltage vector u(t). The resulting nodal voltages and branch currents are then used in both the temperature-aware immortality screen and the transient EM/TM stress solve. D. EM stress evolution mechanism In copper dual damascene interconnects, the electron wind force drives atoms from the cathode toward the anode. Because the wire is encased in a rigid dielectric, this redistribution generates tensile hydrostatic stress at the cathode and compressive stress at the anode. Once the tensile stress exceeds a critical threshold, a void nucleates. Physics-based models [16], [17] characterize the subse-quent EM failure process through three sequential phases: nucleation ( tnuc ), incubation ( tinc ), and growth ( tgrowth ). During nucleation, stress accumulates, potentially leading to void formation at critical stress levels at cathode nodes. In the incubation phase, void growth occurs without resistance changes. The growth phase begins when the void reduces the cross-sectional area of the via, causing current to pass through a higher resistive barrier, changing the wire resistance. This phase may result in early failure (open circuit) or progressive resistance increase up to a predefined threshold (e.g., 10% change). The Total Time To Failure (TTF) is the sum of these three phases, mathematically represented as follows:        
+
+> T T F =tnuc +tinc +tgrowth (9)
+
+1) Void nucleation phase: The nucleation phase of the electromigration-thermomigration (EM-TM) process marks the initial period up to the point where a void forms within the interconnect structure being analyzed. This phase commences with an inherent residual stress within the system. The evolution of EM stress, σ, driven by the combined effects of electromigration (EM), stress migration (SM), and thermomigration (TM), is effectively modeled through the application of Korhonen’s equation [18]:        
+
+> ∂σ ∂t =∂∂x
+> [
+> k(x)
+> (∂σ ∂x −eZρj
+> Ω−Q
+> ΩT∂T ∂x
+> )]
+> (10)
+
+Here, k(x) = Da(T (x)) BΩ/(kB T (x)) represents diffusiv-ity, where Da = D0 exp( −Ea/k B T ) is the atomic diffusion coefficient, D0 a constant, and Ea the activation energy for EM. The transient hydrostatic stress evolution, σ(x, t ),during the nucleation phase of a general interconnect structure is governed by the Korhonen equation:                       
+
+> PDE: ∂σ ∂t =∂∂x
+> [
+> κ(x)
+> (∂σ ∂x −S−M
+> )]
+> ,t > 0(11) BC: κ(xb)
+> (
+> ∂σ ∂x
+> ∣∣∣∣x=xb
+> −S−M
+> )
+> = 0 ,0< t < t nuc (12) IC: σ(x, 0) = σT(13)
+
+In these equations, S = eZρj  
+
+> Ω
+
+represents the EM flux and 
+
+M = Q 
+
+> ΩT∂T ∂x
+
+the TM flux. κ(x) = Da(T (x)) BΩ/(kB T (x)) 
+
+indicates position-dependent diffusivity due to non-uniform temperature, with Da = D0 exp( −Ea/(kB T (x))) 
+
+as the atomic diffusion rate, σT the initial thermally in-duced residual stress, and xb marking the block terminals. 2) Void incubation phase: When the stress hits acritical threshold at tnuc , a void forms. Despite this, the interconnect’s resistance remains largely unchanged because the void has not yet consumed the critical volume of the via’s cross-section. Typically, the void nucleates at or near a terminal node when stress reaches this critical point. At this juncture, the normal component of stress at the void boundary is generally zero as shown in Fig. 1. To model this, we consider the effective thickness of the 
+
+Fig. 1: Stress distribution with void 
+
+copper-void boundary, δ, as infinitesimally small. We then establish the stress gradient between the zero-stress void surface and the adjacent metal as indicated in [19], [20]:       
+
+> ∂σ ∂x
+> ∣∣∣∣∣x=xnuc
+> =σ(xnuc , t )
+> δ,tnuc < t < ∞(14)
+
+In the above expression, xnuc represents the location where the void nucleates along the boundary, and δ denotes the thickness of the void interface. The volume of the void, 
+
+Vv (t), in a multi-segment wire is calculated based on the stress distribution throughout the remaining wire sections. This volume satisfies the atom conservation equation, which is expressed as follows:     
+
+> Vv(t) = −
+> ∫
+> ΩL
+> σ(t)
+> BdV (15)
+
+This relationship is derived from the principles of atom conservation across different segments of the wire as outlined in [19], [20]. Here ΩL represents the volume of the remaining interconnect wire, and V denotes the total volume of the wire, defined by the equation V = W ×h×l,5
+
+where, W is the width of the wire, h is its thickness, and l
+
+is its length. It is important to note that Eq. (15) applies equally during the void growth phase. The period of incubation is defined by the interval 
+
+tnuc < t < t i, where the void volume Vv (t) remains below the critical volume Vcrit :   
+
+> Vv(t)< V crit (16)
+
+In this context, Vcrit is dependent primarily on the cross-sectional area of the wire. In a one-dimensional scenario, the width of the wire W is utilized as the critical dimension rather than the volume, marking the termination of the incubation phase as resistance begins to alter. This usage arises because W ≥ h, and the void will consume the entire cross-section of the wire once it expands to the width W .Fig. 1 illustrates the stress dynamics in a wire during the incubation phase. The stress at the cathode rapidly drops to zero, while the anode stress gradually declines until it stabilizes. This decline fosters void growth, driven by the accumulation of negative stress as integrated in Eq. (14). The void volume reaches saturation when the stress stabilizes. During the incubation phase, the void volume remains insufficient to obstruct the via’s cross section and stays below the critical volume. At the termination of the incubation phase, a void will encompass the entire cross section of the via, potentially leading to either an early or a late failure of the wire [21]. Early failures are common in structures where vias are placed above lines. Here, the void obstructs the via, severing the connection to the upper layer, which consists of non-conductive materials like Si 3N4. This results in a failure at the close of the incubation phase. Conversely, late failures occur in structures with vias below the lines. In such cases, even when a void reaches a critical size within a via-below line, current may still traverse the barrier layer, leading to an increase in resistance during the growth phase [10]. 3) Void growth phase: During the void growth phase, the expansion of the void continues, markedly distin-guishing it from the incubation phase, wherein the wire resistance begins to meaningfully change. This change in resistance arises because the electrical current is forced to traverse a highly resistive barrier, often composed of materials like Ta/TaN, which possess a resistivity significantly greater than that of Cu. The modification in wire resistance during this phase can be approximately expressed as [10]:           
+
+> ∆R(t) = Vν−Vcrit
+> W H
+> [ρTa
+> hTa(2 H+W)−ρCu
+> HW
+> ]
+> (17)
+
+Here, ρTa and ρCu represent the resistivities of the barrier material (Ta/TaN) and copper, respectively. W denotes the width of the wire, H refers to the thickness of the copper, and hT a is the thickness of the barrier layer. 4) Finite-difference transient formulation: Korhonen’s equation, including the EM, SM, and TM terms in Eq. (11), is solved by a finite-difference transient formu-lation on each multi-segment interconnect tree, similar to [10]. After finite-difference discretization, the PDE in Eq. (11), together with its boundary conditions (BCs) and initial condition (IC), is transformed into the linear descriptor system       
+
+> C˙σ(t) = Aσ(t) + Bj(t)−D
+> σ(0) = [ σ1(0) , σ 2(0) , . . . , σ n(0)] ⊤(18)
+
+In this formulation, σ(t) denotes the stress vector; C and 
+
+A are n × n matrices; D is an n × 1 vector associated with the TM term; and B is an n × p input matrix, where p is the number of current-density inputs. The initial condition 
+
+σ(0) includes both the residual stress and, at later outer steps, the stress carried over from the preceding simulation state. Combining Eq. (8), Eq. (15), and Eq. (18), the coupled EM-TM-IR-drop system addressed in this work can be summarized as          
+
+> C˙σ(t) = Aσ(t) + Bj(t)−DVv(t) =
+> ∫
+> ΩL
+> σ(t)
+> BdV M(t)u(t) = P I (t)
+> σ(0) = [ σ1(0) , σ 2(0) , . . . , σ n(0)] ⊤
+> (19)
+
+Eq. (19) summarizes the multiphysics system used to analyze coupled IR drop, void volume, and stress evolution over time. The implementation details are presented in Section IV. IV. EMSpice 3 Framework with Accelerated Implementation A. Overall EMSpice 3 flow Fig. 2 summarizes the overall EMSpice 3 flow. The analysis starts from three inputs: an extracted power-grid netlist, a YAML parameter file containing the material and numerical settings, and an optional thermal map for TM-aware analysis. After parsing these files, the tool can perform an optional steady-state screening pass to prune trees that are already classified as immortal. The main simulation then advances through outer aging steps. At each step, the current degraded netlist is staged and partitioned into wire trees, after which the IR-drop problem is solved by Modified Nodal Analysis (MNA) to obtain nodal voltages and branch current densities. When TM is enabled, the thermal field is loaded once and reused as cached input. The extracted electrical and thermal data are then passed to the per-tree transient solver. As shown in Fig. 2, larger trees are accelerated by the rational Krylov path, while smaller trees are solved directly by backward Euler. The updated stress and void states are finally converted to resistance changes and written back to the staged netlist for the next outer step. B. Finite-difference transient stress solver The finite-difference transient stress solver combines the current-density data from the IR-drop solution with the temperature distribution to solve the discretized Korho-nen equation over time. For each tree, the solver updates the hydrostatic stress state, tracks void nucleation and growth, and computes the resulting change in resistance. These resistance updates are then written back to the staged netlist so that the next IR-drop solve reflects the current aging state of the power grid. C. Early failure detection via via-aware resistance updates Once the FDTD solver has advanced the stress state and updated void positions and lengths, the resulting resistance changes must be written back into the staged netlist before the next IR-drop solve. EMSpice 3 distin-guishes two physically distinct failure modes depending on whether the cathode node of the affected tree carries an explicit via connection to a higher metal layer. 6Power Grid Netlist                            
+
+> (. pna )
+> Simulation Parameters
+> (. yml )
+> (Optional) Temp. Map
+> (.csv)
+> Parse & Load Inputs
+> Steady -state
+> Screening?
+> Steady -state Solver
+> + Immortality Screen
+> YE S
+> Stage Netlist + Extract Wire Trees
+> NO
+> (Optional ) TM Analysis
+> w/ temperature field ( cached)
+> IR -Drop Solver (MNA)
+> →currents & voltages
+> Immortality Filter + Tree Dispatch
+> Rational Krylov Solver
+> (RKSM, order q)
+> when n≥max( 3𝑞 ,30 )
+> Full -order
+> Backward Euler Solver
+> when n≤max( 3𝑞 ,30 )
+> Tree -wise FDTD Stress Solver
+> →stress , v oid nucleation &growth
+> Resistance Update
+> w/ (early /late failure, via -aware)
+> Transient Loop
+> (Outer Iterations)
+> Outputs: stress, void state, IR -drop ,
+> updated netlist, visualization
+
+Fig. 2: Overall algorithmic flow of the proposed EMSpice 3 framework 
+
+In the common case, late failure, the void grows within a wire segment but does not fully block an inter-layer current path. The resistance increase is computed in-crementally from the fraction of the wire cross-section consumed by the void, and the branch resistance is updated accordingly. When the cathode node of the tree is connected upward through an explicit via resistor to a strictly higher metal layer, however, the growing void can sever the only current path through that via, causing an abrupt open-circuit rather than a gradual degradation. This condition is termed early failure, and the affected branch resistance is set to an open-circuit sentinel value. Correctly identifying early failure requires explicit via information in the power-grid netlist. EMSpice 3 parses the SPICE netlist for two-terminal resistors whose two endpoint nodes are encoded on different metal layers; these elements represent explicit via resistors. For each tree, the cathode node is resolved from the extracted tree topology, and its upward-layer connectivity is looked up in the resulting via map. Earlier EMSpice releases lacked this via-aware pathway and therefore could not reliably distinguish the two failure modes: without explicit via resistors in the netlist, all failing branches were treated as late failures by default. EMSpice 3 preserves backward compatibility when the netlist does not include via resis-tors by defaulting to late-failure treatment throughout. D. Treatment of the void nucleation on mid-tree junction nodes 
+
+(a) Spatial stress profile (b) Junction-node stress his-tory 
+
+Fig. 3: Mid-tree void nucleation in the Dual-Port RAM design. Left: stress profile along tree (25-100) over outer timesteps from 2.5 × 10 6 s to 5.0 × 10 7 s, showing the evolution from a near-zero state to a strong compressive gradient as degradation accumulates. Right: stress history at junction node 220, where the abrupt transition from about 3.3 × 10 8 Pa tensile stress to about −3.4 × 10 8 Pa compressive stress marks void nucleation; the subsequent saturation confirms that the Robin boundary condition enforces flux decoupling at the interior node without dynamic tree splitting. 
+
+In existing EM simulation frameworks based on the extended Korhonen formulation, void nucleation at an interior node of a wire tree is handled by explicitly splitting the tree into two separate sub-trees at the nucleation point [22]. A zero-flux (homogeneous Neu-mann) boundary condition is then imposed on each sub-tree at the split boundary, reflecting the physical fact that the void surface carries no net atomic flux. While this approach is physically correct, it requires dynamic bookkeeping: the tree topology must be restructured at every nucleation event, and the system matrices must be reassembled for the resulting sub-trees at each subsequent time step. EMSpice 3 avoids tree splitting entirely through a direct application of the Robin boundary condition at the void node. Once a void nucleates at stress-grid node vi, the corresponding row of the assembled stiffness matrix is cleared and replaced with a Robin stencil stamped over every segment incident to vi:
+
+∂σ ∂x 
+
+∣∣∣∣vi
+
+= σ(vi, t )
+
+δ , t > t nuc , (20) 
+
+where δ is the infinitesimally thin void-surface thickness already used in the post-voiding boundary condition of Eq. (14). Because the stamping loop iterates over all incident segments regardless of their count, the same code path handles terminal nodes, junction nodes, and arbitrary mid-tree interior nodes without any special casing. As δ → 0 the large diagonal coefficient κ/ (∆ x · δ)
+
+forces the atomic flux to zero across all branches meeting at vi, effectively decoupling the two sub-trees within a very short simulation time. The decoupling is therefore not instantaneous but is completed in a time period proportional to δ, which is kept negligibly small relative to the simulation time step. This treatment significantly simplifies the implementa-tion: no tree topology changes are performed at runtime, and the matrix assembly routine requires only a localized row replacement rather than a global remeshing. As illustrated in Fig. 3, the Robin-based approach reproduces the same physical boundary condition as the split-tree 7
+
+method while preserving the correctness of the EM stress dynamics. E. Rational Krylov subspace acceleration For power-grid trees with a large number of finite-difference stress nodes, the backward-Euler solve dom-inates the per-timestep cost of EM-TM analysis. EM-Spice 3 therefore adopts the recently proposed extended rational Krylov subspace method (ExtRaKrylovEM) [23], which projects the n-dimensional stress system onto a much smaller subspace of order q (q ≪ n). This reduces the dominant linear-algebra cost on large trees while preserving high solution accuracy. Compared with the standard extended Krylov method, ExtRaKrylovEM uses a shifted resolvent operator to construct the projection basis, which better captures the transient dynamics of interest and avoids numerical issues associated with near-singular system matrices under Neumann-type boundary conditions. 1) System formulation and extended rational Krylov subspace: After finite-difference spatial discretization of the Korhonen equation, the per-tree stress evolution is described by the linear time-invariant system 
+
+C ˙σ(t) = A σ(t) + B j − D, σ(0) = σ0, (21) 
+
+which is the same descriptor form as Eq. (18). In this paper, j is assumed constant over one outer EMSpice 3 update, but the thermomigration term satisfies D̸ = 0 in general. Define the constant forcing vector 
+
+f := B j − D. 
+
+Applying the Laplace transform gives 
+
+(sC − A) Σ(s) = Cσ0 + f
+
+s .
+
+Because the input is constant, define ˜Σ(s) := s Σ(s), so that 
+
+(sC − A) ˜Σ(s) = sC σ0 + f .
+
+We expand the solution around a shifted frequency s0 =1/t s, where ts is a user-supplied shift time (time constant of interest). Define 
+
+Ks0 := s0C − A, Rs0 := K−1 
+
+> s0
+
+,
+
+and let s = s0 + ∆ . Expanding 
+
+˜Σ(s0 + ∆) = 
+
+> ∞
+
+∑
+
+> k=0
+
+˜mk∆k
+
+and matching powers of ∆ yields the compact recurrence 
+
+˜mk =
+
+
+
+Rs0 (s0Cσ0 + f ) , k = 0 ,Rs0 (Cσ0 − C˜m0) , k = 1 ,
+
+−Rs0 C ˜mk−1, k ≥ 2.
+
+(22) 
+
+Since j is constant here, no source-moment matching is needed; all higher-order shifted moments propagate only through the operator Rs0 C. This leads to the starting block Bs0 := [ Rs0 Cσ0, R s0 f ]. (23) 
+
+All shifted response moments therefore lie in the block rational Krylov subspace 
+
+Kq (Rs0 C, Bs0 ) = range ([ Bs0 , (Rs0 C)Bs0 , . . . , 
+
+(Rs0 C)q−1Bs0
+
+]) . (24) 
+
+Algorithm 1 Constant-Input Block Rational Krylov Re-duction 
+
+Require: System matrices A, C, forcing vector f = Bj − D,initial stress σ0, expansion point s0, reduction order q
+
+Ensure: Projection matrix Vr , reduced matrices Ah, Ch, f h 
+
+> 1:
+
+Form Ks0 ← s0C − A and compute its sparse LU factors  
+
+> 2:
+
+Define the propagation operator M(X) ← K−1 
+
+> s0
+
+CX  
+
+> 3:
+
+Form starting block F0 ← [K−1 
+
+> s0
+
+Cσ0, K −1 
+
+> s0
+
+f ] 
+
+> 4:
+
+Compute thin QR: F0 = V1R0; initialize V ← V1 
+
+> 5:
+
+for j = 1 to q − 1 do  
+
+> 6:
+
+W ← M (Vj ) 
+
+> 7:
+
+for i = 1 to j do  
+
+> 8:
+
+Hij ← V ⊤ 
+
+> i
+
+W 
+
+> 9:
+
+W ← W − ViHij  
+
+> 10:
+
+end for  
+
+> 11:
+
+Compute thin QR: W = Vj+1 Hj+1 ,j  
+
+> 12:
+
+if ∥Hj+1 ,j ∥F < ε then break  
+
+> 13:
+
+end if  
+
+> 14:
+
+Append Vj+1 to V 
+
+> 15:
+
+end for  
+
+> 16:
+
+Ah ← V ⊤AV , Ch ← V ⊤CV , f h ← V ⊤f 
+
+> 17:
+
+return (V, A h, C h, f h)
+
+An orthonormal projection basis Vr ∈ Rn×r is constructed from this subspace via a block Arnoldi process up to order q, as summarized in Algorithm 1. Because s0 is chosen to match the dominant time scale of the simulation, the resulting basis captures the transient dynamics more accurately than a standard (unshifted) Krylov expansion for the same order q. Furthermore, computing the re-solvent (s0C − A) rather than A−1 directly avoids the near-singularity issue of A under Neumann-type boundary conditions that has been reported for earlier Krylov EM solvers [24]. 2) Reduced model and time integration: Using the final basis Vr , the reduced matrices are 
+
+Ah = V ⊤ 
+
+> r
+
+AV r , Ch = V ⊤ 
+
+> r
+
+CV r , f h = V ⊤ 
+
+> r
+
+f , (25) 
+
+and the reduced descriptor system 
+
+Ch ˙ˆσ(t) = Ah ˆσ(t) + f h, ˆσ(0) = V ⊤ 
+
+> r
+
+σ0,
+
+is integrated with backward Euler. The full-space stress field is recovered by the lift σ(t) ≈ Vr ˆσ(t).3) Shift time selection: Rather than specifying s0 di-rectly, EMSpice 3 exposes the shift time ts = 1 /s 0, which has the physical interpretation of the time-constant region of greatest interest. An initial estimate is derived from the analytical solution of the 1-D diffusion equation with blocking boundary conditions at both ends. The slowest-decaying eigenmode has eigenvalue λ1 = ( π/L )2, giving the diffusive time constant 
+
+τ = L2
+
+π2κ , (26) 
+
+where L is the wire length and κ is the stress diffusivity. In the EMSpice 3 flow, we set L = Lmax (maximum path length in the tree), reflecting the longer-range void growth along the critical path. In practice, setting ts = τ without further scaling ( η = 1 ) achieves less than 1% error in nucleation time at reduction order q = 4 –6 [23]. 4) Implementation improvements: Reduction tech-niques can be very effective for large trees, but they are not uniformly beneficial across all extracted power-grid trees. In practical PDN netlists, many trees are short, nearly straight segments with only one or two branches. These trees are typically very cheap to solve directly: empirical 8
+
+profiling in our implementation shows sub-millisecond runtime for tiny trees and only about 1–3 ms for small-to-medium trees. At that scale, the overhead of coarse-grain thread dispatch and synchronization can already exceed the numerical solve cost, so parallel execution alone does not remove the runtime bottleneck. The total simulation time is instead dominated by a smaller subset of larger or more highly discretized trees whose state dimension grows with both branch count and per-branch grid resolution, and which must be re-solved repeatedly over many outer aging steps. This heavy-tail behavior motivates a selective acceleration strategy: keep the numerous small straight-line trees on the lightweight full-order path, and apply Krylov reduction only where its setup cost can be amor-tized. Three optimizations in EMSpice 3 accelerate the basic algorithm: Basis caching. The Arnoldi basis Vr and reduced matri-ces (Ah, C h, f h) are determined by the per-tree descriptor system, the shifted starting block, and the shift s0.EMSpice 3 caches the basis in an LRU dictionary keyed by the MD5 fingerprint of the tree matrices together with 
+
+s0. The expensive sparse LU factorization and Arnoldi iterations run only once per tree; subsequent outer steps retrieve the cached basis at negligible cost. Loop-free time stepping for uniform grids. When the inner time grid is uniformly spaced with step ∆t, the backward-Euler recurrence ˆσk = F ˆσk−1 + g (where 
+
+F = ( Ch − ∆t A h)−1Ch and g = ∆ t (Ch − ∆t A h)−1f h) is solved without a Python loop. F is eigendecomposed once as F = E diag( λ) E⊤, and all time steps are computed simultaneously via vectorized power-series operations: 
+
+ˆσk = E
+
+(
+
+λk ⊙ c0 + ∑ 
+
+> j<k
+
+λj ⊙ cg
+
+)
+
+,
+
+where c0 = E⊤ ˆσ0 and cg = E⊤g. The inner cumulative sum is computed via np.cumsum, making the entire trajectory a sequence of array operations with no per-step overhead. For non-uniform grids, the LU factorization of 
+
+(Ch − ∆t A h) is cached per unique ∆t and reused across steps. Batch lift. The nt × r reduced-space trajectory is lifted to full space in a single BLAS dgemm: series = ˆZ V ⊤ 
+
+> r
+
+,replacing nt individual O(nr ) matrix-vector products with one cache-friendly O(ntnr ) matrix multiply. 5) Fallback to backward Euler and dynamic tree se-lection: Not all trees benefit from Krylov reduction. EMSpice 3 therefore applies a dynamic size threshold before invoking the solver. In the implementation, this threshold depends not only on the state dimension n and reduction order q, but also on whether a Krylov basis is already cached and on the number of inner timesteps to be advanced. On a cold solve, the basis construction and shifted sparse factorization are worthwhile only when 
+
+n is sufficiently larger than q; when the cache is warm, the threshold can be reduced substantially because the expensive setup is skipped. This policy is important in practice: many trees are small enough that direct backward Euler already costs only a few milliseconds, whereas the minority of larger trees benefit from repeated reduced-order solves across outer aging iterations. Small trees therefore fall through to the lightweight full-order path with negligible cost, while the expensive tail of the tree population is accelerated. The accelerated path can also be disabled globally, in which case full backward Euler is used throughout. Even for trees that pass the size threshold, the solver may encounter numerical difficulty (e.g., rank deficiency in the Arnoldi basis or ill-conditioned shift). When this occurs, the tree is transparently re-solved with full back-ward Euler. Krylov reduction is therefore a best-effort performance optimization: it accelerates the common case without risk to correctness. V. Numerical results and case studies In this section, we present numerical case studies and comparative evaluations performed with EMSpice 3. The full toolchain is implemented in Python. All simulations were run on a high-performance Linux server equipped with dual 3.3 GHz Xeon processors and 316 GB of memory. A. Case Study I: RISC-V Core Our first case study focuses on the power grid of a RISC-V processor core, herein referred to as “RISC”. This design was synthesized and placed-and-routed using the SAED32 (Synopsys 32/28nm Generic) library. The design comprises 9 standard-cell blocks across 11 routing layers, with a total chip area of 104,385.65 μm 2 (≈0.104 mm 2). The RISC power grid spans four metal layers (M1, M2, M7, and M8, interconnected by VIA layers) with a total of 186 trees, 115 maximum branches per tree, and up to 5750 nodes per tree. The finished layout and power grid structure are shown in Fig. 4. All simulations use a base temperature of 353 K (80 ◦C) and a total simulation horizon of 5 × 10 7 s ( ≈1.6 years), with ten outer timesteps of 5 × 10 6 s each.     
+
+> (a) RISC-V core: finished physical layout (b) VDD Power grid structure
+
+Fig. 4: RISC-V core: finished physical layout (left) and extracted power grid structure showing four metal layers (M1, M2, M7, M8) with VIA connections (right). 
+
+We run two scenarios that differ only in their spatial temperature distribution, both with the same 353 K av-erage temperature. Case 1 — Joule-heating temperature map. The first scenario derives the temperature field purely from Joule heating of the power grid wires. As shown in Fig. 6a, this produces a localized hotspot concentrated in the lower-left region of the die, reaching a peak of approximately 355 K while the rest of the chip stays near 351 K. The steady-state immortality screening identifies 7 trees as mortal before the transient simulation begins. During the subsequent transient FDTD solve, 19 trees nucleate voids by the end of the simulation. The resulting stress distribution and nucleation sites are illustrated in Fig. 6c. The initial maximum IR drop is 6.19% of Vsrc ; it rises to 29.64% by the end of the simulation. The IR-drop 10% failure threshold is crossed at approximately 1.29 × 10 7 s9
+
+(≈5 months); Fig. 6e shows the voltage drop map at 
+
+t = 1 .50 × 10 7 s, the first saved output timestep after the threshold violation. To better understand the role of void nucleation in redistributing mechanical stress, Fig. 5 shows the steady-state stress distribution for Case 1 computed without accounting for void nucleation. In this reference case, stress accumulates continuously throughout the simula-tion horizon without any saturation mechanism: the most heavily stressed segments, concentrated in the lower-left hotspot region where current densities and temperatures are highest, reach peak tensile values far exceeding those observed when nucleation is enabled. Comparing Fig. 5 with Fig. 6c, it is evident that void nucleation acts as a stress-relief mechanism: once a void nucleates at asegment, the local atomic flux is interrupted and the stress is clamped near the saturation threshold. With-out nucleation, the stress gradient continues to build indefinitely, leading to an overly pessimistic picture of degradation that would overestimate the number of at-risk wires. This comparison highlights the importance of accurately modeling the nucleation phase in coupled EM-TM simulations. 
+
+Fig. 5: Steady-state stress distribution for the RISC-V core (Case 1, Joule-heating temperature map at 353 K) com-puted without void nucleation. Stress accumulates unbounded throughout the simulation, revealing the segments most sus-ceptible to EM degradation prior to any saturation effect. 
+
+Case 2 — Qualcomm measured temperature map. The second scenario uses a real spatial temperature distribu-tion measured from a Qualcomm SM6225 Snapdragon 680 4G 8-core CPU chip at the same 353 K average temperature [25]. As shown in Fig. 6b, this map features a broad central hotspot covering a large area of the die, rather than the tight corner hotspot of Case 1. Despite the wider heated region, the transient simulation identifies only 16 mortal trees (Fig. 6d), two fewer than Case 1. The final maximum IR drop is 17.26%, substantially lower than the 29.64% of Case 1, and the 10% IR-drop threshold is not crossed until 2.36 × 10 7 s ( ≈9 months), as shown in Fig. 6f. The spatial pattern of the temperature distribution, rather than its average value, governs EM reliability: the Joule-heating map concentrates its hotspot over high-current-density trees near the power delivery boundary, while the Qualcomm map spreads heat over a broader central region where current densities are more moderate, leading to fewer mortal trees and a later IR-drop threshold crossing. Tab. I extends the comparison to seven thermal profiles. The mortal tree count varies from 7 (uniform 353 K) to 19 (Joule-heating at 353 K), confirming that the spatial structure—not the mean temperature—controls which trees fail. Among the 353 K profiles, TTF spans from 1.29 × 10 7 s to 2.37 × 10 7 s ( ≈4.9 to 9.0 months), a spread exceeding 70%. Although the uniform profile yields the fewest mortal trees, the Joule-heating 353 K profile produces the shortest TTF, indicating that hotspot alignment with critical current paths can dominate over tree count alone. For a fixed spatial profile, increasing average temperature consistently shortens TTF. TABLE I: RISC-V core EM results under different thermal profiles (186 trees total). TTF is the time at which the network-wide IR drop exceeds the 10% failure threshold.                                            
+
+> Thermal Profile Avg. Temp (K) Max Temp (K) Mortal Trees TTF (s) Uniform 353 K 353.00 353.00 71.37 ×10 7
+> Joule-heating (avg. 320 K) 320.67 345.93 14 2.36 ×10 7
+> Joule-heating (avg. 353 K) 353.40 378.66 18 2.27 ×10 7
+> Joule-heating (avg. 373 K) 373.55 398.81 18 2.02 ×10 7
+> Qualcomm map (avg. 309 K) 309.58 336.90 11 2.36 ×10 7
+> Qualcomm map (avg. 353 K) 353.21 380.53 16 2.37 ×10 7
+> Qualcomm map (avg. 373 K) 373.36 400.68 16 2.37 ×10 7
+
+B. Case Study II: ARM Cortex-A Logic Core The second test case focuses on the power grid of an ARM Cortex-A logic core design, herein referred to as “ARMcore”. The design was synthesized and placed-and-routed using the Synopsys Design Compiler with the Synopsys 32/28nm Generic Library [26]. The ARMcore power grid spans three metal layers (M1/L11, M8/L18, and M9/L19, connected by VIA layers L21–L28) with a total of 208 trees, a maximum of 218 branches per tree, and up to 10 900 nodes per tree. The supply voltage is 1.2 V. The power grid structure spanning a 450 × 450 μmdie footprint is shown in Fig. 7. All simulations use a base temperature of 353 K (80 ◦C) and a total simulation horizon of 5 × 10 7 s ( ≈1.6 years), with ten outer timesteps of 5 × 10 6 s each. We again run two scenarios that differ only in their spatial temperature distribution, both with the same 353 K average temperature. Case 1 — Joule-heating temperature map. The tem-perature field derived from Joule heating produces alocalized hotspot in the lower-left region of the die reach-ing approximately 355 K, while the upper-right region stays near 351 K, as shown in Fig. 8a. The steady-state immortality screening identifies only 5 immortal trees; the remaining 203 out of 208 trees require transient follow-up, corresponding to 10 166 individual mortal wire branches. This exceptionally high mortal count reflects the design’s very high current densities throughout the M1 layer, which push nearly every tree far beyond the nucleation threshold even at moderate temperatures. The transient EM simulation confirms that all 203 trees nucleate voids within the simulation horizon. The five immortal trees are all very short wires that do not nucleate because of their limited length. The resulting stress map and nucleation sites are shown in Fig. 8c, where the ”+” markers indicate the nucleated trees. The initial maximum IR drop is 7.19% of Vsrc ; it rises to 13.00% by the end of the simulation. The 10% IR-drop failure threshold is crossed at approximately 
+
+1.23 × 10 7 s ( ≈4.7 months), as shown in Fig. 8e, where the ”+” marker indicates the location of the maximum IR drop at the time of threshold violation. Case 2 — Qualcomm measured temperature map. The Qualcomm measured map places a broad central hotspot 10                        
+
+> (a) Joule-heating temperature map (Case 1): localized lower-left hotspot, peak ≈355 K
+> (b) Qualcomm measured temperature map (Case 2): broad central hotspot, same 353 K average
+> (c) Stress map and nucleation sites (Case 1): 19 mortal trees at 5×10 7s; the final stress field is predominantly compressive
+> (d) Stress map and nucleation sites (Case 2): 16 mortal trees at 5×10 7s; the final stress field is predominantly compressive
+> (e) IR drop map at threshold violation (Case 1): max IR drop 12.86% at t= 1 .50 ×10 7s
+> (f) IR drop map at threshold violation (Case 2): max IR drop 11.41% at t= 2 .50 ×10 7s
+
+Fig. 6: Temperature maps, stress distributions, and IR drop maps for the RISC-V core under two thermal scenarios 
+
+covering roughly half the die area and peaking at ≈355 K, with the periphery near 351 K (Fig. 8b). Despite the very different spatial distribution, the transient simulation again identifies 203 mortal trees with the same set of nucleated trees as Case 1 (Fig. 8d). The final maximum IR drop is 14.24%, higher than the 13.00% of Case 1 by the end of the simulation, and the 10% failure threshold is crossed at 1.49 × 10 7 s ( ≈5.7 months) (Fig. 8f). Both scenarios yield 203 mortal trees and the same nucleation sites, yet the Qualcomm map delays IR-drop failure from 1.23 × 10 7 s to 1.49 × 10 7 s—a 21% improve-ment at the same average temperature. Unlike the RISC-V core, where the two maps changed both mortal-tree count and TTF, here the mortal set is insensitive to the thermal profile while TTF is not. Tab. II confirms this across seven profiles. The mortal count is fixed at 203 in all cases: M1-layer current densities push nearly every tree far above the nucleation threshold regardless of temperature distribution. Nevertheless, TTF spans from 1.01 × 10 7 s (uniform 353 K) to 1.49 × 10 7 s11 
+
+Fig. 7: Power grid structure of the ARM Cortex-A logic core (three metal layers M1, M8, M9 shown together with VIA connections) 
+
+(Qualcomm 353 K)—nearly 50% spread at the same aver-age temperature. The sweep is also non-monotonic: Joule-heating profiles reach peak temperatures up to 478 K yet fail sooner than the Qualcomm profiles at the same average temperature, because hotspot alignment with electrically stressed wires governs TTF more than any scalar temperature metric. TABLE II: ARM Cortex-A logic core EM results under different thermal profiles (208 trees total). TTF is the time at which the network-wide IR drop exceeds the 10% failure threshold.                                            
+
+> Thermal Profile Avg. Temp (K) Max Temp (K) Mortal Trees TTF (s) Uniform 353 K 353.00 353.00 203 1.01 ×10 7
+> Joule-heating (avg. 320 K) 320.50 415.26 203 1.04 ×10 7
+> Joule-heating (avg. 353 K) 353.23 444.20 203 1.23 ×10 7
+> Joule-heating (avg. 373 K) 373.38 482.67 203 1.23 ×10 7
+> Qualcomm map (avg. 309 K) 309.83 399.13 203 1.10 ×10 7
+> Qualcomm map (avg. 353 K) 353.46 482.25 203 1.49 ×10 7
+> Qualcomm map (avg. 373 K) 373.60 474.33 203 1.49 ×10 7
+
+C. Performance Comparison Across Designs To further evaluate the scalability and efficiency of EMSpice 3, we tested the tool on a broader set of benchmark designs. Tab. III summarizes the key statistics and runtime results for six designs, including the two case studies above. For each design, we report the number of trees, the maximum number of branches and nodes per tree, the initial and final maximum IR drop (as a percentage of Vsrc ), the corresponding IR-drop time to failure (TTF), the number of mortal wires identified after immortality screening, and the wall-clock CPU time (in seconds) with and without the Krylov-subspace acceler-ation described in Section IV-E. For the two case-study designs, the listed TTF values correspond to the 353 K Joule-heating runs reported earlier so that the cross-design comparison remains tied to a single operating point. Several observations can be drawn from Tab. III. First, the Krylov-based solver consistently reduces runtime across all six designs, with speedups ranging from 1.18 ×
+
+(armcore_pad) to 1.50 × (dual_ram), demonstrating that the Krylov acceleration is broadly effective regardless of circuit size or topology. The reported Krylov metric error is 0.0% for all six benchmarks, indicating that the accelerated solver preserves the reported TTF or final-IR-drop metric to the displayed precision. Second, the final maximum IR drop is always larger than the initial value for designs with mortal wires, reflecting the progressive increase in wire resistance as EM-induced voids nucleate and grow. The effect is most pronounced for armcore_logic, where the maximum IR drop rises from 7.19% to 13.00% due to the large number of mortal wires (10,166). Notably, risc_core exhibits a dramatic IR drop increase from 6.19% to 29.64% despite having only 19 mortal wires, suggesting that those wires carry disproportionately high current on critical power delivery paths, which further underscores the importance of accurate per-wire EM analysis rather than simple tree-count metrics. Third, armcore_pad records zero mortal wires and a negligible IR drop change, indicating that its current densities remain below the immortality threshold under the given thermal conditions. This result validates the efficiency of the temperature-aware immortality screening step: by filtering out immortal trees before transient FDTD simulation, EMSpice 3 avoids unnecessary compu-tation and reduces overall runtime substantially for less stressed designs. Finally, the runtimes scale reasonably with design complexity. The largest design, armcore_logic with 208 trees and up to 10,900 nodes per tree, completes in about 31.5 seconds with Krylov acceleration, while the smallest, dual_ram with 55 trees, finishes in under 1.6 seconds. These results confirm that EMSpice 3 is practical for full-chip multiphysics EM analysis on real industrial designs. D. Monte Carlo EM Reliability Analysis To quantify the statistical variability of EM-induced time to failure (TTF) arising from manufacturing process variations, we perform Monte Carlo (MC) simulations on both the RISC-V core and the ARM Cortex-A logic core designs. In each MC run, the atomic diffusivity κ(x)
+
+and critical stress σcrit are randomly perturbed with a coefficient of variation (CoV) of 20% (-mc 0.2) to model the combined effect of process-induced variations in line width, thickness, and grain-structure-dependent material properties. For each design, 100 independent MC samples are drawn, and the full EMSpice 3 pipeline—immortality screening, transient FDTD simulation, and coupled IR-drop analysis—is re-executed for each sample using the Joule-heating temperature map at 353 K. The 10% IR-drop threshold is used to define the TTF for each run. A run in which the IR drop never exceeds the threshold within the 5 × 10 7 s simulation horizon is recorded as censored (right-censored). RISC-V Core. Fig. 9 shows the TTF histogram for the RISC-V core across 100 MC runs. Of the 100 runs, 98 result in IR-drop failure within the simulation window and 2 are right-censored. The mean TTF among the 98 observed failures is 0.4496 years ( ≈ 1.42 × 10 7 s) with a standard deviation of 0.1132 years, yielding a coefficient of 12 
+
+(a) Joule-heating temperature map (Case 1): lower-left hotspot, peak ≈355 K 
+
+(b) Qualcomm measured temperature map (Case 2): broad central hotspot, same 353 K average 
+
+(c) Stress map and nucleation sites (Case 1): 203 mortal trees at 5 × 10 7 s
+
+(d) Stress map and nucleation sites (Case 2): 203 mortal trees at 5 × 10 7 s
+
+(e) IR drop map during late-stage degradation (Case 1) (f) IR drop map during late-stage degradation (Case 2) 
+
+Fig. 8: Temperature maps, stress distributions, and IR drop maps for the ARM Cortex-A logic core under two thermal scenarios 
+
+TABLE III: Performance comparison of EMSpice 3 across benchmark designs. A TTF entry of > 5.0 × 10 7 s indicates that the 10% IR-drop failure threshold was not reached within the simulated time window. The Krylov metric error is measured on TTF when failure occurs, and on the final IR drop otherwise.                                                       
+
+> Design Name No. Trees Max Branch. per Tree Max Nodes per Tree Init. IR Drop (mV) Final IR Drop (mV) Mortal Wires Baseline CPU (s) Krylov CPU (s) Computational Speed-up aes 97 69 3450 6.14 6.86 688 4.56 3.76 1.21 ×
+> armcore_pad 68 34 1700 0.29 0.29 02.35 1.99 1.18 ×
+> jpeg 178 126 6300 6.56 6.77 1821 16.31 12.90 1.26 ×
+> armcore_logic 208 218 10900 7.19 15.01 10166 40.60 31.48 1.29 ×
+> dual_ram 55 29 1450 0.09 0.10 179 2.32 1.55 1.50 ×
+> risc_core 186 115 5750 6.19 29.64 19 5.40 4.45 1.21 ×13
+
+variation of approximately 25%. The distribution is right-skewed with the bulk of samples concentrated between 0.40 and 0.53 years and a single outlier near 1.53 years. The one-sigma bounds ( μ ± σ) span from 0.3364 years to 
+
+0.5628 years, indicating that process-induced variations in atomic diffusivity κ(x) and critical stress can shift the predicted failure time by several months. This significant spread underscores that deterministic single-point EM analysis can substantially over- or under-estimate the actual failure time for designs where a small number of high-current trees dominate the failure mechanism. 
+
+Fig. 9: Monte Carlo TTF distribution for the RISC-V core (100 runs; 20% variation in κ(x) and critical stress). Mean TTF = 0.4496 years, σ = 0.1132 years; 2 runs are right-censored. 
+
+ARM Cortex-A Logic Core. Fig. 10 shows the corre-sponding TTF histogram for the ARM Cortex-A logic core. All 100 runs result in IR-drop failure (zero censored). The mean TTF is 0.3204 years (≈ 1.01 × 10 7 s) with an extremely small standard deviation of 0.0001 years, corresponding to a coefficient of variation of only 0.03%. Virtually all samples collapse onto a single narrow bin near 0.3204 years. This near-deterministic behavior is consis-tent with the observations in Section V: the ARMcore design has 203 mortal trees (out of 208) whose M1-layer current densities far exceed the nucleation threshold. When the overwhelming majority of trees are deeply mortal, random perturbations in atomic diffusivity κ(x)
+
+and critical stress have negligible effect on which trees fail or when, because the design is already operating far into the failure regime. The TTF is therefore dominated by the deterministic stress buildup rate rather than by stochastic parameter variations. 
+
+Fig. 10: Monte Carlo TTF distribution for the ARM Cortex-A logic core (100 runs; 20% variation in κ(x) and critical stress). Mean TTF = 0.3204 years, σ = 0.0001 years; 0 censored runs. 
+
+Comparison and Discussion. The contrasting MC re-sults for the two designs reveal an important design-dependent sensitivity to process variations. The RISC-V core, which has only 19 mortal trees at the nominal operating point, exhibits a 25% CoV in TTF under 20% variation in atomic diffusivity κ(x) and critical stress— a substantial amplification of input uncertainty. Because failure hinges on a handful of marginally mortal trees, small perturbations in κ(x) and critical stress can push individual trees across the nucleation threshold, adding or removing failure sites and significantly shifting the overall TTF. In contrast, the ARMcore design, where nearly all trees are deeply mortal, shows virtually no TTF sensitivity to the same 20% perturbation in κ(x) and critical stress. This dichotomy suggests a practical guideline: designs with a small fraction of marginally mortal trees require statistical EM analysis (e.g., MC simulation) to capture the tail-risk of early failure, whereas designs dominated by deeply mortal trees may rely on deterministic analysis with confidence. The MC capability of EMSpice 3 enables designers to identify which regime their design falls into and to size reliability guard-bands accordingly. Together, these Monte Carlo results and the thermal-map sensitivity studies confirm that both the spatial structure of the temperature field and the margin of individual trees relative to the nucleation threshold must be characterized to correctly assess EM reliability at the full-chip level. VI. Conclusions In this work, we presented EMSpice 3, a full-chip temperature-aware multiphysics framework for coupled EM, TM, and IR-drop analysis that integrates extracted power-grid data, configurable model parameters, optional thermal maps, temperature-aware screening, transient stress evolution with iterative resistance updates, and optional Monte Carlo lifetime analysis in one flow. The results show that spatial thermal structure has a first-order impact on reliability prediction: for equal-average thermal profiles, the RISC-V core exhibits more than 70% spread in TTF and the ARM Cortex-A logic core shows nearly 50% spread, confirming that average or peak temperature alone is insufficient for reliable sign-off. We also showed that process-variation sensitivity is strongly design-dependent, with the RISC-V core exhibiting about 25% TTF coefficient of variation under 20% variation in atomic diffusivity κ(x) and critical stress, while the ARM Cortex-A logic core remains nearly deterministic at about 0.03%. Together with the consistent 1.18 ×–1.50 ×
+
+Krylov speedup across the six benchmarks, these results demonstrate that EMSpice 3 provides a practical and more realistic framework for map-aware, workload-aware EM sign-off. References                     
+
+> [1] J. R. Black, “Electromigration-A Brief Survey and Some Recent Results,” IEEE Trans. on Electron Devices, vol. 16, no. 4, pp. 338–347, Apr. 1969. [2] I. A. Blech, “Electromigration in thin aluminum films on titanium nitride,” Journal of Applied Physics, vol. 47, no. 4, pp. 1203–1208, 1976. [3] M. A. Korhonen, P. Borgesen, K. N. Tu, and C. Y. Li, “Stress evolution due to electromigration in confined metal lines,” Journal of Applied Physics, vol. 73, no. 8, pp. 3790–3799, 1993. [4] C. Cook, Z. Sun, E. Demircan, M. D. Shroff, and S. X.-D. Tan, “Fast electromigration stress evolution analysis for interconnect trees using krylov subspace method,” IEEE Trans. on Very Large Scale Integration (VLSI) Systems, vol. 26, no. 5, pp. 969– 980, May 2018. [5] H. Chen, S. X.-D. Tan, X. Huang, T. Kim, and V. Sukharev, “Analytical modeling and characterization of electromigration effects for multibranch interconnect trees,” IEEE Trans. on Computer-Aided Design of Integrated Circuits and Systems, vol. 35, no. 11, pp. 1811–1824, 2016. 14
+
+[6] A. Abbasinasab and M. Marek-Sadowska, “RAIN: A tool for reliability assessment of interconnect networks—physics to software,” in Proc. Design Automation Conf. (DAC). New York, NY, USA: ACM, 2018, pp. 133:1–133:6. [7] L. Chen, S. X.-D. Tan, Z. Sun, S. Peng, M. Tang, and J. Mao, “A fast semi-analytic approach for combined electromigration and thermomigration analysis for general multisegment inter-connects,” IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems, vol. 40, no. 2, pp. 350–363, 2021. [8] A. Todri, S. Kundu, P. Girard, A. Bosio, L. Dilillo, and A. Virazel, “A study of tapered 3-d TSVs for power and thermal integrity,” IEEE Transactions on Very Large Scale Integration (VLSI) Systems, vol. 21, no. 2, pp. 306–319, Feb 2013. [9] M. Kavousi, L. Chen, and S. X.-D. Tan, “Fast electromigration stress analysis considering spatial joule heating effects,” in 2022 27th Asia and South Pacific Design Automation Conference (ASP-DAC), 2022, pp. 208–213. [10] Z. Sun, S. Yu, H. Zhou, Y. Liu, and S. X.-D. Tan, “EMSpice: Physics-Based Electromigration Check Using Coupled Elec-tronic and Stress Simulation,” IEEE Transactions on Device and Materials Reliability, vol. 20, no. 2, pp. 376–389, Jun. 2020. [11] H. S. Carslaw and J. C. Jaeger, Conduction of Heat in Solids, 2nd ed. Oxford: Oxford University Press, 1959. [12] S. Lamichhane, M. Kavousi, and S. X.-D. Tan, “EMspice 2.0: Multiphysics electromigration analysis tool for beyond moore ics,” in 2024 IEEE Computer Society Annual Symposium on VLSI (ISVLSI), 2024. [13] O. Axelou, E. Tselepi, G. Floros, N. Evmorfopoulos, and G. Stamoulis, “Proton – a python framework for physics-based electromigration assessment on contemporary vlsi power grids,” in 2023 19th International Conference on Synthesis, Modeling, Analysis and Simulation Methods and Applications to Circuit Design (SMACD), 2023, pp. 1–4. [14] L. Chen, S. X.-D. Tan, Z. Sun, S. Peng, M. Tang, and J. Mao, “A fast semi-analytic approach for combined electromigration and thermomigration analysis for general multi-segment inter-connects,” IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems, pp. 1–1, 2020. [15] M. Kavousi, L. Chen, and S. X.-D. Tan, “Electromigration Immortality Check considering Joule Heating Effect for Multi-segment Wires,” in Proc. Int. Conf. on Computer Aided Design (ICCAD), 2020, pp. 1–8. [16] S. X.-D. Tan, H. Amrouch, T. Kim, Z. Sun, C. Cook, and J. Henkel, “Recent advances in EM and BTI induced reliability modeling, analysis and optimization,” Integration, the VLSI Journal, vol. 60, pp. 132–152, Jan. 2018. [17] S. X.-D. Tan, M. Tahoori, T. Kim, S. Wang, Z. Sun, and S. Kiamehr, VLSI Systems Long-Term Reliability – Modeling, Simulation and Optimization. Springer Publishing, 2019. [18] R. de Orio, H. Ceric, and S. Selberherr, “Physically based models of electromigration: From black’s equation to modern tcad models,” Microelectronics Reliability, vol. 50, no. 6, pp. 775–789, 2010, 2009 Reliability of Compound Semiconductors (ROCS) Workshop). [Online]. Available: https://www.sciencedirect.com/science/article/pii/ S0026271410000193 [19] M. Korhonen, P. Bo/rgesen, K. Tu, and C.-Y. Li, “Stress evolution due to electromigration in confined metal lines,” Journal of Applied Physics, vol. 73, no. 8, pp. 3790–3799, 1993. [20] V. Sukharev, A. Kteyan, and X. Huang, “Postvoiding stress evolution in confined metal lines,” IEEE Transactions on Device and Materials Reliability, vol. 16, no. 1, pp. 50–60, 2016. [21] S. M. Alam, C. L. Gan, C. V. Thompson, and D. E. Troxel, “Reliability computer-aided design tool for full-chip electromigration analysis and comparison with different interconnect metallizations,” Microelectron. J., vol. 38, no. 4-5, pp. 463–473, Apr. 2007. [Online]. Available: http: //dx.doi.org/10.1016/j.mejo.2006.11.017 [22] S. Torosyan, A. Kteyan, V. Sukharev, J.-H. Choy, and F. N. Najm, “Novel physics-based tool-prototype for electromigration assessment in commercial-grade power delivery networks,” Journal of Vacuum Science & Technology B, vol. 39, no. 1, p. 013203, 12 2020. [Online]. Available: https: //doi.org/10.1116/6.0000617 [23] H. Lu and S. X.-D. Tan, “Accelerating physics-based electromigration analysis via rational krylov subspaces,” arXiv preprint arXiv:2602.00330, Feb 2026. [Online]. Available: https://arxiv.org/abs/2602.00330 [24] S. Chatterjee, V. Sukharev, and F. N. Najm, “Fast Physics-Based Electromigration Checking for On-Die Power Grids,” in Proceedings of the 35th International Conference on Computer-Aided Design, ser. ICCAD ’16. New York, NY: ACM Press, Nov. 2016, pp. 1–8. [Online]. Available: http://doi.acm.org/10.1145/2966986.2967041 [25] “Commerical Multi/Many Cores Thermal Map Dataset,” https://github.com/sheldonucr/commercial\_thermal\_map\ _dataset. [26] Synopsys, “Synopsys 32/28nm generic library for teaching ic design,” Accessed: Feb. 2019, [Online]. Available. [Online]. Available: http://www.synopsys.com 
+
+Acknowledgments The authors would like to thank the anonymous re-viewers for their valuable feedback. Generative AI tools, specifically ChatGPT and Claude Code, were used to assist with editing and proofreading of this manuscript.
