@@ -1,0 +1,69 @@
+{
+  "label": "2026-04-05 ~ 2026-05-04",
+  "date": "2026-04-05 ~ 2026-05-04",
+  "generated_at": "2026-05-04T16:16:37",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "20260405-20260504/2604.09999v1-gif-a-conditional-multimodal-generative-framework-for-ir-drop-imaging-in-chip-layouts",
+      "section": "quick",
+      "title_en": "GIF: A Conditional Multimodal Generative Framework for IR Drop Imaging in Chip Layouts",
+      "authors": "Kiran Thorat, Nicole Meng, Mostafa Karami, Caiwen Ding, Yingjie Lao, Zhijie Jerry Shi",
+      "date": "2026-04-11",
+      "pdf": "https://arxiv.org/pdf/2604.09999v1",
+      "score": "9.0",
+      "evidence": "基于机器学习的芯片布局电源完整性IR压降分析",
+      "tldr": "针对传统EDA工具在芯片IR drop分析中速度慢且现有机器学习方法忽视几何与拓扑信息的问题，本文提出GIF框架。该框架是一种条件多模态生成模型，通过融合图像和图特征来引导扩散过程。GIF能够同时捕捉局部和远程依赖关系，在CircuitNet-N28数据集上表现优异，显著提升了IR drop图像生成的质量和可靠性，为物理设计提供了高效的分析手段。",
+      "tags": "query:si-pi",
+      "abstract_en": "IR drop analysis is essential in physical chip design to ensure the power integrity of on-chip power delivery networks. Traditional Electronic Design Automation (EDA) tools have become slow and expensive as transistor density scales. Recent works have introduced machine learning (ML)-based methods that formulate IR drop analysis as an image prediction problem. These existing ML approaches fail to capture both local and long-range dependencies and ignore crucial geometrical and topological information from physical layouts and logical connectivity. To address these limitations, we propose GIF, a Generative IR drop Framework that uses both geometrical and topological information to generate IR drop images. GIF fuses image and graph features to guide a conditional diffusion process, producing high-quality IR drop images. For instance, On the CircuitNet-N28 dataset, GIF achieves 0.78 SSIM, 0.95 Pearson correlation, 21.77 PSNR, and 0.026 NMAE, outperforming prior methods. These results demonstrate that our framework, using diffusion based multimodal conditioning, reliably generates high quality IR drop images. This shows that IR drop analysis can effectively leverage recent advances in generative modeling when geometric layout features and logical circuit topology are jointly modeled. By combining geometry aware spatial features with logical graph representations, GIF enables IR drop analysis to benefit from recent advances in generative modeling for structured image generation.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "20260405-20260504/2604.11202v1-capbench-a-multi-pdk-dataset-for-machine-learning-based-post-layout-capacitance-extraction",
+      "section": "quick",
+      "title_en": "CapBench: A Multi-PDK Dataset for Machine-Learning-Based Post-Layout Capacitance Extraction",
+      "authors": "Hector R. Rodriguez, Jiechen Huang, Wenjian Yu",
+      "date": "2026-04-13",
+      "pdf": "https://arxiv.org/pdf/2604.11202v1",
+      "score": "9.0",
+      "evidence": "基于机器学习的版图电容提取",
+      "tldr": "本研究提出了CapBench，一个用于机器学习后布局电容提取的多PDK数据集。该数据集涵盖ASAP7、NanGate45和Sky130HD三个工艺节点，包含从开源设计中提取的61,855个3D窗口。研究利用高精度随机走动求解器生成标签，并评估了CNN、GNN等10种机器学习架构，为电容提取的精度与速度权衡提供了基准，支持迁移学习和可扩展性研究。",
+      "tags": "query:si-pi",
+      "abstract_en": "We present CapBench, a fully reproducible, multi-PDK dataset for capacitance extraction. The dataset is derived from open-source designs, including single-core CPUs, systems-on-chip, and media accelerators. All designs are fully placed and routed using 14 independent OpenROAD flow runs spanning three technology nodes: ASAP7, NanGate45, and Sky130HD. From these layouts, we extract 61,855 3D windows across three size tiers to enable transfer learning and scalability studies. High-fidelity capacitance labels are generated using RWCap, a state-of-the-art random-walk solver, and validated against the industry-standard Raphael, achieving a mean absolute error of 0.64% for total capacitance. Each window is pre-processed into density maps, graph representations, and point clouds. We evaluate 10 machine learning architectures that illustrate dataset usage and serve as baselines, including convolutional neural networks (CNNs), point cloud transformers, and graph neural networks (GNNs). CNNs demonstrate the lowest errors (1.75%), while GNNs are up to 41.4x faster but exhibit larger errors (10.2%), illustrating a clear accuracy-speed trade-off. Code and dataset are available at https://github.com/THU-numbda/CapBench.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "20260405-20260504/2604.04773v1-a-comparative-study-on-power-delivery-aspects-of-compute-innear-memory-approaches-using-dram",
+      "section": "quick",
+      "title_en": "A comparative study on power delivery aspects of compute-in/near-memory approaches using DRAM",
+      "authors": "Siddhartha Raman Sundara Raman, Siyuan Ma, Lizy Kurian John",
+      "date": "2026-04-06",
+      "pdf": "https://arxiv.org/pdf/2604.04773v1",
+      "score": "8.0",
+      "evidence": "存储系统中的电源分配网络（PDN）挑战",
+      "tldr": "本研究针对基于DRAM的存内计算（PIM）系统中的供电网络（PDN）挑战进行了深入探讨。随着PIM技术通过多行激活和近存储计算单元提升效率，其产生的非传统电流需求对PDN造成了巨大压力。本文提出了一个统一的分类法，从时间和空间维度刻画PIM诱导的电流行为，分析了电压降和热点等问题，并探讨了包括调度和电源管理在内的缓解策略，强调了PDN感知设计对PIM系统可靠性的重要性。",
+      "tags": "query:si-pi",
+      "abstract_en": "Compute-in-memory (PIM) mitigates the memory wall by performing computation within memory, reducing data movement and improving energy efficiency. DRAM-based PIM is particularly attractive due to its high density, mature manufacturing ecosystem, and compatibility with existing systems. Recent works exploit multiple levels of the DRAM hierarchy - including subarrays, banks, and 3D-stacked organizations - to enable in-memory computation using mechanisms such as multi-row activation, row-buffer operations, and near-bank compute units. However, these approaches introduce non-traditional current demand patterns that challenge the power delivery network (PDN).   This paper surveys PDN challenges in DRAM-based PIM systems and proposes a unified taxonomy that characterizes PIM-induced current behavior along temporal (burst vs. sustained) and spatial (localized vs. distributed) dimensions. Using this framework, we analyze how representative PIM techniques stress the PDN through bursty activations, multi-row concurrency, and large-scale parallel execution, leading to voltage droop, IR drop, and thermal hotspots.   We further discuss DRAM-specific mitigation strategies leveraging existing architectural and circuit-level mechanisms, including timing constraints, memory controller scheduling, data placement, and bank- and vault-level power management. This survey highlights the importance of PDN-aware design for scalable and reliable DRAM-based PIM systems and outlines key future research directions.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "20260405-20260504/2604.27266v1-autorec-a-software-platform-for-developing-reinforcement-learning-agents-for-equivalent-circuit-model-generation-from-electrochemical-impedance-spectroscopy-data",
+      "section": "quick",
+      "title_en": "AutoREC: A software platform for developing reinforcement learning agents for equivalent circuit model generation from electrochemical impedance spectroscopy data",
+      "authors": "Ali Jaberi, Yonatan Kurniawan, Robert Black, Shayan Mousavi M., Kabir Verma, Zoya Sadighi, Santiago Miret, Jason Hattrick-Simpers",
+      "date": "2026-04-29",
+      "pdf": "https://arxiv.org/pdf/2604.27266v1",
+      "score": "8.0",
+      "evidence": "自动生成等效电路模型",
+      "tldr": "AutoREC是一个开源Python平台，旨在利用强化学习自动从电化学阻抗谱（EIS）数据中生成等效电路模型（ECM）。该研究将电路构建转化为马尔可夫决策过程，通过Double DQN算法解决了传统人工建模效率低、难以扩展的问题。实验证明该工具在合成和真实实验数据上均表现优异，为自动化电化学工作流提供了有力支持。",
+      "tags": "query:bga-xtalk",
+      "abstract_en": "This paper introduces AutoREC, an open-source Python package for developing reinforcement learning (RL) agents to automatically generate equivalent circuit models (ECMs) from electrochemical impedance spectroscopy (EIS) data. While ECMs are a standard framework for interpreting EIS data, traditional identification is typically based on manual trial-and-error, which requires domain experts and limits scalability, particularly in autonomous experimental pipelines such as self-driving laboratories. AutoREC addresses this challenge by formulating ECM construction as a sequential decision-making problem within a Markov Decision Process framework. It implements a Double Deep Q-Network with prioritized experience replay, along with a dedicated dead-loop mitigation strategy, to efficiently explore a complex action space for circuit generation. To demonstrate the capabilities of the platform, we trained an RL agent using AutoREC and evaluated its strengths and limitations across diverse datasets, while also discussing possible strategies to mitigate these limitations in future agent designs. The trained agent achieved a success rate exceeding $99.6\\%$ on synthetic datasets and demonstrated strong generalization to unseen experimental EIS data from batteries, corrosion, oxygen evolution reaction, and CO$_2$ reduction systems. These results position AutoREC as a promising platform for adaptive and data-driven ECM generation, with potential for integration into automated electrochemical workflows.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

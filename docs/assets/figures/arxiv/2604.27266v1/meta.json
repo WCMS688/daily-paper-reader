@@ -1,0 +1,94 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.27266v1/fig-001.webp",
+      "caption": "Fig. 4 Workflow for using the AutoREC package. The three shaded trapezoids represent the three primary modules of AutoREC: EISDataPrep, EIS_ECM_Env, and DDQN_ECM.",
+      "page": 6,
+      "index": 1,
+      "width": 498,
+      "height": 375
+    },
+    {
+      "url": "assets/figures/arxiv/2604.27266v1/fig-002.webp",
+      "caption": "Fig. 9 Illustration of the experimental EIS datasets used to evaluate the trained agent. (a) Normalized Nyquist plots of battery impedance spectra considered in this study. (b) Normalized Nyquist plots of impedance spectra from corrosion, OER, and CO2 reduction systems. (c) UMAP projection as a comparison between these experimental data and the training set.",
+      "page": 11,
+      "index": 2,
+      "width": 481,
+      "height": 499
+    },
+    {
+      "url": "assets/figures/arxiv/2604.27266v1/fig-003.webp",
+      "caption": "Fig. 10 Nyquist plots for experimental EIS spectra (orange lines) with the impedance response predicted by the RL agent’s selected ECM (blue lines). Results are shown for (a) battery half-cell, (b) corrosion, (c) oxygen evolution reaction (OER), and (d) CO2 reduction systems. The displayed ECMs correspond to the best-performing models identified based on fitting metric χ2.",
+      "page": 11,
+      "index": 3,
+      "width": 481,
+      "height": 521
+    },
+    {
+      "url": "assets/figures/arxiv/2604.27266v1/fig-004.webp",
+      "caption": "Fig. 8 Evolution of the success rate over the training trajectory for spectra generated from reference circuits containing (a) one, (b) two, and (c) three Randles-type elements, evaluated on the training and test sets. The red vertical dashed lines indicate when the success rate begins to increase and when it reaches a stable plateau, showing that success emerges earlier for simpler reference circuits, whereas more complex ones require longer training. Furthermore, the policies for different circuits are interdependent, which contributes to the fluctuations in the success rate curves.",
+      "page": 10,
+      "index": 4,
+      "width": 469,
+      "height": 301
+    },
+    {
+      "url": "assets/figures/arxiv/2604.27266v1/fig-005.webp",
+      "caption": "Fig. 5 Representation of the EIS dataset used in this work. (a) Schematic diagrams of the five ECMs used to generate the dataset. (b) The corresponding Nyquist plot for each circuit. (c) UMAP projection of the dataset using the combined EIS representation, showing five well-separated clusters, each associated with a distinct ECM.",
+      "page": 8,
+      "index": 5,
+      "width": 994,
+      "height": 729
+    },
+    {
+      "url": "assets/figures/arxiv/2604.27266v1/fig-006.webp",
+      "caption": "Table 1 Hyperparameter search space and the corresponding optimal values for training the RL agent.",
+      "page": 8,
+      "index": 6,
+      "width": 1102,
+      "height": 320
+    },
+    {
+      "url": "assets/figures/arxiv/2604.27266v1/fig-007.webp",
+      "caption": "Fig. 1 Pipeline for encoded circuit state construction using the linear chromosome representation of the circuit.",
+      "page": 4,
+      "index": 7,
+      "width": 994,
+      "height": 416
+    },
+    {
+      "url": "assets/figures/arxiv/2604.27266v1/fig-008.webp",
+      "caption": "Fig. 2 a) the pipeline for constructing the combined EIS representation, and b) the final state input of the agent.",
+      "page": 4,
+      "index": 8,
+      "width": 994,
+      "height": 639
+    },
+    {
+      "url": "assets/figures/arxiv/2604.27266v1/fig-009.webp",
+      "caption": "Fig. 6 a) Comparison of learning curves for agents trained with and without dead-loop detection. Incorporating Algorithm 1 results in faster reward growth and convergence to a higher final reward, improving training efficiency. b) Agent’s success rates on the training and test sets. For each dataset, we present the results for the agents trained with and without the dead-loop mitigation. c) A list of ECMs suggested by the RL agent for each circuit topology in the training and test sets. In many cases, the agent recovers circuits equivalent to the reference, while in other cases the suggested circuits includ additional components.",
+      "page": 9,
+      "index": 9,
+      "width": 994,
+      "height": 548
+    },
+    {
+      "url": "assets/figures/arxiv/2604.27266v1/fig-010.webp",
+      "caption": "Fig. 7 An example evolution of the ECM and the corresponding Nyquist plots over an episode.",
+      "page": 9,
+      "index": 10,
+      "width": 479,
+      "height": 433
+    },
+    {
+      "url": "assets/figures/arxiv/2604.27266v1/fig-011.webp",
+      "caption": "Fig. 3 Two examples of agent’s action. The blue squares show the coding part and the black ones are non-coding part of the chromosome. The figure clearly shows that the action can change the length of the coding part, yielding circuits with different number of elements and varying complexity.",
+      "page": 5,
+      "index": 11,
+      "width": 994,
+      "height": 323
+    }
+  ]
+}

@@ -1,0 +1,171 @@
+{
+  "mode": "skims",
+  "generated_at": "2026-05-04T16:14:09.686810+00:00",
+  "stats": {
+    "mode": "skims",
+    "forced_all_quick": true,
+    "min_score": 8.0,
+    "deep_divecandidates": 4,
+    "deep_cap": null,
+    "deep_selected": 0,
+    "quick_candidates": 4,
+    "quick_skim_target": null,
+    "quick_selected": 4
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.09999v1",
+      "source": "arxiv",
+      "title": "GIF: A Conditional Multimodal Generative Framework for IR Drop Imaging in Chip Layouts",
+      "abstract": "IR drop analysis is essential in physical chip design to ensure the power integrity of on-chip power delivery networks. Traditional Electronic Design Automation (EDA) tools have become slow and expensive as transistor density scales. Recent works have introduced machine learning (ML)-based methods that formulate IR drop analysis as an image prediction problem. These existing ML approaches fail to capture both local and long-range dependencies and ignore crucial geometrical and topological information from physical layouts and logical connectivity. To address these limitations, we propose GIF, a Generative IR drop Framework that uses both geometrical and topological information to generate IR drop images. GIF fuses image and graph features to guide a conditional diffusion process, producing high-quality IR drop images. For instance, On the CircuitNet-N28 dataset, GIF achieves 0.78 SSIM, 0.95 Pearson correlation, 21.77 PSNR, and 0.026 NMAE, outperforming prior methods. These results demonstrate that our framework, using diffusion based multimodal conditioning, reliably generates high quality IR drop images. This shows that IR drop analysis can effectively leverage recent advances in generative modeling when geometric layout features and logical circuit topology are jointly modeled. By combining geometry aware spatial features with logical graph representations, GIF enables IR drop analysis to benefit from recent advances in generative modeling for structured image generation.",
+      "authors": [
+        "Kiran Thorat",
+        "Nicole Meng",
+        "Mostafa Karami",
+        "Caiwen Ding",
+        "Yingjie Lao",
+        "Zhijie Jerry Shi"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-11T03:00:39+00:00",
+      "link": "https://arxiv.org/pdf/2604.09999v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "query:BGA-XTALK"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "ML-based IR drop analysis for power integrity in chip layouts",
+      "llm_evidence_cn": "基于机器学习的芯片布局电源完整性IR压降分析",
+      "llm_evidence": "基于机器学习的芯片布局电源完整性IR压降分析",
+      "canonical_evidence": "基于机器学习的芯片布局电源完整性IR压降分析",
+      "llm_tldr_en": "Proposes a multimodal generative framework for fast and accurate IR drop imaging in chip designs.",
+      "llm_tldr_cn": "提出一种多模态生成框架，用于芯片设计中快速准确的IR压降成像。",
+      "llm_tldr": "提出一种多模态生成框架，用于芯片设计中快速准确的IR压降成像。",
+      "llm_tags": [
+        "query:si-pi:composite"
+      ],
+      "matched_query_tag": "query:si-pi:composite",
+      "matched_query_text": "Papers central to 板级、封装级、芯片级信号完整性与电源完整性（SI/PI）相关论文检索，涵盖高速互连、建模、PDN优化及机器学习应用。, especially work that connects or combines: Power integrity and PDN modeling optimization; Signal integrity analysis for high-speed interconnects; SerDes DDR and HBM channel modeling and simulation; PDN impedance modeling and decoupling capacitor design; SI/PI analysis for 2.5D 3D and Chiplet packaging; Machine learning methods for SI/PI analysis and optimization; Advanced modeling and optimization techniques for SI/PI in high speed systems; Machine learning applications for signal and power integrity analysis; SI/PI challenges and solutions for Chiplet and 3D heterogeneous integration; High speed channel characterization for SerDes and HBM interfaces.",
+      "matched_requirement_id": "req-composite-si-pi",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.11202v1",
+      "source": "arxiv",
+      "title": "CapBench: A Multi-PDK Dataset for Machine-Learning-Based Post-Layout Capacitance Extraction",
+      "abstract": "We present CapBench, a fully reproducible, multi-PDK dataset for capacitance extraction. The dataset is derived from open-source designs, including single-core CPUs, systems-on-chip, and media accelerators. All designs are fully placed and routed using 14 independent OpenROAD flow runs spanning three technology nodes: ASAP7, NanGate45, and Sky130HD. From these layouts, we extract 61,855 3D windows across three size tiers to enable transfer learning and scalability studies. High-fidelity capacitance labels are generated using RWCap, a state-of-the-art random-walk solver, and validated against the industry-standard Raphael, achieving a mean absolute error of 0.64% for total capacitance. Each window is pre-processed into density maps, graph representations, and point clouds. We evaluate 10 machine learning architectures that illustrate dataset usage and serve as baselines, including convolutional neural networks (CNNs), point cloud transformers, and graph neural networks (GNNs). CNNs demonstrate the lowest errors (1.75%), while GNNs are up to 41.4x faster but exhibit larger errors (10.2%), illustrating a clear accuracy-speed trade-off. Code and dataset are available at https://github.com/THU-numbda/CapBench.",
+      "authors": [
+        "Hector R. Rodriguez",
+        "Jiechen Huang",
+        "Wenjian Yu"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR",
+        "cs.LG"
+      ],
+      "published": "2026-04-13T09:01:12+00:00",
+      "link": "https://arxiv.org/pdf/2604.11202v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "query:BGA-XTALK"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "machine-learning-based capacitance extraction for layouts",
+      "llm_evidence_cn": "基于机器学习的版图电容提取",
+      "llm_evidence": "基于机器学习的版图电容提取",
+      "canonical_evidence": "基于机器学习的版图电容提取",
+      "llm_tldr_en": "Provides a multi-PDK dataset for machine-learning-based post-layout parasitic capacitance extraction.",
+      "llm_tldr_cn": "提供了一个用于基于机器学习的版图后寄生电容提取的多PDK数据集。",
+      "llm_tldr": "提供了一个用于基于机器学习的版图后寄生电容提取的多PDK数据集。",
+      "llm_tags": [
+        "query:si-pi:composite"
+      ],
+      "matched_query_tag": "query:si-pi:composite",
+      "matched_query_text": "Papers central to 板级、封装级、芯片级信号完整性与电源完整性（SI/PI）相关论文检索，涵盖高速互连、建模、PDN优化及机器学习应用。, especially work that connects or combines: Power integrity and PDN modeling optimization; Signal integrity analysis for high-speed interconnects; SerDes DDR and HBM channel modeling and simulation; PDN impedance modeling and decoupling capacitor design; SI/PI analysis for 2.5D 3D and Chiplet packaging; Machine learning methods for SI/PI analysis and optimization; Advanced modeling and optimization techniques for SI/PI in high speed systems; Machine learning applications for signal and power integrity analysis; SI/PI challenges and solutions for Chiplet and 3D heterogeneous integration; High speed channel characterization for SerDes and HBM interfaces.",
+      "matched_requirement_id": "req-composite-si-pi",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.04773v1",
+      "source": "arxiv",
+      "title": "A comparative study on power delivery aspects of compute-in/near-memory approaches using DRAM",
+      "abstract": "Compute-in-memory (PIM) mitigates the memory wall by performing computation within memory, reducing data movement and improving energy efficiency. DRAM-based PIM is particularly attractive due to its high density, mature manufacturing ecosystem, and compatibility with existing systems. Recent works exploit multiple levels of the DRAM hierarchy - including subarrays, banks, and 3D-stacked organizations - to enable in-memory computation using mechanisms such as multi-row activation, row-buffer operations, and near-bank compute units. However, these approaches introduce non-traditional current demand patterns that challenge the power delivery network (PDN).   This paper surveys PDN challenges in DRAM-based PIM systems and proposes a unified taxonomy that characterizes PIM-induced current behavior along temporal (burst vs. sustained) and spatial (localized vs. distributed) dimensions. Using this framework, we analyze how representative PIM techniques stress the PDN through bursty activations, multi-row concurrency, and large-scale parallel execution, leading to voltage droop, IR drop, and thermal hotspots.   We further discuss DRAM-specific mitigation strategies leveraging existing architectural and circuit-level mechanisms, including timing constraints, memory controller scheduling, data placement, and bank- and vault-level power management. This survey highlights the importance of PDN-aware design for scalable and reliable DRAM-based PIM systems and outlines key future research directions.",
+      "authors": [
+        "Siddhartha Raman Sundara Raman",
+        "Siyuan Ma",
+        "Lizy Kurian John"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR"
+      ],
+      "published": "2026-04-06T15:44:40+00:00",
+      "link": "https://arxiv.org/pdf/2604.04773v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "query:BGA-XTALK"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "power delivery network (PDN) challenges in memory systems",
+      "llm_evidence_cn": "存储系统中的电源分配网络（PDN）挑战",
+      "llm_evidence": "存储系统中的电源分配网络（PDN）挑战",
+      "canonical_evidence": "存储系统中的电源分配网络（PDN）挑战",
+      "llm_tldr_en": "Surveys PDN challenges and current demand patterns in DRAM-based compute-in-memory systems.",
+      "llm_tldr_cn": "调研了基于DRAM的存内计算系统中的PDN挑战与电流需求模式。",
+      "llm_tldr": "调研了基于DRAM的存内计算系统中的PDN挑战与电流需求模式。",
+      "llm_tags": [
+        "query:si-pi:composite"
+      ],
+      "matched_query_tag": "query:si-pi:composite",
+      "matched_query_text": "Papers central to 板级、封装级、芯片级信号完整性与电源完整性（SI/PI）相关论文检索，涵盖高速互连、建模、PDN优化及机器学习应用。, especially work that connects or combines: Power integrity and PDN modeling optimization; Signal integrity analysis for high-speed interconnects; SerDes DDR and HBM channel modeling and simulation; PDN impedance modeling and decoupling capacitor design; SI/PI analysis for 2.5D 3D and Chiplet packaging; Machine learning methods for SI/PI analysis and optimization; Advanced modeling and optimization techniques for SI/PI in high speed systems; Machine learning applications for signal and power integrity analysis; SI/PI challenges and solutions for Chiplet and 3D heterogeneous integration; High speed channel characterization for SerDes and HBM interfaces.",
+      "matched_requirement_id": "req-composite-si-pi",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.27266v1",
+      "source": "arxiv",
+      "title": "AutoREC: A software platform for developing reinforcement learning agents for equivalent circuit model generation from electrochemical impedance spectroscopy data",
+      "abstract": "This paper introduces AutoREC, an open-source Python package for developing reinforcement learning (RL) agents to automatically generate equivalent circuit models (ECMs) from electrochemical impedance spectroscopy (EIS) data. While ECMs are a standard framework for interpreting EIS data, traditional identification is typically based on manual trial-and-error, which requires domain experts and limits scalability, particularly in autonomous experimental pipelines such as self-driving laboratories. AutoREC addresses this challenge by formulating ECM construction as a sequential decision-making problem within a Markov Decision Process framework. It implements a Double Deep Q-Network with prioritized experience replay, along with a dedicated dead-loop mitigation strategy, to efficiently explore a complex action space for circuit generation. To demonstrate the capabilities of the platform, we trained an RL agent using AutoREC and evaluated its strengths and limitations across diverse datasets, while also discussing possible strategies to mitigate these limitations in future agent designs. The trained agent achieved a success rate exceeding $99.6\\%$ on synthetic datasets and demonstrated strong generalization to unseen experimental EIS data from batteries, corrosion, oxygen evolution reaction, and CO$_2$ reduction systems. These results position AutoREC as a promising platform for adaptive and data-driven ECM generation, with potential for integration into automated electrochemical workflows.",
+      "authors": [
+        "Ali Jaberi",
+        "Yonatan Kurniawan",
+        "Robert Black",
+        "Shayan Mousavi M.",
+        "Kabir Verma",
+        "Zoya Sadighi",
+        "Santiago Miret",
+        "Jason Hattrick-Simpers"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cond-mat.mtrl-sci"
+      ],
+      "published": "2026-04-29T23:42:27+00:00",
+      "link": "https://arxiv.org/pdf/2604.27266v1",
+      "tags": [
+        "keyword:BGA-XTALK"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "automatic generation of equivalent circuit models",
+      "llm_evidence_cn": "自动生成等效电路模型",
+      "llm_evidence": "自动生成等效电路模型",
+      "canonical_evidence": "自动生成等效电路模型",
+      "llm_tldr_en": "Introduces a reinforcement learning platform for automatically generating equivalent circuit models.",
+      "llm_tldr_cn": "介绍了一个用于自动生成等效电路模型的强化学习平台。",
+      "llm_tldr": "介绍了一个用于自动生成等效电路模型的强化学习平台。",
+      "llm_tags": [
+        "query:bga-xtalk"
+      ],
+      "matched_query_tag": "query:bga-xtalk",
+      "matched_query_text": "equivalent circuit modeling",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    }
+  ]
+}
