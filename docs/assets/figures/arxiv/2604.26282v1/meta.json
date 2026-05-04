@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.26282v1/fig-001.webp",
+      "caption": "TABLE I KEY SIMULATION PARAMETERS [22], [39]",
+      "page": 10,
+      "index": 1,
+      "width": 510,
+      "height": 552
+    }
+  ]
+}

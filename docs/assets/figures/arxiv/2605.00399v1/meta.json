@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.00399v1/fig-001.webp",
+      "caption": "Fig. 1: Tile-based dominance map of the LibreLane-generated Sky130A SoC test vehicle, showing the spatial distribution of CPU, cryptographic, peripheral, and memory logic. Each tile is assigned to the block with the highest standard-cell density in that region",
+      "page": 4,
+      "index": 1,
+      "width": 529,
+      "height": 502
+    }
+  ]
+}
