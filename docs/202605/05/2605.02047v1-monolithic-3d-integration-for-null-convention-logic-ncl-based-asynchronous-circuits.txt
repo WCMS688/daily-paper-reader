@@ -1,0 +1,397 @@
+Title: 2605.02047v1.pdf
+
+URL Source: https://arxiv.org/pdf/2605.02047v1
+
+Published Time: Tue, 05 May 2026 01:24:12 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+Monolithic 3D Integration for Null Convention Logic (NCL)-Based Asynchronous Circuits 
+
+Xiameng Zhang 1, Kushal K. Ponugoti 2 , Ashiq A. Sakib 3, Madhava Sarma Vemuri 1 
+
+> 1
+
+School of STEM, University of Washington Bothell, WA, USA 98011  
+
+> 2
+
+Department of Electrical and Computer Engineering, North Dakota State University, ND, USA 58105  
+
+> 3
+
+Department of Electrical and Computer Engineering, Southern Illinois University Edwardsville, IL, USA 62026, Email:  xiameng@uw.edu,  kushal.ponugoti@ndsu.edu,  asakib@siue.edu,  madhava@uw.edu 
+
+Abstract —As the demand for high-speed and low-power elec-tronics continues to grow, the quasi-delay-insensitive (QDI) asyn-chronous domain of digital design has emerged as a promis-ing alternative to traditional clock-based designs. However, the adoption of the paradigm has been greatly limited due to the lack of mature computer-aided design (CAD) tools and a substantially larger area footprint, owing to various architectural constraints. Monolithic-3D (M3D) technology has recently paved the way for manufacturing highly dense integrated circuits (ICs) through sequential integration, resulting in reduced area footprint, shorter wirelengths, and increased performance. In this study, we integrate M3D technology with QDI Null Convention Logic (NCL) and propose a design methodology for the imple-mentation of M3D-based NCL standard cells, aimed at mitigating the area inefficiencies of traditional planar or 2D counterparts. Furthermore, we employed the threshold gates to design an M3D-NCL unsigned array multiplier circuit. Simulation results suggest that, for a conservative wirelength reduction resulting from M3D implementation, a substantial area reduction of 44% can be achieved while simultaneously reducing delay and power 
+
+by ∼31%, and ∼17%, respectively. 
+
+Index Terms —QDI Asynchronous Circuits, Null Convention Logic, Vertical Integration, Monolithic 3D ICs 
+
+I. INTRODUCTION 
+
+The demand for energy-efficient and high-performance inte-grated circuits (ICs) is growing rapidly. For decades, the syn-chronous domain of digital IC design has been the standard, effectively accommodating this ever-increasing demand. How-ever, the clock-based design style is rapidly approaching its limits in recent years as device dimensions continue to shrink and designs become exceedingly complex. Clock management, clock distribution, increased power dissipation, susceptibility to process, voltage, temperature (PVT) variations, and timing inconsistencies surface as significant challenges that are be-coming substantially difficult to resolve. Consequently, there is a growing interest in exploring alternatives to synchronous design methodologies to circumvent the aforementioned chal-lenges. Quasi-delay-insensitive (QDI) asynchronous design offers a fundamentally transformative approach, eliminating the global clock and employing handshake-driven synchro-nization, making it resilient to timing inconsistencies and inherently ’correct by construction’  [1].  Null Convention Logic (NCL) is a mature and widely adopted QDI paradigm, as NCL circuits exhibit low power performance, generate less noise and electromagnetic interference (EMI), are robust against 
+
+PVT variations, and better handle operating conditions  [2], 
+
+[3].  Moreover, the formal foundations of QDI design allow the use of robust formal verification methodologies to prove correctness and handshake integrity, strengthening resistance against malicious modifications and subtle design flaws. This combination of intrinsic robustness and formal verifiability makes NCL particularly attractive for trustworthy hardware design  [4],  [5]. 
+
+Another major challenge facing today’s semiconductor in-dustry is the slowing down of the transistor’s physical scaling, attributed to the physical and manufacturing limits of con-ventional two-dimensional (2D) technology. Innovative phys-ical design techniques are being investigated to address the constraints of planar 2D ICs. The three-dimensional (3D) integration allows multiple layers of devices to be vertically integrated, leading to shorter wirelengths, reduced routing congestion, and higher functional density  [6].  This makes it a promising method to improve performance and efficiency in modern chips in the coming years. Among the various 3D integration approaches, die stacking facilitates the placement of traditional 2D dies atop the interposer substrate via μ-bumps and Through-Silicon-Via (TSV) technology. TSVs are known to occupy a significant area, leading to an increase in area overhead  [7].  Recently, Monolithic-3D (M3D) technology has emerged as a more viable alternative, paving the way for manufacturing highly dense ICs through sequential integration, resulting in reduced footprint area, shorter wirelengths, and increased performance. Unlike TSV-based methods, which require large vertical interconnects, M3D uses fine-grained metal interlayer vias (MIVs)  [8]. 
+
+The research presented herein aims to study the applica-tion of M3D technology in NCL circuits. The larger area footprint is one of the primary factors that has impeded the widespread adoption of NCL circuits, despite their commercial success  [9].  The integration of M3D can offset the larger area requirements of NCL, thereby introducing new classes of applications that can benefit from robust, energy-efficient, delay-insensitive asynchronous computing without sacrificing an excessive amount of silicon real estate. With this motiva-tion, the following are the major contributions of this work. 
+
+1) We propose the first-ever design and analysis method-ology for M3D-based implementations of static NCL (M3D-NCL) threshold gates. 
+
+2026 IEEE. Personal use of this material is permitted. Permission from IEEE must be obtained for all other uses, in any current or future media, including reprinting/republishing this material for advertising or promotional purposes, creating new collective works, for resale or redistribution to servers or lists, or reuse of any copyrighted component of this work in other works. This article has been accepted for publication in the Proc. of the 2026 IEEE Int’l Symp. on Quality Electronic Design (ISQED). Citation: X. Zhang, K. K. Ponugoti, A. A. Sakib, and M. S. Vemuri, "Monolithic 3D Integration for Null Convention Logic (NCL)-Based Asynchronous Circuits," in IEEE ISQED, San Francisco, CA, US, 2026. 2) We evaluate the power, performance, and area (PPA) metrics of M3D-NCL standard gates and compare those to their corresponding 2D implementations. 
+
+3) We employ the M3D-NCL gates to design an unsigned NCL array multiplier to study the benefits of M3D implementation in comparison to conventional 2D im-plementation for large-scale circuits. 
+
+4) Simulation results for the NCL gates suggest that, for a conservative wirelength reduction resulting from M3D implementation, a substantial area reduction of 44% on average can be achieved while simultaneously reducing the average delay, skew, and power of the NCL gates by 10.5%, 10.2%, and 10.3%, respectively. 
+
+5) Simulation results for the multiplier design suggest that the M3D version outperformed the 2D version in all categories while utilizing half the area. 
+
+The organization of the rest of the paper is as follows: Section  II  provides the background and related works of the current study. Section  III  discusses the proposed methodology to design and analyze the M3D implementation of NCL gates. Section  IV  presents the simulation results and discusses the systematic study conducted in the paper. Finally, the concluding remarks are presented in Section  V. 
+
+II. BACKGROUND AND RELATED WORKS 
+
+A. NCL Background 
+
+NCL has several unique features that separate it from its synchronous/Boolean counterparts. Unlike Boolean logic, NCL employs a 1-hot encoding scheme (1-of-n), most com-monly the dual-rail (DR) logic (1-of-2), to encode data and eliminate timing references. In DR logic, two wires (or rails) are utilized to represent one bit of information, as opposed to a single wire in Boolean logic. A DR variable, D, can assume one of the three permissible values from the set 
+
+{DATA0, DATA1, NULL }, where DATA0 ( D1D0 = 01) and 
+
+DATA1 ( D1D0 = 10) correspond to Boolean logics 0 and 1, 
+
+respectively. ( D1D0= 00) is a spacer state, commonly referred to as the NULL state, which indicates the unavailability of the data. ( D1D0 = 11) constitutes an invalid state. The NCL framework resembles a traditional synchronous framework, 
+
+with each stage consisting of an input and output NCL registration unit and one combinational logic (C/L) in between, as illustrated in Fig.  1a.  The input wavefronts are, however, controlled by local handshaking signals, rather than a global clock signal. A 4-phase handshaking protocol is employed, in which the completion detection unit (C/D) and registers maintain an alternating sequence of NULL and DATA to differentiate between two unique data sets  [2],  as shown in Fig.  1(b). 
+
+The NCL logic, including registers and completion, com-prises 27 fundamental gates with hysteresis , i.e., state hold-ing capability. Each gate is characterized by unique input configurations and threshold levels. Together, these gates can implement any function of up to 4 variables. The threshold gates are classified into two categories: non-weighted and weighted. A non-weighted gate, also known as an m-of-n gate, is denoted as THmn , where n is the number of inputs and 
+
+m (1 ≤ m ≤ n) is the threshold (the minimum number of 
+
+inputs that must be asserted to assert the output) (Fig.  1c).  Aweighted gate is represented as THmnWw 1w2. . . w R, where 
+
+wR (1 < wR ≤ m) is the weight corresponding to input 
+
+R (Fig.  1d).  Fig.  1e  illustrates the generic CMOS template 
+
+for the static implementation of any NCL threshold gate. The template consists of four main blocks: SET , RESET , Hold0 ,and Hold1 . The gate threshold function is implemented by the SET block, while the RESET block deasserts the output when all inputs are deasserted. The Hold blocks implement hysteresis functions that retain the output when neither SET 
+
+nor RESET is active, utilizing two feedback transistors, as indicated in Fig.  1e.  NCL gates can also be implemented in a semi-static manner, in which the Hold blocks are eliminated and replaced by a weak-feedback inverter arrangement  [2]. 
+
+Fig. 1: (a) NCL framework, (b) 4-phased handshaking scheme, (c) Generic non-weighted gate symbol, (d) TH34w2 weighted gate, and (e) CMOS static implementation template for NCL gates. While this decreases the transistor count as compared to the static version, it does not inherently result in a reduced silicon area. This is because pmos transistors require substantial sizing up to maintain the necessary driving strength for proper functionality. Furthermore, semi-static gates exhibit reduced speed and higher energy consumption per switching relative to their static counterparts  [9].  Therefore, the research presented herein primarily focuses on the static implementations of NCL gates. 
+
+B. M3D Implementation Styles 
+
+M3D offers various abstract design styles, including block-level, gate-level, and transistor-level, as depicted in Fig.  2
+
+[10]–[12].  In block-level design style, the conventional 2D IP blocks are partitioned into different layers, as depicted in Fig. 
+
+2a.  Compared to other implementations, this style offers the least area savings, as it does not allow finer integration of Metal Inter-layer Vias (MIVs)  [13].  In gate-level design style, as depicted in Fig.  2b,  the gates are placed in multiple layers, and MIVs connect the input and output pins in different layers. This approach allows the utilization of existing libraries and has reported area savings of up to 50%  [12].  However, it does not address the reliability concerns that result from sequential integration  [14]–[16].  In a transistor-level design style, NMOS and PMOS are assigned to different layers, requiring only local interconnects to route the bottom layers, as depicted in Fig.  2c.  This results in fewer manufacturing steps, resulting in controlling variations arising from M3D integration  [17]. 
+
+The role of MIV is to facilitate interconnections to active and gate regions of various devices in multiple layers.  [13] 
+
+indicates that transistor-level implementations can result in a 12% to 40% reduction in area. The theoretical 50% reduction of area is not observed due to a mismatch between transistor devices in different layers and additional area overhead caused by the presence of MIVs in the top layer. Additionally, a Keep-Out Zone (KOZ) around the MIV is a critical requirement to prevent it from biasing the adjacent devices in the top layer, which further reduces the area savings  [18],  [19]. 
+
+C. Related Works 
+
+NCL circuits must follow delay-insensitive (DI) constraints, such as input-completeness and observability 1, and maintain handshaking protocols for synchronization, leading to signif-icant area overhead compared to their clocked counterparts. Over the years, many research efforts have focused primarily on NCL implementations with fewer constraints to enhance area efficiency. In  [20],  a modified NCL architecture, NCL X, was proposed that allows the C/L unit to be relaxed, i.e., input-incomplete and unobservable, substantially reducing the area. However, the DI constraints are preserved by additional completion logic, resulting in a handshaking network that 
+
+> 1Input completeness requires that no output of a C/L circuit can transition from Null-to-Data (or Data-to-Null) until all inputs have transitioned from Null-to-Data (or Data-to-Null). Observability requires that every switching gate must be observable at the output; i.e., switch at least one of the primary outputs.
+
+is both larger and slower. Multiple relaxation schemes were proposed in  [21]  and  [22],  aiming to achieve an optimal balance between strict and relaxed implementation.  [23]  is a more recent work that intelligently combines  [20]  and  [21]  and expands upon both to yield smaller and faster NCL circuits. At the circuit level, the minimization of the fundamental threshold gates’ area was also the focus of numerous prior studies, both in CMOS  [24],  [25],  [26]  and beyond CMOS technologies 
+
+[27] , [28],  [29].  However, those works relied on traditional 2D technology, limiting the potential for substantial area optimization. There exist very few works that have explored the potential of 3D integration in the context of clockless design. In  [30],  researchers have focused on the use of vertical integration techniques to design QDI asynchronous circuits 
+
+using Through-silicon-via (TSV) based integration. However, TSVs are significantly larger than MIVs ( > 200 ×) and require large KOZs to limit the degradation of devices around TSVs 
+
+[31].  Meanwhile,  [32]  introduces a gate-level M3D implemen-tation methodology for desynchronized circuits and reports reductions in wirelength and area of up to 35% and 50%, respectively. However, as mentioned earlier, the transistor-level M3D integration provides better reliability than gate-level integration, and to the best of our knowledge, no prior research has been reported on the transistor-level M3D implementation for QDI NCL asynchronous circuits. 
+
+III. P ROPOSED METHODOLOGY 
+
+A. Process and Design Considerations 
+
+Since there are no open-source process design kits (PDKs) for the M3D implementation of asynchronous logic, we have adapted the NCSU FreePDK45 model library and made re-alistic assumptions when designing M3D-IC for the Bulk-Si process  [33].  In the conventional planar implementation, both the PMOS and NMOS transistors are fabricated on the same layer, as shown in Fig.  3(a).  Silicon trench isolation (STI) limits the interactions of different PMOS and NMOS devices. For the proposed M3D implementation, we have considered a two-tier transistor-level abstract style with NMOS and PMOS transistors in the top and bottom layers, respectively, as shown in Fig.  3(b)  [34].  The interlayer dielectric (ILD) limits electrical coupling and improves thermal conductivity between layers  [35].  The M3D follows a sequential integration process (i.e., the bottom, ILD, and top layers are created sequentially). Since the top layers are created on the fabricated bottom layer, a thermal budget ( < 500 oC) is set to limit the degradation of transistor devices in the bottom layers  [14]–[16].  Metal routing layers are created inside the interconnect dielectric (ID). MIVs connect the metal interconnects in both layers to facilitate interconnections between the top and bottom layers. An oxide liner is created to prevent the MIV from biasing the devices in the top layer. An additional keep-out-zone (KOZ) is also required for the Bulk-Si around MIV to limit the interactions of MIV and neighboring devices  [36]. 
+
+The process and design parameters considered for this work are presented in Table  I.  The nominal values are extracted from the NCSU FreePDK45nm library  [33].  We considered Fig. 2: M3D implementation styles: (a) block-level, (b) gate-level, and (c) transistor-level.  
+
+> (a) 2D Process (b) M3D Process
+
+Fig. 3: 2D and proposed M3D process comparison (not to scale) 
+
+the length of the channel region to be 50 nm, and the length and width of the source and drain regions to be 90 nm. The width and pitch of the interconnect wires are 65 nm and 130 nm, respectively. We have considered the copper connecting region to have a sheet resistance of 0 .38Ω/sq and a capacitance per unit length of 179.93 fF/mm, based on  [33],  [37].  The 
+
+NMOS : 11), TH24comp (PMOS : 9, NMOS : 9), THand0 (PMOS : 10, NMOS : 10), and TH54w322 
+
+(PMOS : 11, NMOS : 10). These gates are chosen as they cover both weighted and non-weighted gates of varying complexities and transistor counts. By analyzing this set, we can better understand how gate complexity affects performance and integration in our proposed M3D design. Each gate has two to four inputs ( a, b, c , and d) and one output ( Z). The TH22 gate is the simplest gate in the set that behaves like a 2-input Muller C-element  [38],  asserting/deasserting the output only when both inputs are asserted/deasserted; otherwise, holding the previous value. Based on the threshold, the SET 
+
+function for this gate can be expressed as Z = ab . The TH24 gate, with four inputs and a threshold of two, is the largest NCL gate, which gets asserted when at least two of its inputs are asserted, making the SET expression to be 
+
+Z = ab + ac + ad + bc + bd + cd . Similarly, the TH34 gate with a threshold of three has the following SET function: 
+
+Z = abc + abd + acd + bcd . The SET functions of the TH24comp and THand0 gates are Z = ac + ad + bc + bd 
+
+and Z = ab + bc + ad , respectively. The weighted gate in our study is the TH54w322 gate. The gate has four inputs, with the first input a being assigned a weight of three, inputs b
+
+and c each being assigned a weight of two, and the remaining input d having a weight of one. The output is asserted when 
+
+TABLE I: Process and design parameters used in the study for 2D and M3D implementation 
+
+metal vias connect 1) the interconnect to active regions (M1 
+
+- source/drain) and 2) the interconnect to the gate region (M1 
+
+- gate). We have considered the via resistance to be 6Ω, and the MIV resistance and capacitance to be 5.5Ω and 0.04 fF, 
+
+respectively, which is consistent with  [13].  The MIV thickness and the KOZ around the MIV are both considered to be 50nm, as per  [36]. 
+
+B. Overview of Selected NCL Threshold Gates 
+
+As mentioned in Section  IIA,  the 27 NCL gates can im-plement any function of up to 4 variables. In this work, we focus on 6 specific gates: TH22 ( PMOS : 6, NMOS : 6), TH24 ( PMOS : 13, NMOS : 13), TH34 ( PMOS : 13,                                                                  
+
+> Parameter Description Value
+> LGLength of Channel 50 nm
+> lsrc Length of source/drain region 50 nm
+> wsrc Width of source/drain region 90 nm
+> tILD Interlayer dielectric thickness 120 nm
+> tmiv MIV thickness 50 nm
+> wM1Width of M1 interconnect 65 nm
+> wsrc Pitch of M1 Iinterconnect 130 nm
+> wgate Width of gate region 50 nm
+> Rint,sq Sheet resistance of interconnect 0.38 Ω/sq
+> Rvia Via Resistance 6Ω
+> Cint Interconnect capacitance per unit 179 .93 fF/mm
+> length
+> RMIV MIV resistance 5.5Ω
+> CMIV MIV capacitance 0.04 fF (a) 2D Implementation (b) M3D Implementation
+
+Fig. 4: 2D and M3D implementation of TH22 circuit schematic with the RC prasitic model 
+
+either a and b are asserted, a and c are asserted, or when all of b, c and d are asserted, satisfying the threshold of five (i.e., 
+
+Z = ab + ac + bcd ). 
+
+C. Parasitic Model Used in the Study 
+
+In this section, we have used the standard TH22 gate to ex-plain the parasitic model of conventional 2D and the proposed M3D implementation. For both cases, there are 4 common metal routing scenarios, such as: 1) VDD-to-Node, 2) Node– to-GND, 3) Node-to-Node, 4) Input-to-Node as shown in Fig. 
+
+4.  The VDD-to-Node and Node-to-GND connection scenario interconnects power rails such as VDD and GND to the transistor devices’ active regions (i.e., the source and drain). The Node-to-Node connects the active regions of PMOS and NMOS devices. The Input-to-Node connects the inputs, such as a, b, c, and d, to the gate regions of the devices. RC parasitics, such as R wire and Cwire , for the interconnect regions are calculated using the standard cell height. The wires are considered to be extended for half the height of the cell in scenarios that connect to the power and ground rails  [39].  In the M3D implementation, since the PMOS and NMOS devices are placed in different layers, MIV is used to connect the interconnect regions in different layers. Subsequently, the asso-ciated RC parasitics, such as RMIV and CMIV are added into the parasitic model of the M3D implementation, as shown in Fig. 
+
+4(b).  The scaling factor α is used to characterize the reduction of RC parasitics from metal interconnect routing, which is a consequence of the improved routing congestion caused by the reduced cell height in both layers. It is important to note that we have associated the scaling factor to interconnect scenarios such as Node-to-Node and Input-to-Node, as these two are more substantially impacted by M3D implementation than other interconnect scenarios . Interconnect capacitances, such as fringing capacitance and metal coupling capacitance, are ignored to limit the complexity of the design. 
+
+IV. S IMULATION R ESULTS AND P ERFORMANCE ASSESSMENT 
+
+A. Systematic Study of PPA Metrics of NCL Standard Cells 
+
+Based on the parasitic model described in the previous section, we designed both 2D and M3D NCL standard cells, as outlined in Section  III-B,  utilizing a commercial SPICE 
+
+circuit simulator. Custom cells with a height of 14 tracks were designed using the model libraries provided by the NCSU FreePDK45nm. A 1 fF load capacitance has been considered for each gate. A systematic variation in wirelength reduction, ranging from 20% to 40%, was conducted to examine the effects of M3D integration. This variation is represented by the parameter α, which quantifies the extent of physical reduction due to vertical stacking. Specifically, the α values of 0.8, 0.7, and 0.6 correspond to the wirelength reductions of 20%, 30%, and 40%, respectively. These values were chosen to capture both conservative and aggressive levels of 3D integration and to assess how different degrees of vertical compaction affect key performance metrics. Table  II  reports the power, performance, and area (PPA) metrics when the wire length reduction is 30%, i.e., ( α = 0.7). These metrics were chosen because they collectively represent the temporal and dynamic behavior of the test circuits. Delay and skew influence timing robustness and throughput, while power is critical for energy efficiency and thermal reliability, especially in vertically stacked architectures. 
+
+The simulation results indicate that the propagation delay (T D ) is reduced by approximately 11% on average in the M3D implementations relative to the 2D counterparts, with the TH22 gate exhibiting the most notable improvement of around 12%. The average output skew (T S) was reduced by 10.2% on average for the M3D case. The average power consumption of the gates was lowered by around 10% on average. The TH22 and TH34 gates have shown the highest power savings, reaching up to 11%, in comparison to others. The total area footprint of the 2D implementations is compared with that of the M3D implementations, accounting for the additional MIV area overhead for the Bulk-Si process. The results indicate a 44% decrease in average area utilization, with TH24 exhibiting the maximum reduction of 46%. 
+
+Figure  5 compares the PPA metrics of the different NCL gates across varying scaling factors ( α). We observe that the highest performance gains are achieved when the wirelength is reduced by 40% ( α = 0.6). In this configuration, the benefits of shorter interconnects and reduced parasitics are most pronounced. The delay and skew improve by up to 16% and 18%, respectively, while the power consumption shows a reduction of up to 16% relative to the baseline 2D (%) T D Improvement over 2D (%) T S Improvement over 2D 
+
+implementation. These improvements come from placing logic elements closer together in the M3D layout, which shortens the distance signals need to travel and reduces the energy during switching. 
+
+In contrast, when the wirelength reduction is limited to 20% ( α = 0.8), the overall improvements are modest. All the performance parameters, i.e., delay, skew, and power, are improved by 6% on average. These results suggest that without compromising the area benefits, limited reductions in wirelengths may result in reduced power and performance benefits arising from M3D. 
+
+B. Performance Evaluation for Large-Scale NCL Circuits 
+
+The goal of this section is to present the impact of M3D integration on large-scale NCL circuits and provide a compar-ative analysis of performance against their 2D counterparts. A QDI 4×4 NCL unsigned multiplier was synthesized at the gate level for this purpose. A Boolean RTL netlist was first generated using Yosys  [40],  an open-source RTL synthesizer. The generated Boolean netlist was then converted to an NCL gate-level netlist by the UNCLE synthesis tool, using the tool’s intermediate output before the addition of registration and completion logic  [41].  The multiplier created utilized multiple threshold gates, including the TH22, TH24comp, and THand0 NCL gates, from Table  II.  The circuit was then converted to SPICE models using the threshold gate implementations based on Section  III.  The C/L of the 4x4 NCL multiplier requires a total of 2124 transistors. 
+
+We evaluate the performance of the M3D-NCL multiplier in terms of area, power, and delay, and compare it with that of its 2D counterpart. The M3D-NCL multiplier demonstrates a 44.5% reduction in area utilization compared to the 2D version. We report the average power and delay of the designed multipliers using multiple sets of random input combinations. For the nominal case ( α = 0.7), the 2D and M3D versions consumed 56μW and 46.7μW, respectively, indicating an im-
+
+provement of ∼17%. The 2D-NCL multiplier demonstrates a 
+
+worst-case delay of 1.98ns, while the M3D-NCL multiplier has 
+
+a delay of 1.37ns, demonstrating an improvement of 30.8%. Fig.  6 also presents the % improvement in power and delay for varying scaling factors. Finally, this analysis highlights the potential of M3D IC technology to address the area overheads associated with asynchronous circuits, while also improving other performance parameters. By enabling compact layouts and efficient interconnect structures, M3D integration can pave the way towards making asynchronous logic more viable for future energy-efficient computing systems. 
+
+V. CONCLUSIONS AND F UTURE WORK 
+
+In this study, we integrate M3D technology with QDI Null Convention Logic (NCL) and propose a design methodology for the implementation of M3D-based NCL standard cells, aimed at mitigating the area inefficiencies of traditional planar or 2D counterparts. First, we designed M3D-NCL threshold cells and analyzed those in terms of crucial design parameters, such as delay, skew, power dissipation, and area utilization, 
+
+## α = 0.8 α = 0.7 α = 0.6 
+
+15 
+
+12 
+
+9
+
+6
+
+3
+
+0   
+
+> (a) TDComparison: 2D vs M3D
+
+18 
+
+15 
+
+12 
+
+9
+
+6
+
+3
+
+0   
+
+> (b) TSComparison: 2D vs M3D
+
+15 
+
+12 
+
+9
+
+6
+
+3
+
+0 
+
+> (c) Power Comparison: 2D vs M3D
+
+Fig. 5: Power and delay improvements of M3D over 2D implementations with varying reduction factors ( α)
+
+followed by analytically comparing those to the corresponding 2D implementations. Simulation results suggest that, for a conservative wirelength reduction resulting from M3D imple-
+
+> (%)  Power  Improvement  over  2D
+> TH22  TH22 TH22
+> TH24 TH24  TH24
+> TH34  TH34 TH34
+> TH54w322  TH54w322 TH54w322
+> THand0 THand0  THand0
+> TH24comp  TH24comp TH24comp
+
+TABLE II: Conventional 2D vs M3D implementations of static NCL threshold gates ( α = 0.7)                                                                                          
+
+> Gate Case TD(ps) TS(ps) Power (μW) Area (μm 2)
+> 2D 96.4 69.6 1.74 0.2052
+> TH22 M3D 85.2 62.1 1.55 0.1226
+> % Improvement 11.6% 10.8% 11.3% 43.9%
+> 2D 154 95.7 2.07 0.4446
+> TH24 M3D 141 88.9 1.93 0.2598
+> % Improvement 8.5% 7.1% 6.8% 46.1%
+> 2D 208 124 2.19 0.4104
+> TH34 M3D 185 110 1.95 0.2598
+> % Improvement 11.1% 11.6% 11% 41.6%
+> 2D 164 110 2.00 0.3591
+> TH54w322 M3D 146 96.7 1.79 0.2206
+> % Improvement 10.9% 12.2% 10.8% 42.7%
+> 2D 158 105 1.98 0.3420
+> THand0 M3D 141 92.8 1.77 0.2010
+> % Improvement 10.4% 11.6% 10.9% 44.9%
+> 2D 153 102 2.01 0.3078
+> TH24comp M3D 137 93.7 1.79 0.1814
+> % Improvement 10.7% 8.3% 10.8% 44.3%
+> % Average 10.5% 10.2% 10.3% 43.9%
+
+Fig. 6: (%) Improvement of M3D implementation over 2D for Multiplier circuit with varying α
+
+mentation, a substantial area reduction of 44% on average can be achieved while simultaneously reducing the average delay, skew, and power of the NCL gates by 11%, 10%, and 10%, respectively. The benefit of M3D-based implementations for large-scale NCL circuits was also studied, analyzed, and presented in this work. For an unsigned 4x4 NCL array multiplier, the M3D design outperformed the 2D version in all categories while utilizing half the area. In the future, we intend to develop an automated framework to create NCL standard cell layouts, leveraging existing CAD tools. We also plan to extend the work for other QDI paradigms such as Pre-Charge Half Buffers (PCHB) and Sleep Convention Logic (SCL). 
+
+REFERENCES 
+
+[1] K. Fant and S. Brandt, “NULL Convention Logic/sup TM/: a complete and consistent logic for asynchronous digital circuit synthesis,” in Pro-ceedings of International Conference on Application Specific Systems, Architectures and Processors: ASAP ’96 , 1996, pp. 261–273. 
+
+[2] S. Smith and J. Di, Designing asynchronous circuits using NULL convention logic (NCL) . Springer Nature, 2022. 
+
+[3] J. Di and S. C. Smith, Asynchronous Circuit Applications . Institution of Engineering and Technology, 2019. 
+
+[4] K. K. Ponugoti, S. K. Srinivasan, and S. C. Smith, “Hardware trojan design and detection in asynchronous ncl circuits,” in 2020 27th IEEE International Conference on Electronics, Circuits and Systems (ICECS) .IEEE, 2020, pp. 1–4. 
+
+[5] K. K. Ponugoti, S. K. Srinivasan et al. , “Illegal trojan design and detection in asynchronous null convention logic and sleep convention logic circuits,” IET Computers & Digital Techniques , vol. 16, no. 5-6, 
+
+pp. 172–182, 2022. 
+
+[6] J. Kim, L. Zhu et al. , “A PPA study for heterogeneous 3-D IC options: Monolithic, hybrid bonding, and microbumping,” IEEE Transactions on Very Large Scale Integration (VLSI) Systems , vol. 32, no. 3, pp. 401–412, 2023. 
+
+[7] U. R. Tida and M. S. Vemuri, “Efficient Metal Inter-Layer Via Utilization Strategies for Three-dimensional Integrated Circuits,” in 2020 IEEE 33rd International System-on-Chip Conference (SOCC) , 2020, pp. 195–200. 
+
+[8] M. S. Vemuri and U. Rao Tida, “Dual-Purpose Metal Inter-layer Via Utilization in Monolithic Three-Dimensional (M3D) Integration,” in 
+
+2020 IEEE 63rd International Midwest Symposium on Circuits and Systems (MWSCAS) , 2020, pp. 424–427. 
+
+[9] D. Khodosevych and A. A. Sakib, “Evolution of NULL Convention Logic Based Asynchronous Paradigm: An Overview and Outlook,” IEEE Access , vol. 10, pp. 78 650–78 666, 2022. 
+
+[10] S. Panth, K. Samadi et al. , “High-density integration of functional modules using monolithic 3D-IC technology,” in 2013 18th Asia and South Pacific Design Automation Conference (ASP-DAC) . IEEE, 2013, 
+
+pp. 681–686. 
+
+[11] S. A. Panth, K. Samadi et al. , “Design and CAD methodologies for low power gate-level monolithic 3D ICs,” in Proceedings of the 2014 international symposium on Low power electronics and design , 2014, 
+
+pp. 171–176. 
+
+[12] Y.-J. Lee and S. K. Lim, “Ultrahigh density logic designs using mono-lithic 3-D integration,” IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems , vol. 32, no. 12, pp. 1892–1905, 2013. 
+
+[13] C. Yan and E. Salman, “Mono3D: Open Source Cell Library for Monolithic 3-D Integrated Circuits,” IEEE Transactions on Circuits and Systems I: Regular Papers , vol. 65, no. 3, pp. 1075–1085, 2018. 
+
+[14] M. Vinet, P. Batude et al. , “Opportunities brought by sequential 3D CoolCube™ integration,” in 2016 46th European Solid-State Device Research Conference (ESSDERC) . IEEE, 2016, pp. 226–229. 
+
+[15] H. Han, R. Choi et al. , “Low temperature and ion-cut based monolithic 3D process integration platform incorporated with CMOS, RRAM and photo-sensor circuits,” in 2020 IEEE International Electron Devices Meeting (IEDM) . IEEE, 2020, pp. 15–6. 
+
+[16] B. Rajendran, R. S. Shenoy et al. , “Low thermal budget processing for sequential 3-D IC fabrication,” IEEE Transactions on Electron Devices ,vol. 54, no. 4, pp. 707–714, 2007. 
+
+[17] B. W. Ku, T. Song et al. , “Transistor-level monolithic 3D standard cell layout optimization for full-chip static power integrity,” in 2017 IEEE/ACM International Symposium on Low Power Electronics and Design (ISLPED) . IEEE, 2017, pp. 1–6. 
+
+[18] M. S. Vemuri and U. R. Tida, “Modeling and Design of Dual-purpose MIV in Monolithic 3D IC,” IEEE Access , 2024. 
+
+[19] M. S. Vemuri, T. Ahmed, and U. R. Tida, “Compact 6T-SRAM using bottom-gate transistor in FD-SOI process for Monolithic-3D Integra-tion,” in 2024 IEEE Computer Society Annual Symposium on VLSI (ISVLSI) . IEEE, 2024, pp. 725–729. 
+
+[20] A. Kondratyev and K. Lwin, “Design of asynchronous circuits by synchronous CAD tools,” in Proceedings of the 39th annual Design Automation Conference , 2002, pp. 411–414. 
+
+[21] C. Jeong and S. M. Nowick, “Optimization of robust asynchronous circuits by local input completeness relaxation,” in 2007 Asia and South Pacific Design Automation Conference . IEEE, 2007, pp. 622–627. 
+
+[22] ——, “Block-level relaxation for timing-robust asynchronous circuits based on eager evaluation,” in 2008 14th IEEE International Symposium on Asynchronous Circuits and Systems . IEEE, 2008, pp. 95–104. 
+
+[23] A. Bodoh and A. A. Sakib, “ASCEND: Advanced Synthesis, Circuit Exploration, and Design Optimization for NCL Circuits,” in 2024 31st IEEE International Conference on Electronics, Circuits and Systems (ICECS) , 2024, pp. 1–4. 
+
+[24] F. A. Parsan and S. C. Smith, “CMOS implementation of static threshold gates with hysteresis: A new approach,” in 2012 IEEE/IFIP 20th Inter-national Conference on VLSI and System-on-Chip (VLSI-SoC) . IEEE, 2012, pp. 41–45. [25] M. T. Moreira, M. Arendt et al. , “Static Differential NCL Gates: Toward Low Power,” IEEE Transactions on Circuits and Systems II: Express Briefs , vol. 62, no. 6, pp. 563–567, 2015. 
+
+[26] K. Haulmark, W. Khalil et al. , “Comprehensive Comparison of NULL Convention Logic Threshold Gate Implementations,” in 2018 New Generation of CAS (NGCAS) , 2018, pp. 37–40. 
+
+[27] A. A. Sakib and S. C. Smith, “Implementation of Static NCL Threshold Gates Using Emerging CNTFET Technology,” in 2020 27th IEEE International Conference on Electronics, Circuits and Systems (ICECS) ,2020, pp. 1–4. 
+
+[28] A. A. Sakib, A. A. Akib, and S. C. Smith, “Implementation of FinFET Based Static NCL Threshold Gates: An Analysis of Design Choice,” in 2020 IEEE 63rd International Midwest Symposium on Circuits and Systems (MWSCAS) , 2020, pp. 37–40. 
+
+[29] Y. Bai, R. F. DeMara et al. , “Clockless spintronic logic: A robust and ultra-low power computing paradigm,” IEEE Transactions on Comput-ers , vol. 67, no. 5, pp. 631–645, 2017. 
+
+[30] F. Sabado II, Asynchronous 3D (Async3D): Design Methodology and Analysis of 3D Asynchronous Circuits . University of Arkansas, 2017. 
+
+[31] S. K. Samal, D. Nayak et al. , “Monolithic 3D IC vs. TSV-based 3D IC in 14nm FinFET technology,” in 2016 IEEE SOI-3D-Subthreshold Microelectronics Technology Unified Conference (S3S) . IEEE, 2016, 
+
+pp. 1–2. 
+
+[32] N. L. Penmetsa, C. Sotiriou, and S. K. Lim, “Low power monolithic 3D IC design of asynchronous AES core,” in 2015 21st IEEE International Symposium on Asynchronous Circuits and Systems . IEEE, 2015, pp. 93–99. 
+
+[33] NC State University. (2025) FreePDK45 - 45nm Open-Source PDK. Accessed: 2025-05-21. [Online]. Available:  https://eda.ncsu.edu/ 
+
+freepdk/freepdk45/ 
+
+[34] M. S. Vemuri and U. Rao Tida, “FDSOI Process Based MIV-transistor Utilization for Standard Cell Designs in Monolithic 3D Integration,” in 2023 IEEE 36th International System-on-Chip Conference (SOCC) ,2023, pp. 1–6. 
+
+[35] A. W. Topol, D. C. L. Tulipe et al. , “Three-dimensional integrated circuits,” IBM Journal of Research and Development , vol. 50, no. 4.5, 
+
+pp. 491–506, 2006. 
+
+[36] M. S. Vemuri and U. R. Tida, “Metal Inter-layer Via Keep-out-zone in M3D IC: A Critical Process-aware Design Consideration,” in 24th International Symposium on Quality Electronic Design (ISQED) . IEEE, 2023, pp. 1–8. 
+
+[37] V. Nguyen, P. Christie et al. , “An analysis of the effect of wire resistance on circuit level performance at the 45-nm technology node,” 07 2005, 
+
+pp. 191 – 193. 
+
+[38] D. E. Muller, “Asynchronous logics and application to information processing,” in Symposium on the Application of Switching Theory to Space Technology . Stanford University Press, 1962, pp. 289–297. 
+
+[39] Y.-J. Lee, P. Morrow, and S. K. Lim, “Ultra high density logic designs using transistor-level monolithic 3D integration,” in Proceedings of the International Conference on Computer-Aided Design , 2012, pp. 539– 546. 
+
+[40] C. Wolf, “Yosys Open SYnthesis Suite,”  https://yosyshq.net/yosys/. 
+
+[41] R. A. Taylor and R. B. Reese, “Uncle—Unified NCL Environment—an NCL design tool.” IET, 2019.

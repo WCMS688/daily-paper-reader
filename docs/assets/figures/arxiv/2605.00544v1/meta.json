@@ -1,0 +1,62 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.00544v1/fig-001.webp",
+      "caption": "Figure 1: Schematic diagram of the workflow starting from ferroelectric HZO-based capacitor structure fabrication, their electrical characterization, data plotting and key performance indices (KPI) extraction followed by development of machine learning (ML) based virtual metrology framework for ferroelectric device performance prediction for non-characterized dies. The framework consists of dimensionality reduction using principal component analysis (PCA) and clustering, principal component definition (PCD), model training and performance prediction.",
+      "page": 6,
+      "index": 1,
+      "width": 991,
+      "height": 260
+    },
+    {
+      "url": "assets/figures/arxiv/2605.00544v1/fig-002.webp",
+      "caption": "Figure 3: Analysis of optimal clustering and variation visualization (a) Intra-Die D2D Variation at 5V. (b) Elbow method for optimal numbers, SSE is calculated based on the distance to the centroids. (c) Intra-Die device clusters at 5V(k=3). (d) PCA performance map of both dies. (e) Comparison of intra-Die variation of Pr values measured at 5V for different dies.",
+      "page": 11,
+      "index": 2,
+      "width": 850,
+      "height": 431
+    },
+    {
+      "url": "assets/figures/arxiv/2605.00544v1/fig-003.webp",
+      "caption": "Figure 5: Comparison of Experimental and Predicted distribution plots for (a) Remanent Polarization (Pr), (b) Negative Coercive Voltages VC- and (c) Positive Coercive Voltages VC+ on three dies: Die 3, Die 5 and Die 6. The blue bar plots and blue solid line is the statistical distribution from the measured devices while the dotted red curve presents the predicted Gaussian curve.",
+      "page": 15,
+      "index": 3,
+      "width": 976,
+      "height": 506
+    },
+    {
+      "url": "assets/figures/arxiv/2605.00544v1/fig-004.webp",
+      "caption": "Figure 4: Verification of the predictive model showing how close the cluster center lies to different predicted device clusters. Results are from three “unseen“ dies, (a) Die 3 (b) Die 5 (c) Die 6.",
+      "page": 13,
+      "index": 4,
+      "width": 962,
+      "height": 235
+    },
+    {
+      "url": "assets/figures/arxiv/2605.00544v1/fig-005.webp",
+      "caption": "Table 1. Training data on different dies vs. MAPE for Pr and VC values.",
+      "page": 12,
+      "index": 5,
+      "width": 950,
+      "height": 252
+    },
+    {
+      "url": "assets/figures/arxiv/2605.00544v1/fig-006.webp",
+      "caption": "Figure 2: (a) Schematic diagram of the HZO capacitor device structure used in this study together with electrical contacts used for measurement of the capacitors. (b) Position on the wafer for the die 1, die 2, die 3, die 4, die 5 and die 6. (c) Measured P-V loops from multiple devices on die 1 and die 2. (d) Distribution of Pr values among devices within die 1 and die 2 (Cross signs represents shorted device). (e) Deviation from mean Pr value for single devices and bar plot showing number of devices with % variation from the mean value for die 1.",
+      "page": 9,
+      "index": 6,
+      "width": 906,
+      "height": 396
+    },
+    {
+      "url": "assets/figures/arxiv/2605.00544v1/fig-007.webp",
+      "caption": "Figure 6: Spatial Prediction Verification of Remanent Polarization (Pr) values for devices on (a) Die 3, (b) Die 5 and (c) Die 6. The left panel shows experimentally measured Pr numbers from 9 rows and 5 columns of similar devices, the middle panel shows the numbers predicted by the framework and the right column shows the % prediction error for each individual devices.",
+      "page": 16,
+      "index": 7,
+      "width": 832,
+      "height": 879
+    }
+  ]
+}

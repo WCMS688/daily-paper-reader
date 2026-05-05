@@ -1,0 +1,469 @@
+Title: AMSnet-q: Unsupervised Circuit Identification and Performance Labeling for AMS Circuits
+
+URL Source: https://arxiv.org/pdf/2605.01404v1
+
+Published Time: Tue, 05 May 2026 00:37:28 GMT
+
+Number of Pages: 7
+
+Markdown Content:
+# AMSnet-q: Unsupervised Circuit Identification and Performance Labeling for AMS Circuits 
+
+Ze Zhang †,1 , Junzhuo Zhou †,2 , Yichen Shi 4, Zhuofu Tao 2, Rui Ji 1
+
+Zhiping Yu *,3 , Quan Chen *,1 , Ting-Jung Lin *,4 , Lei He *,2 1Southern University of Science and Technology, 2University of California Los Angeles 
+
+3Tsinghua University, 4Eastern Institute of Technology Ningbo 
+
+†Co-first authors *Corresponding authors 
+
+Abstract —Analog and mixed-signal (AMS) circuit design remains heavily reliant on expert knowledge. While recent AI-driven automation tools can generate candidate topologies, they critically depend on manually curated datasets with functional and performance annotations—a requirement that current large language models (LLMs) and vision models cannot automate. Existing approaches still require domain experts to manually interpret circuit functionality. We present AMSnet-q, a fully automated, unsupervised pipeline that eliminates human-in-the-loop annotation by converting schematic images directly into a labeled AMS circuit database. Unlike prior work that stops at netlist extraction, our framework automates the complete verification loop: it performs schematic-to-netlist conversion, topology-aware testbench generation, and simulation-based sizing validation to objectively determine circuit functionality. Validated in 28 nm technology, AMSnet-q processed 739 schematics from the AMSnet 1.0 dataset, automatically constructing a repository of 4 circuit classes, 105 distinct topologies, and 89,789 labeled device configurations. By decoupling human effort from dataset volume and reducing the workload to a one-time testbench template per circuit class, AMSnet-q enables scalable, objective, and fully automated AMS database construction. 
+
+Index Terms —LLM, Circuits, Database, automatic labeling 
+
+I. I NTRODUCTION 
+
+AMS circuit design has traditionally been experience-driven, with engineers relying on tacit knowledge for topology selection and device sizing. Recent advances in artificial intelligence (AI) have catalyzed automated topology generation through LLMs and generative models [1]–[3]. Another category involves human-in-the-loop topology selection guided by algorithmic decision support [4]–[6]. However, these data-driven paradigms presuppose access to repositories of analog topologies annotated with trustworthy functionality and performance labels—a prerequisite that remains challenging to satisfy automatically. The critical unmet challenge lies in functional identification and performance validation. Neither LLMs nor circuit-specific vision models can reliably interpret the functional semantics of a raw netlist (e.g., distinguishing a folded-cascode OpAmp from a comparator) or verify its electrical performance without human intervention. Consequently, experts must manually inspect each topology, configure type-specific testbenches, execute simulations, analyze results, and assign labels—a process whose effort grows linearly with dataset size and introduces subjective biases. Schematic-to-netlist  
+
+> Function identification and performance labeling by experts
+> Verification by manual sizing
+> Schematic-to-netlist
+> Unsupervised identification and labeling
+> Verification by automated testbench generation and transistor sizing
+> （a）Traditional flow （b）AMSnet-q pipeline
+
+Fig. 1: Traditional flow versus our proposed flow 
+
+Prior schematic recognition pipelines [7], [8] only automate the visual recognition layer; the extracted netlists still demand labor-intensive manual annotation, deferring rather than alle-viating the scalability bottleneck. Similarly, prior graph-based approaches [9], [10] are capable of encoding simple building blocks (e.g., differential pairs) through learned graph represen-tations; however, these methods remain limited to implicit local relationships and struggle to achieve comprehensive functional understanding across the complete analog circuit. We propose AMSnet-q, an unsupervised framework that closes the automation gap by replacing manual annotation with executable simulation verification. As depicted in Fig. 1, AMSnet-q completes the loop by integrating template-based testbench assembling with subsequent sizing-driven verification. Given a raw netlist produced by prior recognition pipeline, AMSnet-q first assembles a type-specific testbench from a reusable template library—constructed once per circuit class (e.g. , OpAmp, Low-Dropout Regulator (LDO), comparator). This assembling ensures the executable simulation environment necessary for algorithmic sizing. Subsequently, an automated sizing engine explores the design parameter space to discover feasible device configurations that satisfy the requisite perfor-mance specifications under the assembled testbench. Only upon successful sizing and simulation does the framework determine circuit functionality and generate performance labels. AMSnet-q shifts the labor-intensive annotation into lightweight, one-time testbench template authoring per circuit type. This enables truly scalable AMS database construction without human intervention. Our contributions are summarized as follows:        
+
+> arXiv:2605.01404v1 [cs.AR] 2 May 2026 Stage1 ：Testbench Assembling Stage2 ：Circuit Identification &
+> Performance Labeling
+> Port Detection
+> MLLM Detector
+> Type Number 11221VDD GND Input Output Bias
+> Port Information
+> Fully differential Opamp Comparator ...
+> Topology Modification
+> Circuit Identification
+> ... Assembling Metric N
+> Assembling Metric2
+> Assembling Metric1
+> Netlist
+> Sizing
+> Simulation
+> Yes, Label
+> No, another try
+> Functionality
+> Performance Labeling
+> Modification 1 Modification N
+> Testbench Template Instantiation
+> Assembling Metric1
+> Assembling Metric2
+> Assembling Metric N ...
+> Topology1-Sizing1
+> Topology2-Sizing1 ...
+> Topology2-Sizing2
+> Simulation Result
+> Database
+> Tag1
+> LDO
+> Tag2
+> ... ...
+> Ckt1-sizing14 Ckt3-sizing19
+> ... ...
+> Ckt1-sizing93 Ckt4-sizing75 ...
+> Labeling
+> Input: Schematic
+> Raw netlist
+> Before
+> only expert can find
+> high-performance solutions
+> After
+> everyone (even machine)
+> query solutions via database
+> ...
+> AMSnet
+> Topology1-Sizing2 ...
+
+Fig. 2: Proposed AMSnet-q Pipeline.  
+
+> •
+
+Elimination of manual annotation through automated verification. We replace subjective human labeling with objective simulation-based validation, automatically con-structing a structured database including topology, func-tional class, and performance labels from raw schematic images.  
+
+> •
+
+Topology-driven automated testbench assembly. Given arbitrary netlists, the framework automatically detects ports and assembles executable test environments via intrusive topology modification, enabling unsupervised performance extraction.  
+
+> •
+
+Scalable unsupervised dataset construction. Verified with 739 schematics yielding 89,789 labeled configura-tions, demonstrating the feasibility of building large-scale AMS datasets without expert-in-the-loop curation. II. P RELIMINARY 
+
+A. Schematic-to-Netlist Recognition 
+
+Schematic-to-netlist recognition automates transcription of published schematics into machine-readable netlists, as demonstrated at scale by AMSnet [7], [11] and Masala-CHAI [8]. However, these pipelines are confined to low-level geometry and cannot automatically infer port function ( e.g. ,inputs/outputs, supply rails, bias, etc.) or circuit function, requir-ing expert inspection and correction. Consequently, simulation-ready netlists still require manual port labeling and functional interpretation before verification. While reducing structural netlist collection costs, these methods do not significantly decrease marginal human effort to produce functionally verified, testbench-ready designs. 
+
+B. Automated Sizing 
+
+Automated sizing aims to replace the manual tuning of device dimensions and bias conditions. The engine iteratively proposes parameters, invoking SPICE simulation, and evalu-ating performance against specifications. Methods spanning Bayesian optimization (BO) [12]–[14] with surrogate models, evolutionary and genetic algorithms [15], [16], reinforcement learning [17], [18], and others, converge on a unified abstraction: the circuit-simulator loop constitutes an expensive black-box evaluator. This yields the constrained optimization problem: 
+
+min  
+
+> x∈X
+
+f (x) subject to gm(x) ≥ 0, m = 1 , . . . , M, (1) where f and gm are accessible exclusively through simulation and are typically non-convex, noisy, and expensive to evaluate. At their core, these frameworks differ only in exploration strategy while functioning as unified black-box solvers. III. AMS NET -Q PIPELINE 
+
+As illustrated in Fig. 2, AMSnet-q comprises two successive stages that transform raw schematic netlists into a structured, labeled database without human intervention. Details of each stage are presented in following subsections. 
+
+A. Stage 1: Testbench Assembling 
+
+AMSnet-q starts with the image-to-netlist pipeline. This stage aims to recover semantic information from recognition result and constructs executable simulation environments. Given a netlist with unlabeled port symbols, AMSnet-q performs three steps, Port-type Detection, Topology Modification, and Testbench Instantiation , to produce simulation-ready decks. 
+
+Port-type Detection: Although schematic image recognition extracts netlists retaining geometric port symbols, the absence of semantic labels ( VIN , VOUT , VBIAS ) precludes automated testbench assembly. To interpret these visual cues without man-ual inspection, AMSnet-q harnesses the visual comprehension capabilities of a multimodal large language model (MLLM) via tailored visual prompting. Specifically, we compare two querying strategies (Fig. 3): (i) global single-pass , which visualizes all ports simultaneously, versus (ii) sequential port-wise , which isolates each port through individual visual prompts. The single-pass approach suffers from color confusion and cross-port interference, whereas sequential querying eliminates contextual ambiguity, yielding higher accuracy ( 94 .22% vs. 69 .55% ). AMSnet-q therefore adopts the port-wise strategy. Vin2                           
+
+> Vout
+> M5
+> M1M2
+> M4
+> Vb
+> M3
+> Vin1
+> Q: In the given schematic, classify the red bounding box between Vin, Vout, and Vbias. Please answer in the format “red: <port label>”.
+> LLM Answer ：
+> Brown :Vin1. Green :Vout .
+> Purple :Vin2. Blue : Vb.
+> Q: In the given schematic, classify each bounding box between Vin, Vout, and Vbias. Please answer for the brown, green, purple and blue boxes in the format “<color>: <port label>”.
+> LLM Answer ：
+> Red :Vb. Green : Vin1.
+> Yellow : Vin2. Blue : Vout.
+> Orange :None .
+> Q: In the given schematic, classify each bounding box between Vin, Vout, and Vbias. Please answer for the red, green, yellow, blue and orange boxes in the format “<color>: <port label>”.
+> Port Detection Mistake Port Detection : Sequential, port-wise Port Detection : Global, single-pass
+> Fig.1 Fig.2 Fig.3
+> LLM Answer (Fig.1) ：
+> Red : Vin1.
+> LLM Answer ( Fig.3) ：
+> Red : Vin2.
+> LLM Answer (Fig.2) ：
+> Red : Vin2.
+> (a) (b)
+
+Fig. 3: Illustration of port detection: (a) a mistake example and (b) two strategies for port detection. Vin2   
+
+> Vout
+> M5
+> M1M2
+> M4
+> Vb
+> M3
+> Vin1
+> Input: Schematic
+> MLLM
+> Detector
+> Input: Vin1,Vin2 Output: Vout1,Vout2
+> Port label
+> No Polarity!
+> ①Vin1 as Vin+
+> Vin2 as Vin-
+> Permutation
+> ②Vin1 as Vin-
+> Vin2 as Vin+
+> Vin1 as Vin+
+> Vin2 as Vin-
+> Final Polarity Automated
+> Sizing
+
+Fig. 4: Illustration of port permutation. 
+
+After port detection resolves port types, AMSnet-q addresses polarity ambiguity ( e.g. , Vin lacking explicit “ +/−” marks). Rather than relying on naming heuristics, Fig. 4 shows the framework that (1) identifies potential differential pairs via structural priors, (2) enumerates the constrained set of polarity permutations, and (3) validates each candidate through auto-mated sizing simulations. The permutation achieving functional specifications with minimal optimization effort is adopted as the ground-truth configuration. This establishes a closed verification loop— port detection → permutation enumeration 
+
+→ simulation validation —that augments the DUT netlist with verified functional port annotations, shown as Fig. 4. 
+
+Topology Modification: Port detection yields a labeled netlist, yet raw topologies often lack the access points required for performance evaluation. AMSnet-q performs intrusive topology modification to expose instrumentation nodes while preserving the operating point and external I/O behavior. The modifications are executed automatically based solely on port specifications and connectivity, without manual intervention. Fig. 5 presents two examples of DUT topology modification. For Fully-Differential OpAmps (Fig. 5a), the modification ne-cessity hinges on output stage characteristics. High-impedance current-source loads leave the output common-mode level electrically floating without a DC feedback path, necessitating explicit Common-Mode Feedback (CMFB) injection to stabilize the operating point. Conversely, resistive loads or structural dividers intrinsically fix the common-mode level, often obvi-ating additional CMFB. The framework discriminates these VIN  
+
+> VIP
+> VSS
+> Vb
+> CL
+> CL
+> Ideal Opamp
+> Vref
+> CMFB
+> Vout
+> CLiprobe
+> Vref Vref
+> VDD
+> VDD
+> (a) (b)
+
+Fig. 5: Topology modification: (a) Fully-Diff. OpAmp and (b) LDO. 
+
+scenarios via port signature analysis, applying either explicit CMFB attachment or harness-mode actuation of existing bias nodes accordingly. For LDOs (Fig. 5b), AMSnet-q identifies the pass-transistor and feedback divider, then severs the connection between the divider output and error amplifier input to insert an iprobe. This probe insertion is essential to characterize the internal error amplifier’s performance metrics ( e.g. , loop gain, phase margin) while preserving the circuit’s DC stability during simulation. 
+
+Testbench Instantiation: Once topology modification is complete, AMSnet-q assembles a reusable, parametric testbench template around the modified DUT. Each template specifies a functional class (e.g., OpAmp, LDO), measurable metrics, and required port signatures (number, type, polarity). Selection proceeds via rule-based filtering for port coverage and metric compatibility; when multiple candidates exist, the system instantiates them in parallel for subsequent validation. Crucially, templates remain bias-agnostic to accommodate design-specific variability. Rather than hard-coding bias sources, the framework identifies bias terminals dynamically and inserts corresponding modules with sensible initial ranges on demand, allowing the sizing engine to tune operating points without jeopardizing convergence. Instantiation then proceeds by: 1) wiring template sources and measurement blocks to annotated DUT ports; 2) attaching type-specific harnesses (e.g., CMFB, LDO iprobe) produced during topology modification; 3) emitting a fully specified SPICE deck with stimulus and measurement directives. At this point, AMSnet-q has transformed schematic-derived netlists into simulation-ready decks. This operational paradigm shifts the burden from O(N ) manual labeling (where N is the number of topologies) to O(1) testbench template authoring per circuit class, enabling scalable AMS database construction. 
+
+B. Circuit Identification and Performance Labeling 
+
+Leveraging the assembled testbenches from stage 1, stage 2 operationally validates circuit functionality and generates per-formance labels. First, the Operational Circuit Identification 
+
+step relies on an automated sizing engine to explore device parameter spaces to determine whether a topology satisfies functional specifications. A circuit is classified as type C if and only if feasible parameters exist. In the Unsupervised Performance Labeling step, validated topologies undergo (c) Net Disconnect                                                     
+
+> subckt 640 VDD VSS VI_1 VI_2 VO_1 VO_2 M9 (net17 net14 VDD VDD) pmos M10 (net18 net13 VDD VDD) pmos ... ends 640
+> Schematic Netlist
+> (a) Miss Ports
+> subckt 616 VDD VSS VB_1 ?VB_2 ... M3 (VO_1 ?VSS VSS) nmos ... ends 616
+> subckt 554 VDD VSS VI_1 VI_2 VO VB M3 (VDD VB net12 VSS) nmos
+> ... ends 554
+> (b) Wrong MOS Type (d) Instance Port Disorder
+> subckt ldo1 VDD VSS X2 (net11 net_n1 net10 )opamp ... ends ldo1
+
+Fig. 6: False topologies identified by AMSnet-q circuit identification. Sources: B.Razavi [19] (a) page 408, (b) page 362, (c) page 439; (d) [20] page 8. 
+
+Algorithm 1: Unsupervised Performance Labeling 
+
+Input: Score matrices {Sc} for all topologies of a circuit type; number of clusters K.
+
+Output: Label ℓm and textual tag T (k) for each trial.  
+
+> 1
+
+Stack {Sc} into a global score matrix S ∈ RM ×D ; 
+
+> 2
+
+Compute global mean μ and standard deviation σ over 
+
+S; 
+
+> 3
+
+Standardize scores: Z ← (S − μ)/σ; 
+
+> 4
+
+Truncate negatives: Z+ ← max( Z, 0) ; 
+
+> 5
+
+Run K-means on Z+ to obtain labels ℓ1, . . . , ℓ M and cluster memberships;  
+
+> 6
+
+Compute cluster centers in score space ¯s(k) by averaging rows of S within each cluster k; 
+
+> 7
+
+for each metric j = 1 , . . . , D do  
+
+> 8
+
+Collect {¯s(k) 
+
+> j
+
+}Kk=1 and sort clusters by this value;  
+
+> 9
+
+Mark top (bottom) fraction of clusters as good 
+
+(bad ) for metric j; mark the rest as moderate ; 
+
+> 10
+
+for each cluster k = 1 , . . . , K do  
+
+> 11
+
+Compute standardized center ¯z(k) ← (¯ s(k) − μ)/σ; 
+
+> 12
+
+Rank metric indices j by |¯z(k) 
+
+> j
+
+| in descending order;  
+
+> 13
+
+Select the first few metrics and form a textual tag 
+
+T (k) from their ( good /moderate /bad ,metric name) pairs;  
+
+> 14
+
+Assign to each trial m the performance label 
+
+(ℓm, T (ℓm));extended optimization, with resulting performance vectors clustered into human-readable trade-off labels. 
+
+Operational Circuit Identification: Unlike prior work that relies on LLMs or human experts to infer circuit functionality, AMSnet-q treats classification as a feasibility problem. A topology is identified as candidate type C if and only if there exists a parameter vector x ∈ X satisfying that type’s threshold specifications Rm:find x ∈ X s.t. gm(x) ≥ R m, m = 1 , . . . , M (2) where gm(·) denotes the m-th simulated performance metric. If the automated sizing engine exhausts its trial budget B
+
+without discovering feasible x, the topology is rejected for type C; otherwise, it is accepted and forwarded for performance labeling. This operational definition eliminates subjective biases inherent in manual annotation. For topologies with ambiguous port signatures, multiple candidate types are proposed and validated in parallel. The framework automatically corrects netlist recognition errors (Fig. 6) through this simulation-based consistency check, reduc-ing false negatives to zero upon fixing structural inaccuracies. 
+
+Unsupervised Performance Labeling: Once validated, topologies undergo extended sizing with higher performance targets R∗ 
+
+> m
+
+> Rm and increased trial budget B∗ > B . Each successful trial yields a normalized score vector s ∈ [0 , 100] M ,where meeting the identification threshold Rm corresponds to a score of 60 and achieving the target R∗ 
+
+> m
+
+yields 100. To discover recurring trade-off patterns, we aggregate perfor-mance score vectors into matrix S ∈ RN ×M (N topologies, M
+
+metrics). Following Algorithm 1, we standardize S via Z-score normalization to obtain Z = ( S − μ)/σ, then truncate negative entries to form Z+ = max( Z, 0) , thereby focusing clustering on performance strengths rather than deficits. Applying K-means [21] to Z+ yields cluster assignments ℓn and centroids 
+
+¯s(k) in the original score space. For each cluster k, we rank centroid values ¯s(k) 
+
+> j
+
+relative to other clusters; top/bottom quantiles are rated good /bad for metric j, with intermediates marked moderate . We then rank metrics by the magnitude of their standardized centroid devia-tion |¯z(k) 
+
+> j
+
+| and retain the top 3–4 salient features to compose concise human-readable trade-off tags (e.g., “good Gain; bad Area”). Each trial inherits its cluster index and corresponding tag, constituting the final unsupervised performance labels. IV. E XPERIMENT 
+
+We validate AMSnet-q on 739 schematics from the AMSnet dataset [7]. The experimental evaluation proceeds in two stages: we first assess the accuracy of circuit identification and the quality of performance labeling independently, then demonstrate the scalability of the complete pipeline through comprehensive database construction. The pipeline employs Gemini-3.1-pro [23] for port detection, NSGA-II [15], [24] for automated sizing, and Cadence SPEC-TRE for circuit simulation, targeting TSMC 28nm technology at the TT, 25°C corner. Table I summarizes the performance specifications governing circuit identification and labeling. We (b) Single-Ended OpAmp  
+
+> Schematic Labeled Performance
+> (c) Fully-Di ff . OpAmp (d) LDO (a) Comparator
+
+Fig. 7: Performance labeling and database example. Sources: B.Razavi [19] (a) page 389, (b) page 421, (c) page 131; (d) G.Jaswanth [22] page 6. 
+
+TABLE I: Threshold and Target Specs used in experiments.                                                                                             
+
+> Circuit Metric Unit Threshold ∗Target †
+> Type Specification Specification
+> OpAmp Power μW4.5 0.5 Gain dB 40 80 GBW kHz 100 10000 Phase Margin degree 30 45 Slew Rate V/ μs0.1 8000 CMRR dB 40 90 PSRR dB -40 -60 Area μm281Comp. Power μW100 20 Output Swing Voltage VVDD /22VDD /3
+> Slew Rate V/ μs100 2000 Propagation delay ns 0.8 0.2 Input Offset Voltage (3 σ)mV 10 1Area μm241LDO Power ( 98 ◦C)μW14.4 10.8 VO V(1.5975, 1.6025) (1.5985, 1.6015) Current Capa. (1mA load) mV 0.9 1Current Capa. (4mA load) mV 3.6 4Load Regulation (1uA load) mV 0.9 1Load Regulation (4mA load) mV 27 30 Gain dB 40 45 GBW kHz 90 180 Phase Margin degree 30 45 CMRR ( 98 ◦C)dB 55 60 PSRR ( 98 ◦C)dB -36 -40 Startup Time μs30 20 Recovery Time ns 2000 800 Area μm260 20
+> ∗
+
+Those thresholds serve as Rm in circuit identification, other thresholds are only used to obtain normalized scores. † Serve as R∗ 
+
+> m
+
+in performance labeling. 
+
+configure trial budgets of B = 200 for feasibility identification and B∗ = 2000 for performance optimization. 
+
+A. Validation of Circuit Identification 
+
+We evaluate circuit identification accuracy on 734 schematics from the AMSnet dataset, among which we manually anno-tate 22 Single-Ended and 66 Fully-Differential OpAmps as ground truth. Following the operational definition in TableII, we classify a schematic as an OpAmp only if it satisfies minimum performance thresholds: 40 dB DC gain, 100 kHz gain-bandwidth product (GBW), and 30 ◦ phase margin (PM). AMSnet-q automatically identifies 15 Single-Ended and 47 Fully-Differential OpAmps with correct port permutations, achieving F1 scores of 0.811 and 0.832. The verification process 
+
+TABLE II: Identification confusion matrix for OpAmp. 
+
+Actual Pred. Single-Ended non Single-Ended Total Single-Ended TP = 15 → 21 † FN = 6 → 0 † 21 
+
+non Single-Ended FP = 1 TN = 712 713 
+
+Total 16 718 734 
+
+Actual Pred. Full-Diff. non Full-Diff. Total Full-Diff. TP = 47 → 57 † FN = 10 → 0 † 57 
+
+non Full-Diff. FP = 9 TN = 668 677 
+
+Total 56 678 734 TP : A function supported by the schematic has been correctly identified; TN : A function unsupported by the schematic has been correctly disqualified; FP : A function unsupported by the schematic has been incorrectly identified; FN : A function supported by the schematic has been incorrectly disqualified.  
+
+> †
+
+AMSnet-a successfully figures out those incorrect topologies, as in Fig 6. 
+
+consumes 20,750 simulations (6.4 hours on a 16-core CPU). This cost is dominated by exhaustive polarity enumeration (2 ×
+
+permutations for Single-Ended, 4 × for Fully-Differential) and negative cases that exhaust the trial budget B without meeting specifications. Notably, the only manual effort required is the one-time construction of testbench templates. Representative false negative (FN) cases—topologies incor-rectly rejected despite being valid OpAmps—are illustrated in Fig. 6. These errors primarily stem from netlist recognition inaccuracies (e.g., missing ports, disconnected nets) rather than identification algorithm failures. Upon manual correction of these structural defects, the FN rate drops to zero, improving F1 scores to 0.977 (Single-Ended) and 0.927 (Fully-Differential). This demonstrates AMSnet-q’s capability to robustly validate circuit topology and effectively detect inconsistencies in upstream recognition results. 
+
+B. Validation of Performance Labeling 
+
+To assess the quality of performance labels, we examine whether discovered clusters capture meaningful design trade-offs and whether generated tags provide compact, interpretable Area 
+
+> Slew Rate
+> Output Swing Voltage
+> Propagation Delay
+> Input Offset Voltage
+> Power
+> 0
+> 2000
+> 4000
+> 6000
+> 8000
+> #Entry in each Tag
+> (a) Comparator
+> 22 topologies
+> 10276 sizing instances
+> Area
+> Slew Rate
+> CMRR
+> PSRR
+> Gain
+> Phase Margin
+> GBW
+> Power
+> 0
+> 5000
+> 10000
+> 15000
+> (b) Single-Ended OpAmp
+> 21 topologies
+> 22317 sizing instances
+> Area
+> Slew Rate
+> CMRR
+> PSRR
+> Gain
+> Phase Margin
+> GBW
+> Power
+> 0
+> 10000
+> 20000
+> 30000
+> 40000
+> 50000
+> (c) Fully-Diff. OpAmp
+> 57 topologies
+> 54993 sizing instances
+> Area
+> Gain
+> GBW
+> Phase Margin
+> CMRR
+> PSRR
+> VO max
+> VO min
+> Current Capa@1mA
+> Current Capa@4mA
+> Power
+> LDR@10u
+> LDR@4mA
+> Startup Time
+> Recover Time
+> 0
+> 250
+> 500
+> 750
+> 1000
+> 1250
+> (d) LDO
+> 5 topologies
+> 2203 sizing instances
+> Good
+> Moderate
+> Bad
+
+Fig. 8: Summary of AMSnet-q database. 
+
+summaries of achievable performance regions. We set K = 30 
+
+clusters for K-means partitioning across all circuit types. Fig. 7(b) illustrates the resulting labels for a Single-Ended OpAmp topology. The radar charts compare two representative sizing configurations: “Size1” (blue) exhibits superior phase margin (PM) with moderate gain-bandwidth product (GBW) and common-mode rejection ratio (CMRR), while “Size2” (yellow) achieves higher GBW at the cost of increased power consumption. These automatically generated tags enable designers to rapidly identify Pareto-optimal configurations matching specific requirements—for instance, selecting “Size1” for stability-critical applications or “Size2” for high-speed scenarios—without manual inspection of raw simulation data. Similar trade-off visualizations are presented in Fig. 7(a, c, d), demonstrating that the clustering consistently reveals physically meaningful performance correlations across diverse analog circuit classes. The radar chart overlays two reference boundaries: the red (score of 60) and green (score of 100) dashed lines mark the Threshold Specification and Target Specification in Table I, respectively. 
+
+C. AMSnet-q Database Construction 
+
+Upon validating the identification and labeling method-ologies, we construct the AMSnet-q database by processing all experimental results through the complete pipeline. The performance tags enable efficient retrieval of topologies and sizing configurations without parsing raw simulation data, significantly streamlining design-space exploration. The resulting repository comprises 4 circuit categories (Single-Ended OpAmps, Fully-Differential OpAmps, compara-tors, and LDOs), 105 distinct topologies, and 89,789 labeled device-sizing instances. This structured dataset provides a comprehensive foundation for data-driven analog circuit design research. Fig. 8 illustrates the distribution of entries across the four circuit types and their performance classifications. V. C ONCLUSION 
+
+We present AMSnet-q, a scalable unsupervised framework that closes the automation loop for AMS circuit database construction [25]. By replacing manual functional annotation with executable simulation verification, it reduces human effort from O(N ) per-topology labeling to O(1) testbench template design per circuit class. Integrating MLLM-based visual understanding, intrusive topology modification, and automated sizing, the pipeline transforms raw schematic images into structured netlists with operational classifications and quantitative performance labels. Validated in TSMC 28nm technology on 739 schematics, AMSnet-q constructed a dataset comprising 4 circuit categories, 105 topologies, and 89,789 labeled configurations, providing a robust foundation for data-driven analog design. Future work will extend to complex mixed-signal systems, enable cross-technology portability, and integrate with automated layout synthesis for a fully automated schematic-to-layout workflow. REFERENCES [1] M. Fayazi et al. , “AnGeL: Fully-automated analog circuit generator using a neural network assisted semi-supervised learning approach,” IEEE TCAS I, vol. 70, no. 11, pp. 4516–4529, 2023. [2] Y. Shi et al. , “AMSnet-KG: A Netlist Dataset for LLM-based AMS Circuit Auto-Design Using Knowledge Graph RAG,” arXiv preprint arXiv:2411.13560 , 2024. [3] Y. Lai et al. , “AnalogCoder: Analog Circuit Design via Training-Free Code Generation,” in AAAI , vol. 39, no. 1, 2025, pp. 379–387. [4] M. G. Degrauwe et al. , “Idac: An interactive design tool for analog cmos circuits,” IEEE JSSC , vol. 22, no. 6, pp. 1106–1116, 1987. [5] K. Khalil et al. , “Fast Topology Selection for Analog Amplifier Circuits Using On-The-Fly Cascaded Neural Networks,” Electronics , vol. 11, no. 17, 2022. [6] A. Gerlach et al. , “A generic topology selection method for analog circuits with embedded circuit sizing demonstrated on the OTA example,” in DATE , 2017, pp. 898–901. [7] Z. Tao et al. , “AMSnet: Netlist Dataset for AMS Circuits,” in IEEE LAD , 2024, pp. 1–5. [8] J. Bhandari et al. , “Masala-chai: A large-scale spice netlist dataset for analog circuits by harnessing ai,” arXiv preprint arXiv:2411.14299 , 2024. [9] H. Wang et al. , “Gcn-rl circuit designer: Transferable transistor sizing with graph neural networks and reinforcement learning,” in 57th ACM/IEEE DAC . IEEE, 2020, pp. 1–6. [10] S. Lee et al. , “Dice: Device-level integrated circuits encoder with graph contrastive pretraining,” arXiv preprint arXiv:2502.08949 , 2025. [11] Y. Shi et al. , “AMSnet 2.0: A Large AMS Database with AI Segmentation for Net Detection,” arXiv e-prints , pp. arXiv–2505, 2025. [12] J. Mockus, Bayesian Approach to Global Optimization: Theory and Applications , ser. Mathematics and its Applications. Springer Netherlands, 2012. [Online]. Available: https://books.google.com.hk/ books?id=VuKoCAAAQBAJ [13] W. Lyu et al. , “An Efficient Bayesian Optimization Approach for Automated Optimization of Analog Circuits,” IEEE TCAS I , vol. 65, no. 6, pp. 1954–1967, 2018. [14] C. Chen et al. , “High-Dimensional Bayesian Optimization for Analog Integrated Circuit Sizing Based on Dropout and gm/ID Methodology,” 
+
+IEEE TCAD , vol. 41, no. 11, pp. 4808–4820, 2022. [15] K. Deb et al. , “A fast and elitist multiobjective genetic algorithm: NSGA-II,” IEEE TEVC , vol. 6, no. 2, pp. 182–197, 2002. [16] M. A. Valencia-Ponce et al. , “On the Sizing of CMOS Operational Amplifiers by Applying Many-Objective Optimization Algorithms,” 
+
+Electronics , vol. 10, no. 24, 2021. [17] Z. Zhao et al. , “Deep Reinforcement Learning for Analog Circuit Sizing,” in IEEE ISCAS , 2020, pp. 1–5. [18] A. F. Budak et al. , “DNN-Opt: An RL Inspired Optimization for Analog Circuit Sizing using Deep Neural Networks,” in 58th ACM/IEEE DAC ,2021, pp. 1219–1224. [19] B. Razavi, Design of Analog CMOS Integrated Circuits . New York: McGraw-Hill, 2001. [20] B. Razavi et al. , “The Design of An LDO Regulator [The Analog Mind],” 
+
+IEEE SSC-M , vol. 14, no. 2, pp. 7–17, 2022. [21] J. A. Hartigan et al. , “Algorithm AS 136: A K-Means Clustering Algorithm,” J R Stat Soc C-appl , vol. 28, no. 1, pp. 100–108, 1979. [22] G. Jaswanth et al. , “A Capacitor less LDO Regulator using Push – Pull Composite Power Transistor with A Sub-1 VTransient An Enhanced Output,” 2015. [Online]. Available: https: //api.semanticscholar.org/CorpusID:15806404 [23] Google, “Gemini models: Gemini 3 pro,” https://ai.google.dev/gemini-api/ docs/models, 2025, accessed 2026-02-12. [24] T. Akiba et al. , “Optuna: A Next-generation Hyperparameter Optimization Framework,” in 25th ACM SIGKDD , 2019, pp. 2623–2631. [25] “Method for Unsupervised Functional Annotation and Performance Evaluation of AMS Circuits,” Patent CN202511446844.3[P], Hangzhou Fuhua Intelligent Manufacturing Technology Co. Ltd, Oct. 2025, pending.

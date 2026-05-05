@@ -1,0 +1,150 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.02356v1/fig-001.webp",
+      "caption": "Figure 3: Discrete benchmark results: relative L2 test error (mean± standard deviation, 5 seeds). (a) Matched-budget protocol: all models use 8.5–8.9k parameters on every task. (b) Tuned-best protocol. ZNO has the lowest mean error on the near-unit-circle resonant task and narrowly on NARX, but is not uniformly dominant under the matched budget.",
+      "page": 6,
+      "index": 1,
+      "width": 810,
+      "height": 297
+    },
+    {
+      "url": "assets/figures/arxiv/2605.02356v1/fig-002.webp",
+      "caption": "Table 8: Validation-selected configurations behind Table 2. Selection is performed using validation error only on the train-stream 80/20 split; test results are reported from five independent seeds of the selected configuration.",
+      "page": 15,
+      "index": 2,
+      "width": 782,
+      "height": 386
+    },
+    {
+      "url": "assets/figures/arxiv/2605.02356v1/fig-003.webp",
+      "caption": "Figure 1: Spectral geometries of FNO, LNO and ZNO. (a) FNO parameterizes the transfer function at equally spaced points on the unit circle. (b) LNO parameterizes continuous-time poles in the left-half s-plane. (c) ZNO parameterizes discrete-time poles inside the unit disk of the z-plane; the unit circle is the natural stability boundary for sampled sequences.",
+      "page": 2,
+      "index": 3,
+      "width": 813,
+      "height": 260
+    },
+    {
+      "url": "assets/figures/arxiv/2605.02356v1/fig-004.webp",
+      "caption": "Figure 5: Long-horizon extrapolation at T ∈ {2048, 4096, 8192} (3 tasks, 5 seeds). ZNO and S4D are both essentially length-invariant because their layers are causal recurrences with lengthindependent parameter counts. ZNO retains the lowest absolute error on every task at every length. FNO error grows sharply at T = 8192 on every task, consistent with its frequency grid being tied to the training length.",
+      "page": 14,
+      "index": 4,
+      "width": 814,
+      "height": 201
+    },
+    {
+      "url": "assets/figures/arxiv/2605.02356v1/fig-005.webp",
+      "caption": "Table 6: Long-horizon extrapolation (5 seeds, 3 tasks). The same tuned-best checkpoints are evaluated at T ∈ {2048, 4096, 8192}. Relative L2 test error (mean± standard deviation). Both ZNO and S4D are length-stable, with S4D ratio {0.96, 1.04, 1.07} at T = 8192 and ZNO ratio {0.90, 1.06, 1.05}. ZNO retains the lowest absolute error on every task at every length. FNO grows by 3.6×, 2.7×, 1.9× on resonant ARMA, IIR and NARX at T = 8192.",
+      "page": 14,
+      "index": 5,
+      "width": 640,
+      "height": 256
+    },
+    {
+      "url": "assets/figures/arxiv/2605.02356v1/fig-006.webp",
+      "caption": "Figure 7: Internal ablation of ZNO on resonant ARMA and sixth-order IIR cascade (5 seeds). (a) Doubling K lowers error on both tasks. (b) Raising r from 4 to 12 yields a clear improvement. The r = 4 setting is under-parameterized and diverges on IIR (0.741±0.130), r = 12 approaches tunedbest. (c) FIR order is least sensitive: F = 0 matches baseline on ARMA; F = 8 increases variance and yields the least stable IIR result among the FIR settings. (d) Safe radius ρsafe ∈ {0.90, 0.95, 0.99} has almost no effect, confirming the pole-safety regularizer acts as a soft constraint rather than a driver of the result.",
+      "page": 18,
+      "index": 6,
+      "width": 814,
+      "height": 188
+    },
+    {
+      "url": "assets/figures/arxiv/2605.02356v1/fig-007.webp",
+      "caption": "Table 12: Internal ablation (5 seeds). Relative L2 test error on the resonant ARMA and sixth-order IIR cascade tasks with one knob perturbed at a time away from the ZNO anchor. Bold indicates the lowest error per column. The low-rank factor and the pole count are the dominant knobs; FIR order and safe radius are comparatively insensitive.",
+      "page": 18,
+      "index": 7,
+      "width": 714,
+      "height": 255
+    },
+    {
+      "url": "assets/figures/arxiv/2605.02356v1/fig-008.webp",
+      "caption": "Table 4: Truly matched-budget configurations used by Table 1. Columns: hidden width w, depth L, rank / state dimension / Fourier modes, ZNO pole count K, and FIR order F . For ZNO, K denotes the number of poles per latent scalar filter; FNO and S4D do not use the ZNO-specific K or F hyperparameters. The three models sit in the narrow parameter range 8 457–8 917 on every task.",
+      "page": 13,
+      "index": 8,
+      "width": 611,
+      "height": 257
+    },
+    {
+      "url": "assets/figures/arxiv/2605.02356v1/fig-009.webp",
+      "caption": "Table 5: Tuned-best configurations used by Table 1. For ZNO, K denotes the number of poles per latent scalar filter; FNO and S4D do not use the ZNO-specific K or F hyperparameters. S4D state dimensions are selected per task by the validation sweep of Appendix C. S4D uses base learning rate 5×10−4 and gradient clipping at 1.0; all other optimizer settings match Table 4.",
+      "page": 13,
+      "index": 9,
+      "width": 702,
+      "height": 269
+    },
+    {
+      "url": "assets/figures/arxiv/2605.02356v1/fig-010.webp",
+      "caption": "Table 3: Compute accounting for the submitted experiments. Hours are single-worker wall-clock estimates obtained from the supplementary summary CSV files and rounded to one decimal place. “Runs” counts independent training or evaluation jobs in the reported result files; the configurationselection sweeps are summarized separately because they are used to choose the tuned/public configurations rather than reported as final mean and standard-deviation results.",
+      "page": 13,
+      "index": 10,
+      "width": 502,
+      "height": 345
+    },
+    {
+      "url": "assets/figures/arxiv/2605.02356v1/fig-011.webp",
+      "caption": "Figure 4: Near-unit-circle difficulty sweep. The pole-radius intervals control the effective memory horizon, given by τ ≈−1/ log ρ. This horizon grows from roughly 10 steps for ρ∈ [0.90, 0.93] to approximately 100− 200 steps for ρ∈ [0.99, 0.995]. Error bars indicate the standard deviation over five seeds. ZNO achieves the lowest mean error of the three models in every bin. The performance gap relative to S4D narrows in the most challenging long-memory regime but does not close entirely.",
+      "page": 8,
+      "index": 11,
+      "width": 803,
+      "height": 362
+    },
+    {
+      "url": "assets/figures/arxiv/2605.02356v1/fig-012.webp",
+      "caption": "Figure 2: The ZNO architecture. (a) The full causal network: pointwise lift P , L residual ZNO layers with pointwise nonlinearities, pointwise projection Q. (b) One ZNO layer: the hidden sequence is projected to a low-rank stream; each latent rank channel is fed through its own bank of conjugate-pair stable poles, read out through learnable residues and an optional short FIR branch, projected back by A : r → w, and added to the parallel pointwise skip Wh (ℓ) n .",
+      "page": 4,
+      "index": 12,
+      "width": 783,
+      "height": 346
+    },
+    {
+      "url": "assets/figures/arxiv/2605.02356v1/fig-013.webp",
+      "caption": "Table 13: Sixth-order IIR cascade stability analysis at the matched budget (5 seeds). Stronger gradient clipping at lr=1e-3 moves the ZNO 5-seed standard deviation from 0.138 to 0.023 and the mean from 0.724 to 0.706; the same recipe produces 0.693±0.014 on the s-plane isomorphic variant. The divergence is an optimization artifact of the low-rank rational layer, not a z-plane-specific issue.",
+      "page": 19,
+      "index": 13,
+      "width": 656,
+      "height": 245
+    },
+    {
+      "url": "assets/figures/arxiv/2605.02356v1/fig-014.webp",
+      "caption": "Figure 8: Accuracy vs training time under the tuned-best protocol (5-seed mean; error bars: standard deviation). ZNO requires more wall-clock time for lower test error. FNO and S4D use plain PyTorch implementations; ZNO uses the fused Triton scan, so this is a practical cost comparison rather than a matched-kernel comparison.",
+      "page": 19,
+      "index": 14,
+      "width": 522,
+      "height": 317
+    },
+    {
+      "url": "assets/figures/arxiv/2605.02356v1/fig-015.webp",
+      "caption": "Figure 6: 1D LNO ODE benchmark, relative L2 test error (mean± standard deviation, 3 seeds). (a) Matched-budget protocol (∼7–9k params). (b) Tuned-best protocol. ZNO has the lowest error on Lorenz ρ = 5 and is competitive elsewhere; LNO and FNO each have the lowest error on some cases, as expected given that the benchmark was designed around continuous-time ODEs.",
+      "page": 17,
+      "index": 15,
+      "width": 813,
+      "height": 238
+    },
+    {
+      "url": "assets/figures/arxiv/2605.02356v1/fig-016.webp",
+      "caption": "Figure 9: Learned ZNO poles on the z-plane per task. Color: layer depth; marker size: residue magnitude. Solid/dashed circles: stability boundary and safe radius ρsafe = 0.95. The maps show near-unit-circle oscillatory poles for resonant ARMA, later-layer IIR poles near the safe radius, and NARX poles near the real axis.",
+      "page": 20,
+      "index": 16,
+      "width": 732,
+      "height": 225
+    },
+    {
+      "url": "assets/figures/arxiv/2605.02356v1/fig-017.webp",
+      "caption": "Figure 10: Qualitative comparison on one held-out test trajectory per task. Black dashed: ground truth. Colored: FNO (orange), S4D (brown), ZNO (red). On the resonant ARMA panel, ZNO has the smallest trajectory error and most closely overlays the ground truth. On the sixth-order IIR cascade, FNO substantially underestimates the response amplitude, while S4D and ZNO are closer to the ground truth on this trajectory. On NARX, all three models follow the main low-frequency response, with S4D and ZNO nearly overlapping.",
+      "page": 20,
+      "index": 17,
+      "width": 813,
+      "height": 499
+    },
+    {
+      "url": "assets/figures/arxiv/2605.02356v1/fig-018.webp",
+      "caption": "Table 9: Validation/test gap on the public benchmarks for the selected configuration of each neural architecture (mean over five seeds). Best-val column: relative L2 on the train-stream 80/20 validation split that is used for configuration selection. Test column: relative L2 on the official held-out test set. Negative gaps on CED indicate that the official test split is easier than the validation tail of the train stream; the large positive gap on EMPS for FNO and ZNO indicates that the selected model does not transfer between the two regimes.",
+      "page": 16,
+      "index": 18,
+      "width": 536,
+      "height": 386
+    }
+  ]
+}

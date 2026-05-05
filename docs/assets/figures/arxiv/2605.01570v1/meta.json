@@ -1,0 +1,126 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.01570v1/fig-001.webp",
+      "caption": "Fig. 7. Detailed Structure of the FTN-TransformerNet",
+      "page": 6,
+      "index": 1,
+      "width": 438,
+      "height": 377
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01570v1/fig-002.webp",
+      "caption": "Fig. 16. BER performance with sampling offset for 𝜏 = 0.50 with LSTM equaliser",
+      "page": 11,
+      "index": 2,
+      "width": 474,
+      "height": 669
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01570v1/fig-003.webp",
+      "caption": "Fig. 17. BER performance with Biased Training for 𝜏 = 0.50",
+      "page": 11,
+      "index": 3,
+      "width": 474,
+      "height": 669
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01570v1/fig-004.webp",
+      "caption": "Fig. 8. Training and Validation Loss for FTN-LSTM and FTN-BiLSTM.",
+      "page": 7,
+      "index": 4,
+      "width": 425,
+      "height": 321
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01570v1/fig-005.webp",
+      "caption": "Fig. 9. Loss Curves for FTN-TransformerNet",
+      "page": 7,
+      "index": 5,
+      "width": 423,
+      "height": 335
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01570v1/fig-006.webp",
+      "caption": "Fig. 15. BER Performance of SNR specific models",
+      "page": 10,
+      "index": 6,
+      "width": 474,
+      "height": 669
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01570v1/fig-007.webp",
+      "caption": "Fig. 14. Modified Channels",
+      "page": 10,
+      "index": 7,
+      "width": 399,
+      "height": 319
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01570v1/fig-008.webp",
+      "caption": "Fig. 13. BER comparison of FTN Decoders for 𝜏 = 0.25",
+      "page": 10,
+      "index": 8,
+      "width": 425,
+      "height": 336
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01570v1/fig-009.webp",
+      "caption": "Fig. 19. BER performance with Varying Training Dataset size for 𝜏 = 0.50",
+      "page": 12,
+      "index": 9,
+      "width": 474,
+      "height": 669
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01570v1/fig-010.webp",
+      "caption": "Fig. 18. BER performance with Orthogonal Training and Testing Datasets for 𝜏 = 0.50",
+      "page": 12,
+      "index": 10,
+      "width": 423,
+      "height": 325
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01570v1/fig-011.webp",
+      "caption": "Fig. 20. BER performance with Higher modulation for 𝜏 = 0.50",
+      "page": 12,
+      "index": 11,
+      "width": 409,
+      "height": 345
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01570v1/fig-012.webp",
+      "caption": "Fig. 12. BER comparison of FTN Decoders for 𝜏 = 0.35",
+      "page": 9,
+      "index": 12,
+      "width": 423,
+      "height": 335
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01570v1/fig-013.webp",
+      "caption": "Fig. 11. BER Performance across varying packing ratio models",
+      "page": 9,
+      "index": 13,
+      "width": 442,
+      "height": 290
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01570v1/fig-014.webp",
+      "caption": "Fig. 10. BER comparison of FTN Decoders for 𝜏 = 0.50",
+      "page": 9,
+      "index": 14,
+      "width": 474,
+      "height": 369
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01570v1/fig-015.webp",
+      "caption": "Fig. 5. FTN NN Structure",
+      "page": 5,
+      "index": 15,
+      "width": 408,
+      "height": 303
+    }
+  ]
+}

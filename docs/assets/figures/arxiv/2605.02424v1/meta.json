@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.02424v1/fig-001.webp",
+      "caption": "Figure 1. Basic concept of our framework: Illustration of the relationship between the antenna system, the reference point, the test line, the real electromagnetic field characterized by E and H, and the auxiliary field functions, EFF and HFF. It should be noted that, unlike in the region close to the antenna system, the real fields coincide with the auxiliary fields in the far-field region. The prefactors related to the free-space impedance Z0 are introduced to weight deviations of the electric and magnetic fields equally.",
+      "page": 1,
+      "index": 1,
+      "width": 521,
+      "height": 371
+    },
+    {
+      "url": "assets/figures/arxiv/2605.02424v1/fig-002.webp",
+      "caption": "Figure 6. Approximation error of uniform linear dipole arrays with a total array length of Nd = 3.5λ. The results indicate that, in the absence of inter-antenna coupling, the decay behavior of the approximation error is primarily governed by the total dimensions of the antenna system. However, this observation no longer holds when inter-antenna coupling becomes significant, which is the case for the d = λ/4 separated antenna array.",
+      "page": 10,
+      "index": 2,
+      "width": 1050,
+      "height": 372
+    }
+  ]
+}

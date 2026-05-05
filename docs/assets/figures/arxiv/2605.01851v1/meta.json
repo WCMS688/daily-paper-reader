@@ -1,0 +1,62 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.01851v1/fig-001.webp",
+      "caption": "Fig. 16. Final reconstructed images for CC-PINN and classical cost function PINN using the frequency-hopping strategy to invert the Fresnel lowfrequency dataset FoamTwinDielTM 345 (a, c) and high-frequency dataset FoamTwinDielTM 678 (b, d). Top: CC-PINN; Bottom: classical cost function PINN. The results shown are selected from the median of the final PSNR of the 11 independent runs. Dashed lines mark the true contours of the target.",
+      "page": 11,
+      "index": 1,
+      "width": 432,
+      "height": 386
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01851v1/fig-002.webp",
+      "caption": "Fig. 4. Comparison of mean PSNR convergence with standard deviation band for CC-PINN and classical cost function PINN using the frequencyhopping strategy to invert “Austria” dielectric targets of different contrasts. The relative permittivity of the dielectric targets is εr =4 (a), εr =4.5 (b), εr =5 (c), εr =5.5 (d), εr =6 (e), and εr =6.5 (f). SNR= 20 dB.",
+      "page": 7,
+      "index": 2,
+      "width": 474,
+      "height": 642
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01851v1/fig-003.webp",
+      "caption": "Fig. 14. Comparison of mean PSNR convergence with standard deviation band and boxplots for CC-PINN and classical cost function PINN using the frequency-hopping strategy to invert the Fresnel lowfrequency dataset FoamTwinDielTM 345 (a, c) and high-frequency dataset FoamTwinDielTM 678 (b, d).",
+      "page": 10,
+      "index": 3,
+      "width": 454,
+      "height": 397
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01851v1/fig-004.webp",
+      "caption": "Fig. 7. Comparison of mean PSNR convergence with standard deviation band and boxplots for CC-PINN and classical cost function PINN using the frequency-hopping strategy to invert the same “Austria” dielectric target (εr =6). SNR= 10 dB (a, c); SNR= 0 dB (b, d).",
+      "page": 8,
+      "index": 4,
+      "width": 454,
+      "height": 402
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01851v1/fig-005.webp",
+      "caption": "Fig. 9. Comparison of mean PSNR convergence with standard deviation band for CC-PINN and classical cost function PINN using the simultaneous multi-frequency processing strategy to invert “Austria” dielectric targets of different contrasts. Target relative permittivity is εr =4 (a, c) and εr =5 (b, d). SNR= 20 dB.",
+      "page": 8,
+      "index": 5,
+      "width": 454,
+      "height": 400
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01851v1/fig-006.webp",
+      "caption": "Fig. 12. Reconstruction results for CC-PINN and classical cost function PINN using the frequency-hopping strategy to invert different lossy “Austria” dielectric targets. “Austria” lossy target 1: εr = 6, σ = 0.03 S/m (a–b, e–f); “Austria” lossy target 2: small cylinders εr = 6, σ = 0.05 S/m, large ring εr = 9, σ = 0.03 S/m (c–d, g–h). SNR= 20 dB. Left: relative permittivity; Right: conductivity (S/m). Top: CC-PINN; Bottom: classical cost function PINN. The results shown are selected from the median of the final PSNR of the 11 independent runs. Dashed lines mark the true contours of the target.",
+      "page": 9,
+      "index": 6,
+      "width": 519,
+      "height": 290
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01851v1/fig-007.webp",
+      "caption": "Fig. 10. Comparison of mean PSNR convergence with standard deviation band and boxplots for CC-PINN and classical cost function PINN using the frequency-hopping strategy to invert “Austria” lossy dielectric target 1 (εr = 6, σ = 0.03 S/m). SNR= 20 dB.",
+      "page": 9,
+      "index": 7,
+      "width": 454,
+      "height": 398
+    }
+  ]
+}

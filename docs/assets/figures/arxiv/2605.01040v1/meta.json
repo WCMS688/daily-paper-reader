@@ -1,0 +1,142 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.01040v1/fig-001.webp",
+      "caption": "Figure 3: Geometry-only optimization trajectory for the frozen (−18◦C) case. (a) Total loss convergence, (b) task-loss evolution, and (c) evolution of the optimized 2D footprint at selected epochs.",
+      "page": 11,
+      "index": 1,
+      "width": 911,
+      "height": 768
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01040v1/fig-002.webp",
+      "caption": "Table 8: Objective thresholds.",
+      "page": 21,
+      "index": 2,
+      "width": 602,
+      "height": 281
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01040v1/fig-003.webp",
+      "caption": "Table 9: Grid and time-integration settings.",
+      "page": 21,
+      "index": 3,
+      "width": 791,
+      "height": 253
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01040v1/fig-004.webp",
+      "caption": "Table 10: INR geometry model.",
+      "page": 21,
+      "index": 4,
+      "width": 923,
+      "height": 254
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01040v1/fig-005.webp",
+      "caption": "Figure 2: Schematic of the coupled heat-transfer, transport, phase-change, and shrinkage mechanisms represented in the hamburger cooking case study.",
+      "page": 7,
+      "index": 5,
+      "width": 802,
+      "height": 406
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01040v1/fig-006.webp",
+      "caption": "Table 12: Main optimizer settings.",
+      "page": 22,
+      "index": 6,
+      "width": 698,
+      "height": 312
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01040v1/fig-007.webp",
+      "caption": "Table 1: Optimization cases used in the hamburger cooking benchmark.",
+      "page": 10,
+      "index": 7,
+      "width": 944,
+      "height": 202
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01040v1/fig-008.webp",
+      "caption": "Table 14: Finite-difference implementation details.",
+      "page": 23,
+      "index": 8,
+      "width": 929,
+      "height": 789
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01040v1/fig-009.webp",
+      "caption": "Figure 5: Joint optimization trajectory for the refrigerated (4◦C) case. (a) Total loss convergence, (b) task-loss evolution, (c) optimized hot-plate temperature, (d) optimized cooking time, (e) optimized initial fat fraction, (f) optimized thickness, and (g) evolution of the optimized geometry at selected epochs.",
+      "page": 13,
+      "index": 9,
+      "width": 911,
+      "height": 1010
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01040v1/fig-010.webp",
+      "caption": "Figure 1: Overview of the differentiable co-optimization framework. Spatial coordinates are mapped through Fourier features and passed to a coordinate-based neural network to define the SDF geometry representation. The trainable geometry and physical parameters are coupled to a JAX-compiled differentiable Eulerian multiphysics solver with continuous relaxations. The transient simulation is unrolled over time, the total loss is evaluated from the solution fields, and gradients are backpropagated through the unrolled transient simulation using BPTT.",
+      "page": 4,
+      "index": 10,
+      "width": 943,
+      "height": 546
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01040v1/fig-011.webp",
+      "caption": "Table 4: Material constants.",
+      "page": 19,
+      "index": 11,
+      "width": 729,
+      "height": 281
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01040v1/fig-012.webp",
+      "caption": "Table 5: Temperature-dependent thermal property models. Temperature is in ◦C.",
+      "page": 19,
+      "index": 12,
+      "width": 541,
+      "height": 265
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01040v1/fig-013.webp",
+      "caption": "Figure 4: Final geometry-only solutions for the three initial temperatures: (a) frozen (−18◦C), (b) refrigerated (4◦C), and (c) ambient (20◦C).",
+      "page": 12,
+      "index": 13,
+      "width": 943,
+      "height": 969
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01040v1/fig-014.webp",
+      "caption": "Table 16: Constraint and admissibility losses.",
+      "page": 24,
+      "index": 14,
+      "width": 938,
+      "height": 364
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01040v1/fig-015.webp",
+      "caption": "Table 15: Task-loss implementation.",
+      "page": 24,
+      "index": 15,
+      "width": 919,
+      "height": 338
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01040v1/fig-016.webp",
+      "caption": "Table 7: Bounds and initial scalar values used in the optimization cases.",
+      "page": 20,
+      "index": 16,
+      "width": 942,
+      "height": 286
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01040v1/fig-017.webp",
+      "caption": "Table 6: Thermal BC, contact, transport, and calibrated loss constants.",
+      "page": 20,
+      "index": 17,
+      "width": 858,
+      "height": 535
+    }
+  ]
+}

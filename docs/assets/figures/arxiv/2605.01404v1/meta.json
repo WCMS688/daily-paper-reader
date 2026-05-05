@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.01404v1/fig-001.webp",
+      "caption": "Fig. 1: Traditional flow versus our proposed flow",
+      "page": 1,
+      "index": 1,
+      "width": 522,
+      "height": 256
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01404v1/fig-002.webp",
+      "caption": "Fig. 2: Proposed AMSnet-q Pipeline.",
+      "page": 2,
+      "index": 2,
+      "width": 1072,
+      "height": 379
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01404v1/fig-003.webp",
+      "caption": "Fig. 3: Illustration of port detection: (a) a mistake example and (b) two strategies for port detection.",
+      "page": 3,
+      "index": 3,
+      "width": 522,
+      "height": 300
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01404v1/fig-004.webp",
+      "caption": "Fig. 6: False topologies identified by AMSnet-q circuit identification. Sources: B.Razavi [19] (a) page 408, (b) page 362, (c) page 439; (d) [20] page 8.",
+      "page": 4,
+      "index": 4,
+      "width": 1068,
+      "height": 280
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01404v1/fig-005.webp",
+      "caption": "Fig. 7: Performance labeling and database example. Sources: B.Razavi [19] (a) page 389, (b) page 421, (c) page 131; (d) G.Jaswanth [22] page 6.",
+      "page": 5,
+      "index": 5,
+      "width": 1070,
+      "height": 437
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01404v1/fig-006.webp",
+      "caption": "TABLE II: Identification confusion matrix for OpAmp.",
+      "page": 5,
+      "index": 6,
+      "width": 527,
+      "height": 358
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.24210v1/fig-001.webp",
+      "caption": "Fig. 4. Example predictions obtained from the second sample of IEEE 9-bus system on node 6 for the MPG-NODE and the monolith NODE.",
+      "page": 7,
+      "index": 1,
+      "width": 505,
+      "height": 402
+    },
+    {
+      "url": "assets/figures/arxiv/2604.24210v1/fig-002.webp",
+      "caption": "Fig. 5. Boxplot of voltage and frequency RMSEs of all samples of the evaluation dataset of the original IEEE 9-bus system, the altered system without retraining and the altered system with retraining. The errors are shown for each node separately.",
+      "page": 7,
+      "index": 2,
+      "width": 484,
+      "height": 407
+    },
+    {
+      "url": "assets/figures/arxiv/2604.24210v1/fig-003.webp",
+      "caption": "Fig. 1. Schematic of the unrolled prediction model. The encoder yields an inital state for the NODE from historic data. Then, multistep predictions are obtained by repeatedly solving IVPs. Note that the the NNs are simplified for illustrative reasons. Typically, the state x(i), input u(i), the node embeddings θ (i) node and edge embeddings θ (ij)",
+      "page": 4,
+      "index": 3,
+      "width": 1045,
+      "height": 414
+    }
+  ]
+}
