@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.26405v1/fig-001.webp",
+      "caption": "Fig. 3. (a) Transformer layout and Cadence EMX simulation results - (b) Inductance and (c) Quality Factor",
+      "page": 2,
+      "index": 1,
+      "width": 529,
+      "height": 394
+    },
+    {
+      "url": "assets/figures/arxiv/2604.26405v1/fig-002.webp",
+      "caption": "Fig. 4. Variation of frequency ratios with (a)-(b) k12 and (c)-(d) k13",
+      "page": 3,
+      "index": 2,
+      "width": 529,
+      "height": 385
+    },
+    {
+      "url": "assets/figures/arxiv/2604.26405v1/fig-003.webp",
+      "caption": "Fig. 5. Proposed Topology with Noise Circulation Technique and sixth-order triple-coupled XFMR based tank",
+      "page": 4,
+      "index": 3,
+      "width": 529,
+      "height": 483
+    },
+    {
+      "url": "assets/figures/arxiv/2604.26405v1/fig-004.webp",
+      "caption": "Fig. 6. Layout of the proposed triple-coupled XFMR tank based VCO",
+      "page": 4,
+      "index": 4,
+      "width": 474,
+      "height": 343
+    },
+    {
+      "url": "assets/figures/arxiv/2604.26405v1/fig-005.webp",
+      "caption": "Fig. 7. Transient waveforms of (a) Vout and (b) Vout, (c) Spectrum of Vout and (d) Phase Noise profile",
+      "page": 4,
+      "index": 5,
+      "width": 529,
+      "height": 419
+    },
+    {
+      "url": "assets/figures/arxiv/2604.26405v1/fig-006.webp",
+      "caption": "Fig. 8. Post-layout simulation results summarizing TR and PN performance of the proposed VCO: (a) frequency vs Vtune at TT 27 ◦C, (b)-(d) TR variation across PVT, respectively, (e) PN profile at TT 27 ◦C, and (f)-(h) PN variation across PVT, respectively.",
+      "page": 5,
+      "index": 6,
+      "width": 1076,
+      "height": 483
+    }
+  ]
+}

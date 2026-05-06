@@ -1,0 +1,213 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-05-06T20:42:33.649887+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 2,
+    "deep_divecandidates": 0,
+    "deep_cap": 7,
+    "deep_selected": 0,
+    "quick_candidates": 5,
+    "quick_skim_target": 12,
+    "quick_selected": 5
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2605.02158v1",
+      "source": "arxiv",
+      "title": "Diffusion Transformers with Hybrid Conditioning for Structural Optimization",
+      "abstract": "This work presents a diffusion transformer framework for data-driven structural topology optimization that combines the accuracy of physics-based methods with the efficiency of generative deep learning. Conventional approaches such as the Solid Isotropic Material with Penalization (SIMP) method require repeated finite element analyses at every iteration, making large-scale or real-time optimization computationally expensive. We propose a hybrid conditioning diffusion transformer (DiT) model that learns to generate near-optimal topologies directly from problem definitions, eliminating iterative analysis during inference. The model integrates spatially distributed conditioning through concatenated stress and strain fields and global conditioning via adaptive layer normalization (AdaLN) using scalar descriptors such as load position, magnitude, and prescribed volume fraction. A dataset of 30,000 two-dimensional SIMP-optimized structures was generated for training and evaluation. Results demonstrate that the proposed DiT achieves less than 1% compliance errors relative to ground-truth SIMP solutions while maintaining accurate volume fractions and structural connectivity. Deterministic DDIM sampling enables high-fidelity topology generation in seconds using as few as five denoising steps, enabling near-real-time performance. The hybrid conditioning diffusion transformer thus provides an efficient and scalable alternative to traditional topology optimization methods, with strong potential for integration into interactive computer-aided design workflows.",
+      "authors": [
+        "Aaron Lutheran",
+        "Srijan Das",
+        "Alireza Tabarraei"
+      ],
+      "primary_category": "cs.CE",
+      "categories": [
+        "cs.CE"
+      ],
+      "published": "2026-05-04T02:37:22+00:00",
+      "link": "https://arxiv.org/pdf/2605.02158v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:BGA-XTALK",
+        "query:si-pi"
+      ],
+      "llm_score": 6.5,
+      "llm_evidence_en": "Generative deep learning for structural topology optimization",
+      "llm_evidence_cn": "用于结构拓扑优化的生成式深度学习",
+      "llm_evidence": "用于结构拓扑优化的生成式深度学习",
+      "canonical_evidence": "用于结构拓扑优化的生成式深度学习",
+      "llm_tldr_en": "Proposes a diffusion transformer for structural optimization, potentially applicable to PDN/SI layout tasks.",
+      "llm_tldr_cn": "提出一种用于结构优化的扩散Transformer模型，可能适用于PDN或SI布局任务。",
+      "llm_tldr": "提出一种用于结构优化的扩散Transformer模型，可能适用于PDN或SI布局任务。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.26405v1",
+      "source": "arxiv",
+      "title": "A 21-24 GHz Low-Phase-Noise mmWave VCO with Third-Harmonic Expansion using a Triple-Coupled Transformer based Tank",
+      "abstract": "This work presents the design and analysis of a sixth-order triple-coupled transformer-based tank, enabling third-harmonic expansion for mmWave VCOs. Unlike conventional fourth-order tanks, the proposed tank inherently supports three resonance modes, enabling wideband third-harmonic expansion without additional low-Q switched-capacitor tuning elements. In contrast to conventional class-F23 designs, the proposed VCO removes the head resonator and adopts a noise circulating core to maintain low phase noise with reduced area. Implemented in TSMC 65-nm CMOS, post-layout simulation results demonstrate a 21.03-23.99 GHz (13.5%) tuning range, minimum phase noise of -116.25 dBc/Hz at 1 MHz offset, and peak FoM/FoMT/FoMA of 195.86/198.24/212.31 dBc/Hz while consuming 5.4 mW and occupying 0.02268 mm2.",
+      "authors": [
+        "Narahari N. Moudhgalya"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP"
+      ],
+      "published": "2026-04-29T08:17:36+00:00",
+      "link": "https://arxiv.org/pdf/2604.26405v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:BGA-XTALK",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "triple-coupled transformer based tank modeling",
+      "llm_evidence_cn": "基于三耦合变压器的谐振腔建模",
+      "llm_evidence": "基于三耦合变压器的谐振腔建模",
+      "canonical_evidence": "基于三耦合变压器的谐振腔建模",
+      "llm_tldr_en": "Analyzes a sixth-order triple-coupled transformer tank for mmWave VCO performance optimization.",
+      "llm_tldr_cn": "分析了用于毫米波VCO性能优化的六阶三耦合变压器谐振腔。",
+      "llm_tldr": "分析了用于毫米波VCO性能优化的六阶三耦合变压器谐振腔。",
+      "llm_tags": [
+        "query:bga-xtalk"
+      ],
+      "matched_query_tag": "query:bga-xtalk",
+      "matched_query_text": "equivalent circuit modeling",
+      "matched_requirement_id": "req-12",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.01670v1",
+      "source": "arxiv",
+      "title": "Maxwell à la Helmholtz: Direct boundary integral equations for 3D scattering by perfect electric conductors via Helmholtz operators",
+      "abstract": "This paper is the direct-formulation companion to [Burbano-Gallegos, P'erez-Arancibia, and Turc, ESAIM: M2AN, 60(1):273--315, 2026], which developed indirect combined-field-only boundary integral equations (BIEs) for time-harmonic electromagnetic scattering by smooth perfectly electrically conducting (PEC) obstacles, relying entirely on Helmholtz boundary integral operators. Here we exploit the same equivalence between the Maxwell PEC scattering problem and a pair of vector Helmholtz boundary value problems -- one for the electric field and one for the magnetic field -- to derive direct BIE formulations whose unknowns are the Dirichlet and Neumann traces of the total fields, decomposed into their normal and tangential surface components. These unknowns carry direct physical meaning: in particular, the magnetic-field formulation yields the surface electric currents as part of its solution. The mixed regularity of the two field-trace components requires introducing a tailored product H\"older space, a distinctive feature absent from the indirect approach. We prove that the resulting Direct Electric and Magnetic Combined-Field-Only Integral Equations (D-ECFOIE and D-MCFOIE) are uniquely solvable at all frequencies, and introduce Calder'on-type regularizations (RD-ECFOIE and RD-MCFOIE) that render them of the Fredholm second kind. We further examine the low-frequency breakdown affecting the electric-field formulation and introduce a modified equation that enforces the physical charge-conservation constraints, which restores numerical accuracy and well-conditioned linear systems for frequencies arbitrarily close to zero. Numerical experiments, performed using a high-order Nystr\"om solver based on the Density Interpolation Method and implemented in the Julia package Inti.jl, validate the accuracy and robustness of the proposed formulations across a range of geometries and frequencies.",
+      "authors": [
+        "Carlos Pérez-Arancibia",
+        "Catalin Turc"
+      ],
+      "primary_category": "math.NA",
+      "categories": [
+        "math.NA",
+        "physics.comp-ph"
+      ],
+      "published": "2026-05-03T01:51:52+00:00",
+      "link": "https://arxiv.org/pdf/2605.01670v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:BGA-XTALK"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "boundary integral equations for 3D electromagnetic scattering by conductors",
+      "llm_evidence_cn": "导体3D电磁散射的边界积分方程",
+      "llm_evidence": "导体3D电磁散射的边界积分方程",
+      "canonical_evidence": "导体3D电磁散射的边界积分方程",
+      "llm_tldr_en": "Develops direct boundary integral equations for 3D electromagnetic scattering by perfect electric conductors.",
+      "llm_tldr_cn": "开发了用于完美电导体3D电磁散射的直接边界积分方程。",
+      "llm_tldr": "开发了用于完美电导体3D电磁散射的直接边界积分方程。",
+      "llm_tags": [
+        "query:bga-xtalk"
+      ],
+      "matched_query_tag": "query:bga-xtalk",
+      "matched_query_text": "papers on PEEC or reduced order modeling for package and interconnect analysis",
+      "matched_requirement_id": "req-17",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.02400v1",
+      "source": "arxiv",
+      "title": "2D Waveguide-Fed Metasurfaces: Physically Consistent Modeling, Validation, and Optimization",
+      "abstract": "Antenna array architectures based on programmable metasurfaces are emerging as a promising solution for scalable implementations of the eXtremely Large Multiple-Input Multiple-Output (XL-MIMO) systems paradigm, envisioned for 6-th Generation (6G), and beyond, wireless networks. However, their accurate modeling, quantifying the role of key structural features, such as strong mutual coupling and guided-wave excitation, remains challenging, amplifying the need for physically consistent representations of the constituent metamaterial elements. In this paper, capitalizing on the coupled dipole formulation, we develop a comprehensive electromagnetics-compliant framework for 2-Dimensional (2D) waveguide-fed metasurface antennas. The proposed model extends relevant existing modeling approaches by incorporating both electric and magnetic dipoles' responses, accounting for multiple excitation feeds, and enabling accurate characterization in both the near- and far-field regimes. Radiation-reaction corrections based on passivity constraints are derived and shown to ensure the passivity of the overall dipole system. In addition, we present a novel input impedance model for the considered architecture enabling explicit computation of the accepted power, and facilitating efficient beamforming design under realistic power constraints. All modeling components developed in this paper are validated against full-wave electromagnetic simulations. Furthermore, the analytical structure of the proposed model enables the formulation of a differentiable beamforming design optimization problem over both the considered metasurface geometry and its feed excitations. The presented numerical results demonstrate the effectiveness of the proposed modeling framework in achieving both directive beamforming and sector-wide coverage.",
+      "authors": [
+        "Panagiotis Gavriilidis",
+        "George C. Alexandropoulos"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP"
+      ],
+      "published": "2026-05-04T09:43:25+00:00",
+      "link": "https://arxiv.org/pdf/2605.02400v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:BGA-XTALK",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "physically consistent modeling and optimization of mutual coupling in waveguide structures",
+      "llm_evidence_cn": "波导结构中相互耦合的物理一致性建模与优化",
+      "llm_evidence": "波导结构中相互耦合的物理一致性建模与优化",
+      "canonical_evidence": "波导结构中相互耦合的物理一致性建模与优化",
+      "llm_tldr_en": "Develops an EM-compliant framework for modeling and optimizing mutual coupling in 2D waveguide metasurfaces.",
+      "llm_tldr_cn": "开发了一个符合电磁规范的框架，用于建模和优化二维波导超表面的相互耦合。",
+      "llm_tldr": "开发了一个符合电磁规范的框架，用于建模和优化二维波导超表面的相互耦合。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Advanced modeling and optimization techniques for SI/PI in high speed systems",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.03335v1",
+      "source": "arxiv",
+      "title": "WGAN based Inverse Design of Active Dual Band FSS with Switchable Transmission",
+      "abstract": "This letter presents a novel design method for switchable dual band transmissive frequency selective surface (FSS). The proposed FSS possesses characteristics of maintaining passband characteristics at high frequencies, while switching from transmission to reflection at low frequencies with pin diodes states altering. Specifically, we propose a crystal growth-based topology generation strategy, and utilize a simplified U-Net Wasserstein GAN (WGAN) neural network model to establish an inverse mapping model from electromagnetic response to structure topology parameters. The trained WGAN achieves training and validation accuracies of 95.59% and 90.84%, while the simplified U-Net attains training and validation accuracies of 98.5% and 94.1%. Using the trained WGAN. The generated structural topologies were validated through full-wave simulations and experimental measurements. The proposed method enhances the design flexibility and overcomes the time- consuming drawbacks of conventional FSS design.",
+      "authors": [
+        "Rui Xi",
+        "Xinke Kuang",
+        "Huanran Qiu",
+        "Shiyun Ma",
+        "Xiaokui Kang",
+        "Yuanyuan Wang",
+        "Ying Li",
+        "Long Li"
+      ],
+      "primary_category": "physics.app-ph",
+      "categories": [
+        "physics.app-ph"
+      ],
+      "published": "2026-05-05T03:57:00+00:00",
+      "link": "https://arxiv.org/pdf/2605.03335v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:BGA-XTALK",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "WGAN based inverse design and mapping from EM response to structure topology",
+      "llm_evidence_cn": "基于WGAN的逆向设计以及从电磁响应到结构拓扑的映射",
+      "llm_evidence": "基于WGAN的逆向设计以及从电磁响应到结构拓扑的映射",
+      "canonical_evidence": "基于WGAN的逆向设计以及从电磁响应到结构拓扑的映射",
+      "llm_tldr_en": "Uses WGAN and U-Net for the inverse design of frequency selective surfaces based on electromagnetic responses.",
+      "llm_tldr_cn": "利用WGAN和U-Net根据电磁响应对频率选择表面进行逆向设计。",
+      "llm_tldr": "利用WGAN和U-Net根据电磁响应对频率选择表面进行逆向设计。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

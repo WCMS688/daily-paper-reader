@@ -1,0 +1,62 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.01670v1/fig-001.webp",
+      "caption": "Table 5: Divergence errors, surface charge integrals, and GMRES iteration counts (relative tolerance 10−4) for all four BIE formulations applied to planewave scattering (59) by two configurations of non-simplyconnected scatterers at a low (k = 10−8π) and a moderate (k = 10−1π) frequency. The top half shows the direct formulations and the bottom half their analytically preconditioned counterparts; two values of ξ are shown for the (R)D-ECFOIE. A fixed mesh with h ≈ 0.14 (N = 54648) is used, with η = 100π throughout.",
+      "page": 25,
+      "index": 1,
+      "width": 964,
+      "height": 446
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01670v1/fig-002.webp",
+      "caption": "Figure 1: Surface meshes for the two non-simply-connected scatterer configurations used in Table 5: interlocking tori (left) and adjacent tori (right), both with h ≈ 0.14 (N = 54648).",
+      "page": 26,
+      "index": 2,
+      "width": 956,
+      "height": 397
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01670v1/fig-003.webp",
+      "caption": "Table 1: Accuracy and GMRES iteration counts (with a relative tolerance of 10−6) for the numerical solution of all four direct BIE formulations for electromagnetic scattering by a PEC sphere Γ = S2, illuminated by a plane wave (59) with wavenumber k = π. The top half shows the direct formulations and the bottom half their analytically preconditioned counterparts. The electric formulations (left) report errors for the scattered electric field Ẽs; the magnetic formulations (right) report errors for H̃s. The results are computed for various target mesh sizes h > 0, leading to surface discretizations with N quadrature nodes (10 points per element) and linear systems of size 3N . The parameter η = 100k was used throughout and ξ = 0 in the case of the (R)D-ECFOIE.",
+      "page": 21,
+      "index": 3,
+      "width": 682,
+      "height": 609
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01670v1/fig-004.webp",
+      "caption": "Table 2: Relative errors, induced surface charge (61), and GMRES iteration counts (with a relative tolerance of 10−6) for all four direct BIE formulations applied to the electromagnetic scattering problem by the unit sphere Γ = S2 (of diameter d = 2) under planewave illumination (59) at low frequencies. The results are obtained using a fixed surface mesh of size h ≈ 0.16. In all cases, the parameter η = 100π is used, and two different values of the stabilization parameter ξ—introduced to mitigate the low-frequency breakdown—are shown.",
+      "page": 22,
+      "index": 4,
+      "width": 952,
+      "height": 471
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01670v1/fig-005.webp",
+      "caption": "Table 3: Frequency robustness of all four BIE formulations for planewave scattering (59) by the PEC sphere Γ = S2 at wavenumbers k ∈ {π, 2π, 3π, 4π, 5π}. The mesh is adapted to each frequency to maintain h ≈ λ/10, so that the number of quadrature nodes N scales with k; linear systems have size 3N , with six quadrature points per element. Layout, error measures, GMRES tolerance (10−6), and parameters (η = 100k, ξ = 0) are as in Table 1.",
+      "page": 23,
+      "index": 5,
+      "width": 682,
+      "height": 425
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01670v1/fig-006.webp",
+      "caption": "Figure 2: Real part of the x-component of the total electric field Re(Ex) (left) and the z-component of the total magnetic field Re(Hz) (right), computed for the interlocking tori configuration at k = π, with η = 100π and ξ = π · 104.",
+      "page": 27,
+      "index": 6,
+      "width": 956,
+      "height": 501
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01670v1/fig-007.webp",
+      "caption": "Table 4: Relative errors, induced surface charge (61), and GMRES iteration counts (with a relative tolerance of 10−6) for the (R)D-ECFOIE formulations applied to the electromagnetic scattering problem by a torus and a flower surface under planewave illumination (59) at low frequencies. The results are obtained using fixed surface meshes of size h ≈ 0.17. In all cases, the parameter η = 100π is used, and two different values of the parameter ξ—introduced to mitigate the low-frequency breakdown—are shown, demonstrating its effectiveness in reducing the surface charge values. Bold entries indicate cases severely affected by low-frequency breakdown.",
+      "page": 24,
+      "index": 7,
+      "width": 1040,
+      "height": 505
+    }
+  ]
+}

@@ -1,0 +1,1271 @@
+Title: Maxwell \`a la Helmholtz: Direct boundary integral equations for 3D scattering by perfect electric conductors via Helmholtz operators
+
+URL Source: https://arxiv.org/pdf/2605.01670v1
+
+Published Time: Tue, 05 May 2026 01:05:00 GMT
+
+Number of Pages: 28
+
+Markdown Content:
+# Maxwell ` a la Helmholtz: Direct boundary integral equations for 3D scattering by perfect electric conductors via Helmholtz operators 
+
+Carlos P´ erez-Arancibia ∗1 and Catalin Turc †21Department of Applied Mathematics, University of Twente, the Netherlands 
+
+> 2
+
+Department of Mathematical Sciences, New Jersey Institute of Technology, USA 
+
+May 5, 2026 
+
+Abstract 
+
+This paper is the direct-formulation companion to [3], which developed indirect combined-field-only boundary integral equations (BIEs) for time-harmonic electromagnetic scattering by smooth perfectly electrically conducting (PEC) obstacles, relying entirely on Helmholtz boundary integral operators. Here we exploit the same equivalence between the Maxwell PEC scattering problem and a pair of vec-tor Helmholtz boundary value problems—one for the electric field and one for the magnetic field—to derive direct BIE formulations whose unknowns are the Dirichlet and Neumann traces of the total fields, decomposed into their normal and tangential surface components. These unknowns carry di-rect physical meaning: in particular, the magnetic-field formulation yields the surface electric currents as part of its solution. The mixed regularity of the two field-trace components requires introducing a tailored product H¨ older space, a distinctive feature absent from the indirect approach. We prove that the resulting Direct Electric and Magnetic Combined-Field-Only Integral Equations (D-ECFOIE and D-MCFOIE) are uniquely solvable at all frequencies, and introduce Calder´ on-type regularizations (RD-ECFOIE and RD-MCFOIE) that render them of the Fredholm second kind. We further examine the low-frequency breakdown affecting the electric-field formulation and introduce a modified equation that enforces the physical charge-conservation constraints, which restores numerical accuracy and well-conditioned linear systems for frequencies arbitrarily close to zero. Numerical experiments, performed using a high-order Nystr¨ om solver based on the Density Interpolation Method and implemented in the Julia package Inti.jl , validate the accuracy and robustness of the proposed formulations across a range of geometries and frequencies. 
+
+# 1 Introduction 
+
+The numerical solution of frequency-domain electromagnetic scattering problems via boundary integral equations (BIEs) is widely regarded as significantly more challenging than the analogous acoustic problem governed by the Helmholtz equation. Traditional Maxwell BIE formulations—such as the electric field in-tegral equation (EFIE), the magnetic field integral equation (MFIE), and their combined-field counterpart (CFIE) [32]—involve surface-tangential vector unknowns, complex hypersingular kernels, and notorious dif-ficulties including low-frequency breakdown and the need for specialized Calder´ on preconditioning strate-gies. While important contributions have addressed these issues—including high-order Nystr¨ om meth-
+
+> ∗
+
+c.a.perezarancibia@utwente.nl 
+
+> †
+
+catalin.turc@njit.edu 
+
+1
+
+> arXiv:2605.01670v1 [math.NA] 3 May 2026
+
+ods [2,11,12,17] and current-and-charge reformulations incorporating Helmholtz operators [1,7,8,31]—the gap between the practical accessibility of Helmholtz and Maxwell BIE solvers remains significant. The companion paper [3] introduced a framework—referred to as Maxwell ` a la Helmholtz —that bridges this gap by reformulating 3D electromagnetic scattering by smooth perfectly electrically conducting (PEC) obstacles entirely in terms of Helmholtz boundary integral operators. The central idea rests on two equiv-alence theorems establishing that the Maxwell PEC scattering problem is equivalent to a pair of vector Helmholtz boundary value problems (BVPs) for the electric and magnetic fields individually, with bound-ary conditions expressed through the Dirichlet and Neumann traces of the respective field components. Building on these theorems, in [3] we develop indirect combined-field-only BIE formulations—the Elec-tric and Magnetic Field-Only Integral Equations (ECFOIE and MCFOIE)—in which the unknowns are auxiliary surface densities appearing in a combined-field layer potential ansatz. Crucially, these densities carry no direct physical meaning. The companion paper also introduces Calder´ on-regularized variants (R-ECFOIE and R-MCFOIE) that render the formulations of the second kind, and addresses the low-frequency breakdown inherent in the electric-field formulation via a modified combined-field potential. The present paper develops the direct counterpart of this framework. Rather than representing the scattered field through an ansatz in terms of auxiliary densities, we apply Green’s representation formula directly to the scattered field in the exterior domain and to the incident field in the interior, combining them to obtain integral representations in terms of the Dirichlet and Neumann traces of the total fields. These traces carry clear physical meaning: for the electric formulation, the unknown decomposes into the normal component of the total electric field on the surface and the tangential component of its normal derivative; for the magnetic formulation, the roles are interchanged. In particular, the solution of the direct magnetic formulation yields the surface electric currents directly, which are central to many applications and can be used to reconstruct the full scattered field via the classical Stratton–Chu formulas [27]. A related class of methods—known as field-only surface integral equations [20, 28–30]—has previously explored direct reformulations of Maxwell problems in terms of Helmholtz equations. In particular, [30] uses the same non-standard boundary condition on the normal derivative of the electric field (appearing in the equivalence theorems of [3]) to construct a direct BIE. However, that formulation suffers from spu-rious resonances, is not of Fredholm second kind, and its low-frequency behavior is not analyzed. Spurious resonances for the case of a sphere were partially addressed in [9], but neither work treats the magnetic for-mulation or provides a thorough well-posedness analysis. The present paper provides a complete theoretical treatment of the direct approach that was missing in the prior literature. Concretely, the contributions of this paper are the following: 
+
+• We derive direct combined-field-only integral equations for both the electric and magnetic fields—the D-ECFOIE and D-MCFOIE—whose unknowns are projections of the Dirichlet and Neumann traces of the respective total fields onto the tangential and normal components at the surface. These unknowns live in a product function space Cp,q ν,t (Γ), defined in (17), with mixed H¨ older regularity reflecting the different smoothness of the two components, which is a distinctive feature of the direct approach not present in the indirect formulation. 
+
+• We prove uniqueness of solutions to the D-ECFOIE and D-MCFOIE for all wavenumbers k > 0 (Theo-rems 4.2 and 5.1). The argument proceeds by reducing the homogeneous BIEs to the uniqueness question for the underlying PEC scattering problem, formulated as a pair of vector Helmholtz boundary value problems derived in [3]. 
+
+• We introduce Calder´ on-type (single-layer) regularizers for both formulations (the RD-ECFOIE and RD-MCFOIE), and establish that the resulting regularized equations are of the Fredholm second kind on 
+
+C0,α (Γ , C3), from which existence of solutions follows by the Fredholm alternative. 2• We address the potential low-frequency breakdown of the electric-field formulation as k ↓ 0 by introduc-ing a modified formulation that enforces the underlying charge-conservation constraints. We prove the unique solvability of the modified formulation for all k > 0 under mild conditions on the stabilization parameter ( ξ), and demonstrate numerically that it restores accuracy and well-conditioned GMRES it-eration counts for frequencies arbitrarily close to k = 0 in the cases severely affected by the phenomenon. The magnetic-field formulation, by contrast, is unaffected by this breakdown on simply-connected sur-faces. 
+
+• We validate the proposed formulations through numerical experiments using a high-order Nystr¨ om method based on the General-Purpose Density Interpolation Method (GP-DIM) [10], as implemented in the open-source Julia package Inti.jl [18]. The examples cover smooth surfaces of varying topology and geometry under planewave incidence, and span a wide range of frequencies including the near-zero regime. The paper is organized as follows. Section 2 collects notation, function spaces, and the Helmholtz boundary integral operators used throughout. Section 3 formulates the PEC scattering problem and recalls from [3] the equivalence theorems between the Maxwell problem and vector Helmholtz BVPs, which form the theoretical backbone of our formulations. Sections 4 and 5 develop the direct electric and magnetic combined-field-only formulations, respectively, together with their Calder´ on-regularized variants and low-frequency-robust modifications. Finally, Section 6 presents the numerical experiments. 
+
+# 2 Preliminaries 
+
+The essential definitions and notation used throughout the paper are collected in this section. 
+
+Function spaces First, we introduce the notation for the function spaces that will be used throughout the paper. Let X ⊂ Rm and Y ⊂ Cn. Given p ∈ N0 and α ∈ (0 , 1), the H¨ older space Cp,α (X, Y ) is defined as 
+
+Cp,α (X, Y ) = 
+
+n
+
+F = ( f1, · · · , f n) : X → Y fi ∈ Cp(X), ∀i ∈ { 1, . . . , n }, and ∀| β| = p, Dβ fi ∈ C0,α (X)
+
+o
+
+,
+
+with the norm 
+
+∥F ∥Cp,α (X,Y ) := 
+
+> n
+
+X
+
+> i=1
+
+ X
+
+> |β|≤ p
+
+∥Dβ fi∥C(X) + X
+
+> |β|=p
+
+h
+
+Dβ fi
+
+i
+
+> C0,α (X)
+
+ .
+
+Throughout, we use standard multi-index notation, and the symbol D denotes the total derivative. For the definition and properties of the standard H¨ older space C0,α (X), as well as the norm ∥ · ∥ C(X) and the seminorm [ · ]C0,α (X), we refer the reader to [14, Sec. 4.1] or [4, Sec. 2.2]. 
+
+Domain geometry and boundary regularity We let Γ denote a smooth surface that encloses an open, bounded region Ω ⊂ R3, and assume that the exterior domain R3 \ Ω is connected. The boundary Γ = ∂Ωadmits the decomposition Γ = Γ 1 ∪ · · · ∪ ΓJ into J pairwise disjoint, closed, bounded, and connected components Γ j , for j ∈ { 1, . . . , J }, each assumed to be at least C2,α -smooth for some α ∈ (0 , 1). The outward unit normal vector field is denoted by ν and belongs to C1,α (Γ , R3). This regularity guarantees that the shape operator, defined as R = D Γν, where D Γ denotes the surface derivative, belongs to C0,α (Γ , R3). Similarly, the mean curvature, given by H = 12 div Γ ν in terms of the surface divergence, lies in C0,α (Γ). 3Specifically, we let x : N ⊂ R2 → Γ be a C2,α -smooth local regular parametrization mapping an open set N onto a neighborhood of a point on Γ. The coefficients of the first and second fundamental forms are then given by 
+
+E = x u · xu, F = x u · xv, G = x v · xv,
+
+and 
+
+L = −xu · νu, M = −xu · νv = −xv · νu, N = −xv · νv,
+
+respectively, where subscripts denote partial derivatives with respect to the local coordinates ( u, v ) ∈ N .Letting x u and x v be represented as column vectors, the shape operator R can then be expressed in terms of these coefficients as 
+
+R = −[x u xv]
+
+E FF G
+
+−1  L MM N
+
+  E FF G
+
+−1
+
+[x u xv]⊤,
+
+and the mean curvature is recovered via H = 12 tr R. As is well known [6], both R and H are intrinsic geometric quantities of the surface, independent of the particular parametrization, and can be defined globally on all of Γ. In fact they define the following multiplication operators, which will arise naturally in our boundary integral equation formulations: 
+
+R : Cp,α (Γ , C3) → C0,α (Γ , C3), (Rφ)( x) = R(x)φ(x), and (1) 
+
+H : Cp,α (Γ , C3) → C0,α (Γ , C3), (Hφ)( x) = H (x)φ(x), x ∈ Γ, p ∈ N0. (2) 
+
+Traces and projectors Next, we introduce the notation for the exterior and interior traces of sufficiently regular Cn-valued vector fields, with n ∈ { 1, 3}, which will be used throughout the paper to impose boundary conditions and to define the decomposition of surface unknowns. Let U + ⊂ R3 \ Ω (resp. 
+
+U − ⊂ Ω) be an open set such that its closure contains Γ. The exterior and interior Dirichlet traces are then defined as 
+
+γ+ : Cp,β (U +, Cn) → Cp,β (Γ , Cn), γ+F (x) = lim  
+
+> δ→0+
+
+F (x + δν (x)) , (3a) 
+
+γ− : Cp,β (U −, Cn) → Cp,β (Γ , Cn), γ−F (x) = lim  
+
+> δ→0+
+
+F (x − δν (x)) , x ∈ Γ, (3b) where ( p, β ) ∈ ({0, 1} × [0 , 1]) ∪ ({2} × [0 , α ]), respectively. Similarly, we introduce the following notation for the exterior and interior Neumann traces: 
+
+∂+ 
+
+> ν
+
+: Cp+1 ,β (U +, Cn) → Cp,β (Γ , Cn), ∂+ 
+
+> ν
+
+F (x) := lim  
+
+> δ→0+
+
+DF (x + δν (x)) ν(x), (4a) 
+
+∂− 
+
+> ν
+
+: Cp+1 ,β (U −, Cn) → Cp,β (Γ , Cn), ∂− 
+
+> ν
+
+F (x) := lim  
+
+> δ→0+
+
+DF (x − δν (x)) ν(x), x ∈ Γ, (4b) for ( p, β ) ∈ ({0, 1} × [0 , 1]) ∪ ({1} × [0 , α ]), respectively, where D : F 7 → (D F )i,j = ∂F i 
+
+> ∂x j
+
+, i ∈ { 1, . . . , n },
+
+j ∈ { 1, 2, 3}, denotes the total derivative (which is represented by the Jacobian matrix ( ∂F i/∂x j )i,j ). The trace operators γ± and ∂± 
+
+> ν
+
+are well-defined and bounded due to the assumed C2,α -regularity of the surface Γ, with α ∈ (0 , 1). Throughout this paper, unless the interior trace is explicitly required, we adopt the convention γ := γ+ and ∂ν := ∂+ 
+
+> ν
+
+, i.e., γ and ∂ν without a superscript always denote the exterior traces. We also use the alternative notation ∂F ∂ν := ∂+ 
+
+> ν
+
+F for the exterior Neumann trace of a field F .It is important to note that, when n = 3, the above definition (4) implies that the Neumann traces ∂± 
+
+> ν
+
+F
+
+are a vector field whose coordinate components correspond to the scalar Neumann traces of each component (F )i = Fi (i ∈ { 1, 2, 3}) of the vector field F , i.e., ( ∂± 
+
+> ν
+
+F )i = ∂± 
+
+> ν
+
+Fi.4We make extensive use of the projectors on the tangent plane of Γ and along its normal. Specifically, we define the operators: 
+
+Pν : Cp,β (Γ , C3) → Cp,β (Γ , C3), Pν φ(x) = ( ν(x) · φ(x)) ν(x) and (5a) 
+
+Pt : Cp,β (Γ , C3) → Cp,β (Γ , C3), Ptφ(x) = φ(x) − (ν(x) · φ(x)) ν(x), x ∈ Γ, (5b) for ( p, β ) ∈ ({0} × [0 , 1]) ∪ ({1} × [0 , α ]), which map the vector φ(x) onto the normal and the tangent plane at x ∈ Γ, respectively. Clearly, since ν ∈ C1,α (Γ , R3), both projectors are bounded. 
+
+Helmholtz integral operators Our boundary integral equation formulations are based on Helmholtz layer potentials and boundary integral operators, which act component-wise on the three Cartesian com-ponents of a vector density, introduced below. We begin by defining the vector-valued Helmholtz layer potentials and their associated boundary integral operators. Let S : C0,α (Γ , C3) → C2(R3 \ Γ, C3) and 
+
+D : C0,α (Γ , C3) → C2(R3 \Γ, C3), with α ∈ (0 , 1), denote the Helmholtz single- and double-layer potentials, respectively, defined as 
+
+S[φ]( x) := 
+
+Z
+
+> Γ
+
+G(x, y )φ(y) d s(y) and (6) 
+
+D[φ]( x) := 
+
+Z
+
+> Γ
+
+∂G (x, y )
+
+∂ν (y) φ(y) d s(y), x ∈ R3 \ Γ, (7) for vector density functions φ ∈ C0,α (Γ , C3), where 
+
+G(x, y ) := eik|x−y|
+
+4π|x − y| , x̸ = y, k ≥ 0,
+
+is the free-space Green’s function for the Helmholtz equation. Here and throughout this work, the (vec-torial) layer potentials (6) and (7), along with the associated (vectorial) boundary integral operators introduced below, are to be interpreted component-wise. It follows from the standard jump relations for scalar Helmholtz layer potentials [4, Thms. 2.12 & 2.13] that analogous jump conditions hold for the vector-valued Helmholtz layer potentials. Specifically, consider a sufficiently regular vector density function φ : Γ → C3. The vectorial layer potentials (6) and (7) admit extensions to the closure of both the exterior domain R3 \ Ω and the interior domain Ω, and satisfy the following limiting relations as the target point x ∈ R3 \ Γ approaches the boundary Γ from either side: 
+
+γ±(Sφ) = Sφ, γ±(Dφ) = ± 12 φ + Kφ, (8a) 
+
+∂± 
+
+> ν
+
+(Sφ) = ∓ 12 φ + K′φ, ∂± 
+
+> ν
+
+(Dφ) = Tφ, (8b) where γ± and ∂± 
+
+> ν
+
+denote the exterior/interior Dirichlet and Neumann traces defined in (3) and (4), respec-tively, and S, K, K′ and T are the (vector) boundary integral operators: 
+
+S : C0,α (Γ , C3) → C1,α (Γ , C3), S[φ]( x) := 
+
+Z
+
+> Γ
+
+G(x, y )φ(y) d s(y), (9a) 
+
+K : C0,α (Γ , C3) → C1,α (Γ , C3), K[φ]( x) := 
+
+Z
+
+> Γ
+
+∂G (x, y )
+
+∂ν (y) φ(y) d s(y), (9b) 
+
+K′ : C0,α (Γ , C3) → C0,α (Γ , C3), K′[φ]( x) := 
+
+Z
+
+> Γ
+
+∂G (x, y )
+
+∂ν (x) φ(y) d s(y), (9c) 
+
+T : C1,α (Γ , C3) → C0,α (Γ , C3), T[φ]( x) := f .p.
+
+Z
+
+> Γ
+
+∂2G(x, y )
+
+∂ν (x)∂ν (y) φ(y) d s(y), (9d) 5for x ∈ Γ, which are well defined component-wise and bounded under the assumption that Γ is C2,α -smooth. This result directly follows from the properties of the corresponding scalar operators [5, Thm. 3.4]. The hypersingular integral defining T is to be understood in the sense of the Hadamard finite-part integral [15]. The following theorem, whose proof follows directly from [5, Thm. 3.2] and [4, Thm. 2.31], together with the componentwise (diagonal) nature of the operators defined in (9), summarizes key mapping properties of these operators that will be used throughout the remainder of the paper. We emphasize that the subscript 0 in T0, S0, K0, and K′ 
+
+> 0
+
+indicates the hypersingular, single-layer, double-layer, and adjoint double-layer operators, respectively, each defined as in (9) for the case k = 0. 
+
+Theorem 2.1. The operators S, K′, K, and T − T0 are compact on C0,α (Γ , C3).
+
+# 3 Problem setup 
+
+This paper addresses the problem of time-harmonic electromagnetic scattering arising when an incident electromagnetic field ( Ei, H i) impinges on the surface Γ of a PEC obstacle, embedded in an unbounded, homogeneous, isotropic medium characterized by dielectric and magnetic constants ϵ > 0 and μ > 0, respectively. The incident electromagnetic field ( Ei, H i), where each field belongs to C1,α (U, C3), is assumed to be defined in an open set U ⊂ R3 containing Ω, where it satisfies the time-harmonic Maxwell equations: curl Ei − iωμH i = 0 and curl Hi + i ωϵE i = 0 in U, (10) with ω > 0 denoting the angular frequency. The scattered electric and magnetic fields, denoted by Es and Hs, respectively, are generated by the interaction of the incident field with the PEC boundary. These scattered fields satisfy the time-harmonic Maxwell equations: curl Es − iωμH s = 0 and curl Hs + i ωϵE s = 0 in R3 \ Ω, (11a) with the electric field subject to the PEC boundary condition [19]: 
+
+PtγE s = −PtγE i on Γ, (11b) which is written using the tangential projector (5b). The scattered field is further required to satisfy the Silver–M¨ uller radiation condition at infinity, given by either lim  
+
+> |x|→∞
+
+|x|
+
+
+
+curl Es(x) × x
+
+|x| − ikE s(x)
+
+
+
+= 0 or lim  
+
+> |x|→∞
+
+|x|
+
+
+
+curl Hs(x) × x
+
+|x| − ikH s(x)
+
+
+
+= 0 , (11c) where the limit holds uniformly with respect to all directions x/ |x| and where k := ω√ϵμ > 0 is the wavenumber. The time dependence e −iωt is assumed throughout the paper. The following theorem, whose proof can be found in [3, Corollary 5.14], establishes the well-posedness of the scattering problem (11) in H¨ older spaces suitable for our analysis: 
+
+Theorem 3.1. Under the stated assumptions on the surface Γ and the incident fields Ei and Hi, the PEC scattering problem (11) admits a unique solution Es, H s ∈ C2(R3 \ Ω, C3) ∩ C1,α (R3 \ Ω, C3) for all ω > 0.
+
+6We conclude this section by recalling two theorems from [3] that are central to our formulations. They establish that the electromagnetic scattering problem (11) is equivalent to a pair of vector Helmholtz boundary value problems—one for the electric field and one for the magnetic field—in which the boundary conditions are expressed solely in terms of the Dirichlet and Neumann traces of the respective fields. This is the key feature that enables the direct BIE formulations developed in the following sections. 
+
+Theorem 3.2. The following statements are equivalent for fields Es, H s ∈ C2(R3 \Ω, C3)∩C1,α (R3 \Ω, C3):1. Es and Hs solve the PEC scattering problem (11) with incident fields Ei, H i ∈ C1,α (U, C3) satisfy-ing (10) .2. Hs = (i ωμ )−1 curl Es and Es satisfies: 
+
+∆Es + k2Es = 0 in R3 \ Ω, (12a) 
+
+Pt(γE s) = − Pt(γE i), (12b) 
+
+Pν (∂ν Es + 2 H γE s) = − Pν (∂ν Ei + 2 H γE i), (12c) lim  
+
+> |x|→∞
+
+|x|
+
+
+
+(D Es) x
+
+|x| − ikE s
+
+
+
+= 0 uniformly in x
+
+|x| . (12d) 
+
+3. Es = −(i ωϵ )−1 curl Hs and Hs satisfies 
+
+∆Hs + k2Hs = 0 in R3 \ Ω, (13a) 
+
+Pν (γH s) = − Pν (γH i) (13b) 
+
+Pt(∂ν Hs + RγH s) = − Pt(∂ν Hi + RγH i) (13c) lim  
+
+> |x|→∞
+
+|x|
+
+
+
+(D Hs) x
+
+|x| − ikH s
+
+
+
+= 0 uniformly in x
+
+|x| . (13d) 
+
+Proof. See Theorems 3.4 and 3.5 in [3]. 
+
+# 4 Direct electric combined-field-only formulation 
+
+In this section, we derive a direct boundary integral equation formulation for the electric field scattering problem (12), and study its existence and uniqueness. Under the assumption that the incident fields Ei and Hi satisfy (10), we have curl curl Ei − k2Ei = 0 in Ω ⊂ U. Using the vector identity curl curl Ei = ∇ div Ei − ∆Ei and the fact that div Ei = 0 in Ω, it follows that ∆ Ei + k2Ei = 0 in Ω. Applying Green’s representation theorem (component-wise) to Ei in Ω then yields 0 = D[γE i]( x) − S [∂ν Ei]( x), x ∈ R3 \ ΩSimilarly, leveraging the fact that Es satisfies the vector Helmholtz equation (12a) and the component-wise Sommerfeld radiation condition (12d), we apply Green’s representation formula for the Helmholtz equation to the scattered field Es in R3 \ Ω, and obtain: 
+
+Es(x) = D[γE s]( x) − S [∂ν Es]( x), x ∈ R3 \ Ω.
+
+7By adding these two integral representations, we arrive at the following expression: 
+
+Es(x) = D[γE ]( x) − S [∂ν E]( x), x ∈ R3 \ Ω, (14) where we introduce the following notation for the traces of the total field E := Es+Ei defined in ( R3\Ω) ∩U :
+
+γE := γE s + γE i ∈ C1,α (Γ , C3) and ∂ν E := ∂ν Es + ∂ν Ei ∈ C0,α (Γ , C3).
+
+Expressing the boundary conditions (12c) and (12b) in terms of the traces of the total field, we obtain: 
+
+γE = Pν γE and ∂ν E = Pt∂ν E − 2HP ν γE, 
+
+where Pν and Pt denote the normal and tangential projections, respectively, as defined in (5), and H denotes the mean curvature multiplication operator (2). Upon substituting these identities into Green’s representation formula (14), we obtain: 
+
+Es(x) = D [Pν γE ] ( x) − S [Pt∂ν E − 2HP ν γE ] ( x), x ∈ R3 \ Ω. (15) Taking the exterior Dirichlet and Neumann traces on both sides of (15) yields: 
+
+−γE i = − 12 Pν γE + ( K + 2 SH )Pν γE − SP t∂ν E, (16a) 
+
+−∂ν Ei = − 12 (Pt∂ν E − 2HP ν γE ) + ( T + 2 K′H)Pν γE − K′Pt∂ν E. (16b) By taking the linear combination (16b)+i η(16a) of the Neumann and Dirichlet trace equations with 
+
+η ∈ R \ { 0}, we arrive at 
+
+− 12 {Pt∂ν E + (i ηI − 2H)Pν γE } + {T + i ηK + 2( K′ + i ηS)H}Pν γE − (K′ + i ηS)Pt∂ν E =
+
+−∂ν Ei − iηγE i.
+
+At first glance, the relation above may appear to define an underdetermined BIE, since both the Dirichlet and Neumann traces, γE and ∂ν E, are involved. However, this is not the case, as we now show. Before proceeding, we introduce the function space in which we will seek our direct BIE solutions. For 
+
+p, q ∈ { 0, 1} and α ∈ (0 , 1)—where α corresponds to the C2,α -regularity of the surface Γ—we define the space 
+
+Cp,q ν,t (Γ) := φ : Γ → C3 | Pν φ ∈ Cp,α (Γ , C3), Ptφ ∈ Cq,α (Γ , C3) , (17) equipped with the norm 
+
+∥φ∥Cp,q ν,t (Γ) := ∥Pν φ∥Cp,α (Γ ,C3) + ∥Ptφ∥Cq,α (Γ ,C3). (18) 
+
+Lemma 4.1. Cp,q ν,t (Γ) is a Banach space under the norm (18) .Proof. That (18) defines a norm follows readily: if ∥φ∥Cp,q ν,t (Γ) = 0 then Pν φ = 0 and Ptφ = 0, so φ =
+
+Pν φ + Ptφ = 0; homogeneity and the triangle inequality are inherited from those of the H¨ older norms. For completeness, let {φn} ⊂ C p,q ν,t (Γ) be a Cauchy sequence. By definition (18), {Pν φn} is Cauchy in Cp,α (Γ , C3) and {Ptφn} is Cauchy in Cq,α (Γ , C3). Since both H¨ older spaces are Banach, there exist limits f ∈ Cp,α (Γ , C3) and g ∈ Cq,α (Γ , C3) such that Pν φn → f and Ptφn → g. Define φ := f + g. Since 
+
+Pν + Pt = I, we have Pν φ = Pν f + Pν g = f ∈ Cp,α (Γ , C3) and Ptφ = Ptf + Ptg = g ∈ Cq,α (Γ , C3), where we used that f = lim n Pν φn lies in the range of Pν and g = lim n Ptφn lies in the range of Pt, which are closed subspaces of Cp,α (Γ , C3) and Cq,α (Γ , C3), respectively. Hence φ ∈ C p,q ν,t (Γ), and ∥φn − φ∥Cp,q ν,t (Γ) =
+
+∥Pν φn − f ∥Cp,α + ∥Ptφn − g∥Cq,α → 0. 8Our direct electric combined-field-only integral equation (D-ECFOIE) is then given by: 
+
+− 12 {φt + (i ηI − 2H)φν } + {T + i ηK + 2( K′ + i ηS)H}φν − (K′ + i ηS)φt = f, (19a) where the unknown density is 
+
+φ := φt + φν ∈ C 1,0 
+
+> ν,t
+
+(Γ) , φt := Pt(∂ν E), φν := Pν (γE ) (19b) and the right-hand-side is given by 
+
+f := −∂ν Ei − iηγE i ∈ C0,α (Γ , C3). (19c) The scattered electric field can then be retrieved from the BIE solution via the representation formula (15). Clearly, by leveraging the surface projection operators, the equation above can be recast in the form 
+
+Leφ = f, (20) where Le : C1,0 
+
+> ν,t
+
+(Γ) → C0,α (Γ , C3) is the operator defined by 
+
+Le := − 12 {Pt + (i ηI − 2H)Pν } + {T + i ηK + 2( K′ + i ηS)H}Pν − (K′ + i ηS)Pt. (21) We are now ready to establish the uniqueness of solutions to the above BIE: 
+
+Theorem 4.2. The D-ECFOIE given by (19) admits at most one solution φ ∈ C 1,0 
+
+> ν,t
+
+(Γ) for all wavenumbers 
+
+k > 0 and all coupling parameters η ∈ R \ { 0}.Proof. Suppose there exists a non-trivial φ ∈ C 1,0 
+
+> ν,t
+
+(Γ) satisfying the homogeneous BIE: 
+
+− 12 {φt + (i ηI − 2H)φν } + {T + i ηK + 2( K′ + i ηS)H}φν − (K′ + i ηS)φt = 0 . (22) Let φν := Pν φ and φt := Ptφ, and define the layer potential: 
+
+U (x) := D[φν ]( x) − S [φt − 2Hφν ]( x), x ∈ R3 \ Γ. (23) By taking the traces of the layer potential (23) and applying the jump relations (8), it follows that 
+
+γ±U = ± 12 φν + ( K + 2 SH )φν − Sφt and ∂± 
+
+> ν
+
+U = ± 12 (φt − 2Hφν ) + ( T + 2 K′H)φν − K′φt. (24) Therefore, it is clear from this expression that (22) corresponds to the Robin boundary condition: 
+
+∂− 
+
+> ν
+
+U + i ηγ −U = 0 . Since the restriction U |Ω ∈ C2(Ω , C3) ∩ C1,α (Ω , C3) of the layer potential U to the interior domain Ω satisfies the Helmholtz equation ∆ U |Ω + k2U |Ω = 0 in Ω, it follows from the uniqueness of the interior Robin boundary value problem that U |Ω = 0 and hence U = 0 in Ω. Consequently, both interior traces γ−U and ∂− 
+
+> ν
+
+U vanish. Using the jump relations from (24), we then obtain 
+
+γ+U − γ−U = γ+U = φν and ∂+ 
+
+> ν
+
+U − ∂− 
+
+> ν
+
+U = ∂+ 
+
+> ν
+
+U = φt − 2Hφν . (25) From the expressions for the exterior traces obtained above, we observe that both φν and φt vanish if and only if the exterior Dirichlet and Neumann traces of the potential U vanish. To show that the exterior traces vanish, we note that from (25) it follows that 
+
+Ptγ+U = 0 and Pν (∂+ 
+
+> ν
+
+U + 2 Hγ+U ) = 0 .
+
+9Then, given that in addition, U in (23) satisfies the Helmholtz equation (12a) as well as the radiation condition (12d), by the equivalence between the Maxwell and vector Helmholtz formulations established in Theorem 3.2, we conclude that the restriction U |R3\Ω ∈ C2(R3 \ Ω, C3) ∩ C1,α (R3 \ Ω, C3) of the layer potential U to the exterior domain solves the PEC scattering problem (11) with homogeneous boundary data, i.e., PtγE i = 0. Since this problem admits a unique solution by Theorem 3.1, it follows that U = 0 in R3 \ Ω. This leads to a contradiction, because the boundary data φ = Pν γ+U + Pt∂+ 
+
+> ν
+
+U must then vanish identically, implying that the original density φ is zero. This completes the proof of uniqueness. We now present the following lemma, which is used to establish the existence of solutions to the integral equation (4) by means of the Fredholm alternative. 
+
+Lemma 4.3. The operators 
+
+Cν : C0,α (Γ , C3) → C1,α (Γ , C3), Cν φ := νS 0(ν · φ) − S0Pν φ, (26a) 
+
+Ct : C0,α (Γ , C3) → C1,α (Γ , C3), Ctφ := PtS0φ − S0Ptφ, (26b) 
+
+where S0 : C0,α (Γ) → C1,α (Γ) denotes the scalar Laplace single-layer operator, admit the integral represen-tations: 
+
+Cν [φ]( x) = 
+
+Z
+
+> Γ
+
+ν(y) · φ(y)4π|x − y| {ν(x) − ν(y)} ds(y),
+
+Ct[φ]( x) = −
+
+Z
+
+> Γ
+
+14π|x − y| · { φ(y) · ν(x)ν(x) − φ(y) · ν(y)ν(y)} ds(y), x ∈ Γ,
+
+and are compact. Proof. The well-definedness of the operators (26) and their integral representations follow directly by sub-stituting the integral kernel of the Laplace single-layer operator (9a) (with k = 0) into the definitions (26a) and (26b). In order to prove that Cν in (26a) is compact, we examine its Cartesian components, namely Cν,j for 
+
+j ∈ { 1, 2, 3}. It hence suffices to show that the operators δCν,j : C0,α (Γ , C3) → C0,α (Γ , C3), defined by 
+
+δCν,j φ := ∇Γ(Cν,j φ), are compact. Let φ ∈ C0,α (Γ , C3). Applying the surface gradient to the integral representation of Cν,j and using the well-known property that the tangential derivative of the single-layer operator S0 can be computed by differentiation under the integral sign (see, e.g. [4, Thm. 2.17]), we obtain 
+
+δCν,j [φ]( x) = 
+
+Z
+
+> Γ
+
+φ(y) · ν(y)4π|x − y|3 {(x − y) − ν(x) · (x − y)ν(x)} { νj (x) − νj (y)} ds(y)+ 
+
+∇Γνj (x)
+
+Z
+
+> Γ
+
+φ(y) · ν(y)4π|x − y| ds(y), x ∈ Γ,
+
+(27) where all the surface integrals are to be understood in the improper sense. Note that they are well defined by virtue of the fact that each of the integrands is weakly singular. In view of the mapping properties of the Laplace single-layer operator S0 and the fact that ∇Γνj ∈
+
+C0,α (Γ , C3), we readily conclude that the last term in (27) defines a compact operator on C0,α (Γ , C3). On the other hand, the mapping properties of the operator defined by the first integral in (27) are governed by the smoothness of the kernels defining each of the operator’s Cartesian components, which are given by 
+
+κi,j (x, y ) := {(xi − yi) − ν(x) · (x − y)νi(x)} { νj (x) − νj (y)}|x − y|3 , Γ ∋ x̸ = y ∈ Γ, i, j ∈ { 1, 2, 3}.
+
+10 where νj ∈ C1,α (Γ) denote the components of the unit normal vector. Clearly, since the Cartesian compo-nents of the unit normal νj are Lipschitz continuous, there exists a constant L > 0 such that 
+
+|κi,j (x, y )| ≤ L|x − y|−1 (28) for all x, y ∈ Γ, x̸ = y. Moreover, for all x, y, z ∈ Γ, we have 
+
+κi,j (x, y ) − κi,j (z, y ) = (xi − zi) {νj (x) − νj (y)}|x − y|3 − {ν(x) · (x − z)νi(x)} { νj (x) − νj (y)}|x − y|3
+
+− {(ν(x) − ν(z)) · (z − y)νi(x)} { νj (x) − νj (y)}|x − y|3
+
+− {ν(z) · (z − y)( νi(x) − νi(z)} { νj (x) − νj (y)}|x − y|3
+
++ {(zi − yi) − ν(z) · (z − y)νi(z)} { νj (x) − νj (z)}|x − y|3
+
++ {(zi − yi) − ν(z) · (z − y)νi(z)} { νj (z) − νj (y)}
+
+ 1
+
+|x − y|3 − 1
+
+|z − y|3
+
+
+
+.
+
+Taking absolute value and applying the triangle inequality, we arrive at 
+
+|κi,j (x, y ) − κi,j (z, y )| ≤ 2 |x − z||x − y|2 + 2 |x − z|| z − y||x − y|2 + 2 |z − y|| x − z||x − y|3
+
++ 2 |z − y|2 1
+
+|x − y|3 − 1
+
+|z − y|3
+
+(29) Then, under the assumption that 2 |x − z| ≤ | x − y|, we have (see [3, Eq. (72)] with m = 3): 
+
+|z − y| ≤ 32 |x − y| and 1
+
+|x − y|3 − 1
+
+|z − y|3 ≤ 48 |x − z||x − y|4 .
+
+Using these inequalities in (29) we obtain 
+
+|κi,j (x, y ) − κi,j (z, y )| ≤ 2 |x − z||x − y|2 + 3 |x − z||x − y| + 3 |x − z||x − y|2 + 216 |x − z||x − y|2 . (30) It then follows that the kernels κi,j satisfy all the conditions in [4, Thm.2.7], so we can conclude that the first integral in (27) defines a bounded operator from C0,α (Γ , C3) to C0,β (Γ , C3) for all β ∈ (α, 1]. Then, using the compact embedding of C0,β (Γ , C3) into C0,α (Γ , C3) for any β > α [4, Thm. 2.5], we conclude that each operator δCν,j for j ∈ { 1, 2, 3} is compact on C0,α (Γ , C3). Hence, Cν is compact as an operator from C0,α (Γ , C3) to C1,α (Γ , C3). The compactness of the operator Ct : C0,α (Γ , C3) → C1,α (Γ , C3) can be established by noting that it can be expressed as 
+
+Ct[φ]( x) = −ν(x)
+
+Z
+
+> Γ
+
+φ(y) · { ν(x) − ν(y)}
+
+4π|x − y| ds(y) −
+
+Z
+
+> Γ
+
+φ(y) · ν(y)4π|x − y| {ν(x) − ν(y)} ds(y)where the second term is exactly Cν φ, and the first term can be analyzed analogously by exploiting the smoothness of the unit normal vector. This completes the proof. 11 We are now ready to state and prove the well-posedness of (19). 
+
+Theorem 4.4. The D-ECFOIE (19) is uniquely solvable in C1,0 
+
+> ν,t
+
+(Γ) for all wavenumbers k > 0 and coupling parameters η ∈ R \ { 0}.Proof. We begin the proof by introducing the following regularizing operator: 
+
+Rν : C1,0 
+
+> ν,t
+
+(Γ) → C1,α (Γ , C3), Rν eφ := −2Pt eφ − 4νS 0(ν · eφ), (31) which, in view of the invertibility of the Laplace single-layer operator S0 : C0,α (Γ) → C1,α (Γ), is invert-ible [21, Thm. 7.40]. Indeed, its inverse R−1 
+
+> ν
+
+: C1,α (Γ , C3) → C 1,0 
+
+> ν,t
+
+(Γ) is well defined, bounded and given by the formula R−1 
+
+> ν
+
+φ = − 12 Ptφ − 14 νS −10 (ν · φ).
+
+We then perform the substitution φ = Rν eφ into (19), where eφ ∈ C0,α (Γ , C3). This substitution yields 
+
+Pt eφ + 2(i ηI − 2H)νS 0(ν · eφ) − 4{T + i ηK + 2( K′ + i ηS)H}[νS 0(ν · eφ)] + 2( K′ + i ηS)Pt eφ = f. 
+
+Next, using the identity νS 0(ν · eφ) = Cν eφ + S0Pν eφ, which follows from the definition of the operator 
+
+Cν in (26a), we can rewrite the equation above as 
+
+Pt eφ + 2(i η − 2H)νS0(ν · eφ) − 4{T + i ηK + 2( K′ + i ηS)H}{ Cν eφ + S0Pν eφ} + 2( K′ + i ηS)Pt eφ = f. (32) From Calder´ on’s identity 
+
+T0S0 = K′ 
+
+> 02
+
+− 14 I, (33) for the operators defined with k = 0, we obtain 
+
+TS 0 = T0S0 + ( T − T0)S0 = − 14 I + K′ 
+
+> 02
+
++ ( T − T0)S0. (34) Therefore, substituting this expression into (32), the equation can be recast as 
+
+eφ + A eφ = f (35a) where A := P4 
+
+> j=1
+
+Aj and the operators Aj : C0,α (Γ , C3) → C0,α (Γ , C3) for j ∈ { 1, 2, 3, 4} are defined by: 
+
+A1φ := 2(i ηI − 2H)νS 0(ν · φ), (35b) 
+
+A2φ := − 4{K′ 
+
+> 02
+
++ ( T − T0)S0 + i ηKS 0 + 2( K′ + i ηS)HS 0}Pν φ, (35c) 
+
+A3φ := − 4{T + i ηK + 2( K′ + i ηS)H}Cν φ, (35d) 
+
+A4φ := 2( K′ + i ηS)Ptφ. (35e) As it turns out, each of these operators, and therefore the full operator A, is compact on C0,α (Γ , C3). In particular, A1 is compact, as it is the composition of the bounded operator 2(i ηI − 2H) with the compact operator Cν + S0Pν . Regarding A2, the operator T − T0, along with all the other operators appearing within the curly brackets in its definition, are compact on C0,α (Γ , C3). Since Pν is bounded in that space, their composition with Pν remains compact. Similarly, A3 is compact, as it is the composition of the compact operator Cν : C0,α (Γ , C3) → C1,α (Γ , C3) (see Lemma 4.3) with the bounded operator 4{T + i ηK + 2( K′ + i ηS)H} : C1,α (Γ , C3) → C0,α (Γ , C3). Finally, A4 is compact on C0,α (Γ , C3), as it is the composition of the compact operator 2( K′ + i ηS) with the bounded operator Pt.Now, to establish the uniqueness of solutions to the regularized BIE (35), suppose that it admits two distinct solutions eφj ∈ C0,α (Γ , C3) for j ∈ { 1, 2}. Then, by the injectivity of the regularizer, the corresponding densities φj := Rν eφj ∈ C 1,0 
+
+> ν,t
+
+(Γ) are both solutions to the homogeneous boundary integral 12 equation (22), and satisfy φ1̸ = φ2. This, however, contradicts Theorem 4.2. We therefore conclude that (35) admits at most one solution eφ ∈ C0,α (Γ , C3). Finally, by the Fredholm alternative, since (35) is of the form “invertible plus compact”, the existence of such a solution follows. Finally, from the unique solution eφ ∈ C0,α (Γ , C3) of the regularized BIE (35), we recover the unique solution of the original BIE (19) by applying the regularizer, that is, φ = Rν eφ ∈ C 1,0 
+
+> ν,t
+
+(Γ). This completes the proof. 
+
+Low-frequency breakdown 
+
+As shown in [3], the low-frequency breakdown of the indirect (R-)ECFOIE formulations is rooted in the lack of uniqueness of the k = 0 limit of problem (12): in the zero-frequency limit, the homogeneous exterior boundary value problem for the vector Laplacian admits non-trivial solutions unless the surface charge integrals are prescribed for each boundary component [33] (see also [3, Remark 4.2]). The same issue affects the direct formulations of the present paper: both the D-ECFOIE (19) and the RD-ECFOIE (35) suffer from low-frequency breakdown as k ↓ 0, meaning that the accuracy of the numerical solutions and the conditioning of the linear systems arising from the discretization of the BIEs degrade as k ↓ 0. The remedy, as in the indirect case, is to enforce the charge conditions satisfied by any physical solution of (12), namely Z
+
+> Γj
+
+ν · γE s ds = 0 , j ∈ { 1, . . . , J },
+
+which are precisely the constraints that restore uniqueness in the zero-frequency limit [33]. Well-conditioning can then be enforced by augmenting Le with a low-rank perturbation that penalizes violations of these charge conditions. To this end, we introduce the following bounded linear functionals: 
+
+ℓj : C0,α (Γ , C3) → C, ℓj (φ) := 
+
+Z
+
+> Γj
+
+ν · φ, ds, j ∈ { 1, . . . , J }, (36) along with the vector fields 
+
+ϕj := Leνj ∈ C0,α (Γ , C3), where νj (x) := 
+
+(
+
+ν(x), x ∈ Γj ,
+
+0, x ∈ Γ \ Γj , j ∈ { 1, . . . , J }. (37) We then consider the following modification of the D-ECFOIE: 
+
+
+
+Le + ξ
+
+> J
+
+X
+
+> j=1
+
+ϕj ℓj
+
+
+
+φ = f, (38) where Le is the operator defined in (21), and the unknown density φ = Pν γE + Pt∂ν E ∈ C 1,0 
+
+> ν,t
+
+(Γ). Similarly, we propose a corresponding modification of the regularized formulation (35), given by: 
+
+
+
+I + A + ξ
+
+> J
+
+X
+
+> j=1
+
+ϕj ℓj Rν
+
+eφ = f, (39) for eφ ∈ C0,α (Γ , C3), where the regularizing operator Rν is defined in (31). 13 Note that we have used the identity LeRν = I + A, as established in the proof of Theorem 4.4. Also observe that the modified formulation (39) remains a second-kind BIE, as the added term corresponds to a finite-rank operator, which is compact. We now present the following lemma, which establishes the existence of solutions to the modified equations: 
+
+Lemma 4.5. Let φ ∈ C 1,0 
+
+> ν,t
+
+(Γ) be the unique solution to the D-ECFOIE (19) . Then, for any ξ ∈ C,
+
+φ also satisfies the modified equation (38) . Similarly, if eφ ∈ C0,α (Γ , C3) is the unique solution to the RD-ECFOIE (35) , then it also solves the modified regularized equation (39) for all ξ ∈ C.Proof. Let φ = Pν γE + Pt∂ν E ∈ C 1,0 
+
+> ν,t
+
+(Γ) be the unique solution to the D-ECFOIE (19) with datum defined in (19c). Then, for each j ∈ { 1, . . . , J },
+
+ℓj (φ) = 
+
+Z
+
+> Γj
+
+ν · γE ds =
+
+Z
+
+> Γj
+
+ν · γE s ds +
+
+Z
+
+> Γj
+
+ν · γE i ds. 
+
+Since the incident field Ei is assumed to satisfy Maxwell’s equations in U and therefore also in Ω, we have div Ei = 0 in Ω. Applying the divergence theorem over the subdomain Ω j ⊂ Ω yields 
+
+ℓj (γE i) = 
+
+Z
+
+> Γj
+
+ν · γE i ds =
+
+Z
+
+> Ωj
+
+div Ei dx = 0 .
+
+To analyze the contribution of the scattered field, we first observe that the traces γE s = Pν (φ) − γE i
+
+and ∂ν Es = Ptφ−2H Pν φ−∂ν Ei allow us to recover the scattered field Es throughout the exterior domain 
+
+R3 \ Ω via Green’s representation formula. We can then make use of the series expansion of the scalar field 
+
+Es(x) · x in the region R3 \ BR(0), where BR(0) is a ball large enough to contain the domain Ω. As shown in [10], this field admits the expansion 
+
+Es(x) · x =
+
+> ∞
+
+X
+
+> l=1
+> l
+
+X
+
+> m=−l
+
+cml h(1)  
+
+> l
+
+(k|x|)Y ml
+
+ x
+
+|x|
+
+
+
+, |x| ≥ R, 
+
+where {Y ml }lm=−l are spherical harmonics and {h(1)  
+
+> l
+
+}l∈N0 are spherical Hankel functions of the first kind. Since the spherical harmonics satisfy 
+
+Z
+
+> ∂B 1(0)
+
+Y ml (ˆ x) d s(ˆ x) = 0 for all l ∈ N, −l ≤ m ≤ l, 
+
+it follows that 1
+
+R
+
+Z
+
+> ∂B R(0)
+
+Es(x) · x ds(x) = 
+
+Z
+
+> ∂B R(0)
+
+Es(x) · x
+
+|x| ds(x) = 0 .
+
+Now, define the scalar field uj := div Es in R3 \ Ωj , which vanishes in the exterior domain R3 \ Ω, and is extended by zero to all of Ω except Ω j , i.e., uj = 0 in R3 \ Ωj . Let BR(0) be as before. Applying the divergence theorem to uj over BR(0) \ Ωj , we obtain 0 = −
+
+Z
+
+> BR(0) \Ωj
+
+uj dx = ℓj (γE s) − 1
+
+R
+
+Z
+
+> ∂B R(0)
+
+Es(x) · x ds(x).
+
+Since the surface integral over ∂B R(0) above vanishes, it follows that ℓj (γE s) = 0 .
+
+14 Combining this with the result for ℓj (γE i), we conclude that ℓj (φ) = ℓj (γE s) + ℓj (γE i) = 0 for all 
+
+j ∈ { 1, . . . , J }. This shows that φ ∈ C 1,0 
+
+> ν,t
+
+(Γ) also satisfies the modified equation (38). Finally, the fact that the unique solution eφ ∈ C0,α (Γ , C3) of (35) satisfies (39) follows immediately from the identity φ = Rν eφ,since 
+
+ℓj (φ) = ℓj (Rν eφ) = 0 , j ∈ { 1, . . . , J }.
+
+This completes the proof. It remains to determine under which conditions on the stabilization parameter ξ the modified boundary integral equations, (38) and (39), remain uniquely solvable. The following theorem addresses this question: 
+
+Theorem 4.6. Suppose ξ ∈ C \ SJj=1 {−| Γj |−1}, where |Γj | denotes the surface area of the connected component Γj of Γ. Then, for all k > 0 and η ∈ C \ { 0}, the modified BIEs (38) and (39) each admit a unique solution, φ ∈ C 1,0 
+
+> ν,t
+
+(Γ) and eφ ∈ C0,α (Γ , C3), respectively. Moreover, these solutions coincide with the unique solutions of the D-ECFOIE (19) and the RD-ECFOIE (35) , respectively. Proof. It suffices to prove the statement for (39). It follows from Theorem 4.4 that the operator I + A
+
+admits a bounded inverse on C0,α (Γ , C3). Let us define the operator 
+
+Q : C0,α (Γ , C3) → CJ , Qφ := [ ℓ1φ, . . . , ℓ J φ]⊤ ∈ CJ ,
+
+in terms of the linear functionals ℓj introduced in (36), and the operator 
+
+V : CJ → C0,α (Γ , C3), Vc := 
+
+> J
+
+X
+
+> j=1
+
+cj ϕj , c = [ c1, . . . , c J ]⊤ ∈ CJ ,
+
+in terms of the vector fields ϕj ∈ C0,α (Γ , C3) defined in (37). It is clear that both Q and V are bounded linear operators on their respective domains. With these definitions, the modified regularized equation (39) can be written as (I + A + ξVQR ν ) eφ = f. 
+
+Applying the Woodbury identity, one finds that the inverse of this operator is given by (I + A + ξVQR ν )−1 = ( I + A)−1 − ξ(I + A)−1V (IJ + ξΞ) −1 QR ν (I + A)−1, (40) where IJ denotes the identity matrix in CJ and Ξ := QR ν (I + A)−1V = QL −1 
+
+> e
+
+V ∈ CJ×J .
+
+Clearly, the inverse operator (40) exists and is bounded on C0,α (Γ , C3) if and only if IJ +ξΞ is invertible. Using the definition of ϕj in (37), a direct computation yields Ξ = diag {| Γ1|, . . . , |ΓJ |} ,
+
+so the matrix IJ + ξΞ is invertible if and only if ξ ∈ C \ SJj=1 {−| Γj |−1}, which completes the proof. 
+
+Remark 4.7. To explain the rationale behind the modified BIEs (38) and (39) , note that the modified D-ECFOIE (38) can be rewritten, using ϕj = Leνj , as 
+
+Le
+
+I + ξ
+
+> J
+
+X
+
+> j=1
+
+νj ℓj
+
+ φ = f, 
+
+15 or equivalently 
+
+
+
+I + ξ PJj=1 νj ℓj
+
+
+
+φ = L−1 
+
+> e
+
+f . Applying the functional ℓi to both sides and using the fact that 
+
+ℓi(L−1 
+
+> e
+
+f ) = 0 (which follows from the preceding lemma applied to the datum f ), we obtain 
+
+ℓiφ + ξ
+
+> J
+
+X
+
+> j=1
+
+(ℓiνj )( ℓj φ) = (1 + ξ|Γi|) ℓiφ = 0 ,
+
+where we used ℓiνj = δij |Γi|. Therefore, since 1+ ξ|Γi|̸ = 0 for ξ ∈ C\SJj=1 {−| Γj |−1}, the charge conditions 
+
+ℓiφ = 0 are automatically enforced for all i ∈ { 1, . . . , J }. In practice, however, the condition ℓi(L−1 
+
+> e
+
+f ) = 0 is only approximately satisfied due to discretization errors and potential matrix ill-conditioning, so the right-hand side above is a small but nonzero residual εi ≈ 0. In this case the identity becomes (1 + ξ|Γi|)ℓiφ = εi,so that ℓiφ = εi/(1 + ξ|Γi|). Choosing ξ ≫ 1 drives ℓiφ toward zero, thereby penalizing deviations from the charge condition even in the presence of discretization errors. 
+
+# 5 Direct magnetic combined-field-only formulation 
+
+In this section, we derive a direct boundary integral equation for the magnetic PEC scattering problem (13). Analogously to the electric case, we obtain the following integral representation for the scattered field from Green’s representation formula: 
+
+Hs(x) = D[γH ]( x) − S [∂ν H]( x), x ∈ R3 \ Ω,
+
+where the traces of the total magnetic field H = Hs + Hi, defined in ( R3 \ Ω) ∩ U , are given by 
+
+γH = γH s + γH i ∈ C1,α (Γ , C3) and ∂ν H = ∂ν Hs + ∂ν Hi ∈ C0,α (Γ , C3). (41) Applying the magnetic PEC boundary conditions (13b) and (13c), we arrive at 
+
+γH = PtγH and ∂ν H = Pν ∂ν H − RP tγH. 
+
+Substituting these identities into Green’s representation formula for the magnetic field (5) yields 
+
+Hs(x) = D[PtγH ]( x) − S [Pν ∂ν H − RP tγH ]( x), x ∈ R3 \ Ω. (42) Next, taking exterior traces on both sides of (42) and using (41), we get 
+
+−γH i = − 12 γH + ( K + SR )PtγH − SP ν ∂ν H, (43a) 
+
+−∂ν Hi = − 12 (Pν ∂ν H − RP tγH ) + ( T + K′R)PtγH − K′Pν ∂ν H. (43b) Combining these equations as (43b)+i η(43a), with η ∈ R \ { 0}, we obtain 
+
+− 12 (Pν ∂ν H + (i ηI − R)PtγH ) + ( T + i ηK + ( K′ + i ηS)R)PtγH − (K′ + i ηS)Pν ∂ν H =
+
+−∂ν Hi − iηγH i
+
+(44) From this, we can identify a suitable BIE, specifically, the direct magnetic combined-field-only integral equation (D-MCFOIE), which is given by: 
+
+− 12 {ψν + (i ηI − R)ψt} + {T + i ηK + ( K′ + i ηS)R}ψt − (K′ + i ηS)ψν = g, (45a) 16 where the unknown density is 
+
+ψ := ψt + ψν ∈ C 0,1 
+
+> ν,t
+
+, ψt := Pt(γH ), ψν := Pν (∂ν H), (45b) and the right-hand-side is given by 
+
+g := −∂ν Hi − iηγH i ∈ C0,α (Γ , C3). (45c) The scattered magnetic field can then be retrieved from the BIE solution via the representation for-mula (42). Leveraging the surface projection operators, the D-MCFOIE can be recast in the form 
+
+Lmψ = g (46) where Lm : C0,1 
+
+> ν,t
+
+(Γ) → C0,α (Γ , C3) is the operator defined by 
+
+Lm := − 12 {Pν + (i ηI − R)Pt} + {T + i ηK + ( K′ + i ηS)R}Pt − (K′ + i ηS)Pν . (47) We now proceed to prove the uniqueness of solutions to (45). 
+
+Theorem 5.1. The D-MCFOIE given by (45) admits at most one solution ψ ∈ C 0,1 
+
+> ν,t
+
+(Γ) for all wavenumbers 
+
+k > 0 and all coupling parameters η ∈ R \ { 0}.Proof. We proceed as in the proof of Theorem 4.2. Suppose there exists a non-trivial vector density 
+
+ψ ∈ C 0,1 
+
+> ν,t
+
+(Γ) satisfying the homogeneous BIE: 
+
+− 12 {ψν + (i ηI − R)ψt} + {T + i ηK + ( K′ + i ηS)R}ψt − (K′ + i ηS)ψν = 0 . (48) Letting ψ = ψν + ψt, where ψν = Pν ψ and ψt = Ptψ, we define the corresponding layer potential as follows: 
+
+V (x) := D[ψt]( x) − S [ψν − Rψt]( x), x ∈ R3 \ Γ.
+
+Taking traces of the potential, we obtain 
+
+γ±V = ± 12 ψt + ( K + SR )ψt − Sψν , and ∂± 
+
+> ν
+
+V = ± 12 (ψν − Rψt) + ( T + K′R)ψt − K′ψν , (49) from which it follows, together with (48), that ∂− 
+
+> ν
+
+V + i ηγ −V = 0. Since the restriction V |Ω ∈ C2(Ω , C3) ∩
+
+C1,α (Ω , C3) of the layer potential V to Ω satisfies the Helmholtz equation ∆ V |Ω + k2V |Ω = 0 in Ω and the Robin boundary condition with an imaginary coupling parameter, the uniqueness of this interior problem implies that γ−V = 0 and ∂− 
+
+> ν
+
+V = 0. Substituting these identities into (49), we find 
+
+γ+V = ψt, and ∂+ 
+
+> ν
+
+V = ψν − Rψt.
+
+Now, using the facts that Pν ψt = 0, Ptψν = 0, and PtR = RP t, we get 
+
+Pν γ+V = 0 , and Pt(∂+ 
+
+> ν
+
+V + Rγ+V ) = 0 . (50) Since in addition to (50) the restriction V |R3\Ω ∈ C2(R3 \ Ω, C3) ∩ C1,α (R3 \ Ω, C3) satisfies both the Helmholtz equation in the exterior domain (13a) and the Sommerfeld radiation condition (13d), it follows from Theorem 3.2 that V |R3\Ω solves the exterior PEC scattering problem (11) with homogeneous boundary conditions. As this problem admits a unique solution by Theorem 3.1, we conclude that V = 0 in R3 \ Ω. This leads to a contradiction, since ψ = Ptγ+V + Pν ∂+ 
+
+> ν
+
+V = 0. The proof is thus complete. 17 As in the case of the D-ECFOIE, we rely on a Calder´ on-type regularization of the magnetic boundary integral equation (45) to establish its Fredholm properties and, subsequently, the existence of solutions. In this case, however, proving the invertibility of the corresponding regularizing operator is slightly more involved, so we state this result in the following lemma. 
+
+Lemma 5.2. The operator 
+
+Rt : C0,1 
+
+> ν,t
+
+(Γ) → C0,α (Γ , C3), Rtψ = −2( Pν + 2 PtS0Pt)ψ, (51) 
+
+is a bounded linear operator that admits a bounded inverse. Proof. Clearly, Rt is linear and bounded. We then proceed to show that Rt is injective. Suppose there exists a nontrivial function ψ ∈ C0,α (Γ , C3) such that 
+
+− 12 Rtψ = ψν + 2 PtS0ψt = 0 , (52) where we let ψν := Pν ψ and ψt := Ptψ.Let us denote by (φ, ψ )L2(Γ ,C3) := 
+
+Z
+
+> Γ
+
+φ · ψ ds
+
+the inner product on the Hilbert space L2(Γ , C3), equipped with the norm ∥ψ∥L2(Γ ,C3) := 
+
+q
+
+(ψ, ψ )L2(Γ ,C3).
+
+Taking the inner product with ψ on both sides of (52), we obtain (ψ, Pν ψ)L2(Γ ,C3) + 2( ψ, PtS0Ptψ)L2(Γ ,C3) = ( ψν , ψ ν )L2(Γ ,C3) + 2( ψt, S0ψt)L2(Γ ,C3) = 0 .
+
+Extracting the real part of the identity above yields 
+
+∥ψν ∥2 
+
+> L2(Γ ,C3)
+
++ 2Re ( ψt, S0ψt)L2(Γ ,C3) = 0 . (53) Then, in view of the facts that Re ( ψt, S0ψt)L2(Γ ,C3) ≥ 0, and that equality holds if and only if ψt = 0, since ψt ∈ C0,α (Γ , C3) ⊂ L2(Γ , C3) ⊂ H−1/2(Γ , C3) [22, Thm. 8.10], we conclude that both terms on the left-hand side of (53) must vanish. Therefore, ψν = 0 and ψt = 0, which implies that ψ = 0, contradicting the assumption that ψ is nontrivial. We then conclude that Rt is injective. To finish the proof, it suffices to show that for all ψ ∈ C 0,1 
+
+> ν,t
+
+(Γ) there exists a unique eψ ∈ C0,α (Γ , C3)such that 
+
+− 12 Rt eψ = ( Pν + 2 PtS0Pt) eψ = ψ. (54) It follows directly from (54) and the mapping properties of Pν that the normal component eψν := Pν eψ =
+
+Pν ψ ∈ C0,α (Γ , C3). To prove the existence of the tangential component eψt := Pt eψ, we rewrite (54) as 
+
+Pν ψ + 2( S0 + Ct) eψt = ψ, 
+
+in terms of the commutator Ct defined in (26b). Subtracting Pν ψ from both sides and using that Ptψ =
+
+ψ − Pν ψ ∈ C1,α (Γ , C3), we obtain (S0 + Ct) eψt = 12 Ptψ. 
+
+Applying S−10 : C1,α (Γ , C3) → C0,α (Γ , C3) and using that this operator is bounded [21, Thm. 7.40], we get eψt + S−10 Ct eψt = 12 S−10 Ptψ. (55) 18 Since Ct : C0,α (Γ , C3) → C1,α (Γ , C3) is compact by Lemma 4.3, the composition S−10 Ct is compact on C0,α (Γ , C3). Hence, in view of the injectivity of Rt and the fact that 12 S−10 Ptψ ∈ C0,α (Γ , C3), the Fredholm alternative guarantees the existence and uniqueness of a solution eψt ∈ C0,α (Γ , C3) to (55) which corresponds to the tangential component of eψ. This completes the proof. We are now in a position to establish the well-posedness of the magnetic BIE (45). 
+
+Theorem 5.3. The D-MCFOIE (45) is uniquely solvable in C0,1 
+
+> ν,t
+
+(Γ) for all wavenumbers k > 0 and coupling parameters η ∈ R \ { 0}.Proof. Consider the regularized BIE resulting from substituting ψ = Rt eψ into (45), where Rt is the regu-larizing operator defined in (51). This substitution leads to the equation 
+
+eψν + 2(i ηI − R)PtS0 eψt − 4{T + i ηK + ( K′ + i ηS)R}PtS0 eψt + 2( K′ + i ηS) eψν = g, (56) where we seek a solution eψ = eψν + eψt ∈ C0,α (Γ , C3) with eψν := Pν eψ and eψt := Pt eψ.It then follows from the invertibility of Rt (Lemma 5.2) and the uniqueness of solutions to (45) (Theo-rem 5.1) that, to complete the proof, it suffices to show that the regularized equation (56) is of the form identity plus a compact perturbation in C0,α (Γ , C3). This is so because, by the Fredholm alternative, uniqueness implies existence when the operator is of Fredholm type with index zero. To this end, we substitute the identities (34) and PtS0Pt eψ = S0Pt eψ + CtPt eψ into (56), which allows us to rewrite the equation in the form eψ + B eψ = g, (57) where B := P4 
+
+> j=1
+
+Bj and the operators Bj : C0,α (Γ , C3) → C0,α (Γ , C3) for j ∈ { 1, 2, 3, 4} are given by 
+
+B1ψ := 2(i ηI − R)PtS0ψ, 
+
+B2ψ := − 4{K′ 
+
+> 02
+
++ ( T − T0)S0 + i ηKS 0 + ( K′ + i ηS)RS 0}Ptψ, 
+
+B3ψ := − 4{T + i ηK + ( K′ + i ηS)R}CtPtψ, 
+
+B4ψ := 2( K′ + i ηS)Pν ψ. 
+
+Following the arguments in the proof of Theorem 4.4, it is straightforward to show that each of the operators Bj is compact on C0,α (Γ , C3). In particular, B3 is compact because it involves the composition 
+
+TC t, where Ct : C0,α (Γ , C3) → C1,α (Γ , C3) is compact, as established in Lemma 4.3, and T : C1,α (Γ , C3) →
+
+C0,α (Γ , C3) is bounded. It follows that B is compact on C0,α (Γ , C3), which completes the proof. 
+
+Remark 5.4. Theorem 5.3 can be extended to the zero-frequency limit k = 0 for a simply connected surface Γ. In that case, the magnetostatic exterior problem—the k = 0 limit of (13) —is uniquely solvable without additional constraints [33], in contrast to the electrostatic case which requires prescribing the charge integrals. This unique solvability can be leveraged, following the same arguments as in [3] for the indirect (R-)MCFOIE, to show that the D-MCFOIE remains well-posed at k = 0 for any η ∈ R \ { 0}. We do not pursue this extension here, as the proof is analogous to that in [3]. 
+
+We conclude this section by noting that the D-MCFOIE (45) solution ψ ∈ C 0,1 
+
+> ν,t
+
+(Γ) provides a direct representation of the surface electric currents: 
+
+J := ν × γH = ν × Ptψ. 
+
+19 These surface currents are of practical importance in their own right, playing a central role in various applications. Moreover, they can be directly used to reconstruct both the magnetic and electric components of the scattered electromagnetic field via the Stratton–Chu integral representation formulae [19, Thm. 3.30]: 
+
+Es(x) = − 1iωϵ curl curl 
+
+Z
+
+> Γ
+
+J(y)G(x, y ) d s(y) and Hs(x) = curl 
+
+Z
+
+> Γ
+
+J(y)G(x, y ) d s(y). (58) 
+
+# 6 Numerical examples 
+
+This section presents numerical experiments validating all four BIE formulations introduced in this paper: the direct electric and magnetic formulations D-ECFOIE (19) and D-MCFOIE (45), and their analytically preconditioned counterparts RD-ECFOIE (35) and RD-MCFOIE (57), which employ the right precondi-tioners Rν (31) and Rt (51), respectively. More specifically, we solve the equations Leφ = f and Lmψ = g
+
+and the preconditioned equations LeRν φ = f and LmRtψ = g, where Le and Lm are the operators defined in (21) and (47), respectively, and the data f and g are given by (19c) and (45c), respectively. The scat-tered fields are then evaluated via the representation formulae (15) and (42) for the electric and magnetic cases, respectively. All experiments use a Nystr¨ om discretization based on the General-Purpose Density Interpolation Method (GP-DIM) [10], which builds on the earlier DIM framework [23–25], as implemented in the open-source Julia package Inti.jl [18]. All linear systems are solved with GMRES [26], with H-matrix compres-sion through HMatrices.jl for efficient operator assembly and application. Surface meshes are generated with Gmsh [13] using curved triangular elements of degree five, which provide sufficient geometric accuracy for the curvature quantities H and R entering the boundary conditions; while the resulting meshes are not globally C2,α -smooth in the strict sense required by the analysis, they are smooth enough to ensure convergence in practice. The incident field throughout this section is a planewave 
+
+Ei(x) := p eikx ·d, ∂ν Ei(x) = i k(d · ν(x)) γE i(x), (59a) 
+
+Hi(x) := 
+
+q ϵμ (d × p) e ikx ·d, ∂ν Hi(x) = i k(d · ν(x)) γH i(x), x ∈ Γ, (59b) where p, d ∈ R3 \ { 0} are the polarization and propagation directions, with |d| = 1 and p · d = 0, and we set ϵ = μ = 1. Numerical errors are assessed using the relative error measures defined by 
+
+eF := max 
+
+> j∈{ 1,..., 100 }
+
+| eF (xj ) − Fref (xj )||Fref (xj )| and ediv F := max 
+
+> j∈{ 1,..., 100 }
+
+| div eF (xj )|| eF (xj )| , (60) where Fref denotes the exact (electric or magnetic) reference solution, and eF is the approximate field computed via quadrature evaluation of the corresponding representation formula, (15) for electric field and (42) for magnetic field. The target points xj , for j = 1 , . . . , 100, are (approximately) uniformly distributed on a sphere of radius 5 centered at the origin, ensuring it encloses the surface Γ in all test cases. Exact solutions are generally unavailable; an exception is the PEC unit sphere Γ = S2 considered in the next section, for which the Mie series solution provides an analytical reference computed via the Julia package SphericalScattering.jl [16]. In all the other cases we rely on divergence error, which exhibits the same order of convergence as the field error and is a good proxy for it, as a measure of accuracy. (This is so because the divergence-free condition is enforced via a boundary condition in the BIE formulations.) 20 Sphere D-ECFOIE (19) D-MCFOIE (45) 
+
+λ/h N eEs ediv Es |q1| iter. eHs ediv Hs iter. 22.0 1540 7.80e-3 2.26e-2 6.85e-4 152 1.24e-2 1.56e-2 125 22.5 2560 2.80e-3 8.56e-3 5.83e-5 162 2.65e-3 2.95e-3 127 23.0 5400 2.49e-4 5.05e-4 1.79e-5 121 2.22e-4 2.20e-4 96 23.5 10860 7.96e-5 1.68e-4 2.25e-6 51 3.68e-5 4.68e-5 39 24.0 21160 1.52e-5 3.33e-5 5.74e-7 38 8.37e-6 6.97e-6 31 24.5 39920 4.05e-6 8.96e-6 1.05e-7 40 2.60e-6 1.83e-6 34 25.0 79720 1.88e-6 4.87e-6 2.73e-8 41 7.89e-7 1.08e-6 35 25.5 157860 9.10e-7 2.79e-6 2.21e-8 50 3.22e-7 5.16e-7 44 26.0 310480 7.86e-7 2.40e-6 1.17e-8 54 4.69e-7 5.53e-7 44 RD-ECFOIE (35) RD-MCFOIE (57) 
+
+λ/h N eEs ediv Es |q1| iter. eHs ediv Hs iter. 22.0 1540 7.79e-3 2.25e-3 6.85e-4 215 1.24e-2 1.56e-2 199 22.5 2560 2.80e-3 8.56e-3 5.83e-5 304 2.65e-3 2.94e-3 309 23.0 5400 2.50e-4 5.07e-4 1.79e-5 260 2.25e-4 2.26e-4 216 23.5 10860 7.90e-5 1.68e-4 2.22e-6 95 3.73e-5 4.61e-5 34 24.0 21160 1.72e-5 4.07e-5 5.76e-7 30 8.07e-6 7.40e-6 24 24.5 39920 3.94e-6 7.89e-6 9.47e-8 25 2.67e-6 2.67e-6 21 25.0 79720 1.40e-6 2.64e-6 2.39e-8 25 1.11e-6 1.91e-6 21 25.5 157860 7.04e-7 1.60e-6 3.15e-8 25 9.55e-7 1.71e-6 21 26.0 310480 1.01e-6 2.66e-6 8.25e-9 25 8.99e-7 2.03e-6 21 
+
+Table 1: Accuracy and GMRES iteration counts (with a relative tolerance of 10 −6) for the numerical solution of all four direct BIE formulations for electromagnetic scattering by a PEC sphere Γ = S2,illuminated by a plane wave (59) with wavenumber k = π. The top half shows the direct formulations and the bottom half their analytically preconditioned counterparts. The electric formulations (left) report errors for the scattered electric field eEs; the magnetic formulations (right) report errors for eHs. The results are computed for various target mesh sizes h > 0, leading to surface discretizations with N quadrature nodes (10 points per element) and linear systems of size 3 N . The parameter η = 100 k was used throughout and ξ = 0 in the case of the (R)D-ECFOIE. In addition to the error measures above, in the case of the electric-field BIEs we additionally monitor the approximate surface charge integrals 
+
+qj := 
+
+Z
+
+> Γj
+
+ν · γE s ds, j ∈ { 1, . . . , J }, (61) which should vanish for all k > 0. Finally, we report the number of GMRES iterations required to reach a relative residual tolerance specified in each case (see the captions of the tables for details). 
+
+Remark 6.1. The divergence errors reported in the tables can be suppressed by applying the field correction 
+
+eF 7 → eF + 1
+
+k2 ∇ div eF , 
+
+also employed in the indirect formulations of [3]. Alternatively, when the (R)D-MCFOIE is used, the surface current J = ν × γH can be reconstructed from the BIE solution and used to evaluate the scattered fields via the Stratton–Chu formulae (58) , which yield divergence-free fields by construction. Throughout this section, however, we report errors for the uncorrected fields eF .
+
+21 Sphere D-ECFOIE (19); ξ = 0 D-ECFOIE (38); ξ = π · 10 4 D-MCFOIE (45)                                                                                                                                                                    
+
+> λ/d eEsediv Es|q1|#iter eEsediv Es|q1|#iter eHsediv Hs#iter 10 16 1.76e-5 2.11e-6 2.09e-6 41.76e-5 2.11e-6 2.06e-6 43.56e-4 3.44e-5 210 08 1.75e-5 2.10e-6 2.08e-6 41.75e-5 2.10e-6 2.05e-6 43.56e-4 3.44e-5 210 04 7.38e-6 8.74e-7 1.00e-6 57.38e-6 8.73e-7 1.04e-6 53.58e-4 3.47e-5 410 02 7.06e-6 8.13e-7 3.16e-6 86.61e-6 8.17e-7 1.08e-9 93.58e-4 3.41e-5 610 01 7.51e-6 9.04e-7 3.49e-6 11 7.02e-6 6.48e-7 4.40e-12 12 3.05e-4 1.85e-5 10 10 00 2.35e-6 7.06e-6 1.09e-7 37 2.76e-6 8.32e-6 2.75e-13 38 7.62e-6 6.36e-6 31 RD-ECFOIE (35); ξ= 0 RD-ECFOIE (39); ξ=π·10 4RD-MCFOIE (57)
+> λ/d eEsediv Es|q1|#iter eEsediv Es|q1|#iter eHsediv Hs#iter 10 16 1.62e-5 1.20e-6 2.85e-5 51.40e-5 1.14e-6 2.33e-5 53.58e-4 3.46e-5 210 08 1.81e-5 1.74e-6 2.58e-5 51.63e-5 1.67e-6 2.21e-5 53.58e-4 3.46e-5 210 04 1.85e-5 1.26e-6 3.23e-5 72.02e-5 1.09e-6 4.12e-5 73.58e-4 3.48e-5 510 02 2.70e-5 1.21e-6 5.65e-5 91.10e-5 1.23e-6 1.04e-9 10 3.58e-4 3.42e-5 610 01 2.19e-5 4.79e-6 2.34e-6 13 9.89e-6 9.75e-7 4.17e-12 12 3.07e-4 1.87e-5 910 00 2.13e-6 6.23e-6 1.33e-7 28 2.57e-6 7.42e-6 3.32e-13 29 7.86e-6 7.86e-6 24
+
+Table 2: Relative errors, induced surface charge (61), and GMRES iteration counts (with a relative tol-erance of 10 −6) for all four direct BIE formulations applied to the electromagnetic scattering problem by the unit sphere Γ = S2 (of diameter d = 2) under planewave illumination (59) at low frequencies. The results are obtained using a fixed surface mesh of size h ≈ 0.16. In all cases, the parameter η = 100 π is used, and two different values of the stabilization parameter ξ—introduced to mitigate the low-frequency breakdown—are shown. Our first set of examples considers scattering of a plane wave (59) ( p = (1 , 0, 0), d = (0 , 0, 1)) by the unit PEC sphere at wavenumber k = π (λ = 2). Table 1 reports errors (60) and GMRES iteration counts for all four formulations against the Mie series reference, over a range of nearly uniform surface discretizations with meshsize h > 0. All formulations achieve the expected accuracy using GP-DIM, confirming the viability of BIEs for-mulated entirely in terms of Helmholtz operators. The regularized formulations (RD-ECFOIE and RD-MCFOIE) require fewer GMRES iterations than their unregularized counterparts, with counts remain-ing essentially flat under mesh refinement while a mild growth is observed for the direct formulations— showcasing the effect of the Calder´ on-type preconditioning. The improvement is modest, partly because the large coupling parameter η = 100 k already reduces ill-conditioning at the unregularized level by amplifying the compact operators S and K relative to the hypersingular T. This choice also improves accuracy, since the GP-DIM evaluation of T and K′ is less accurate than that of S and K. (Smaller values of η result in significantly larger GMRES iteration counts across all formulations.) Finally, the surface charge integrals 
+
+qj (61) are small and decrease as h → 0, as expected, even without the low-frequency correction ( ξ = 0). We next examine the low-frequency regime on the same surface Γ = S2, now holding the mesh fixed at 
+
+h ≈ 0.16 across all experiments and sweeping the wavelength λ = 2 π/k from λ/d = 1 up to λ/d = 10 16 ;results are reported in Table 2. As expected, the (R)D-MCFOIE formulations are largely unaffected by decreasing frequency, consistent with the absence of low-frequency breakdown in the magnetic equations. More surprisingly, the (R)D-ECFOIE formulations also remain well-behaved throughout: field errors, divergence errors, and surface charge integrals all stay at the level of the discretization error, and iteration counts remain stable. This is in stark contrast to their indirect counterparts [3] on the same problem. The stabilization parameter ξ = π · 10 4 has negligible effect on accuracy or conditioning here, consistent 22 Sphere D-ECFOIE (19) D-MCFOIE (45)                                                                                                      
+
+> k/π NeEsediv Es|q1|iter. eHsediv Hsiter. 112696 7.66e-5 2.10e-4 2.43e-5 56 4.47e-5 6.75e-5 45 247832 3.53e-5 1.21e-4 1.46e-6 97 1.57e-5 2.62e-5 78 3105648 4.26e-6 3.84e-5 5.05e-7 157 2.86e-6 2.18e-5 121 4186288 2.94e-6 3.25e-5 9.63e-8 274 2.96e-6 8.52e-6 220 5289212 5.45e-6 7.48e-5 2.30e-7 327 5.59e-6 1.68e-5 280 RD-ECFOIE (35) RD-MCFOIE (57)
+> k/π NeEsediv Es|q1|iter. eHsediv Hsiter. 112696 7.46e-5 2.04e-4 2.45e-5 49 5.34e-5 5.14e-5 38 247832 3.62e-5 1.35e-4 1.46e-6 67 2.21e-5 2.86e-5 57 3105648 6.85e-6 6.20e-5 4.97e-7 99 1.14e-5 2.52e-6 107 4186288 3.34e-6 3.95e-5 9.77e-8 129 1.27e-5 5.84e-6 119 5289212 7.85e-6 9.18e-5 2.22e-7 142 7.95e-6 4.05e-5 136
+
+Table 3: Frequency robustness of all four BIE formulations for planewave scattering (59) by the PEC sphere Γ = S2 at wavenumbers k ∈ { π, 2π, 3π, 4π, 5π}. The mesh is adapted to each frequency to maintain 
+
+h ≈ λ/ 10, so that the number of quadrature nodes N scales with k; linear systems have size 3 N , with six quadrature points per element. Layout, error measures, GMRES tolerance (10 −6), and parameters (η = 100 k, ξ = 0) are as in Table 1. with the absence of breakdown. We attribute this robustness to the simple connectedness of the sphere, which, for these formulations, appears to suppress the near-kernel components responsible for low-frequency breakdown in more general, non-simply-connected geometries, as confirmed by the results on the torus and flower surface below. Still on the sphere, Table 3 reports results at higher frequencies, with meshes refined to maintain 
+
+h ≈ λ/ 10 so that the discretization error stays approximately constant across all k. All formulations achieve the expected level of accuracy for the solver parameters used, remain well-conditioned with no sign of high-frequency breakdown, and the regularized formulations consistently require fewer GMRES iterations than their unregularized counterparts. To further investigate the low-frequency behavior of the (R)D-ECFOIE, we consider the same planewave incident field on two additional surfaces: a torus with major and minor radii 1 and 1 /2, and the (non-axisymmetric) flower-shaped surface [34]. These surfaces are parametrized by torus: (1 + 12 cos θ) cos ϕ, (1 + 12 cos θ) sin ϕ, 12 sin θ ,
+
+flower: p0.8 + 0 .5(cos(2 ϕ) − 1)(cos(4 θ) − 1) [cos( ϕ) sin( θ), sin( ϕ) sin( θ), cos( θ)] , (62) for ( θ, ϕ ) ∈ [0 , 2π] × [0 , 2π] and ( θ, ϕ ) ∈ [0 , π ] × [0 , 2π], respectively, with diameters of approximately d = 3 and d ≈ 3.35, respectively. Table 4 reports divergence errors, surface charge integrals, and GMRES iteration counts for the (R)D-ECFOIE formulations on both surfaces, for ξ = 0 and ξ = π · 10 4, across the same low-frequency range as in Table 2. For the flower surface, a mild breakdown is observed: divergence errors remain small at all frequencies, but the surface charge integrals grow to be orders of magnitude larger, while GMRES iteration counts remain stable. Setting ξ = π ·10 4 effectively brings the surface charge below the level of the divergence error. For the torus, however, the breakdown is more pronounced when ξ = 0: GMRES iteration counts grow as the frequency decreases and surface charge integrals remain large, indicating a severe loss 23 of accuracy. The stabilization parameter ξ = π · 10 4 makes a decisive difference in this case, suppressing the surface charge and fully restoring accuracy—as jointly confirmed by the divergence error, the iteration counts, and the surface charge integrals. The contrast in behavior between the two surfaces is interesting: we speculate that the non-trivial topology of the torus (which has a non-simply-connected boundary and a non-trivial first homology group) may be responsible, as it introduces additional near-kernel components in the low-frequency limit that the stabilization term is designed to suppress.                                                                                                                                                                                                             
+
+> Torus Flower D-ECFOIE; ξ= 0 D-ECFOIE; ξ=π·10 4D-ECFOIE; ξ= 0 D-ECFOIE; ξ=π·10 4
+> λ/d ediv Es|q1|#iter ediv Es|q1|#iter ediv Es|q1|#iter ediv Es|q1|#iter 10 16 8.24e-4 1.65e-0 227 7.08e-4 2.72e-6 178 7.55e-5 2.98e-3 75 7.58e-5 6.25e-9 76 10 08 8.24e-4 1.65e-0 227 7.08e-4 2.72e-6 178 7.55e-5 2.98e-3 75 7.58e-5 6.25e-9 76 10 04 8.24e-4 1.65e-0 227 7.08e-4 2.74e-6 179 7.56e-5 3.01e-3 76 7.61e-5 6.31e-9 77 10 02 7.88e-4 2.23e-1 151 7.09e-4 3.01e-7 89 7.48e-5 2.86e-3 78 7.56e-5 3.72e-9 78 10 01 7.08e-4 2.52e-3 82 6.67e-4 4.08e-9 78 7.80e-5 6.89e-5 84 7.43e-5 1.03e-10 80 10 00 3.43e-4 6.96e-6 89 3.41e-4 1.12e-11 90 2.70e-5 5.83e-7 110 2.69e-5 7.28e-13 111 Torus Flower RD-ECFOIE; ξ= 0 RD-ECFOIE; ξ=π·10 4RD-ECFOIE; ξ= 0 RD-ECFOIE; ξ=π·10 4
+> λ/d ediv Es|q1|#iter ediv Es|q1|#iter ediv Es|q1|#iter ediv Es|q1|#iter 10 16 8.20e-4 1.60e-0 211 7.08e-4 3.09e-6 53 7.59e-5 4.19e-3 58 7.60e-5 2.64e-8 60 10 08 8.20e-4 1.60e-0 211 7.08e-4 3.09e-6 53 7.59e-5 4.19e-3 58 7.60e-5 2.64e-8 60 10 04 8.20e-4 1.60e-0 211 7.08e-4 3.10e-6 54 7.59e-5 4.21e-3 59 7.61e-5 2.66e-8 61 10 02 7.85e-4 2.15e-1 90 7.09e-4 3.63e-7 49 7.53e-5 4.33e-3 60 7.55e-5 6.36e-9 82 10 01 7.08e-4 2.52e-3 56 6.67e-4 4.08e-9 56 7.78e-5 7.00e-5 65 7.37e-5 1.06e-10 64 10 00 3.43e-4 6.97e-6 100 3.41e-4 1.12e-11 100 2.81e-5 3.66e-7 109 2.81e-5 5.57e-13 109
+
+Table 4: Relative errors, induced surface charge (61), and GMRES iteration counts (with a relative toler-ance of 10 −6) for the (R)D-ECFOIE formulations applied to the electromagnetic scattering problem by a torus and a flower surface under planewave illumination (59) at low frequencies. The results are obtained using fixed surface meshes of size h ≈ 0.17. In all cases, the parameter η = 100 π is used, and two different values of the parameter ξ—introduced to mitigate the low-frequency breakdown—are shown, demonstrat-ing its effectiveness in reducing the surface charge values. Bold entries indicate cases severely affected by low-frequency breakdown. To further illustrate the BIE formulations for disconnected scatterers, our final example considers planewave scattering (59), with p = (1 , 0, 0) and d = 2 − 12 (0 , 1, −1), by two configurations of disjoint tori forming disconnected scatterers with boundaries Γ = Γ 1 ∪Γ2. The two configurations, displayed in Figure 1, consist of a pair of interlocking nearly touching tori (left) and a pair of adjacent tori (right); each torus has minor radius 1 /2.1 rather than 1 /2, a slight reduction chosen to create a narrow gap between the interlocking pair. All four BIE formulations are solved on the fixed meshes shown in that figure, with 
+
+h ≈ 0.14 ( N = 54648), at three frequencies ( k/π = 10 −8, 10 −1, 10 0) and for ξ = 0 and ξ = π · 10 4; results are reported in Table 5 using a GMRES tolerance of 10 −4, matched to the expected discretization accuracy. At low frequency ( k = 10 −8π), low-frequency breakdown is visible in the (R)D-ECFOIE with ξ = 0: the surface charge integrals, here measured via max {| q1|, |q2|} , are one to two orders of magnitude larger than the divergence errors, most noticeably for the adjacent configuration. Setting ξ = π · 10 4 reduces the surface charge to ∼ 10 −7 across both configurations, restoring accuracy. At k = 10 −1π and k = π, all formulations are well-behaved with no signs of breakdown, and accuracy levels are comparable across both 24 configurations. Figure 2 shows the real parts of the x- and z-components of the total electric and magnetic fields, Re( Ex) and Re( Hz ), for the interlocking configuration at k = π, confirming that GP-DIM resolves the fields accurately in the challenging nearly touching geometry.                                                                                                                                               
+
+> D-ECFOIE (19); ξ= 0 D-ECFOIE (38); ξ=π·10 4D-MCFOIE (45) Tori k/π ediv Esmax {| q1|,|q2|} iter. ediv Esmax {| q1|,|q2|} iter. ediv Hsiter. Interlocking 10 −85.69e-04 2.42e-03 49 4.68e-04 6.07e-07 52 1.99e-04 58 10 −13.86e-04 1.43e-03 58 3.66e-04 2.26e-06 55 1.11e-03 119 10 −08.65e-04 1.31e-04 127 5.39e-04 3.50e-07 126 4.31e-03 69 Adjacent 10 −85.12e-04 2.20e-02 19 5.84e-04 1.41e-07 20 2.44e-03 24 10 −17.79e-04 1.42e-02 26 3.39e-04 1.34e-07 23 5.66e-04 47 10 −08.11e-04 5.91e-05 63 8.51e-04 1.27e-07 63 8.39e-04 47 RD-ECFOIE (35); ξ= 0 RD-ECFOIE (39); ξ=π·10 4RD-MCFOIE (57) Tori k/π ediv Esmax {| q1|,|q2|} iter. ediv Esmax {| q1|,|q2|} iter. ediv Hsiter. Interlocking 10 −84.60e-04 2.41e-02 33 4.71e-04 1.35e-07 40 3.88e-04 40 10 −13.23e-04 1.05e-03 42 2.30e-04 5.07e-07 46 2.56e-04 51 10 −04.78e-04 2.46e-03 129 5.37e-04 5.12e-07 127 1.14e-03 58 Adjacent 10 −83.09e-04 2.16e-02 12 2.99e-04 1.27e-07 14 1.45e-03 20 10 −13.23e-04 5.75e-03 19 2.40e-04 6.01e-08 19 1.41e-04 36 10 −06.44e-04 2.74e-05 66 6.13e-04 9.71e-08 65 4.84e-04 39
+
+Table 5: Divergence errors, surface charge integrals, and GMRES iteration counts (relative tolerance 10 −4)for all four BIE formulations applied to planewave scattering (59) by two configurations of non-simply-connected scatterers at a low ( k = 10 −8π) and a moderate ( k = 10 −1π) frequency. The top half shows the direct formulations and the bottom half their analytically preconditioned counterparts; two values of ξ are shown for the (R)D-ECFOIE. A fixed mesh with h ≈ 0.14 ( N = 54648) is used, with η = 100 π throughout. 
+
+# 7 Conclusions 
+
+We have developed direct combined-field-only boundary integral formulations—D-ECFOIE and D-MCFOIE— for time-harmonic electromagnetic scattering by smooth PEC obstacles, building on the Maxwell ` a la Helmholtz framework of [3]. Unlike their indirect counterparts, the proposed formulations take as un-knowns the physical field traces on the scattering surface; in particular, the D-MCFOIE yields the surface electric currents directly. We proved unique solvability at all frequencies k > 0, introduced Calder´ on regu-larizations that render the equations of Fredholm second kind, and resolved the low-frequency breakdown of the electric-field formulation via a charge-conservation-enforcing modification. Numerical experiments with a GP-DIM-based Nystr¨ om solver implemented in Inti.jl confirmed the accuracy and robustness of all formulations across a range of geometries and frequencies. Future work includes extensions to Sobolev-space settings and transmission problems, all within the same Helmholtz-operator framework. 
+
+# References 
+
+[1] A. Bendali, F. Collino, M. Fares, and B. Steif. Extension to nonconforming meshes of the combined current and charge integral equation. IEEE Transactions on Antennas and Propagation , 60(10):4732– 4744, 2012. 25 Figure 1: Surface meshes for the two non-simply-connected scatterer configurations used in Table 5: inter-locking tori (left) and adjacent tori (right), both with h ≈ 0.14 ( N = 54648). [2] O. Bruno, T. Elling, R. Paffenroth, and C. Turc. Electromagnetic integral equations requiring small numbers of Krylov-subspace iterations. Journal of Computational Physics , 228(17):6169–6183, 2009. [3] J. Burbano-Gallegos, C. P´ erez-Arancibia, and C. Turc. Maxwell ` a la Helmholtz: Electromagnetic scattering by 3D perfect electric conductors via Helmholtz integral operators. ESAIM: Mathematical Modelling and Numerical Analysis , 60(1):273–315, 2026. [4] D. Colton and R. Kress. Integral Equation Methods in Scattering Theory . Pure and Applied Mathe-matics. John Wiley & Sons Inc., first edition, 1983. [5] D. Colton and R. Kress. Inverse Acoustic and Electromagnetic Scattering Theory , volume 93. Springer, third edition, 2012. [6] M. P. Do Carmo. Differential Geometry of Curves and Surfaces . Courier Dover Publications, 2016. [7] C. L. Epstein and L. Greengard. Debye sources and the numerical solution of the time harmonic Maxwell equations. Communications on Pure and Applied Mathematics , 63(4):413–463, 2010. [8] C. L. Epstein, L. Greengard, and M. O’Neil. Debye sources and the numerical solution of the time harmonic Maxwell equations II. Communications on Pure and Applied Mathematics , 66(5):753–789, 2013. [9] L. Faria, C. P´ erez-Arancibia, and C. Turc. Combined field-only boundary integral equations for PEC electromagnetic scattering problem in spherical geometries. SIAM Journal on Applied Mathematics ,84(1):19–38, 2024. [10] L. M. Faria, C. P´ erez-Arancibia, and M. Bonnet. General-purpose kernel regularization of boundary integral equations via density interpolation. Computer Methods in Applied Mechanics and Engineering ,378:113703, 2021. [11] M. Ganesh and S. C. Hawkins. A spectrally accurate algorithm for electromagnetic scattering in three dimensions. Numerical Algorithms , 43:25–60, 2006. 26 Figure 2: Real part of the x-component of the total electric field Re( Ex) (left) and the z-component of the total magnetic field Re( Hz ) (right), computed for the interlocking tori configuration at k = π, with 
+
+η = 100 π and ξ = π · 10 4.[12] E. Garza. Boundary Integral Equation Methods for Simulation and Design of Photonic Devices . Cal-ifornia Institute of Technology, 2020. [13] C. Geuzaine and J.-F. Remacle. Gmsh: A 3-D finite element mesh generator with built-in pre- and post-processing facilities. International Journal for Numerical Methods in Engineering , 79(11):1309– 1331, 2009. [14] D. Gilbarg and N. S. Trudinger. Elliptic Partial Differential Equations of Second Order . Classics in Mathematics. Springer, reprint of the 1998 edition edition, 2001. [15] W. Hackbusch. Integral Equations: Theory and Numerical Treatment . Birkh¨ auser, 1995. [16] B. Hofmann, P. Respondek, and S. B. Adrian. SphericalScattering: A Julia package for electromagnetic scattering from spherical objects. Journal of Open Source Software , 8(91):5820, 2023. [17] J. Hu, E. Garza, and C. Sideris. A Chebyshev-based high-order-accurate integral equation solver for Maxwell’s equations. IEEE Transactions on Antennas and Propagation , 69(9):5790–5800, 2021. [18] IntegralEquations contributors. Inti.jl — Integral equation solver in Julia. https://github.com/ IntegralEquations/Inti.jl , 2025. Accessed: 2025-05-25. [19] A. Kirsch and F. Hettlich. The Mathematical Theory of Time-harmonic Maxwell’s Equations . Springer, 2015. [20] E. Klaseboer, Q. Sun, and D. Y. Chan. Nonsingular field-only surface integral equations for electro-magnetic scattering. IEEE Transactions on Antennas and Propagation , 65(2):972–977, 2016. 27 [21] R. Kress. Linear Integral Equations , volume 82. Springer, 3rd edition, 2014. [22] W. C. H. McLean. Strongly Elliptic Systems and Boundary Integral Equations . Cambridge University Press, 2000. [23] C. P´ erez-Arancibia, C. Turc, and L. Faria. Harmonic density interpolation methods for high-order evaluation of Laplace layer potentials in 2D and 3D. Journal of Computational Physics , 376:411–434, 2019. [24] C. P´ erez-Arancibia, C. Turc, and L. Faria. Planewave density interpolation methods for 3D Helmholtz boundary integral equations. SIAM Journal on Scientific Computing , 41(4):A2088–A2116, 2019. [25] C. P´ erez-Arancibia, C. Turc, L. M. Faria, and C. Sideris. Planewave density interpolation methods for the EFIE on simple and composite surfaces. IEEE Transactions on Antennas and Propagation ,69(1):317–331, 2020. [26] Y. Saad and M. H. Schultz. GMRES: A generalized minimal residual algorithm for solving nonsym-metric linear systems. SIAM Journal on Scientific and Statistical Computing , 7(3):856–869, 1986. [27] J. A. Stratton and L. J. Chu. Diffraction theory of electromagnetic waves. Physical Review , 56(1):99– 107, July 1939. [28] Q. Sun, E. Klaseboer, and D. Y. Chan. Robust multiscale field-only formulation of electromagnetic scattering. Physical Review B , 95(4):045137, 2017. [29] Q. Sun, E. Klaseboer, A. J. Yuffa, and D. Y. Chan. Field-only surface integral equations: Scattering from a dielectric body. Journal of the Optical Society of America A , 37(2):284–293, 2020. [30] Q. Sun, E. Klaseboer, A. J. Yuffa, and D. Y. Chan. Field-only surface integral equations: Scattering from a perfect electric conductor. Journal of the Optical Society of America A , 37(2):276–283, 2020. [31] M. Taskinen and P. Yla-Oijala. Current and charge integral equation formulation. IEEE Transactions on Antennas and Propagation , 54(1):58–67, 2006. [32] J. L. Volakis and K. Sertel. Integral Equation Methods for Electromagnetics . Scitech, 2012. [33] P. Werner. On the exterior boundary value problem of perfect reflection for stationary electromagnetic wave fields. Journal of Mathematical Analysis and Applications , 7:348–396, 1963. [34] R. A. Wildman, G. Pisharody, D. S. Weile, S. Balasubramaniam, and E. Michielssen. An accurate scheme for the solution of the time-domain integral equations of electromagnetics using higher or-der vector bases and bandlimited extrapolation. IEEE Transactions on Antennas and Propagation ,52(11):2973–2984, 2004. 28
