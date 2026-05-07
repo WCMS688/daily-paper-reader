@@ -6,38 +6,32 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-05-06
-- 运行时间：2026-05-06 20:44:06 UTC
+- 最新运行日期：2026-05-07
+- 运行时间：2026-05-07 20:25:39 UTC
 - 运行状态：成功
-- 本次总论文数：5
+- 本次总论文数：3
 - 精读区：0
-- 速读区：5
+- 速读区：3
 
 ### 今日简报（AI）
-今日速读 5 篇前沿论文，重点涵盖生成式 AI 结构优化、毫米波电路设计及电磁散射计算。
-最值得关注利用混合条件扩散 Transformer 提升结构设计效率，以及通过三耦合变压器优化 21-24 GHz 振荡器的相位噪声。
-建议关注 AI 与传统工程设计的跨界融合，探索生成式模型在复杂物理约束下的落地潜力。
-- 详情：[/202605/06/README](/202605/06/README)
+今日速读聚焦电磁散射算法优化、电路图自动转代码及 5G 信道估计的软硬协同设计。
+重点关注利用 Helmholtz 算子解决 3D 散射问题的新方案，以及提升多模态模型生成 Verilog 代码可靠性的前沿探索。
+建议关注 AI 在硬件设计自动化与通信物理层优化中的落地应用。
+- 详情：[/202605/07/README](/202605/07/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Diffusion Transformers with Hybrid Conditioning for Structural Optimization](/202605/06/2605.02158v1-diffusion-transformers-with-hybrid-conditioning-for-structural-optimization)  
-   标签：评分：6.5/10、query:si-pi
-   evidence：用于结构拓扑优化的生成式深度学习
-2. [A 21-24 GHz Low-Phase-Noise mmWave VCO with Third-Harmonic Expansion using a Triple-Coupled Transformer based Tank](/202605/06/2604.26405v1-a-21-24-ghz-low-phase-noise-mmwave-vco-with-third-harmonic-expansion-using-a-triple-coupled-transformer-based-tank)  
-   标签：评分：6.0/10、query:bga-xtalk
-   evidence：基于三耦合变压器的谐振腔建模
-3. [Maxwell à la Helmholtz: Direct boundary integral equations for 3D scattering by perfect electric conductors via Helmholtz operators](/202605/06/2605.01670v1-maxwell--la-helmholtz-direct-boundary-integral-equations-for-3d-scattering-by-perfect-electric-conductors-via-helmholtz-operators)  
-   标签：评分：6.0/10、query:bga-xtalk
-   evidence：导体3D电磁散射的边界积分方程
-4. [2D Waveguide-Fed Metasurfaces: Physically Consistent Modeling, Validation, and Optimization](/202605/06/2605.02400v1-2d-waveguide-fed-metasurfaces-physically-consistent-modeling-validation-and-optimization)  
+1. [Maxwell à la Helmholtz: Direct boundary integral equations for 3D scattering by perfect electric conductors via Helmholtz operators](/202605/07/2605.01670v2-maxwell--la-helmholtz-direct-boundary-integral-equations-for-3d-scattering-by-perfect-electric-conductors-via-helmholtz-operators)  
+   标签：评分：6.5/10、query:bga-xtalk
+   evidence：针对理想电导体的3D电磁散射边界积分方程建模
+2. [From Mirage to Grounding: Towards Reliable Multimodal Circuit-to-Verilog Code Generation](/202605/07/2604.27969v1-from-mirage-to-grounding-towards-reliable-multimodal-circuit-to-verilog-code-generation)  
    标签：评分：6.0/10、query:si-pi
-   evidence：波导结构中相互耦合的物理一致性建模与优化
-5. [WGAN based Inverse Design of Active Dual Band FSS with Switchable Transmission](/202605/06/2605.03335v1-wgan-based-inverse-design-of-active-dual-band-fss-with-switchable-transmission)  
+   evidence：多模态大模型用于电路图到Verilog代码生成
+3. [SwiftChannel: Algorithm-Hardware Co-Design for Deep Learning-Based 5G Channel Estimation](/202605/07/2605.01931v1-swiftchannel-algorithm-hardware-co-design-for-deep-learning-based-5g-channel-estimation)  
    标签：评分：6.0/10、query:si-pi
-   evidence：基于WGAN的逆向设计以及从电磁响应到结构拓扑的映射
+   evidence：基于深度学习的高速通信信道估计
 
 
 <div class="dpr-home-promo-card">

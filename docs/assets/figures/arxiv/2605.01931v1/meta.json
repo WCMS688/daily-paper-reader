@@ -1,0 +1,86 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.01931v1/fig-001.webp",
+      "caption": "Figure 1: The proposed SwiftChannel achieves high-accuracy and low-latency channel estimation by integrating algorithm design, model compression, and hardware accelerator design.",
+      "page": 1,
+      "index": 1,
+      "width": 516,
+      "height": 286
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01931v1/fig-002.webp",
+      "caption": "Figure 6: Model performance comparison with baselines across different settings. Performance is averaged over the full range of another variable for each data point (e.g., the result at each SNR is an average over all tested UE velocities, and vice versa).",
+      "page": 11,
+      "index": 2,
+      "width": 1056,
+      "height": 302
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01931v1/fig-003.webp",
+      "caption": "Figure 4: (a) The hardware accelerator architecture targeting the FPGA platforms. (b) An illustration depicting the window generation process within QCONV3 engines.",
+      "page": 7,
+      "index": 3,
+      "width": 1063,
+      "height": 394
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01931v1/fig-004.webp",
+      "caption": "TABLE II: 5G MIMO System and Dataset Parameter Settings.",
+      "page": 10,
+      "index": 4,
+      "width": 468,
+      "height": 513
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01931v1/fig-005.webp",
+      "caption": "TABLE VII: Hardware design post-implementation report.",
+      "page": 14,
+      "index": 5,
+      "width": 488,
+      "height": 254
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01931v1/fig-006.webp",
+      "caption": "TABLE VI: Post-synthesis block-wise analysis. (x, y) = (number of input channels, number of output channels).",
+      "page": 14,
+      "index": 6,
+      "width": 962,
+      "height": 273
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01931v1/fig-007.webp",
+      "caption": "Figure 9: Board setup and physical implementation of design.",
+      "page": 13,
+      "index": 7,
+      "width": 500,
+      "height": 383
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01931v1/fig-008.webp",
+      "caption": "Figure 2: The uplink channel estimation process.",
+      "page": 4,
+      "index": 8,
+      "width": 470,
+      "height": 282
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01931v1/fig-009.webp",
+      "caption": "Figure 7: (a) Ablation study of parameter-free attention mechanism (attn) and residual connection (res). (b) Ablation study of knowledge distillation (kd) and re-parameterization (rep). (c) Ablation study of model quantization.",
+      "page": 12,
+      "index": 9,
+      "width": 1063,
+      "height": 447
+    },
+    {
+      "url": "assets/figures/arxiv/2605.01931v1/fig-010.webp",
+      "caption": "Figure 3: The architectures of the teacher and student model, along with the knowledge distillation process. (a) The internal structures of PABs and SPABs are shown in green and blue blocks, respectively, and the numbers below the layers indicate the number of output features. (b) A legend for symbols representing each layer type. (c) The illustration of the re-parameterization.",
+      "page": 5,
+      "index": 10,
+      "width": 1070,
+      "height": 387
+    }
+  ]
+}

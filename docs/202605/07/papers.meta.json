@@ -1,0 +1,54 @@
+{
+  "label": "2026-05-07",
+  "date": "2026-05-07",
+  "generated_at": "2026-05-07T20:25:56",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202605/07/2605.01670v2-maxwell--la-helmholtz-direct-boundary-integral-equations-for-3d-scattering-by-perfect-electric-conductors-via-helmholtz-operators",
+      "section": "quick",
+      "title_en": "Maxwell à la Helmholtz: Direct boundary integral equations for 3D scattering by perfect electric conductors via Helmholtz operators",
+      "authors": "Carlos Pérez-Arancibia, Catalin Turc",
+      "date": "2026-05-03",
+      "pdf": "https://arxiv.org/pdf/2605.01670v2",
+      "score": "6.5",
+      "evidence": "针对理想电导体的3D电磁散射边界积分方程建模",
+      "tldr": "本研究针对光滑完美电导体（PEC）的3D电磁散射问题，提出了一种基于亥姆霍兹算子的直接边界积分方程（BIE）方法。通过将麦克斯韦方程组等效转化为电场和磁场的矢量亥姆霍兹边值问题，推导出了D-ECFOIE和D-MCFOIE公式。研究引入了Calderón型正则化以解决算子性质问题，并通过修正方程克服了低频失效。该方法在保持物理意义的同时，通过高阶Nyström求解器验证了在不同几何形状和频率下的准确性与鲁棒性。",
+      "tags": "query:bga-xtalk",
+      "abstract_en": "This paper is the direct-formulation companion to [Burbano-Gallegos, Pérez-Arancibia, and Turc, ESAIM: M2AN, 60(1):273--315, 2026], which developed indirect combined-field-only boundary integral equations (BIEs) for time-harmonic electromagnetic scattering by smooth perfectly electrically conducting (PEC) obstacles, relying entirely on Helmholtz boundary integral operators. Here we exploit the same equivalence between the Maxwell PEC scattering problem and a pair of vector Helmholtz boundary value problems -- one for the electric field and one for the magnetic field -- to derive direct BIE formulations whose unknowns are the Dirichlet and Neumann traces of the total fields, decomposed into their normal and tangential surface components. These unknowns carry direct physical meaning: in particular, the magnetic-field formulation yields the surface electric currents as part of its solution. The mixed regularity of the two field-trace components requires introducing a tailored product Hölder space, a distinctive feature absent from the indirect approach. We prove that the resulting Direct Electric and Magnetic Combined-Field-Only Integral Equations (D-ECFOIE and D-MCFOIE) are uniquely solvable at all frequencies, and introduce Calderón-type regularizations (RD-ECFOIE and RD-MCFOIE) that render them of the Fredholm second kind. We further examine the low-frequency breakdown affecting the electric-field formulation and introduce a modified equation that enforces the physical charge-conservation constraints, which restores numerical accuracy and well-conditioned linear systems for frequencies arbitrarily close to zero. Numerical experiments, performed using a high-order Nyström solver based on the Density Interpolation Method and implemented in the Julia package Inti.jl, validate the accuracy and robustness of the proposed formulations across a range of geometries and frequencies.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/07/2604.27969v1-from-mirage-to-grounding-towards-reliable-multimodal-circuit-to-verilog-code-generation",
+      "section": "quick",
+      "title_en": "From Mirage to Grounding: Towards Reliable Multimodal Circuit-to-Verilog Code Generation",
+      "authors": "Guang Yang, Xing Hu, Xiang Chen, Xin Xi",
+      "date": "2026-04-30",
+      "pdf": "https://arxiv.org/pdf/2604.27969v1",
+      "score": "6.0",
+      "evidence": "多模态大模型用于电路图到Verilog代码生成",
+      "tldr": "本研究探讨了多模态大模型在电路图转Verilog代码中的可靠性，揭示了模型倾向于依赖文本标识符而非视觉输入的“幻象”现象。为此，作者构建了C2VEVAL基准测试，并提出VeriGround模型。该模型通过标识符匿名化、拒绝增强及D-ORPO对齐算法进行训练，在保持高性能的同时实现了真正的视觉对齐，显著提升了硬件代码生成的可靠性。",
+      "tags": "query:si-pi",
+      "abstract_en": "Multimodal large language models (MLLMs) are increasingly used to translate visual artifacts into code, from UI mockups into HTML to scientific plots into Python scripts. A circuit diagram can be viewed as a visual domain-specific language for hardware: it encodes timing, topology, and bit level semantics that are invisible to casual inspection yet safety critical once fabricated in silicon. Translating such diagrams into register-transfer-level(RTL) code therefore represents an extreme reliability test for vision-to-code generation. We reveal a phenomenon we call Mirage: replacing a circuit diagram with a blank image leaves Pass@k unchanged or even higher, because models bypass the visual input and instead exploit identifier semantics in the module header to retrieve canonical RTL templates. This constitutes a new, highly covert class of defect in AI-assisted code generation that directly undermines MLLMs' trustworthiness. To quantify the effect, we construct C2VEVAL and evaluate eight MLLMs under a paired Normal/Anony protocol in which Anony mode anonymizes all identifiers in both the diagram and the module header; Anony-mode scores drop sharply across all models, confirming that high Normal-mode accuracy is largely a Mirage. We then propose VeriGround (4B), trained with identifier anonymization, refusal augmentation, and D-ORPO (Decision-Focused ORPO) preference alignment that up-weights pivotal generate-or-refuse tokens. VeriGround achieves Functional Pass@1 of 46.11%/42.51%(Normal/Anony) with a False Refusal Rate of only 1.20%/0.00%, while maintaining >92% Refusal Rate on blank images. With only 4B parameters, VeriGround performs on par with GPT-5.4 under Normal and significantly outperforms all baselines under Anony, confirming genuine visual grounding.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/07/2605.01931v1-swiftchannel-algorithm-hardware-co-design-for-deep-learning-based-5g-channel-estimation",
+      "section": "quick",
+      "title_en": "SwiftChannel: Algorithm-Hardware Co-Design for Deep Learning-Based 5G Channel Estimation",
+      "authors": "Shengzhe Lyu, Yuhan She, Di Duan, Tao Ni, Yu Hin Chan, Chengwen Luo, Ray C. C. Cheung, Weitao Xu",
+      "date": "2026-05-03",
+      "pdf": "https://arxiv.org/pdf/2605.01931v1",
+      "score": "6.0",
+      "evidence": "基于深度学习的高速通信信道估计",
+      "tldr": "针对5G MIMO和毫米波通信中信道估计的高精度与低延迟需求，本文提出SwiftChannel算法硬件协同设计框架。该框架采用增强型卷积神经网络，结合无参数注意力机制，并利用知识蒸馏、重参数化和量化感知训练进行模型压缩。通过在FPGA上实现细粒度流水线加速器，实现了亚毫秒级延迟，在能效和速度上显著优于GPU方案，为5G系统提供了高效可靠的信道估计方案。",
+      "tags": "query:si-pi",
+      "abstract_en": "Channel estimation is crucial in 5G communication networks for optimizing transmission parameters and ensuring reliable, high-speed communication. However, the use of multiple-input and multiple-output (MIMO) and millimeter-wave (mmWave) in 5G networks presents challenges in achieving accurate estimation under strict latency requirements on resource-limited hardware platforms. To address these challenges, we propose SwiftChannel, an algorithm-hardware co-design framework that integrates a hardware-friendly deep learning-based channel estimator with a dedicated accelerator. Our approach employs a convolutional neural network enhanced with a parameter-free attention mechanism, which effectively reconstructs full-resolution spatial-frequency domain channel matrices from low-resolution least squares (LS) estimates. We further develop a multi-stage model compression pipeline combining knowledge distillation, convolution re-parameterization, and quantization-aware training, resulting in substantial model size reduction with negligible accuracy loss. The hardware accelerator, implementing the compressed model and the LS estimator on FPGA platforms using High-level Synthesis (HLS), features a fine-grained pipeline architecture and optimized dataflow strategies. Tested on a Zynq UltraScale+ RFSoC, the accelerator achieves sub-millisecond latency, providing up to 24x speed-up and over 33x improvement in energy efficiency compared to GPU-based solutions. Extensive evaluations demonstrate that the proposed design generalizes not only across various noise levels and user mobilities, but also to a variety of unseen channel profiles, outperforming state-of-the-art baselines. By unifying algorithmic innovation with hardware-aware design, our work presents a future-proof channel estimation solution for 5G MIMO systems.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
