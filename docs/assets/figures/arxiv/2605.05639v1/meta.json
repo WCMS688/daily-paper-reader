@@ -1,0 +1,38 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.05639v1/fig-001.webp",
+      "caption": "Figure 11: Normalized p50 TTFT (top) and TBT (bottom) vs. QPS for Devstral-123B and Qwen3-32B. TTFT dominates the gap.",
+      "page": 11,
+      "index": 1,
+      "width": 1046,
+      "height": 243
+    },
+    {
+      "url": "assets/figures/arxiv/2605.05639v1/fig-002.webp",
+      "caption": "Figure 9: Normalized p50 end-to-end latency vs. QPS (normalized to TokenStack’s minimum). TokenStack stays flat; AttAcc",
+      "page": 10,
+      "index": 2,
+      "width": 1046,
+      "height": 242
+    },
+    {
+      "url": "assets/figures/arxiv/2605.05639v1/fig-003.webp",
+      "caption": "Figure 7: Prompt and generation length distributions across",
+      "page": 8,
+      "index": 3,
+      "width": 500,
+      "height": 255
+    },
+    {
+      "url": "assets/figures/arxiv/2605.05639v1/fig-004.webp",
+      "caption": "Figure 3: TokenStack system architecture. Each stack combines dense capacity layers, PIM-enabled compute layers, and a",
+      "page": 4,
+      "index": 4,
+      "width": 921,
+      "height": 494
+    }
+  ]
+}

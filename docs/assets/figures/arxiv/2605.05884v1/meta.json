@@ -1,0 +1,86 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.05884v1/fig-001.webp",
+      "caption": "FIGURE 3. Structure of the considered SIM with Q stacked T-RIS layers. Each layer includes planar receive and transmit arrays interconnected by tunable active phase-shifting networks.",
+      "page": 7,
+      "index": 1,
+      "width": 514,
+      "height": 289
+    },
+    {
+      "url": "assets/figures/arxiv/2605.05884v1/fig-002.webp",
+      "caption": "FIGURE 12. Transfer-function diagonality versus inter-layer spacing for K = 64 and K = 256.",
+      "page": 10,
+      "index": 2,
+      "width": 517,
+      "height": 337
+    },
+    {
+      "url": "assets/figures/arxiv/2605.05884v1/fig-003.webp",
+      "caption": "FIGURE 11. Sum spectral efficiency versus G for maximum bandwidth and K = 256.",
+      "page": 10,
+      "index": 3,
+      "width": 514,
+      "height": 344
+    },
+    {
+      "url": "assets/figures/arxiv/2605.05884v1/fig-004.webp",
+      "caption": "FIGURE 10. Sum spectral efficiency versus G for minimum bandwidth and K = 256.",
+      "page": 10,
+      "index": 4,
+      "width": 514,
+      "height": 346
+    },
+    {
+      "url": "assets/figures/arxiv/2605.05884v1/fig-005.webp",
+      "caption": "FIGURE 4. Sum spectral efficiency versus bandwidth for G = 0 dB and K = 64.",
+      "page": 8,
+      "index": 5,
+      "width": 517,
+      "height": 346
+    },
+    {
+      "url": "assets/figures/arxiv/2605.05884v1/fig-006.webp",
+      "caption": "FIGURE 5. Sum spectral efficiency versus bandwidth for G = 6 dB and K = 64.",
+      "page": 8,
+      "index": 6,
+      "width": 517,
+      "height": 343
+    },
+    {
+      "url": "assets/figures/arxiv/2605.05884v1/fig-007.webp",
+      "caption": "FIGURE 8. Sum spectral efficiency versus G for minimum bandwidth and K = 64.",
+      "page": 9,
+      "index": 7,
+      "width": 517,
+      "height": 346
+    },
+    {
+      "url": "assets/figures/arxiv/2605.05884v1/fig-008.webp",
+      "caption": "FIGURE 6. Sum spectral efficiency versus bandwidth for G = 0 dB and K = 256.",
+      "page": 9,
+      "index": 8,
+      "width": 514,
+      "height": 346
+    },
+    {
+      "url": "assets/figures/arxiv/2605.05884v1/fig-009.webp",
+      "caption": "FIGURE 7. Sum spectral efficiency versus bandwidth for G = 6 dB and K = 256.",
+      "page": 9,
+      "index": 9,
+      "width": 514,
+      "height": 343
+    },
+    {
+      "url": "assets/figures/arxiv/2605.05884v1/fig-010.webp",
+      "caption": "FIGURE 9. Sum spectral efficiency versus G for maximum bandwidth and K = 64.",
+      "page": 9,
+      "index": 10,
+      "width": 517,
+      "height": 343
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.06419v1/fig-001.webp",
+      "caption": "Figure 4: Schematic of the ECM-UDE model used in this work. Blocks shaded in blue denote physics-based components; the orange block denotes the learned neural correction fθ . The dashed boundary encloses the hybrid latent dynamics integrated by the solver.",
+      "page": 6,
+      "index": 1,
+      "width": 473,
+      "height": 513
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06419v1/fig-002.webp",
+      "caption": "Figure 8: Zero-shot temperature transfer from the UDDS 25 ◦C source domain. Filled markers denote outof-distribution target temperatures; hollow markers denote the in-distribution source condition. All three models degrade monotonically as the target temperature decreases, but ECM-UDE (blue) retains the lowest MAE at every target temperature.",
+      "page": 11,
+      "index": 2,
+      "width": 469,
+      "height": 332
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06419v1/fig-003.webp",
+      "caption": "Figure 6: Seed-wise validation MAE on UDDS at 25 ◦C over 30 random seeds. The horizontal dotted line marks the deterministic ECM-1RC baseline (128.0 mV). Boxes span the interquartile range; whiskers extend to the data extremes. ECM-UDE consistently outperforms the LSTM in all 30 paired comparisons (W = 0, p < 10−9).",
+      "page": 10,
+      "index": 3,
+      "width": 465,
+      "height": 406
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06419v1/fig-004.webp",
+      "caption": "Figure 7: Inference-time sensitivity to Gaussian noise in the z input channel on the held-out UDDS 25 ◦C validation set. The LSTM and ECM-UDE curves use the best checkpoints selected in Experiment 1; the ECM1RC baseline is deterministic.",
+      "page": 10,
+      "index": 4,
+      "width": 467,
+      "height": 331
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06419v1/fig-005.webp",
+      "caption": "Table 2: Consolidated summary of the main MAE results across all four evaluation settings. For matched-condition prediction, LSTM and ECM-UDE are reported as mean ± standard deviation over repeated training runs, whereas ECM-1RC is deterministic. For inference-time z perturbation, the σz = 0 row is deterministic, while the σz > 0 rows are reported as mean ± standard deviation over repeated Monte Carlo noise realizations for all methods. For temperature-transfer and drive-cycle-transfer experiments, the table reports the corresponding test-set MAE values under zero-shot transfer.",
+      "page": 12,
+      "index": 5,
+      "width": 718,
+      "height": 318
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06419v1/fig-006.webp",
+      "caption": "Figure 5: Representative UDDS validation segment at 25 ◦C. Measured voltage is shown in solid black; model predictions are dashed.",
+      "page": 9,
+      "index": 6,
+      "width": 472,
+      "height": 351
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06419v1/fig-007.webp",
+      "caption": "Figure 2: Identified OCV–SOC curve. The shaded region indicates the SOC range covered by the training data (approximately 21–100%). The curve spans approximately 3.30 V at 0% SOC to 4.15 V at 100% SOC, consistent with the NCA chemistry of the Panasonic 18650PF cell.",
+      "page": 5,
+      "index": 7,
+      "width": 434,
+      "height": 320
+    }
+  ]
+}

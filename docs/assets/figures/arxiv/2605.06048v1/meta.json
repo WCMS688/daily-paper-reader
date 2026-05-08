@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.06048v1/fig-001.webp",
+      "caption": "Figure 2: Illustration of a reconfigurable intelligent surface (RIS) reflecting an incidentwave toward a desired target direction, given some phase shift for each tile. Here, the incident and scattered fields are assumed to be in the far field.",
+      "page": 2,
+      "index": 1,
+      "width": 498,
+      "height": 294
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06048v1/fig-002.webp",
+      "caption": "Figure 4: Results for (𝜃 𝑖 , 𝜙𝑖 ) = (60◦, 30◦) and (𝜃𝑠 , 𝜙𝑠 ) = (15◦, 100◦). “Optimal” means model optimality, not physical performance. QAOAmatches optimal solutions for Models 2–4, while Model 1 converges to a suboptimal configuration that better approximates the underlying physics, highlighting the mismatch between encoded 𝐽𝑖 𝑗 objective and full electromagnetic model.",
+      "page": 7,
+      "index": 2,
+      "width": 491,
+      "height": 363
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06048v1/fig-003.webp",
+      "caption": "Figure 5: (a) Approximation ratio (AR) computed using Eq.(4) based on the expectation value of the costHamiltonian, demonstrating similar final AR for all four models. (b) Overlap between the quantum state and the optimal subspace, as defined in Eq.(5). Unlike theAR, the overlap continues to show a clearly growing trend at the end of optimization for most models.",
+      "page": 7,
+      "index": 3,
+      "width": 469,
+      "height": 378
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06048v1/fig-004.webp",
+      "caption": "Figure 6: Radiation power 𝑃 (𝜃, 𝜙) in dB, normalized to the peak scattered beam of the RIS using Model 1, comparing the QAOAderived solution with the model-optimal solution. While QAOA does not exactly reach the optimal state (right), it still yields strong performance. Target angle is marked by a black cross, while radiation maximum is indicated in red; smaller angular separation means higher QAOA accuracy. The two solutions exhibit distinct beam patterns, including side-lobe differences.",
+      "page": 7,
+      "index": 4,
+      "width": 1026,
+      "height": 250
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06048v1/fig-005.webp",
+      "caption": "Figure 3: Workflow for QAOA-based metasurface optimization. The four models feed into the cost-Hamiltonian construction which is optimized using QAOA. The optimized circuit parameters are then used to extract the most likely binary solution and estimate the radiation power pattern. The final performance is summarized by the angular mismatch metric 𝜖.",
+      "page": 4,
+      "index": 5,
+      "width": 972,
+      "height": 252
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06048v1/fig-006.webp",
+      "caption": "Table 1: Comparison of 𝐽𝑖 𝑗 construction models.",
+      "page": 5,
+      "index": 6,
+      "width": 1010,
+      "height": 241
+    }
+  ]
+}

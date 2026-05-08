@@ -1,0 +1,217 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-05-08T20:39:20.430882+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 2,
+    "deep_divecandidates": 0,
+    "deep_cap": 7,
+    "deep_selected": 0,
+    "quick_candidates": 5,
+    "quick_skim_target": 12,
+    "quick_selected": 5
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2605.05773v1",
+      "source": "arxiv",
+      "title": "CircuitFormer: A Circuit Language Model for Analog Topology Design from Natural Language Prompt",
+      "abstract": "Automating analog circuit design remains a longstanding challenge in Electronic Design Automation (EDA). While Transformer-based Large Language Models (LLMs) have revolutionized software code generation, their application to analog hardware design is hindered by two critical limitations: (i) the scarcity of analog design datasets containing natural language description of a design and its corresponding netlist, and (ii) the inefficiency of general-purpose tokenizers (e.g., Byte Pair Encoding (BPE)) in capturing the inherent graph structure of circuits. To bridge this gap, first, we curate the largest annotated dataset of analog circuit netlists to date, comprising 31,341 netlist-natural language description pairs across all major circuit classes. Furthermore, we propose Circuit Tokenizer (CKT), a novel circuit graph tokenizer designed to encode netlist connectivity by explicitly mining frequent subcircuits. In terms of scalability, CKT overcomes the bottleneck of prior circuit graph serialization methods where vocabulary size scales linearly with maximum number of components in the dataset, n_max, (O(n_max)); instead, CKT decouples vocabulary growth from circuit complexity, achieving a constant O(1) complexity. Empirically, CKT outperforms standard BPE on circuit topology representation, reducing sequence length by 57% and achieving a 2.3x superior compression ratio using a compact, fixed vocabulary of size 512. Leveraging this optimized tokenization, we train a circuit-specific language model, CircuitFormer, a 511M parameter encoder-decoder transformer. Our model achieves 100% syntactic correctness and an 83% functional success rate across all major analog circuit categories, outperforming state-of-the-art open-source LLMs by 10% and 14%, respectively, while requiring 240x fewer parameters. The dataset is publicly available at https://huggingface.co/datasets/touhid314/cktformer-dataset.",
+      "authors": [
+        "Md Touhidul Islam",
+        "Sujan Kumar Saha",
+        "Farimah Farahmandi",
+        "Mark Tehranipoor"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-05-07T07:04:36+00:00",
+      "link": "https://arxiv.org/pdf/2605.05773v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:BGA-XTALK",
+        "query:si-pi"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Machine learning for analog circuit netlist and topology design",
+      "llm_evidence_cn": "用于模拟电路网表和拓扑设计的机器学习",
+      "llm_evidence": "用于模拟电路网表和拓扑设计的机器学习",
+      "canonical_evidence": "用于模拟电路网表和拓扑设计的机器学习",
+      "llm_tldr_en": "Introduces CircuitFormer, a language model for automating analog circuit design from natural language.",
+      "llm_tldr_cn": "引入了CircuitFormer，一种从自然语言自动进行模拟电路设计的语言模型。",
+      "llm_tldr": "引入了CircuitFormer，一种从自然语言自动进行模拟电路设计的语言模型。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2605.06048v1",
+      "source": "arxiv",
+      "title": "Quantum Optimization for Electromagnetics: Physics-Informed QAOA for Reconfigurable Intelligent Surfaces",
+      "abstract": "Optimizing Reconfigurable Intelligent Surfaces (RIS) is a high-dimensional combinatorial challenge. Current quantum algorithms often simplify this problem by ignoring physical constraints like mutual coupling, which significantly degrades real-world performance. Rather than targeting a fully realistic RIS description, we embed progressively more physics-informed models of mutual coupling into Quadratic Unconstrained Binary Optimization (QUBO) formulations. We evaluate four Ising interaction models ($J_{ij}$) for the Quantum Approximate Optimization Algorithm (QAOA), ranging from idealized phase-only to fully dense physical models. Analyzing a $5 \\times 5$ grid, our results expose a critical trade-off between spatial pointing accuracy and quantum hardware feasibility. While complete global coupling maximizes beamforming precision, dense Hamiltonians introduce prohibitive routing overhead and complicate convergence on near-term processors. Ultimately, we demonstrate that while physics-informed quantum optimization is mathematically viable, sparse, distance-penalized models remain a necessary compromise for execution on current noisy intermediate-scale quantum (NISQ) devices.",
+      "authors": [
+        "Marco Pasquale",
+        "Erik M. Åsgrim",
+        "Stefano Markidis",
+        "Oscar Quevedo-Teruel"
+      ],
+      "primary_category": "cs.CE",
+      "categories": [
+        "cs.CE"
+      ],
+      "published": "2026-05-07T11:34:28+00:00",
+      "link": "https://arxiv.org/pdf/2605.06048v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:BGA-XTALK",
+        "query:si-pi"
+      ],
+      "llm_score": 6.5,
+      "llm_evidence_en": "physics-informed models of mutual coupling in electromagnetic optimization",
+      "llm_evidence_cn": "电磁优化中互耦合的物理信息模型",
+      "llm_evidence": "电磁优化中互耦合的物理信息模型",
+      "canonical_evidence": "电磁优化中互耦合的物理信息模型",
+      "llm_tldr_en": "Embeds mutual coupling physics into quantum optimization for reconfigurable intelligent surfaces.",
+      "llm_tldr_cn": "将互耦合物理模型嵌入量子优化算法，用于可重构智能表面设计。",
+      "llm_tldr": "将互耦合物理模型嵌入量子优化算法，用于可重构智能表面设计。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "SI/PI challenges and solutions for Chiplet and 3D heterogeneous integration",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.05884v1",
+      "source": "arxiv",
+      "title": "From Multi-Port Models to Cascade Structures: Optimization of Active Unilateral Stacked Intelligent Metasurfaces",
+      "abstract": "This paper develops a multi-port S-parameter framework for the analysis and optimization of stacked intelligent metasurfaces (SIMs) with unilateral active interconnections. By modeling each unit cell as a non-reciprocal two-port network, the resulting SIM exhibits a feed-forward structure that enables a recursive, cascade-like representation of the end-to-end transfer function while preserving electromagnetic accuracy. Based on this model, we derive an efficient gradient-based optimization algorithm with reduced computational complexity compared to conventional reciprocal SIM architectures. Numerical results, obtained from full-wave simulations, illustrate the trade-offs among inter-layer spacing, active gain, and SIM size in terms of channel diagonalization and achievable spectral efficiency.",
+      "authors": [
+        "Andrea Abrardo",
+        "Giulio Bartoli",
+        "Alberto Toccafondi",
+        "Marco Di Renzo"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP"
+      ],
+      "published": "2026-05-07T08:56:04+00:00",
+      "link": "https://arxiv.org/pdf/2605.05884v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:BGA-XTALK",
+        "query:si-pi"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "multi-port S-parameter framework and cascade structures for interconnect optimization",
+      "llm_evidence_cn": "用于互连优化的多端口S参数框架和级联结构",
+      "llm_evidence": "用于互连优化的多端口S参数框架和级联结构",
+      "canonical_evidence": "用于互连优化的多端口S参数框架和级联结构",
+      "llm_tldr_en": "Develops a multi-port S-parameter framework for optimizing stacked metasurfaces with high electromagnetic accuracy.",
+      "llm_tldr_cn": "开发了一种多端口S参数框架，用于优化具有高电磁精确度的堆叠超表面。",
+      "llm_tldr": "开发了一种多端口S参数框架，用于优化具有高电磁精确度的堆叠超表面。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Advanced modeling and optimization techniques for SI/PI in high speed systems",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2605.05639v1",
+      "source": "arxiv",
+      "title": "TokenStack: A Heterogeneous HBM-PIM Architecture and Runtime for Efficient LLM Inference",
+      "abstract": "Large language model (LLM) serving is now limited by the key-value (KV) cache. During decode, each new token rereads prior KV state, so attention becomes a bandwidth- and capacity-heavy memory task. HBM-PIM helps by moving attention closer to memory, but current stack organizations still waste resources. In practice, only hot KV blocks benefit from near-memory compute. Weights, activations, and cold KV mainly need dense storage and GPU-visible bandwidth. A uniform HBM-PIM stack makes all layers pay for PIM logic, while a dedicated-PIM design such as AttAcc recovers capacity but shrinks the HBM bandwidth left for GPU-side work. We propose TokenStack, a vertically heterogeneous HBM-PIM architecture for KV-centric LLM serving that leverages HBM4's logic-die substrate. TokenStack separates each stack into dense capacity layers and PIM-enabled compute layers, then uses the logic base die as a stack-local control point that manages cross-layer movement without host-side overhead. The base-die controller handles cross-layer DMA, layered address translation, attention-side gather/broadcast coordination, and inline quantization during migration. On top of this hardware, TokenStack uses topology-aware KV placement, workload-aware eviction, and bounded replication to keep hot KV near PIM compute while moving colder state to dense layers. Using production-derived traces across four models, completed multi-QPS runs show that TokenStack increases geometric-mean token throughput by 1.62x and SLO-compliant serving capacity by 1.70x over AttAcc, and reduces per-token energy by 30-47%.",
+      "authors": [
+        "Zhuoran Li",
+        "Zhuohang Bian",
+        "Zihao Huang",
+        "Guangyu Sun",
+        "Yun Liang",
+        "Youwei Zhuo"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR"
+      ],
+      "published": "2026-05-07T03:47:18+00:00",
+      "link": "https://arxiv.org/pdf/2605.05639v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:BGA-XTALK",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "HBM-PIM architecture for high-bandwidth memory tasks",
+      "llm_evidence_cn": "用于高带宽内存任务的HBM-PIM架构",
+      "llm_evidence": "用于高带宽内存任务的HBM-PIM架构",
+      "canonical_evidence": "用于高带宽内存任务的HBM-PIM架构",
+      "llm_tldr_en": "Proposes a heterogeneous HBM-PIM architecture to optimize bandwidth and capacity for LLM serving.",
+      "llm_tldr_cn": "提出一种异构HBM-PIM架构，以优化LLM服务的带宽和容量。",
+      "llm_tldr": "提出一种异构HBM-PIM架构，以优化LLM服务的带宽和容量。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "SerDes DDR and HBM channel modeling and simulation",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.06419v1",
+      "source": "arxiv",
+      "title": "Residual-Corrected Equivalent-Circuit Model with Universal Differential Equations for Robust Battery Voltage Prediction under Operating-Condition Shift",
+      "abstract": "Accurate terminal-voltage prediction underpins model-based battery management, yet low-order equivalent-circuit models (\\ecm{}) lack expressiveness under transient conditions, whereas purely data-driven predictors sacrifice interpretability and may degrade under operating-condition shift. This paper introduces a residual-corrected hybrid formulation in which a first-order Thevenin \\ecm{} (\\ecmrc{}) provides the dominant voltage structure, and a compact neural network embedded as a universal differential equation (\\ude{}) corrects only the latent polarization mismatch. The \\ecmrc{} parameters identified by nonlinear least squares warm-start the hybrid model so that the learned component operates in a low-residual regime. Experiments on a public Panasonic 18650PF dataset compare the proposed \\ecmude{} with standalone \\ecmrc{} and Long Short-Term Memory (\\lstm{}) baselines across four axes: matched-condition prediction on UDDS at \\SI{25}{\\celsius}, inference-time perturbation of the supplied state-of-charge (\\SOC{}, denoted $z$) input, zero-shot temperature transfer (\\SI{25}{\\celsius} to \\SI{-20}{\\celsius}), and zero-shot drive-cycle transfer to US06, LA92, and HWFET. The proposed \\ecmude{} achieves the lowest voltage error in every setting, reducing mean absolute error (\\mae{}) by 48\\% relative to the \\lstm{} under matched conditions and showing an order-of-magnitude lower inter-seed variability (coefficient of variation: 0.44\\% vs.\\ 6.20\\%). Substantial gains persist under challenging distribution shifts, indicating that the physical model anchors prediction where a purely learned model is most vulnerable. These results position residual-corrected \\ecmude{} as a lightweight and interpretable enhancement of low-order circuit models for voltage prediction in battery management systems (\\bms{}).",
+      "authors": [
+        "Alexandre Barbosa de Lima",
+        "Roberta Vieira Raggi"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-05-07T15:27:19+00:00",
+      "link": "https://arxiv.org/pdf/2605.06419v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:BGA-XTALK",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "residual-corrected equivalent-circuit model with neural network correction",
+      "llm_evidence_cn": "带有神经网络修正的残差校正等效电路模型",
+      "llm_evidence": "带有神经网络修正的残差校正等效电路模型",
+      "canonical_evidence": "带有神经网络修正的残差校正等效电路模型",
+      "llm_tldr_en": "Proposes a hybrid equivalent-circuit model and neural network for robust voltage prediction.",
+      "llm_tldr_cn": "提出一种结合等效电路模型与神经网络的混合模型，用于鲁棒电压预测。",
+      "llm_tldr": "提出一种结合等效电路模型与神经网络的混合模型，用于鲁棒电压预测。",
+      "llm_tags": [
+        "query:bga-xtalk"
+      ],
+      "matched_query_tag": "query:bga-xtalk",
+      "matched_query_text": "equivalent circuit modeling",
+      "matched_requirement_id": "req-12",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
