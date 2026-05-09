@@ -1,0 +1,38 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.04821v1/fig-001.webp",
+      "caption": "Fig. 4 Differential equivalent interconnection model of the power system.",
+      "page": 6,
+      "index": 1,
+      "width": 477,
+      "height": 270
+    },
+    {
+      "url": "assets/figures/arxiv/2605.04821v1/fig-002.webp",
+      "caption": "Table 1 Device parameters of the three-bus system",
+      "page": 11,
+      "index": 2,
+      "width": 1084,
+      "height": 595
+    },
+    {
+      "url": "assets/figures/arxiv/2605.04821v1/fig-003.webp",
+      "caption": "Fig. 9 Simulation results of three cases with varying passivity indices. (a), (c) and (e) show the",
+      "page": 14,
+      "index": 3,
+      "width": 1050,
+      "height": 249
+    },
+    {
+      "url": "assets/figures/arxiv/2605.04821v1/fig-004.webp",
+      "caption": "Fig. 3 The block diagram of input-differential passivity.",
+      "page": 5,
+      "index": 4,
+      "width": 1056,
+      "height": 244
+    }
+  ]
+}

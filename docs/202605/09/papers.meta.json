@@ -1,0 +1,39 @@
+{
+  "label": "2026-05-09",
+  "date": "2026-05-09",
+  "generated_at": "2026-05-09T20:19:06",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202605/09/2605.04821v1-toward-less-conservative-distributed-stability-analysis-of-power-systems-via-matrix-valued-differential-passivity-indices",
+      "section": "quick",
+      "title_en": "Toward less conservative distributed stability analysis of power systems via matrix-valued differential passivity indices",
+      "authors": "Xi Ru, Cong Fu, Zhongze Li, Xiaoyu Peng, Feng Liu",
+      "date": "2026-05-06",
+      "pdf": "https://arxiv.org/pdf/2605.04821v1",
+      "score": "6.5",
+      "evidence": "用于通道特性和通道间耦合的矩阵值公式",
+      "tldr": "针对电力系统分布式稳定性分析中传统标量钝感指数过于保守的问题，本文提出了矩阵值微分钝感指数。该方法通过捕捉MIMO子系统的通道特性及耦合效应，建立了适用于异构非线性设备的分布式稳定性判据。研究推导了典型元件的钝感矩阵表达式，并通过IEEE 118节点系统验证了该框架在降低保守性和提升分析准确性方面的显著优势。",
+      "tags": "query:bga-xtalk",
+      "abstract_en": "Passivity indices have been widely adopted to derive distributed stability certificates for power systems. Nevertheless, conventional passivity indices remain scalar-valued even for multi-input-multi-output (MIMO) systems, which can introduce excessive conservatism and compromise analysis accuracy. To overcome these limitations, this paper extends the differential passivity index to a matrix-valued formulation that captures both channel-wise passivity properties and inter-channel coupling effects in MIMO subsystems. On this basis, semi-distributed and fully distributed stability criteria are developed for power systems with heterogeneous nonlinear devices. It is shown that system stability is guaranteed when the aggregate passivity excess of devices compensates for the passivity shortage imposed by the network. Furthermore, analytical passivity matrix expressions for typical power system components are derived, facilitating compositional stability analysis. Case studies on a three-bus system and a modified IEEE 118-bus system validate the effectiveness of the proposed framework.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/09/2605.01338v1-diagramnet-an-end-to-end-recognition-framework-and-dataset-for-non-standard-system-level-diagrams",
+      "section": "quick",
+      "title_en": "DiagramNet: An End-to-End Recognition Framework and Dataset for Non-Standard System-Level Diagrams",
+      "authors": "Jincheng Lou, Ruohan Xu, Jiapeng Li, Junyin Pi, Runzhe Tao, Weijian Fan, Xiao Tan, Guojie Luo, Yibo Lin",
+      "date": "2026-05-02",
+      "pdf": "https://arxiv.org/pdf/2605.01338v1",
+      "score": "6.0",
+      "evidence": "芯片设计系统级图表识别与电路问答",
+      "tldr": "针对芯片设计中非标准系统级图表识别难题，本文提出首个多模态数据集DiagramNet及端到端识别框架。通过包含1万余条标注和1.5万组QA对的数据集，结合解耦的多智能体工作流（感知、推理、知识），显著提升了模型在复杂电路图识别与推理上的表现，在端到端评估中超越了GPT-5等主流大模型。",
+      "tags": "query:si-pi",
+      "abstract_en": "System-level diagrams encode the architectural blueprint of chip design, specifying module functions, dataflows, and interface protocols. However, non-standardized symbols and the scarcity of structured training data hinder existing multimodal large language models (MLLMs) from recognizing these diagrams. To address this gap, we introduce DiagramNet, the first multimodal dataset for system-level diagrams, comprising 10,977 connection annotations and 15,515 chain-of-thought QA pairs across four tasks: Listing, Localization, Connection, and Circuit QA. Building on this dataset, we propose a progressive training pipeline together with a decoupled multi-agent workflow that decomposes complex visual reasoning into Perception, Reasoning, and Knowledge stages. On the DiagramNet benchmark, integrating our 3B-parameter model with the proposed workflow surpasses the 2025 EDA Elite Challenge winner and outperforms GPT-5, Claude-Sonnet-4, and Gemini-2.5-Pro by over 2x in end-to-end evaluation. Notably, the workflow generalizes beyond our model, boosting Task 1 performance by 128.7x for Gemini-2.5-Pro and 12.4x for GPT-5. Furthermore, with only 60 images for detector adaptation, the method transfers effectively to AMSBench, achieving zero-shot connectivity reasoning on par with GPT-5 and Claude-Sonnet-4 while surpassing the AMS state-of-the-art method Netlistify.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

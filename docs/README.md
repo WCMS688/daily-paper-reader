@@ -6,38 +6,29 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-05-08
-- 运行时间：2026-05-08 20:40:32 UTC
+- 最新运行日期：2026-05-09
+- 运行时间：2026-05-09 20:18:55 UTC
 - 运行状态：成功
-- 本次总论文数：5
+- 本次总论文数：2
 - 精读区：0
-- 速读区：5
+- 速读区：2
 
 ### 今日简报（AI）
-今日聚焦AI与量子计算赋能硬件设计，涵盖模拟电路自动生成及智能超表面（RIS）优化等5项前沿进展。
-亮点包括通过自然语言驱动模拟拓扑生成的CircuitFormer，以及利用物理信息量子算法（QAOA）提升超表面配置效率。
-推荐关注EDA自动化与新一代通信技术的读者，重点探索大模型与量子优化如何重塑复杂硬件的设计流程。
-- 详情：[/202605/08/README](/202605/08/README)
+今日聚焦电力系统分布式稳定性分析的优化，以及非标准系统图纸的端到端自动识别技术。
+重点关注利用矩阵值微分无源性指标降低电网分析的保守性，以及 DiagramNet 框架对复杂系统图识别的性能突破。
+建议关注能源互联网安全与文档 AI 自动化的读者，深入了解这两项提升复杂系统处理效率的新方案。
+- 详情：[/202605/09/README](/202605/09/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [CircuitFormer: A Circuit Language Model for Analog Topology Design from Natural Language Prompt](/202605/08/2605.05773v1-circuitformer-a-circuit-language-model-for-analog-topology-design-from-natural-language-prompt)  
-   标签：评分：7.0/10、query:si-pi
-   evidence：用于模拟电路网表和拓扑设计的机器学习
-2. [From Multi-Port Models to Cascade Structures: Optimization of Active Unilateral Stacked Intelligent Metasurfaces](/202605/08/2605.05884v1-from-multi-port-models-to-cascade-structures-optimization-of-active-unilateral-stacked-intelligent-metasurfaces)  
-   标签：评分：7.0/10、query:si-pi
-   evidence：用于互连优化的多端口S参数框架和级联结构
-3. [Quantum Optimization for Electromagnetics: Physics-Informed QAOA for Reconfigurable Intelligent Surfaces](/202605/08/2605.06048v1-quantum-optimization-for-electromagnetics-physics-informed-qaoa-for-reconfigurable-intelligent-surfaces)  
-   标签：评分：6.5/10、query:si-pi
-   evidence：电磁优化中互耦合的物理信息模型
-4. [TokenStack: A Heterogeneous HBM-PIM Architecture and Runtime for Efficient LLM Inference](/202605/08/2605.05639v1-tokenstack-a-heterogeneous-hbm-pim-architecture-and-runtime-for-efficient-llm-inference)  
+1. [Toward less conservative distributed stability analysis of power systems via matrix-valued differential passivity indices](/202605/09/2605.04821v1-toward-less-conservative-distributed-stability-analysis-of-power-systems-via-matrix-valued-differential-passivity-indices)  
+   标签：评分：6.5/10、query:bga-xtalk
+   evidence：用于通道特性和通道间耦合的矩阵值公式
+2. [DiagramNet: An End-to-End Recognition Framework and Dataset for Non-Standard System-Level Diagrams](/202605/09/2605.01338v1-diagramnet-an-end-to-end-recognition-framework-and-dataset-for-non-standard-system-level-diagrams)  
    标签：评分：6.0/10、query:si-pi
-   evidence：用于高带宽内存任务的HBM-PIM架构
-5. [Residual-Corrected Equivalent-Circuit Model with Universal Differential Equations for Robust Battery Voltage Prediction under Operating-Condition Shift](/202605/08/2605.06419v1-residual-corrected-equivalent-circuit-model-with-universal-differential-equations-for-robust-battery-voltage-prediction-under-operating-condition-shift)  
-   标签：评分：6.0/10、query:bga-xtalk
-   evidence：带有神经网络修正的残差校正等效电路模型
+   evidence：芯片设计系统级图表识别与电路问答
 
 
 <div class="dpr-home-promo-card">

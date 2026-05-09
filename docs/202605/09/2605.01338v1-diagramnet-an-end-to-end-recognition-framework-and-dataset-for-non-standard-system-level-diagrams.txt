@@ -1,0 +1,383 @@
+Title: DiagramNet: An End-to-End Recognition Framework and Dataset for Non-Standard System-Level Diagrams
+
+URL Source: https://arxiv.org/pdf/2605.01338v1
+
+Published Time: Tue, 05 May 2026 00:39:52 GMT
+
+Number of Pages: 13
+
+Markdown Content:
+# DiagramNet: An End-to-End Recognition Framework and Dataset for Non-Standard System-Level Diagrams 
+
+Jincheng Lou 1 Ruohan Xu 1 Jiapeng Li 2 Junyin Pi 3 Runzhe Tao 1
+
+Weijian Fan 1 Xiao Tan 4 Guojie Luo 5 Yibo Lin 1 6 7 
+
+# Abstract 
+
+System-level diagrams encode the architectural blueprint of chip design, specifying module func-tions, dataflows, and interface protocols. How-ever, non-standardized symbols and the scarcity of structured training data hinder existing mul-timodal large language models (MLLMs) from recognizing these diagrams. To address this gap, we introduce DiagramNet, the first multimodal dataset for system-level diagrams, comprising 
+
+10,977 connection annotations and 15,515 chain-of-thought QA pairs across four tasks: Listing, Lo-calization, Connection, and Circuit QA. Building on this dataset, we propose a progressive training pipeline together with a decoupled multi-agent workflow that decomposes complex visual reason-ing into Perception, Reasoning, and Knowledge stages. On the DiagramNet benchmark, integrat-ing our 3B -parameter model with the proposed workflow surpasses the 2025 EDA Elite Challenge winner and outperforms GPT-5, Claude-Sonnet-4, and Gemini-2.5-Pro by over 2× in end-to-end evaluation. Notably, the workflow generalizes be-yond our model, boosting Task 1 performance by 
+
+128.7 × for Gemini-2.5-Pro and 12.4 × for GPT-5. Furthermore, with only 60 images for detec-tor adaptation, the method transfers effectively to AMSBench, achieving zero-shot connectivity rea-soning on par with GPT-5 and Claude-Sonnet-4 while surpassing the AMS state-of-the-art method Netlistify. 
+
+> 1
+
+School of IC, Peking University, Beijing, China 2College of Artificial Intelligence, Xi’an Jiaotong University, Xi’an, China 
+
+> 3
+
+Department of Precision Instruments, Tsinghua University, Bei-jing, China 4School of Software and Microelectronics, Peking University, Beijing, China 5School of Computer Science, Peking University, Beijing, China 6Institute of EDA, Peking Univer-sity, Beijing, China 7Beijing Advanced Innovation Center for IC, Beijing, China. Correspondence to: Jincheng Lou <jinchen-glou@stu.pku.edu.cn>, Yibo Lin <yibolin@pku.edu.cn>. 
+
+Preprint. May 5, 2026. 
+
+Figure 1. Overview of the DiagramNet dataset and our end-to-end multi-agent workflow, which eliminates time-consuming manual recognition that requires domain expertise. 
+
+# 1. Introduction 
+
+AI techniques have advanced rapidly and are reshaping electronic design automation (EDA). Traditional methods include graph neural networks for chip placement (Mirho-seini et al., 2021) and GPU-accelerated gradient-based op-timization (Lin et al., 2021). More recently, LLMs have enabled RTL code generation (Liu et al., 2024b; Thakur et al., 2023; Lu et al., 2024), syntax repair (Tsai et al., 2024), and domain-adapted engineering assistants (Liu et al., 2024a). Multi-agent systems further extend these capabilities: ChatEDA (Wu et al., 2024) orchestrates tool-augmented agents for end-to-end design automation, and VerilogCoder (Ho et al., 2025) combines planning with waveform tracing for autonomous RTL development. Ow-ing to their strong generalization, learning-based methods are becoming mainstream across the EDA pipeline. Multimodal Large Language Models (MLLMs) have fur-ther enabled joint vision-language reasoning across diverse domains (OpenAI et al., 2024; Team et al., 2024; Bai et al., 2025). Their capabilities, however, are fundamentally driven by high-quality datasets that provide structured supervision. 1
+
+> arXiv:2605.01338v1 [cs.AI] 2 May 2026 DiagramNet: End-to-End Recognition Framework for System-Level Diagrams
+
+In other visual domains, benchmarks such as AI2D (Kem-bhavi et al., 2016), ChartQA (Masry et al., 2022), and DocVQA (Mathew et al., 2021) have driven substantial progress in structured visual reasoning. A similar bench-mark could likewise advance structured understanding for circuit diagrams. In EDA, existing benchmarks remain limited in scope. Cir-cuitNet (Chai et al., 2023; Jiang et al., 2024) and Verilo-gEval (Liu et al., 2023) focus on digital backend prediction and RTL code generation, respectively. Multimodal circuit datasets are scarce and restricted to analog-mixed-signal (AMS) schematics: AMSNet (Tao et al., 2024; Shi et al., 2025a) and Image2Net (Xu et al., 2025) provide schematic-netlist pairs, AMSBench (Shi et al., 2025b) offers evaluation tasks for AMS circuit understanding, and Netlistify (Huang et al., 2025a) constructs a 40k synthetic AMS schematic dataset. Yet these efforts target standardized AMS schemat-ics with fixed component libraries, and none provides the comprehensive annotations needed for any other level circuit diagrams. Enabling MLLMs to understand circuit diagrams requires a dataset at a higher abstraction level. System-level diagrams occupy the top of the design hierarchy (Weste & Harris, 2011), serving as the architectural blueprints of chip design. They capture how processors, memory controllers, PLLs, ADCs, and other functional blocks interconnect. This infor-mation then guides logic synthesis and physical layout. Un-like transistor-level schematics or gate-level netlists, these diagrams use non-standardized domain-specific notations that vary across documents and organizations. This visual diversity and the scarcity of public multimodal circuit data have limited progress on automated diagram understanding. Most existing circuit datasets are restricted by NDAs or lack structured annotations. Moreover, manual annotation requires domain expertise and is highly time-consuming, which further exacerbates data scarcity, as illustrated in Figure 1. To address these gaps, our contributions are as follows. • A principled task formulation decomposes system-level diagram recognition into four subtasks across three semantic levels: Listing and Localization at the perception level, Connection at the structure level, and Circuit QA at the semantic level. This hierarchical decomposition offers a general paradigm for structured visual reasoning, applicable beyond circuit diagrams to complex graph relationships and other technical il-lustrations with implicit connectivity. • DiagramNet , the first multimodal dataset for system-level diagrams, contributes 10,977 connection pairs and 15,515 chain-of-thought QA samples with full annotations for all four subtasks. By bridging the data gap between general vision-language benchmarks and domain-specific EDA tasks, DiagramNet enables the community to study how MLLMs generalize to circuit domain. • A decoupled multi-agent workflow decomposes com-plex visual reasoning into Perception, Reasoning, and Knowledge stages. This architecture not only achieves strong performance on DiagramNet and robust transfer to AMSBench with only 60 images for detector adapta-tion, but also provides a model-agnostic paradigm that boosts frontier MLLMs by up to 128 ×.• A progressive training pipeline combining supervised fine-tuning, topology-consistency reinforcement learn-ing, and task-specific LoRA yields large gains on topol-ogy accuracy. This training recipe demonstrates how reinforcement learning with structured rewards can im-prove MLLM performance on tasks requiring precise relational reasoning. 
+
+# 2. Preliminary 
+
+Position in the design hierarchy. We characterize system-level diagrams along three dimensions (Figure 2a). First, by 
+
+circuit type : as indicated by the A and D regions, chips are divided into analog and digital categories, each handled by specialized IC engineers. Second, by design stage : fol-lowing the arrows in the figure, the design flow proceeds from front-end to back-end. Although specific steps differ between analog and digital domains, the front-end generally addresses logical or functional implementation, while the back-end focuses on physical realization. Third, by abstrac-tion level : at the leftmost end of the A and D regions, primitive building blocks differ by circuit type—devices for analog and gates for digital. At the highest abstraction level, system-level diagrams represent both analog and dig-ital chips, primarily defined by architects. They encode top-level architectural information including system func-tionality, dataflow, and interface protocols. 
+
+Recognition challenges. System-level diagram understand-ing differs from AMS schematic recognition in four aspects. 
+
+❶ Non-standardized symbols. Unlike AMS circuits with a fixed set of component types, system-level diagrams have no upper limit on symbol categories. As shown in Fig-ure 2a, even components with the same function can appear in very different visual forms, making template-based de-tection infeasible. ❷ Implicit connectivity. Unlike AMS circuits where devices have explicit input/output ports in-dicating connection direction, system-level diagrams from different sources may have directed or undirected connec-tions. Jump wire labels and connection markers are also non-standardized. ❸ Semantic gap. Different system-level diagrams may represent circuits at different abstraction lev-2DiagramNet: End-to-End Recognition Framework for System-Level Diagrams         
+
+> (a) Relationship between system-level diagrams and the circuit design hierarchy (b) DiagramNet framework.
+> Figure 2. (a) System-level diagrams across three aspects: circuit type ( Aanalog, Ddigital), design stage (front-end/back-end), and abstraction level (macro to device/gate). (b) The DiagramNet framework comprises three parts. The problem definition, DiagramNet dataset, and training pipeline together constitute an end-to-end recognition framework for system-level diagrams.
+
+els. They depict abstract architectures rather than real cir-cuits, requiring deeper circuit understanding and reason-ing. ❹ Data scarcity. No annotated system-level diagram dataset currently exists. 
+
+# 3. Methodology 
+
+This section presents the DiagramNet framework for rec-ognizing system-level diagrams. Figure 2b summarizes the overall pipeline that addresses heterogeneous symbols, im-plicit connections, and system-level semantics. We first formalize the recognition problem into four subtasks in Sec-tion 3.1.1. We then describe the DiagramNet dataset with task-specific annotations in Section 3.1. We design a multi-agent workflow with perception, reasoning, and knowledge agents in Section 3.2. Finally, we present a 3-phase training pipeline that combines supervised fine-tuning, reinforce-ment learning, and low-rank adaptation in Section 3.3. 
+
+3.1. DiagramNet Dataset 
+
+3.1.1. T ASK DEFINITION 
+
+The first key contribution of this work is a principled de-composition of system-level diagram recognition into well-defined subtasks. Unlike transistor-level schematics where components follow standard symbol libraries, system-level diagrams exhibit diverse visual styles and implicit connectiv-ity. Directly predicting the full circuit connection topology in one shot is difficult for current MLLMs. We therefore define four subtasks: 
+
+
+
+Listing: flist : I → C = {c1, . . . , c n}
+
+Localization: floc : ( I, c i) → bi ∈ [0 , 1] 4
+
+Connection: fconn : ( I, c i, C) → T i ⊆ C 
+
+Circuit QA: fqa : ( I, q ) → (r, a )
+
+(1) where I denotes the input image, C is the component set ordered by row-major position index, bi = ( x, y, w, h ) is a normalized bounding box, Ti ⊆ C \ { ci} is the set of output targets from ci, and (r, a ) denotes stepwise reasoning followed by the final answer. 3.1.2. D ATASET CONSTRUCTION AND COMPOSITION 
+
+DiagramNet is the first multimodal dataset for system-level diagram understanding. The dataset contains 1,000 dia-grams extracted from major chip design and computer archi-tecture venues across multiple years, released as part of the 2025 EDA Elite Challenge (2025 EDA Elite Challenge Con-test, 2025). All images are publicly available conference and journal figures with no license restrictions. The dataset comprises 10,977 connection annotations and 15,515 chain-of-thought QA pairs. We organize annotations into three semantic levels following the task hierarchy in Sec. 3.1.1. All labels are produced through a semi-automated pipeline combining model pre-annotation with expert verification. The full dataset and code will be released upon publication. 
+
+Perception level. This level supports the Listing and Lo-calization tasks. Listing extracts component names from visual entities to establish the vocabulary for downstream tasks. Localization provides spatial coordinates of compo-nent icons and serves as a reference for subsequent connec-tion prediction. After detection, components are reordered in row-major order from left to right and top to bottom to provide a consistent sequence for downstream reason-ing. YOLOv11-nano detects component bounding boxes, Qwen2.5-VL extracts component names from cropped re-gions, and domain experts verify correctness. To handle diagrams with repeated component names, we assign unique identifiers via row-major ordering. The detector is trained as a single-class model to generalize across heterogeneous symbol styles. 3DiagramNet: End-to-End Recognition Framework for System-Level Diagrams                                                  
+
+> Table 1. Comparison of DiagramNet with AMS circuit datasets including AMSBench (Shi et al., 2025b), Image2Net (Xu et al., 2025), and Netlistify (Huang et al., 2025a). Li: Listing, Lo: Localization, C: Connection, QA: Circuit QA. †40k synthetic samples.
+> DiagramNet AMSBench Image2Net Netlistify
+> Scope
+> Abstraction level System AMS AMS AMS Supported tasks Li, Lo, C, QA Li, Lo, C, QA Lo Lo, C
+> Annotations
+> # Connections 10,977 6,000 2,914 359 †
+> # QA pairs 15,515 1,260 ——Coverage per diagram All components 1 component All All
+> Features
+> Multimodal QA ✓(+ CoT) Text only ——Spatial annotation Accurate Index Approximate ——Includes method ✓—✓✓
+> Train / Eval split ✓/✓— / ✓✓/✓✓/✓
+
+Structure level. This level supports the Connection task. Connection predicts only the output connections of a source component rather than all connections. Gemini-2.5-Pro generates initial labels, which experts then verify and correct. The resulting connection topology annotations also provide ground truth for reinforcement learning rewards. 
+
+Semantic level. This level supports the Circuit QA task. We assemble multiple-choice questions at two levels: text-only questions adapted from circuit textbooks and image-conditioned questions generated from diagram content. The questions span seven domains including control systems, power electronics, RF communication, PLL design, data conversion, multi-rate DSP, and decision decoding. Each question includes stepwise reasoning to enable chain-of-thought training. 
+
+Evaluation benchmark. The evaluation benchmark follows Problem Two of the 2025 EDA Elite Challenge (2025 EDA Elite Challenge Contest, 2025). It contains 100 difficult diagrams with 100 Task 1 instances and 80 Task 2 instances. Each image is manually verified to have no overlap with the training set. No augmented or similar versions of training images appear in the test split. 3.1.3. C OMPARISON WITH PRIOR WORK .As shown in Table 1, AMSBench, Image2Net, and Netlistify target standardized analog-mixed signal (AMS) schematics, while DiagramNet focuses on system-level diagrams. Dia-gramNet provides 1.8 × more connection pairs than AMS-Bench (10,977 vs. 6,000) and 12.3 × more QA samples (15,515 vs. 1,260), each with chain-of-thought. Critically, DiagramNet annotates all components per diagram with rel-ative positions in natural number ordering, whereas AMS-Bench labels only one component per diagram with approx-imate locations. 
+
+3.2. Multi-agent Workflow 
+
+Recognition is decomposed into three specialized agents to keep each subproblem controllable. Appendix B and Figure 5 show that end-to-end MLLMs suffer from visual grounding bottlenecks and spatial hallucinations on dense diagrams. The term “agent” denotes an abstract functional role and allows the underlying model to be replaced indepen-dently. The Perception Agent uses YOLOv11-nano and the Reasoning Agent uses a 3B VLM to enable low-cost transfer across diagram domains. Figure 3 shows the architecture of the multi-agent workflow and the inference procedure. Following the task definitions in §3.1.1, we assign each subtask to a dedicated agent. The Perception Agent outputs component locations and ordering indices. The Reasoning Agent predicts component-wise topological connections. The Knowledge Agent helps to enhance specific tasks. 
+
+Perception Agent. The perception agent converts raw pixels into a structured list of components with locations. Vision-language models (VLMs) can detect objects but are costly and memory-heavy on large diagrams. We instead use YOLO for efficient component localization. To pro-vide spatial structure for downstream reasoning, we apply row-major ordering to the detected components. This serial-ization removes ordering ambiguity and gives the reasoning agent a consistent positional prior. 
+
+Reasoning Agent. The reasoning agent is a vision-language model (VLM) that predicts connections between components. Predicting the full circuit graph at once is challenging because the output space is large and spatial constraints are complex. We predict component-wise con-nections following the row-major order from the Perception Agent, from left to right and top to bottom. The VLM sees the full diagram and a source component then predicts 4DiagramNet: End-to-End Recognition Framework for System-Level Diagrams 
+
+Algorithm 1 Multi-agent Workflow for System-Level Dia-gram Recognition 
+
+Require: System-level diagram I, query Q
+
+Ensure: Connectivity graph G, answer A 
+
+> 1:
+
+[P ERCEPTION AGENT ] 
+
+> 2:
+
+B ← DETECT (I) {component bounding boxes}  
+
+> 3:
+
+B ← SORT ROW MAJOR (B) {spatial ordering}  
+
+> 4:
+
+C ← EXTRACT NAMES (I, B) {component list}  
+
+> 5: 6:
+
+[R EASONING AGENT ] 
+
+> 7:
+
+E ← ∅  
+
+> 8:
+
+for each ci ∈ C do  
+
+> 9:
+
+Ti ← fconn (I, c i, C) {predict output targets}  
+
+> 10:
+
+E ← E ∪ { (ci, t ) : t ∈ T i} 
+
+> 11:
+
+end for  
+
+> 12:
+
+G ← (C, E) {directed topology graph}  
+
+> 13: 14:
+
+[K NOWLEDGE AGENT ] 
+
+> 15:
+
+A ← fqa (I, Q ; θLoRA ) {domain reasoning}  
+
+> 16:
+
+return G, A 
+
+only its output connections. In experiments, this approach improves connection identification accuracy, especially on dense diagrams with many crossings. 
+
+Knowledge Agent. The knowledge agent is responsible for loading task-specific LoRA weights into the VLM based on the tasks. The purpose of introducing the knowledge agent is to improve performance on Circuit QA and to en-able low-cost adaptation to new tasks. This design enables efficient specialization to new circuit domains while sharing one basic reasoning backbone. Algorithm 1 summarizes the inference procedure. The per-ception agent first detects and orders components. The rea-soning agent then iterates over each component to predict component-wise output connections. Finally, the knowledge agent answers queries using the extracted topology or direct visual reasoning based on the question type. 
+
+3.3. Model Training Pipeline 
+
+This section describes how we train the Reasoning Agent (VLM) and inject circuit connection and QA knowledge via LoRA. The Perception Agent (YOLOv11-nano) is trained separately as a single-class detector. This step is lightweight and omitted here for brevity. The training pipeline is di-vided into three phases and described in Sections 3.3.1 to 3.3.3. Phase 1 uses multi-task supervised fine-tuning on all parameters. Phase 2 applies reinforcement learning on hard samples. Phase 3 uses LoRA for task-specific adaptation. 3.3.1. P HASE 1: M ULTI -TASK SUPERVISED 
+
+FINE -T UNING (SFT) General VLMs are pre-trained on natural images. They fo-cus on overall semantics, not precise logical connections. To avoid cold-start issues, we initialize from a base model pre-trained on structured diagram tasks that share topological characteristics with circuit schematics. Subsequent experi-ments 2 confirm that this choice yields better performance in understanding topological relationships. This initialization gives the model a better starting point. It avoids re-learning basic chart understanding. We convert all four subtasks in Equation 1 into instruction-tuning format. The model takes image Xv and instruction 
+
+Xt as input. It generates every task’s target answer sequence 
+
+Y . We use cross-entropy loss: 
+
+LSFT = −
+
+> L
+
+X
+
+> i=1
+
+log P (yi|Xv , X t, y <i ; Θ) (2) where Θ is model parameters and L is sequence length. We mix all four subtasks in each batch. This balances learn-ing across component recognition, localization, connection identification, and Circuit QA. 3.3.2. P HASE 2: H ARD -S AMPLE REINFORCEMENT 
+
+LEARNING WITH COMPOUND REWARDS 
+
+Supervised fine-tuning works well on simple samples. But it struggles with hard cases such as dense connections, cross-ing buses, or unusual layouts. We use reinforcement learn-ing to improve robustness on selected difficult samples. 
+
+Hard Sample Selection. We select difficult samples from DiagramNet using three criteria (Guo et al., 2025; Singh et al., 2024). ❶ Inference instability captures cases where predictions vary across repeated decoding runs and yield low or inconsistent Pass@K scores. ❷ Visual ambiguity 
+
+includes partially hidden or low resolution symbols and inconsistent diagram conventions such as unlabeled line crossings or reused icons. ❸ High density connectivity 
+
+refers to large fan in and fan out with many crossings, which stresses topological consistency. 
+
+Compound Reward Design. We design rewards for each subtask. The total reward combines format validity ( Rf mt )and prediction accuracy ( Racc ): 
+
+Rtotal = X
+
+> t∈{ loc,conn,qa,list }
+
+(λf,t R(t) 
+
+> f mt
+
++ λa,t R(t)
+
+> acc
+
+) (3) The specific rewards are: For Localization , IoU serves as the reward function: 
+
+R(loc ) 
+
+> acc
+
+= IoU (bbox pred , bbox gt ) (4) 5DiagramNet: End-to-End Recognition Framework for System-Level Diagrams       
+
+> Figure 3. Architecture of the proposed multi-agent workflow. The Perception Agent detects components and applies row-major ordering to form a structured layout. The Reasoning Agent predicts directed connections per source component with a VLM backbone. The
+> Knowledge Agent decides whether to activate task-specific LoRA adapters for Circuit QA and outputs the final answer.
+
+YOLO handles final inference, but RL training still includes localization to force the VLM’s attention on correct compo-nent regions. For Connection , F1 score plus a length penalty balances recall and precision: 
+
+R(conn ) 
+
+> acc
+
+= α · F 1( P, G ) + (1 − α) · Rlen (5) where P and G are predicted and ground truth sets. Rlen 
+
+encourages matching the number of connections. For Listing , F1 score plus LCS (Longest Common Subse-quence) is applied: 
+
+R(list ) 
+
+> acc
+
+= β1 ·F 1multi +β2 ·Rlen +β3 · LCS (A, B )max( |A|, |B|) (6) LCS rewards maintaining row-major order. For Circuit QA , exact string matching is used: 
+
+R(qa ) 
+
+> acc
+
+= I(answer pred == answer gt ) (7) These task-specific rewards define the RL objective and yield a robust base model. 3.3.3. P HASE 3: F INAL REFINEMENT WITH LORA After RL, the model has strong structured perception and logical reasoning. To evaluate transferability to specific downstream tasks, LoRA (Low-Rank Adaptation) is applied for efficient fine-tuning. The base model weights W0 ∈ Rd×k are frozen, and only low-rank matrices B ∈ Rd×r and A ∈ Rr×k are updated, where r ≪ min( d, k ). The forward pass is: 
+
+h = W0x + ∆ W x = W0x + αr BAx (8) This adapts the output format such as Circuit QA without losing topology reasoning capability. This shows our frame-work can serve as a general visual foundation for recognition any level circuits. 
+
+# 4. Experimental Result 
+
+This section demonstrates that the proposed method gener-alizes across benchmarks through comparison with diverse models and pipelines. Experimental settings are described in §4.1, followed by comparative results on the DiagramNet evaluation benchmark in §4.2 and ablation analyses in §4.3. Case studies are provided in Appendix B. 
+
+4.1. Experimental Settings 
+
+All experiments were conducted on NVIDIA A100-SXM4 (80GB) GPUs for reinforcement learning and A40 GPUs for supervised fine-tuning, with LoRA adaptation tested on consumer-grade RTX 4090 GPUs. The base model is 
+
+Qwen2.5-VL-3B-Hint-GRPO (Huang et al., 2025b), with weights pre-trained on AI2D-RST (Hiippala et al., 2020) due to its topological similarity with circuit diagrams. Train-ing was implemented using LlamaFactory (Zheng et al., 2024) and Verl (Sheng et al., 2025) with bfloat16 precision and DeepSpeed ZeRO-3 optimization. For closed-source models, APIs were configured with temperature 0 and top_p 0.9 to ensure reproducibility. 
+
+4.2. Evaluation on DiagramNet benchmark 
+
+The evaluation is conducted on the DiagramNet benchmark from Problem Two of the 2025 EDA Elite Challenge (2025 EDA Elite Challenge Contest, 2025). Task 1 covers com-ponent detection (S1), output count (S2), and connection identification (S3). Task 2 covers Circuit QA. F1 scores 6DiagramNet: End-to-End Recognition Framework for System-Level Diagrams                                                                                                                 
+
+> Table 2. DiagramNet benchmark results. Best in bold , second underlined.
+> Method S1 S2 S3 Task 1 Task 2 Overall
+> Ours DiagramNet-3B (w. Workflow) 0.988 0.828 0.735 0.855 0.395 0.671
+> Domain EDA Elite Winner 0.984 0.787 0.777 0.862 0.370 0.665 Netlistify (Huang et al., 2025a) 0.986 0.239 0.150 0.502 ——
+> Open-source Qwen2.5-VL-3B (Bai et al., 2025) 0.111 0.038 0.014 0.058 0.360 0.179 Hint-GRPO (Huang et al., 2025b) 0.153 0.062 0.025 0.083 0.355 0.192
+> Commercial
+> Gemini-2.5-Pro (E2E) 0.008 0.005 0.008 0.007 0.685 0.278 GPT-5 (E2E) 0.085 0.068 0.029 0.059 0.730 0.327 Claude-Sonnet-4 (E2E) 0.477 0.337 0.265 0.364 0.445 0.397
+> Table 3. Multi-agent Workflow effect. Gain is vs. end-to-end inference. Best in bold .
+> Method S1 S2 S3 Task 1 Task 2 Overall Gain (T1)
+> Ours DiagramNet-3B 0.988 0.828 0.735 0.855 0.395 0.671 —
+> Open-source Qwen2.5-VL-3B (Bai et al., 2025) 0.988 0.375 0.203 0.552 0.365 0.447 9.5 ×
+> Hint-GRPO (Huang et al., 2025b) 0.988 0.454 0.258 0.589 0.355 0.496 7.1 ×
+> Commercial
+> Gemini-2.5-Pro 0.986 0.870 0.832 0.901 0.685 0.815 128.7 ×
+> GPT-5 0.986 0.582 0.555 0.733 0.705 0.722 12.4 ×
+> Claude-Sonnet-4 0.986 0.486 0.314 0.618 0.450 0.551 1.7 ×
+
+are reported for all metrics. The overall score follows the official formula: 
+
+Score Task1 = 0 .4 S1 + 0 .2 S2 + 0 .4 S3,Score overall = 0 .6 Score Task1 + 0 .4 Score Task2 . (9) Table 2 reports the main results. DiagramNet-3B achieves an overall score of 0.671, ranking first among all methods. 
+
+Comparison with domain-specific methods. DiagramNet-3B outperforms EDA Elite Winner by 4.1% on S2 and matches its S1 performance. Netlistify, the AMS circuit recognition SOTA, achieves only 0.150 on S3, trailing DiagramNet-3B by 4.9 ×. Even with our YOLO detector, its poor S3 performance indicates weak generalization from standardized AMS schematics to system-level diagrams. The detailed analysis is provided in Appendix B. 
+
+Comparison with open-source MLLMs. Relative to Qwen2.5-VL-3B, DiagramNet-3B improves S2 by 21.8 ×
+
+and S3 by 52.5 ×. Compared to Hint-GRPO, the gains re-main substantial at 13.4 × on S2 and 29.4 × on S3. These results demonstrate the effectiveness of the proposed train-ing pipeline. A detailed phase-wise analysis is provided in Section 4.3.2. 
+
+Comparison with commercial MLLMs. In end-to-end mode, commercial models struggle on Task 1: Gemini-2.5-Pro and GPT-5 score below 0.1, while Claude-Sonnet-4 reaches 0.364. Despite detailed prompts with output for-mat guidance, Gemini-2.5-Pro and GPT-5 fail to accurately recognize components, leading to cascading errors in down-stream subtasks. A detailed analysis is provided in Ap-pendix B. DiagramNet-3B surpasses Claude-Sonnet-4 by 
+
+2.3 × on Task 1. On Task 2, GPT-5 leads at 0.730, exceed-ing DiagramNet-3B by 1.8 ×. This gap reflects the broader domain knowledge of commercial models from large-scale pretraining. The analysis of this issue is shown in Sec-tion 4.3.2. Nevertheless, DiagramNet-3B achieves the best overall score in DiagramNet benchmark. 
+
+4.3. Ablation Study 
+
+4.3.1. V ALIDATION OF MULTI -AGENT WORKFLOW 
+
+Table 3 shows that the multi-agent workflow provides sub-stantial gains on Task 1 across all models. On Task 1, the workflow boosts Gemini-2.5-Pro by 128.7 ×, GPT-5 by 12.4 ×, and Claude-Sonnet-4 by 1.7 ×. It also improves the open-source baselines by 9.5 × and 7.1 ×. These results demonstrate that the workflow generalizes well and benefits models of varying capacity. Notably, Gemini-2.5-Pro with our workflow achieves the highest Task 1 score of 0.901, surpassing DiagramNet-3B. This shows the workflow is not tied to our model and can boost other VLMs. DiagramNet-3B also outperforms GPT-5 and Claude-Sonnet-4 on Task 1, indicating strong standalone performance. The improve-ment on Task 2 is limited because LoRA weights do not transfer across models. 7DiagramNet: End-to-End Recognition Framework for System-Level Diagrams                                
+
+> Table 4. Ablation study on different training phases. Each row adds one phase to the previous configuration. S1 is fixed at 0.988 (handled by YOLOv11-nano) and omitted for clarity.
+> Training Phase S2 S3 Task 1 Task 2 Overall
+> Qwen2.5-VL-3B (base) 0.375 0.203 0.552 0.365 0.447 + Hint-GRPO 0.454 0.258 0.589 0.355 0.496 + SFT 0.736 0.594 0.780 0.355 0.610 + RL 0.807 0.725 0.847 0.355 0.650 + LoRA 0.828 0.735 0.855 0.395 0.671
+
+4.3.2. V ALIDATION OF THE TRAINING PIPELINE 
+
+Table 4 summarizes the phase-wise effects. Comparing Qwen2.5-VL-3B with Hint-GRPO shows that training on AI2D-RST improves Task 1 but degrades Task 2. This re-veals that 3B models are easy to forget during fine-tuning. Optimizing one task can degrade performance on another. To address this issue, we train Task 1 and Task 2 jointly by combining their data in each training phase. This joint training prevents Task 2 from dropping while Task 1 im-proves, so preserving Task 2 accuracy is itself a success. The final model improves S2 by 2.2 ×, S3 by 3.6 ×, overall score by 22.4% , and Task 2 by 3% over Qwen2.5-VL-3B. S1 remains unchanged because it is handled by a fixed YOLOv11-nano detector. These results validate the effec-tiveness of each phase in the training pipeline. 4.3.3. V ALIDATION OF TASK TRANSFERABILITY 
+
+This ablation validates the generalization capability of DiagramNet-3B and its genuine understanding of circuit connectivity. Transferability is evaluated by stratified sam-pling on AMSBench (Shi et al., 2025b) with a ratio of 7:2:1 
+
+over easy, medium, and hard cases, using 30 cases per task and a fixed seed of 324964 . YOLOv11-nano is retrained with only 60 images from AMSBench to adapt to AMS components. Because these images are used for detector training, component detection tasks are excluded, and the evaluation focuses on two connection tasks and Textual QA to test connectivity reasoning and domain knowledge. Table 5 reports zero-shot transfer results on AMSBench. DiagramNet-3B achieves 0.500/0.667/0.900 on Connection Identification, Connection Judgement, and TQA. Percent-ages denote relative change to the compared method. On Connection Identification, it improves over the 2025 EDA Elite winner at 0.133 by 36.7%, exceeds Netlistify at 0.433 by 6.7%, and outperforms Hint-GRPO at 0.233 by 26.7%. On Connection Judgement, it ties Netlistify and Hint-GRPO at 0.667, improves over the EDA winner at 0.567 by 10%, and trails GPT-5 at 0.700 by 0.3%. On TQA, it ties GPT-5 at 0.900, exceeds Hint-GRPO and Gemini-2.5-Pro at 0.867 by 3.3%.                        
+
+> Table 5. Zero-shot connectivity reasoning on AMSBench. Open-source models are evaluated with the multi-agent workflow, while commercial APIs (gray rows) are evaluated end-to-end. Best in
+> bold , second underlined.
+> Method Conn. Ident. Conn. Judg. TQA
+> DiagramNet-3B 0.500 0.667 0.900 EDA Elite Winner 0.133 0.567 0.930 Netlistify (Huang et al., 2025a) 0.433 0.667 —Hint-GRPO (Huang et al., 2025b) 0.233 0.667 0.867 Gemini-2.5-Pro 0.670 1.000 0.867 GPT-5 0.530 0.700 0.900 Claude-Sonnet-4 0.200 0.800 0.933
+
+# 5. Conclusion 
+
+We presented DiagramNet, the first multimodal dataset and recognition framework for system-level diagrams. The dataset contributes 10,977 connection annotations and 15,515 chain-of-thought QA pairs, addressing a critical data gap in circuit understanding. Our hybrid training pipeline combines supervised fine-tuning, topology-consistency re-inforcement learning, and task-specific LoRA. It improves S2 by 21.86 × and S3 by 52.57 × over Qwen2.5-VL-3B, achieving an overall score of 0.671 that surpasses EDA Elite Winner by 22.4%. The multi-agent workflow gen-eralizes across model scales, yielding 128.7 × Task 1 im-provement for Gemini-2.5-Pro and enabling competitive zero-shot transfer to AMSBench. 
+
+# Software and Data 
+
+Due to submission file size limits, dataset images and model weights are not included. The released scripts and an-notation files are available at: https://anonymous. 4open.science/r/DiagramNet-1727/ . Upon ac-ceptance, the full dataset, models, and code will be released. 
+
+# Impact Statement 
+
+This work advances multimodal AI for electronic design automation. DiagramNet provides the first public bench-8DiagramNet: End-to-End Recognition Framework for System-Level Diagrams 
+
+mark for system-level diagram recognition, addressing data scarcity and enabling reproducible evaluation. The multi-agent workflow offers a reusable paradigm for other level circuit diagrams such as PCB schematics and architectural blueprints. Competitive cross-domain results with only 60 images for detector adaptation lower the barrier for apply-ing MLLMs where labeled data is scarce. Potential risks include exposure of proprietary designs and over-reliance on automation in safety-critical flows. We recommend human verification in high-stakes contexts. 
+
+# References 
+
+2025 EDA Elite Challenge Contest. 2025 china postgradu-ate ic innovation competition: Eda elite challenge contest, 2025. URL http://www.edachallenge.cn . Ac-cessed: 2026-01-26. Bai, S., Chen, K., Liu, X., et al. Qwen2.5-vl technical re-port, 2025. URL https://arxiv.org/abs/2502. 13923 .Chai, Z., Zhao, Y., Liu, W., et al. CircuitNet: An Open-Source Dataset for Machine Learning in VLSI CAD Applications With Improved Domain-Specific Evaluation Metric and Learning Strategies. IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems , 42(12):5034–5047, December 2023. ISSN 1937-4151. doi: 10.1109/TCAD. 2023.3287970. URL https://ieeexplore.ieee. org/document/10158384/ .Guo, D., Yang, D., Zhang, H., et al. Deepseek-r1 incentivizes reasoning in llms through reinforce-ment learning. Nature , 645(8081):633–638, Septem-ber 2025. ISSN 1476-4687. doi: 10.1038/ s41586-025-09422-z. URL http://dx.doi.org/ 10.1038/s41586-025-09422-z .Hiippala, T., Alikhani, M., Haverinen, J., Kalliokoski, T., Logacheva, E., Orekhova, S., Tuomainen, A., Stone, M., and Bateman, J. A. AI2D-RST: a multimodal cor-pus of 1000 primary school science diagrams. Lan-guage Resources and Evaluation , 55(3):661–688, De-cember 2020. ISSN 1574-0218. doi: 10.1007/ s10579-020-09517-1. URL http://dx.doi.org/ 10.1007/s10579-020-09517-1 .Ho, C.-T., Ren, H., and Khailany, B. VerilogCoder: Au-tonomous verilog coding agents with graph-based plan-ning and abstract syntax tree (ast)-based waveform trac-ing tool. Proceedings of the AAAI Conference on Artificial Intelligence , 39(1):300–307, Apr. 2025. doi: 10.1609/ aaai.v39i1.32007. URL https://ojs.aaai.org/ index.php/AAAI/article/view/32007 .Huang, C.-Y., Chen, H.-I., Ho, H.-W., Kang, P.-H., Lin, M. P.-H., Liu, W.-H., and Ren, H. Netlistify: Trans-forming circuit schematics into netlists with deep learn-ing. In 2025 ACM/IEEE 7th Symposium on Machine Learning for CAD (MLCAD) , pp. 1–8, 2025a. doi: 10.1109/MLCAD65511.2025.11189145. Huang, Q., Dai, W., Liu, J., et al. Boosting mllm reasoning with text-debiased hint-grpo, 2025b. URL https:// arxiv.org/abs/2503.23905 .Jiang, X., zhuomin chai, Zhao, Y., Lin, Y., Wang, R., and Huang, R. CircuitNet 2.0: An advanced dataset for pro-moting machine learning innovations in realistic chip design environment. In The Twelfth International Confer-ence on Learning Representations , 2024. URL https: //openreview.net/forum?id=nMFSUjxMIl .Kembhavi, A., Seo, M., Schwenk, D., et al. A diagram is worth a dozen images. In European Conference on Computer Vision , pp. 235–251, 2016. Lin, Y., Jiang, Z., Gu, J., Li, W., Dhar, S., Ren, H., Khailany, B., and Pan, D. Z. DREAMPlace: Deep learning toolkit-enabled gpu acceleration for modern vlsi placement. 
+
+IEEE Transactions on Computer-Aided Design of Inte-grated Circuits and Systems , 40(4):748–761, 2021. doi: 10.1109/TCAD.2020.3003843. Liu, M., Pinckney, N., Khailany, B., and Ren, H. Invited paper: VerilogEval: Evaluating large language models for verilog code generation. In 2023 IEEE/ACM In-ternational Conference on Computer Aided Design (IC-CAD) , pp. 1–8, 2023. doi: 10.1109/ICCAD57390.2023. 10323812. Liu, M., Ene, T.-D., Kirby, R., et al. Chip-NeMo: Domain-Adapted LLMs for Chip Design, April 2024a. URL http://arxiv.org/abs/2311. 00176 . arXiv:2311.00176 [cs]. Liu, S., Fang, W., Lu, Y., Zhang, Q., Zhang, H., and Xie, Z. RTLCoder: Outperforming gpt-3.5 in design rtl gen-eration with our open-source dataset and lightweight solution. In 2024 IEEE LLM Aided Design Workshop (LAD) , pp. 1–5, 2024b. doi: 10.1109/LAD62341.2024. 10691788. Lu, Y., Liu, S., Zhang, Q., and Xie, Z. RTLLM: An open-source benchmark for design rtl generation with large language model. In 2024 29th Asia and South Pacific Design Automation Conference (ASP-DAC) , pp. 722–727, 2024. doi: 10.1109/ASP-DAC58780.2024.10473904. Masry, A., Long, D. X., Tan, J. Q., et al. ChartQA: A bench-mark for question answering about charts with visual and logical reasoning. In Findings of ACL , 2022. 9DiagramNet: End-to-End Recognition Framework for System-Level Diagrams 
+
+Mathew, M., Karatzas, D., and Jawahar, C. V. DocVQA: A dataset for vqa on document images. In IEEE Winter Conference on Applications of Computer Vision , pp. 2200– 2209, 2021. Mirhoseini, A., Goldie, A., et al. A graph placement method-ology for fast chip design. Nature , 594:207–212, 2021. OpenAI, Achiam, J., Adler, S., et al. GPT-4 Technical Re-port, 2024. URL https://arxiv.org/abs/2303. 08774 .Sheng, G., Zhang, C., Ye, Z., Wu, X., Zhang, W., Zhang, R., Peng, Y., Lin, H., and Wu, C. HybridFlow: A flexible and efficient RLHF framework. In Proceedings of the Twenti-eth European Conference on Computer Systems , EuroSys ’25, pp. 1279–1297, New York, NY, USA, 2025. Associa-tion for Computing Machinery. ISBN 9798400711961. doi: 10.1145/3689031.3696075. URL https://doi. org/10.1145/3689031.3696075 .Shi, Y., Tao, Z., Gao, Y., Huang, L., Wang, H., Yu, Z., Lin, T.-J., and He, L. Amsnet 2.0: A large ams database with ai segmentation for net detection. In 2025 IEEE International Conference on LLM-Aided Design (ICLAD) ,pp. 242–248, 2025a. doi: 10.1109/ICLAD65226.2025. 00014. Shi, Y., Zhang, Z., Wang, H., et al. AMSbench: A Compre-hensive Benchmark for Evaluating MLLM Capabilities in AMS Circuits, October 2025b. URL http://arxiv. org/abs/2505.24138 . arXiv:2505.24138 [cs]. Singh, A., Co-Reyes, J. D., Agarwal, R., et al. Beyond human data: Scaling self-training for problem-solving with language models. Transactions on Machine Learn-ing Research , 2024. ISSN 2835-8856. URL https:// openreview.net/forum?id=lNAyUngGFK . Ex-pert Certification. Tao, Z., Shi, Y., Huo, Y., et al. AMSNet: Netlist Dataset for AMS Circuits, October 2024. URL http://arxiv. org/abs/2405.09045 . arXiv:2405.09045 [cs]. Team, G., Anil, R., Borgeaud, S., et al. Gemini: A family of highly capable multimodal models, 2024. URL https: //arxiv.org/abs/2312.11805 .Thakur, S. et al. VeriGen: A large language model for verilog code generation. In International Conference on Computer-Aided Design , 2023. Tsai, Y., Liu, M., and Ren, H. RTLFixer: Automati-cally Fixing RTL Syntax Errors with Large Language Model. In Proceedings of the 61st ACM/IEEE Design Automation Conference , pp. 1–6, San Francisco CA USA, June 2024. ACM. ISBN 979-8-4007-0601-1. doi: 10.1145/3649329.3657353. URL https://dl.acm. org/doi/10.1145/3649329.3657353 .Weste, N. H. E. and Harris, D. CMOS VLSI Design: A Circuits and Systems Perspective . Addison-Wesley, 4th edition, 2011. Wu, H., He, Z., Zhang, X., Yao, X., Zheng, S., Zheng, H., and Yu, B. ChatEDA: A large language model pow-ered autonomous agent for eda. IEEE Transactions on Computer-Aided Design of Integrated Circuits and Sys-tems , 43(10):3184–3197, 2024. doi: 10.1109/TCAD. 2024.3383347. Xu, H., Liu, C., Wang, Q., Huang, W., Xu, Y., Chen, W., Peng, A., Li, Z., Li, B., Qi, L., Yang, J., Du, Y., and Du, L. Image2Net: Datasets, benchmark and hybrid framework to convert analog circuit diagrams into netlists. In 2025 International Symposium of Electronics Design Automation (ISEDA) , pp. 807–816, 2025. doi: 10.1109/ ISEDA65950.2025.11100581. Zheng, Y., Zhang, R., Zhang, J., et al. LlamaFactory: Uni-fied efficient fine-tuning of 100+ language models. In 
+
+Proceedings of the 62nd Annual Meeting of the Asso-ciation for Computational Linguistics (Volume 3: Sys-tem Demonstrations) , Bangkok, Thailand, 2024. As-sociation for Computational Linguistics. URL http: //arxiv.org/abs/2403.13372 .10 DiagramNet: End-to-End Recognition Framework for System-Level Diagrams 
+
+# A. Task Definitions and Prompts       
+
+> (a) End-to-end prompt. (b) Workflow prompt. (c) YOLO prompt.
+> Figure 4. Prompts used in Task Definitions.
+
+To illustrate the rationale behind our method, this section presents the exploration of end-to-end, YOLO-assisted, and multi-agent workflow approaches for system-level diagram recognition, along with representative prompts shown in Figure 4. Based on the task decomposition of DiagramNet into Listing, Localization, Connection, and Circuit QA, an end-to-end setting was first attempted (Figure 4a), completing Task 1 (Listing, Localization, and Connection) in a single pass before directly answering Task 2. However, system-level diagrams often contain non-standard symbols, and their wiring is frequently expressed in implicit or crossing forms. As a result, preserving correctness for component recognition, localization, and topological connectivity simultaneously within one-round generation proves difficult. This limitation is reflected in the experimental results in Table 2. To address this limitation, YOLO annotations were introduced to strengthen Localization as the perception layer (Figure 4c), enabling the model to observe detection boxes and indices. Yet requiring a single-pass output of the full connectivity graph still leads to instability because the non-deterministic YOLO detection order, combined with the non-unique mapping between indices and components, amplifies ambiguity and makes reliable connectivity recovery challenging. These observations motivated the decoupled multi-agent workflow described in this paper (Figure 4b). The Perception Agent first completes Listing and Localization, assigning unified indices to components in row-major order (left to right, top to bottom) to establish a stable sequential prior. The Reasoning Agent then predicts output connections component by component using fconn : I, c i, C → T i, which substantially reduces output-space complexity. Finally, Circuit QA is handled by the Knowledge Agent as a separate step. This workflow aligns with the DiagramNet task decomposition and significantly improves stability and accuracy for connectivity identification in complex topologies with dense wiring. 
+
+# B. Case Study 
+
+This appendix provides qualitative analysis of DiagramNet-3B and baseline methods across five aspects: end-to-end failures of commercial MLLMs on component detection, sources of S3 errors under visual ambiguity, domain knowledge gaps on textual QA, Netlistify failure modes, and cross-domain transfer to AMSBench. 
+
+End-to-end failures of commercial MLLMs on component detection. We evaluate GPT-5, Gemini-2.5-Pro, and Claude-Sonnet-4 on DiagramNet using identical prompts with strict output format constraints. All three models exhibit systematic failures on S1 (component detection): Gemini-2.5-Pro scores 0.008, GPT-5 scores 0.085, and Claude-Sonnet-4 scores 0.477. In contrast, our workflow achieves 0.988 using a perception agent. Figure 5 visualizes component detection results. Subfigure (a) shows our workflow output with YOLO annotations. Subfigures (b)–(d) show component locations rendered from Task 1 outputs of Claude, GPT-5, and Gemini-2.5-Pro. We identify three failure patterns through visualization. Invalid coordinates : Gemini occasionally outputs bounding boxes with zero height, producing invalid localizations. This behavior is inconsistent across images, indicating unstable spatial alignment for certain diagram layouts. Loose bounding boxes : GPT-5 produces coordinates in reasonable ranges but with insufficient precision. The IoU frequently falls between 0.3 and 0.49, just below the S1 threshold. Moderate accuracy :11 DiagramNet: End-to-End Recognition Framework for System-Level Diagrams        
+
+> (a) Workflow with YOLO. (b) Claude Task 1 output.
+> (c) GPT-5 Task 1 output. (d) Gemini-2.5-Pro Task 1 output.
+> Figure 5. Component detection visualizations. (a) Our workflow with YOLO annotations. (b)–(d) Component locations rendered from Task 1 outputs of Claude, GPT-5, and Gemini-2.5-Pro.
+
+Claude produces more stable coordinates with approximately 40% hit rate, but this remains insufficient for high-precision detection. After introducing our multi-agent workflow, Task 1 scores improve substantially: 128.7 × for Gemini-2.5-Pro, 12.4 × for GPT-5, and 1.7 × for Claude-Sonnet-4. The dedicated detector provides reliable spatial references, and topology reasoning is decoupled from implicit localization. This demonstrates that the workflow mitigates the visual grounding bottleneck on circuit diagrams.       
+
+> (a) Weak directional cues. (b) Crossing ambiguity. (c) Multi-fan-out misses.
+> Figure 6. Representative S3 error cases on DiagramNet.
+
+Failure mode analysis: sources of S3 errors on DiagramNet. Our method achieves 0.855 on Task 1, compared to 0.862 for EDA Elite Winner. On S3, our score is 0.736 versus 0.777. The gap is concentrated in a small set of ambiguous samples and does not reflect a systematic failure of the recognition pipeline. Figure 6 illustrates three triggering conditions. 
+
+Weak directional cues cause direction ambiguity, introducing reversed edges. In Figure 6a, unclear arrows swap the direction between device 3 and device 4. Crossing ambiguity arises when crossings lack explicit no-connection marks. The 12 DiagramNet: End-to-End Recognition Framework for System-Level Diagrams 
+
+model may add false connections or miss true ones. In Figure 6b, the output of device 7 is incorrectly linked to device 17. 
+
+Multi-fan-out structures reduce endpoint visibility, causing missing branch targets. Figure 6c shows missing edges under multi-fan-out. These errors correlate with limited visual cues and incomplete diagram markings. The primary direction for improvement is to enhance robustness under ambiguous conditions rather than to revise the overall pipeline.  
+
+> Figure 7. Gap analysis on the Textual Circuit QA subset of AMSBench.
+
+Gap analysis on Textual QA. We compare DiagramNet-3B with EDA Elite Winner on the text-only TQA subset of AMSBench. On 30 questions, our model achieves 27/30 (accuracy 0.900), while EDA Elite Winner achieves 28/30 (accuracy 0.933). The two models differ on three questions; in two cases our model errs while the competitor answers correctly, explaining the net gap. The errors stem from fine-grained terminology distinctions in analog circuits. Specifically, our model confuses near-synonymous concepts that differ only by strict textbook definitions, such as MOS operating regions versus voltage-controlled resistors, and mispredicts the direction of nondominant pole shift under large Miller capacitance. The remaining gap reflects a coverage advantage on AMS-specific textbook facts rather than a reasoning deficiency. Both models answer graduate-level questions with short reasoning chains correctly, while errors concentrate on niche analog terminology. The comparison suggests that targeted text adaptation with concept-contrast supervision can close this gap. 
+
+Failure mode analysis: Netlistify on AMSBench and DiagramNet. Netlistify reports strong results on its original AMS benchmark but degrades on AMSBench and DiagramNet. On AMSBench, Netlistify achieves F1=0.667 on Connection Judgement. On DiagramNet S3, it scores only 0.15. We identify three failure modes. Symbol heterogeneity : Netlistify’s ResNet-based orientation classifier is trained on standard AMS symbols and fails to generalize to abstract system-level blocks with arbitrary shapes. Text interference : system-level diagrams contain dense annotations such as signal names and module labels. Netlistify’s Transformer decoder misinterprets these text regions as connection endpoints, producing spurious edges. Hyperparameter brittleness : Netlistify requires manual tuning of distance thresholds and angle tolerances for each diagram style, whereas DiagramNet-3B learns these priors from data. These failure modes highlight the limitations of modular pipelines that separate visual feature extraction from topological reasoning. 
+
+Cross-domain transfer to AMSBench. We evaluate transfer learning by retraining the YOLO detector with 60 images from AMSBench. Because these images are used for detector training, we exclude component detection tasks and focus on two connection tasks and Textual QA to test connectivity reasoning and domain knowledge. On Connection Identification, DiagramNet-3B achieves F1=0.5, outperforming Netlistify (F1=0.433). Qualitative inspection shows that DiagramNet-3B transfers topological reasoning patterns from system-level diagrams to AMS circuits. For example, it correctly handles multi-terminal components such as operational amplifiers with five ports by reasoning over spatial layout, even though such structures are rare in the DiagramNet training set. DiagramNet-3B occasionally fails on AMS-specific conventions such as implicit ground connections or power rail shortcuts. This indicates that core topology reasoning transfers robustly while domain-specific conventions require targeted fine-tuning. Since AMSBench provides only test data without a training split, we leave this adaptation for future work. 13

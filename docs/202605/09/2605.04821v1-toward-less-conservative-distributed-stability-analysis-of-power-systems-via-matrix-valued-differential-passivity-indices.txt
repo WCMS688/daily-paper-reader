@@ -1,0 +1,1774 @@
+Title: Predicting Tie Strength of Chinese Guanxi by Using Big Data of Social Networks
+
+URL Source: https://arxiv.org/pdf/2605.04821v1
+
+Published Time: Thu, 07 May 2026 00:53:57 GMT
+
+Number of Pages: 18
+
+Markdown Content:
+Article iEnergy 
+
+# T
+
+# Toward less conservative distributed stability analysis of power 
+
+# systems via matrix -valued differenti al passivity indices 
+
+Xi Ru 1, Cong Fu 2, Zhongze Li 1, Xiaoyu Peng 1, Feng Liu 1,* 
+
+> 1
+
+Department of Electr ical Engineering , Tsinghua University, Beijing , 100084 , China  
+
+> 2
+
+Power Dispatching Control Center, Guangdong Power Grid Co., Ltd., Guangzhou 528322, China 
+
+*Corre sponding author Feng Liu ; lfeng@tsinghua.edu.cn 
+
+ABSTRACT 
+
+Passivity indices have been widely adopted to derive distributed stability certificates for power systems. Nevertheless, conv entional 
+
+passivity indices remain scalar -valued even for multi -input -mul ti -output (MIMO) systems, which can introduce excessive 
+
+conservatism and compromise analysis accuracy . To overcome these limitations, this paper extends the differential passivity index to 
+
+a matrix -valued formulation that captures both channel -wise passivi ty properties and inter -channel coupling effects in MIMO 
+
+subsystems. On this basis, semi -distributed and fully distributed stability criteria are developed for power systems with 
+
+heterogeneous nonlinear devices. It is shown that system stability is guarant eed when the aggregate passivity excess of devices 
+
+compensates for the passivity shortage imposed by the network. Furthermore, analytical passivity matrix expressions for typic al 
+
+power system components are derived, facilitating compositional stability ana lysis. Case studies on a three -bus system and a 
+
+modified IEEE 118 -bus system validate the effectiveness of the proposed framework. 
+
+KEYWORDS 
+
+Power system stability, distributed stability analysis, differential passivity, pass ivity index, matrix -valued pass ivity index .
+
+he increasing scale, heterogeneity, and dynamic complexity of modern power systems have posed significant challenges to 
+
+stability analysis and dynamic performance assessment . Traditional approaches, including simulation [1] , eigenanalysis 
+
+[2] , and energy -function methods [3] , have been well developed and widely applied in conventional synchronous -
+
+generator -dominated systems, where the dynamics are relatively homogeneous and centrally manageable [4] . However, 
+
+modern power systems are undergoing a profound transformation driven by the rapid integration of renewable generation, power 
+
+electronic devices, and distri buted energy resources [5], [6] . This transition introduces diverse and fast -varying dynamics, 
+
+substantially increases the number of dynamic buses, and rend ers centralized stability assessment increasingly impractical owing to 
+
+its heavy computational burden, limited scalability, and difficulty in localizing instability sources [7], [8] . These challenges motivate 
+
+the development of distributed stability analysis methods for large -scale heterogeneous power systems. 
+
+Among various methods for analyzing power system stability, passivity and dissi pativity theories have garnered considerable 
+
+attention in recent years. Passivity is typically defined as an energy -based property in which the energy absorbed from the 
+
+environment is greater than or equal to the energy stored in the system [9] . It provides a general framew ork for assessing system 
+
+stability: a system has a stable equilibrium if it is passive and admits a pos itive definite storage function [10] . Moreover, a system is 
+
+passive if all of its interconnected subsystems, through feedback, are passive [11] . This compositional nature enables a distributed 
+
+stability assessment, effectively avoiding the redundancy inherent in centralized analysis [12] –[14] . To quantify the passivity surplus 
+
+or s hortage of a subsystem, passivity indices have been introduced and applied in stability analysis and controller design [15] –[17] .
+
+For linear time -invariant systems, their relation to positive realness further fac ilitates small -signal stability verification [18] . Owing 
+
+to these advantages, passivity -based analysis has attracted increasing attention in power systems, especially in inverter -dominated 
+
+scenarios [19] –[21] .
+
+Despite these advantages, existing passivity -based methods still face important limitations when applied to modern heterogeneous 
+
+power systems. A critical limitation is that most existing approaches rely on scalar passivity indices [14], [22], [23] . While effective 
+
+for single -input single -output syst ems or weakly coupled settings, scalar indices are inherently limited in characterizing the full 
+
+passivity properties of multi -input multi -output (MIMO) subsystems. In particular, they cannot explicitly capture the coupling and 
+
+complementarity among differ ent input -output channels, which may lead to conservative stability conditions and may even fail to 
+
+provide a valid characterization. 
+
+To address these shortcomings, recent research has extended scalar -valued passivity indices to matrix -valued formulations based 
+
+on the classical concept of passivity [24] . Building upon this foundation , this paper further extends the concept to differential 
+
+passivity and develops a comprehensive stability analysis framework based on matrix -valued differential passivity indices. The 
+
+main contributions of this paper are summarized as follows: 
+
+1) Theoretical Extension: We extend the classical scalar differential passivity index to a matrix -valued form for MIMO 
+
+subsystems in power systems. Compared with scalar indices, the proposed matr ix -valued indices capture not only channel -wise 
+
+passivity properties but also the coupling and complementarity among different input -output channels, thereby providing a more ARTICLE ARTICLE Passivity matrix -based distributed stability a nalysis 
+
+> 2
+
+expressive characterization of subsystem passivity in heterogeneous interconnecte d power systems. 
+
+2) Improved Stability Criteria: Based on the proposed matrix -valued differential passivity indices, we derive distributed stability 
+
+criteria for interconnected power systems. In particular, the semi -distributed criterion achieves improved accuracy and reduced 
+
+conservativeness compared with conventional scalar -index -based criteria, while the fully distributed criterion provides a simpler 
+
+distributed alternative. We further develop an application framework for power systems, including the der ivation of differential 
+
+passivity matrices for representative device and network models and a two -level distributed stability assessment procedure. 
+
+The rest of this paper is organized as follows. Section 1 presents the modeling of the interconnected power system. Section 2
+
+introduces the matrix -valued differential passivity indices , and then Section 3 derives the distributed stability criteria. Section 4
+
+applies the proposed theory to power -system models. Section 5 presents case studies, and Section 6 concl udes the paper. 
+
+Notations : For any real matrix A , its symmetric part is denoted by : ( ) / 2 T
+
+A A A  .
+
+1. Power systems modeling 
+
+1.1 Bus dynamics model 
+
+Consider a network -reduced power system with N buses and transmission lines. The power 
+
+system can be abstracted as an undirected graph  
+
+, , where  is the set of buses and  is the 
+
+set of transmission lines. For each bus i  ,iV ,i
+
+ ,iP , and iQ denote its voltage amplitude, phase 
+
+angle, active and reactive power injection, respectively. The bus dynamics is mod eled in a general form 
+
+as below:  
+
+> dev, dev,
+
+,i i i ii i i
+
+x f x u y C x 
+
+  
+
+(1)
+
+where inix  is the state variable that contains at lea st i
+
+ and iV . The input and output variables are 
+
+selected as dev, : [ , / ]Ti i i iu P Q V   and dev, : [ , ]Ti i i i iy C x V
+
+  , where the subscript dev  indicates the 
+
+device dynamics. The ma p2
+
+: ini if   is locally Lipschitz, where i is a domain that contains the 
+
+equilibrium point of Eq. (1).
+
+Many common dynamic devices in power systems conform to the structure of Eq. (1). First, we 
+
+consider the third -order flux -decay model of SGs [25] :( )          
+
+> iigiiiiiiidi fi di qi qi di qi
+
+M D P PQT E E x x EE
+
+     
+
+> 
+
+          
+
+(2)
+
+Here, qi iE
+
+ denotes the complex q -axis transient internal voltage, and i
+
+ denotes the rotor 
+
+frequency deviation. The constants 0iM  ,0iD  , and 0di 
+
+T   represent the moment of inertia, 
+
+damping coefficient, and the d -axi s open -circuit transient time constant, respectively. di x ,di 
+
+x 
+
+represents the d -axis synchronous and transient reactance, respectively. giP and fi E are control 
+
+signals. 
+
+Since the integration of renewable generation is primarily interfaced through inverters, we next 
+
+introduce the dynamic model of conventional droop -controlled inverters (CDs) with additional cross -loop 
+
+controls ,V i u 
+
+> 
+
+and ,V iu 
+
+> 
+
+as below [26] .* *1 1 ,* *2 2 ,
+
+( ) ( )( ) ( )               
+
+> iiiiiiiV i iiiiiiiVi
+
+D P P uV V V D Q Q u
+
+> 
+
+               
+
+(3)
+
+where 1i
+
+ and 2i
+
+ are the time constants; 1iD and 2iD are the droop gains; ,V i u 
+
+> 
+
+and ,V iu 
+
+> 
+
+are possible 
+
+control signals. ` ARTICLE ARTICLE 
+
+> 3
+
+Another type of i nverter is the quad ratic droop -controlled inverter [27] . Its dynamic behavior is 
+
+described by the following model. * *1 1 ,*2 2 ,
+
+( ) ( )( )               
+
+> iiiiiiiV i iiiiiiiVi
+
+D P P uV V V u D Q u
+
+> 
+
+              
+
+(4)
+
+where the control input * * * *2 /i i i i iu D Q V V  is a constant determined by the steady -state conditions. ,V i u
+
+> 
+
+and ,V iu 
+
+> 
+
+are control signals. 
+
+1.2 Power network model 
+
+The bus dynamics are interconnected through transmission lines that can be modeled using power 
+
+flow equations. The network topology is represented by the admittance matrix Y G jB   . For each 
+
+bus i  , the power flow equations are: ( cos sin )( sin cos )            
+
+> iijij ij ij ij jiijij ij ij ij j
+
+P V V G BQ V V G B
+
+
+
+> 
+
+    
+
+# 
+
+(5)
+
+where ij G and ij B are the components of matrix Y ,:ij i j
+
+    is the phase difference between bus i
+
+and bus j .
+
+We denote the set of input -output pairs of all devices by dev dev ( , )u y , and the input -output pair of the 
+
+network by net net ( , )u y , where the subscript net  indicates the network model. Their relationship is defined 
+
+as follows. net dev 1 1 1net dev 1 1
+
+: ( , / , , , / ): ( , , , , )   
+
+> TnnnTnn
+
+y u P Q V P Q Vu y V V
+
+      
+
+(6)
+
+The power flow function (5) can be rewritten as: net net ( )y g u 
+
+(7)
+
+1.3 Feedback -interconnection model of the overall system 
+
+Combining the device dynamics and the network power flow equation yields an overall 
+
+interconnected power system model: dev dev net net 
+
+( , )( )
+
+x f x u y Cx y g u 
+
+  
+
+(8)
+
+where 1 2: [ , , , ]TNx x x x . Its input -output feedback -interconnection configuration is illustrated in Fig.  1.
+
+Fig. 1 Feedback -interconnection model of p ower system s.
+
+Definition 1.* * *dev dev ( , , )x u y is called an equilibrium triplet of system (8) if * *dev * *dev * *dev dev 
+
+0 ( , )( )
+
+f x uy Cx u g y 
+
+     
+
+(9)ARTICLE ARTICLE Passivity matrix -based distributed stability a nalysis 
+
+> 4
+
+where *
+
+x is the equilibrium poin t,*dev u and *dev y are the corresponding input and output at *
+
+x .
+
+Throughout the paper, we assume the following general assumption: 
+
+Assumption 1. The equilibrium *
+
+x exists and is isolated. 
+
+In the following parts , all analysis is carried out in equilibrium -shifted coordinates with respect to the 
+
+equilibrium triplet * * *dev dev ( , , )x u y . Specifically, d efine the shifted variables as *
+
+ˆ :x x x  ,*dev dev dev 
+
+ˆ :u u u  ,*dev dev dev 
+
+ˆ :y y y 
+
+. The network -side variables net u and net y are defined consistently in the shifted 
+
+coordinates through the interconnection relation (6). For notational simplicity, in the remainder of the 
+
+paper , these shifted variables are still denoted by x ,dev u ,net u ,dev y and net y , unless otherwise 
+
+specified. 
+
+2 From conventional passivity index to differential passivity matrix 
+
+2.1 Classical concepts of passivity indices and their limitations 
+
+Passivity theory provides an energy -based framework for analyzing the stability of interconnected 
+
+dynamical systems, and has been widely applied to power system analysis. Consider a nonlinear 
+
+system with input m
+
+u  , output m
+
+y  and state n
+
+x  . The system is said to be passive if there 
+
+exists a continuously differentiable storage function ( ) 0V x  such that ( , ), ( , )T n mVu y V f x u x u x
+
+    
+
+(10 )
+
+Moreover, it is input -feedforward passive if ( ) T T
+
+u y V u u
+
+  for some function  , and output -
+
+feedback passive if ( )T T
+
+u y V y y
+
+  for some function  . It is strictly passive if ( ) T
+
+u y V x
+
+  for 
+
+some positive definite (p.d.) function  . If( ) u u
+
+  and ( ) y y
+
+  with ,
+
+   , the scalar numbers 
+
+and  are called the input -feedforward and the output -feedback passivity index, respectively [15] . A 
+
+positive  or  indicates passivity exces s in the system, while a negative value indicates passivity 
+
+shortage. 
+
+However, scalar passivity indices are inherently restrictive for multi -input multi -output (MIMO) 
+
+systems. Since t hey do not capture inter -channel coupling and complementarity across devi ces, the 
+
+stability assessments can be can be overly conservative . This motivates us to seek a more expressive 
+
+formulation. 
+
+2.2 Differential passivity and its extension to matrix -valued indices 
+
+In the literature, it has been recognized that differential pas sivity offers advantages over 
+
+conventional passivity in power system stability analysis. Here, w e focus on two specific types of 
+
+differential passivity: output -differential passivity (ODP), which applies to bus dynamics, and input -
+
+differential passivity (I DP), which applies to networks. Compared to conventional concepts of ODP and 
+
+IDP [14] , we use matrix -valued indices instead of scalar ones here. 
+
+Definition 2 (ODP of bus dynamics ). The system (1) is said to be output -differential passive (ODP) if 
+
+there exists a matrix dev, 
+
+> m m i
+> 
+
+ and a continuously differentiable positive semi -definite ( p.s.d. ) storage 
+
+function ( ) iV x such that dev, dev, dev, dev, dev,        
+
+> TTTiiiiii
+
+V u y y y 
+
+(11 )
+
+Moreover, it is strictly output -differential passive (SODP) if dev, dev, dev, d ee ,v, dev, d v ( )T T Ti i i i i i iiV u y yy y
+
+   for 
+
+some p.d. funct ion i
+
+ .
+
+In Definition  2, the matrix dev, i is a matrix -valued output -differential passivity index , which is 
+
+referred to as an output -diffe rential passivity matrix (ODPM) of t he system. 
+
+The ODP of the system dev, dev, dev, :i i iu y is equivalent to the passivity of the system ` ARTICLE ARTICLE   
+
+> 5dev, dev, dev,
+
+:i i iu y
+
+, where dev, dev, dev, dev, i i i iu u y  and dev, dev, i iy y , as shown in Fig.  2. We refer to dev, i
+
+as the output -differential equivalent system of dev, i .
+
+Fig. 2 The block diagram of output -differential passivity. 
+
+The input -differential passivity is the dual concept of the output -differential passivity. 
+
+Definition 3 (IDP for power networks) . The system (7) is said to be input -differential passive if th ere 
+
+exists a matrix net 
+
+> m m 
+
+ such that net net net net net 0T T
+
+u y u u  .
+
+In Definition  3, the matrix net  is a matrix -valued input differential passivity index , which is 
+
+referred to as an input -diffe rential passivity matrix (IDPM) of the system. 
+
+The input -differential passivity of the system net net net : u y is equivalent to the passivity of the 
+
+system net net net : u y with the input u u and the output net net net net y y u  as shown in Fig.  3.net 
+
+is called the input -differential equivalent system of net  .
+
+Fig. 3 The block diagram of in put -differe ntial passivity. 
+
+The differential passivity matrix dev, i or net  can be interpreted as an equivalent virtual output 
+
+feedback loop or input feedforward loop applied to the system, through which the excess or short age of 
+
+passivity inherent in the system is removed. Hence, dev, i or net  serves as a matrix -valued passivity 
+
+index whose elements reflect the passivity measure (either excess or shortage) of corresponding input –
+
+output channels of the system. When dev, i or net  is a diagonal matrix with identical diagonal elements, 
+
+it is directly reduced to the classical scalar passivity index in [14] .
+
+3 Distributed stability criteria empowered by differential p assivity matrices 
+
+3.1 Differential passivity matrix –based stability conditions 
+
+We first present several passivity conditions that subsequent analyses may require. 
+
+Condition 1 (ODP for bus dynamics ). Each bus i  wit h dynamic (1) satisfies the ODP property with 
+
+a symmetric ODPM 2 2 dev, i
+
+> 
+
+ and a p.d. storage function iV .
+
+Condition 2 (S ODP for bus dynamics ). Each bus i  with dynamic (1) satisfies the SODP property 
+
+with a symmetric ODPM 2 2 dev, i
+
+> 
+
+ and a p.d. storage function iV .
+
+Condition 3 (I DP for networks). The network (7) satisfies the IDP property with a symmetric 
+
+IDPM 2 2net  
+
+> NN
+
+ .
+
+Since Condition  1 is implied by Condition  2, the following equivalent system construction assumes 
+
+only the former. Whe n Condition  1 is satisfied for power system (8), the ODPM dev  is composed of the 
+
+ODPMs of buses 1 ~ N :dev dev,1 dev, : diag( , , )N 
+
+(12 )
+
+Furthermore, the power system (8) satisfying Conditions  1 and  3 can be reformulated using the 
+
+output -differential equivalent systems of bus dynamics and the input -differ ential equivalent system of ARTICLE ARTICLE Passivity matrix -based distributed stability a nalysis 
+
+> 6
+
+the network, as shown in Fig.  4. In this way, the extra feedback subsystem ext  ensures the input –
+
+output consistency of feedback interconnection .
+
+Fig. 4 Differential equivalent interconnection model of the power system. 
+
+3.2 Distributed stability criteri a
+
+Since the differential equivalent system shares the same zero -input dynamics as the original 
+
+system (Fig.  1), analyzing its passivity provides direct insight into the original system’s zero -input 
+
+stability, as formalized in the following theorem s.
+
+Theorem 1. Suppose that Assumption  1 hold s for power system (8). If Conditions  1 and  3 are satisfied 
+
+with net dev 0
+
+(13 )
+
+Then the equilibrium 0x  of the shifted system is Lyapunov stable. Furthermore, if Condition  2 is 
+
+satisfied , and for each bus dynamics (1), a constant output implies a constant state, i.e. dev, 0, 0 0, 0i iy t x t       
+
+, then the equilibrium 0x  is asymptotically stable. 
+
+Proof: Let dev ( )i ii
+
+VV x  and net net dev net net 
+
+1 ( )2
+
+> T
+
+V u u  . Consider the Lyapunov candidate :dev net dev dev dev net 
+
+1( ) ( )+ (2= )Ti ii
+
+V Vx V x y yV  
+
+(14 )
+
+Since iV is positive definite ,dev 0V  ,0x  . In addition, net dev 0 denotes that net 0V  . Hence ,
+
+there exists a -neighborhood  
+
+:: n
+
+D xx
+
+   of 0x  such that  
+
+0 =0 V and  
+
+0V x  ,  
+
+\ 0 x D  
+
+. That is,  
+
+V x is a positive def inite function in D . According to condition  3 and the 
+
+relation net dev u y ,net dev y u   , we have dev dev dev net dev  
+
+> TT
+
+y u y y   . Denote that dev net   . Since  is 
+
+symmetrical, the time derivative of V is calculated as:  
+
+#  dev dev dev, dev, dev, dev, dev, dev dev dev dev dev dev dev dev dev net dev 0         
+
+> TiiTTTTdiiiiiiTTTTev
+
+V V y yu y y y y yu y y yu y y y
+
+       
+
+# 
+
+Thus, ( ) V x  is a Lyapunov function in D , which impl ies 0x  is stable. Fu rthermore, if Condition  2 holds ,
+
+we have dev, ( ) 0iii
+
+yV
+
+   . By Assumption  1,0x  is an isolated equilibri um. Hence, there exi sts a 0
+
+
+
+such that the set  
+
+#  
+
+: :x D V x
+
+    is positive invariant and contains no other equilibrium 
+
+point except 0x  . Let  
+
+#  
+
+: 0x D V x      . Since i
+
+ is positive definite , 
+
+0V x  implies dev 0y 
+
+. By the assumed implication 0 0i iy x   , it follows that any trajectory contained in  must ` ARTICLE ARTICLE 
+
+> 7
+
+satisfy   
+
+0x t  . Thus, no solution can stay identically in  other than the equilibrium point 0x  .
+
+According to the LaSalle’s invariance principle, 0x  is asymptotically stab le . □
+
+Theorem  1 offers a semi -distributed stability criterion by combining distributed computation and 
+
+centralized verification. Specifically, individual devices and the network can independently verify their 
+
+own passivity conditions ( Conditions  1 and  3) using local models and measurements only. System -wide 
+
+stability, however, still relies on a centralized check of the matrix condition net dev 0 . Theorem  1
+
+follows the standard passivity principle: the feedback interconnection of passive systems remains 
+
+passive. Since both the bus dynamics and the network are passive under the differential equivalent 
+
+formul ation, the overall system is passive if the extra feedback path is passive, which further implies 
+
+zero -input stability, as the p.d. storage function naturally serves as a Lyapunov function. 
+
+To further decentralize the stability criterion, we define scalar passivity indices based on the 
+
+minimum eigenvalues of the symmetric DPMs. Specifically, dev, min dev, ( ) : ( )i i
+
+ and net min net ( ) : ( )
+
+
+
+are introduced to quantify the passivity excess or shortage of bus dynamics and the 
+
+network, respectively. Th ese quantitative passivity indices allow individual subsystems to independently 
+
+assess their contribution, leading to the following fully distributed stability criterion. 
+
+Theorem 2. Let Assumption  1 hold for the power system (8). Assume that Conditions  1 and  3 are 
+
+satisfied. If the following inequality holds: dev, net min [ ( )] ( ) 0, i i
+
+ 
+
+(15 )
+
+Then the equilibrium 0x  of the shifted system is Lyapu nov stable. Furthermore, if the system 
+
+satisfies Condition  2, and for each bus dynamics (1), a steady output implies a steady state, i.e. 0, 0 0, 0i iy t x t       
+
+, then 0x  is asymptotically stable. 
+
+The result follows directly from Theorem 1 and the eigenvalue bound of symmetric 
+
+matrices min min min ( ) ( ) ( )A B A B
+
+   .
+
+Theorem  2 decomposes the system -level stability condition (13 ) into device -level conditions. Each 
+
+subsystem i only needs to veri fy whether dev, net ( ) ( ) 0i
+
+  when assessing system -wide stability. 
+
+The minimum eigenvalue dev, ( )i
+
+ can be regarded as a scalar index characterizing the local passivity 
+
+surpl us or shortage of the subsystem . In this sense, the st ability criterion based on scalar differential 
+
+passivity indices [14] is a special case of Theorem  2, applicable when the differential passivity matrices 
+
+of devices are fully diagonal. Although the fully distributed stability criterion simplifies the stability 
+
+assessment process, it can introduce additional conservativeness. In practice, a trade -off can be made 
+
+between accuracy and efficiency by selecting an appropriate form of the stability criteria. 
+
+4 Application to power systems 
+
+To demonstrate the applicability of the proposed stability criteria, we first show that the required 
+
+symmetric differential passivity matrices can be rigorously obtained in a practically relevant special case, 
+
+namely, without device -side cross control and under lossless net works. We then extend the framework 
+
+to more general engineering settings, where the resulting differential passivity matrices are generally 
+
+nonsymmetric , and their symmetric parts are used for approximate stability assessment. Based on the 
+
+above analysis, a systematic procedure is further proposed for evaluating the stability of general power 
+
+systems using the developed passivity -based criteria. 
+
+4.1 ODP verification for individual bus dynamics 
+
+In this subsection, we show that the three typical dynamic devic es introduced in Section 1.1 can 
+
+satisfy the ODP property through appropriate control design. The following results can be verified by 
+
+direct substitution into Definition  2, and the proofs are therefore omitted for brevi ty. 
+
+1) Synchronous Generators (SGs) : Consider the SG model (2). We first consider the control signal s
+
+with standard PID -like self -loop terms only , that is :ARTICLE ARTICLE Passivity matrix -based distributed stability a nalysis 
+
+> 8
+
+#    
+
+> *0''* *
+
+dg self gi gi Ii i Pi i iself fi fi Ei qi qi fi 
+
+P P K t K PE E K E E E
+
+> 
+
+       
+
+# 
+
+(16 )
+
+where Ii K ,Pi K ,,E i K are control parame ters of the self -loop control, *
+
+> gi
+
+P and *
+
+> fi
+
+E are steady -state inputs. 
+
+The resulting ODPM takes the following diagonal form: 1dev, 2
+
+> i
+
+    
+
+(17 )
+
+where 1 2, ( 1) / ( )Ii Ei di di 
+
+K K x x
+
+ 
+
+> 
+
+    . Under the above parameter conditions, the ODPM in (17 ) is 
+
+diag onal and hence symmetric. Therefore, Conditions  1 and  2 are rigorously satisfied for the SG model 
+
+in this no -cross -control case. 
+
+We next consider the case with cross -loop contro l [28], [29] , which is introduced here to 
+
+compensate for the network coupling deficiency and thereby enhance the overall system stability [30] .' '* ,, ,
+
+( )d         
+
+> cross gi wV i qi qi cross fi ViiVii
+
+P K E EE K t K
+
+> 
+
+    
+
+(18 )
+
+where ,V i K 
+
+> 
+
+,,V iK 
+
+> 
+
+and ,V iK 
+
+> 
+
+are control parameters of cross -loop control. The complete control signals 
+
+are then given by ,self cross self cross gi gi gi fi fi fi P P P E E E   
+
+(19 )
+
+Then, the ODPM is analyti cally expressed in Proposition  1.
+
+Proposition 1. Let 1 2, ( 1) / ( )Ii Ei di di 
+
+K K x x
+
+ 
+
+> 
+
+    . The SG model (2) with the control law (19 ) is 
+
+SODP at the equilibrium *
+
+x with the following ODPM: 1 ,,dev, 2  
+
+> V i Viidd
+
+KKx x
+
+> 
+
+
+
+> 
+
+      
+
+(20 )
+
+provided that 0, Pi iK D  ,0di di 
+
+x x   and , 2 ( )( )V i d P d dK T D K x x 
+
+> 
+
+   .
+
+2) Conventional Droop -Controlled Inverters (CDs) : Consider the CD model (3). We first consi der the 
+
+control signals without cross -loop terms, i.e., , =0 V i u 
+
+> 
+
+and , =0 V iu 
+
+> 
+
+. The resulting ODPM takes the 
+
+following diagonal form: 1dev, * *2*2 2
+
+1   
+
+> iiiiiii
+
+DD Q VD V 
+
+       
+
+(21 )
+
+whe n1 2 1 2, , , 0i i i iD D
+
+  . Under the above parameter conditions, the ODPM in (21 ) is dia gonal and 
+
+hence symmetric. Therefore, Conditions  1 and  2 are rigorously satisfied for the CD model. 
+
+We next consider cross -loop control signals: *, ,*, , ,
+
+( )( )           
+
+> V i V i iiViViiiVii
+
+u K V Vu K K
+
+> 
+
+    
+
+(22 )
+
+where ,V i K 
+
+> 
+
+,,V iK 
+
+> 
+
+and ,V iK 
+
+> 
+
+are control parameters of cross -loop control. Then, t he ODPM is given in 
+
+Proposition  2 below. 
+
+Proposition 2. The CD inverter model (3) with the cros s-loop control (22 ) is SODP at the equilibrium *
+
+x
+
+with the following ODPM: ` ARTICLE ARTICLE       
+
+> 9,11dev, **,2**2 22
+
+1 V i i iiV i i i ii i i i
+
+KD DK D Q VD V D V 
+
+> 
+
+       
+
+(23 )
+
+provided that: 1 2 1 2, , , 0i i i iD D
+
+  ,*, 1 2 2 12 /V i i i i i iK V D D
+
+> 
+
+   .
+
+3) Quadratic Droop -Controlled Inverters (QDs) : Consider the quadratic droop -controlled inverte rs (4).
+
+We first consider the control signals with out cross -loop term , that is , =0 V i u 
+
+> 
+
+and , =0 V iu 
+
+> 
+
+. The resulting 
+
+ODPM takes the following diagonal form: 1dev, 2
+
+11
+
+> iii
+
+DD
+
+       
+
+(24 )
+
+when 1 2 1 2, , , 0i i i iD D
+
+  . Under the above parameter conditions, the ODPM in (24 ) is diagonal and 
+
+hence symmetric. Therefore, Conditions  1 and  2 are rigorously satisfied for the QD model. 
+
+We next consider the same cross -loop control signals as in (22 ). Then, the ODPM is analyt ically 
+
+expressed in Propo sition  3.
+
+Proposition 3. The QD inverter model (4) with the cross -loop control (22 ) is SODP at the equilibrium *
+
+x
+
+with the following ODPM: ,1 1dev, ,*2 2
+
+11    
+
+> V i iiiViiii
+
+KD DKD V D
+
+> 
+
+       
+
+(25 )
+
+provided that: 1 2 1 2, , , 0i i i iD D
+
+  ,*, 1 2 2 12 /V i i i i i iK V D D
+
+> 
+
+   .
+
+For all the above device models, the no -cross -control case yields diagonal and symmetric ODPMs 
+
+(17 ), (21 ) and (24 ), under which Conditions 1 and 2 are rigorously satisfied. When cross -loop control is 
+
+introduced, off -diagonal terms appear in the corresponding ODPMs (20 ), (23 ) and (25 ), capturing the 
+
+coupling bet ween different input -output channels. As a result, the ODPMs are generally no longer 
+
+exactly symmetric, although they provide a richer characterization of the MIMO passivity properties of 
+
+the devices. For the subsequent approximate stability assessment, th e symmetric parts of these 
+
+nonsymmetric ODPMs will be used in the general case. 
+
+4.2 IDP verification for power network coupling 
+
+Consider the LTI form of the power network model (7):net net net y G u
+
+(26 )
+
+where the gain matrix 2 2net  
+
+> NN
+
+G 
+
+ is a constant matrix. According to Definition 3, the linearized 
+
+network -side transfer matrix net G provides an exact IDPM for the power network model. 
+
+To derive the exact expression of net G , w e first consider the lossless network case. Specifica lly, for 
+
+the power flow model (5) with 0ij G  in admittance matrix Y G jB   , the linearized transfer function 
+
+matrix lossless net G can be derived as follows: lossless net 
+
+/ T
+
+P A DGQ V V D C V
+
+                      
+
+(27 )
+
+In this case, lossless net G is symmetri c and t herefore can be directly used in the stability criteria. Then we ARTICLE ARTICLE Passivity matrix -based distributed stability a nalysis 
+
+> 1
+> 0
+
+consider the more general lossy network case with 0ij G  . The transfer function matrix lossy net G can be 
+
+derived via linearization: lossy net 
+
+/
+
+P A DGQ V V E C V
+
+                        
+
+(28 )
+
+The Jacobian matrix blocks in Eq. (27 ) and Eq. (28 ) are given in the Appendix. In general, lossy net G is 
+
+nonsymmetric. Nevertheless, it still serves as an exact IDPM under Definition 3. For the subsequent 
+
+application of Theorems  1 and  2, we use its symmetric part as an approximate matrix in the stability 
+
+assessment. 
+
+It should be noted that the input a nd output ordering of the linear model in Eq. (27 ) and Eq. (28 )
+
+differs from that in Eq. (6). This difference can be remedied by a permutation transformation, as 
+
+illustrated by the permutation matrix 2 2
+
+[ ] N Nij N N 
+
+  , defined as follows: 1, 2 1, 1, , ,1, 2 2 , 1, , 2 ,0, otherwise. 
+
+> ij
+
+i j j NN i j N j N N
+
+        
+
+(29 )
+
+The transfer function matrix 'net G under the input and o utput selection (6) is given by 'net net 
+
+> T
+
+G NG N .
+
+Since permutation transformations preserve the eigenvalues and symmetry of matrices, it follows t hat 
+
+the power network model (5) is IDP with the IDP matrix 'net G . The symmetric part 'net G of the IDP matrix 
+
+can be used to estimate the system -wide stability by leveraging Theorems  1 and  2.
+
+4.3 Two -level distributed stability assessment 
+
+The ODPMs and IDPMs derived above are exact differential passivit y matrices in the sense of 
+
+Definitions  2 and  3, and are not required to be symmetric in general. However, the stability criteria in 
+
+Theorems  1 and  2 are established under symmetric matrix conditions. Therefore, in the practically 
+
+relevant special case where no asymmetric coupling terms are present on the device side and the 
+
+network is lossless , the exact ODPMs and IDPMs are symmetric, and the proposed stability criteria are 
+
+strictly applicable. In more general engineering settings, such as those involving device -side cross -loop 
+
+control or network losses, the exact differential passivity matrices are generally nonsymmetri c. In these 
+
+cases, their symmetric parts are used when applying Theorems  1 and  2 for app roximate stability 
+
+assessment. 
+
+Remark 1: Such a structured approximation is not uncom mon in power -system analysis. A
+
+representative example arises in the construction of Lyapunov or energy functions for lossy power 
+
+systems, where conductance -related terms generally make the associated vector field non -conservative 
+
+and thus hinder the deriv ation of a globally well -defined energy function [31] . To address this difficulty, 
+
+engineering -oriented approximations such as path -dependent assumptions and numerical energy 
+
+functions have been widely adopted in practice [32] –[34] . These approximations share the same 
+
+methodological spirit with the symmetrization used in this paper: when the exact analytical object does 
+
+not possess the structure required by a desi red stability -analysis tool, a structured approximation is 
+
+introduced to recover a tractable and practical ly useful assessment framework. 
+
+Based on the above analysis, t he semi -distributed stability criterion derived from Theorem  1 allows 
+
+individual subsystems to compute their differential passivity matrices independently in a distributed 
+
+manner. The control center then centrally verifies the system -wide stability based on the collected 
+
+indices. Here, a two -level distributed stability assessment procedure is presented below, as shown in 
+
+Fig.  5(A). 
+
+1) Device level: Obtain the linearized model of each device around the equilibrium, and determine 
+
+the corresponding differential passivity matrix dev, i . The resulting matrices are then reported to the 
+
+control center. 
+
+2) System level: Based on the network power flow, the control center constructs the IDP matrix net net G
+
+and evaluates the overall stability by v erifying the sufficient condition net dev 0 .
+
+This passivity -based approach features streamlined data communication and reduced ` ARTICLE ARTICLE 
+
+> 1
+> 1
+
+computational burden. Although eigenvalue computation is still required when verifying the 
+
+condition net dev 0 , the matrix involved is of much lower dimension compared to the method based 
+
+on eigenanalysis, since the control center does not require detailed dynamic models but only the 
+
+passivity indices of individual devices. An additional benefit is that the proposed approach can 
+
+inherently preserve the privacy of device -level data. 
+
+In addition, the process of the fully distributed assessment indicated by Theorem  2 is illustrated in 
+
+Fig.  5(B). In this process, the control center only needs to broadcast a scalar passivity index of the 
+
+network side, while each device verifies its local stability condition in a distributed manner, without 
+
+collecting matrix -valued indices and verifying t he centralized stability condition. Notably, the scalar -
+
+index -based criterion in [14] is a special case of the proposed fully distributed criterion when all local 
+
+passivity matrices are diagonal. 
+
+Fig. 5 The application process of (a ) the semi -distributed s tability criterion , (b ) the fully distributed 
+
+stability criterion. 
+
+5 Case study 
+
+5.1 Three -bus il lustrative power system 
+
+As depicted in Fig.  6, a small -scale three -bus system, including one SG bus, one CD bus, and one 
+
+QD bus, is us ed to validate the proposed criteria and methods. The device parameters of the three -bus 
+
+system are provided in T able  1. The ODP matrices are analytically computed based on Propositions  1-3.
+
+Table 1 Device parameters of the three -bus system 
+
+Devices  Parameters 
+
+SG0.1607, 0.8, 6.56, 2.68, d IM D T K   0.295, 0.17, 0.066, 0.014, d d V Vx x K K
+
+> 
+
+   1.56 VK
+
+> 
+
+
+
+CD1 2 1 21, 10, 0.37, 0.39, D D
+
+    0.076, 0.076 V VK K
+
+> 
+
+ 
+
+QD1 2 1 20.8, 8, 0.37, 0.37, D D
+
+    0.078, 0.078 V VK K
+
+> 
+
+ ARTICLE ARTICLE Passivity matrix -based distributed stability a nalysis 
+
+> 1
+> 2
+
+Fig. 6 Topology of the three -bus system and passivity complementarity without cross -loop 
+
+control. 
+
+We first consider the case without cross -loop control. In t he absence of cross -coupling, the ODP 
+
+matrices become diagonal, resulting in decoupled -P
+
+ and -Q V  channels. Let -P
+
+> 
+
+ and -Q V 
+
+ denote 
+
+the differential passivity i ndices for the -P
+
+ and -Q V  channels, respectively. The self -loop control 
+
+parameters of SG and CD are tuned to vary -P
+
+> 
+
+ , while other passivity indices are fixed to match the 
+
+passivity in dex of the network. 
+
+The proposed criteria, implemented using the symmetric part of the differential passivity matrix, are 
+
+evaluated under lossy networks . The minimum eigenvalue of the system IDP matrix net 
+
+is net ( ) 2.6769 
+
+   . The stability verification results are illustrated in Fig.  7. In each figure, the blue 
+
+area indicates the unstable region obtained by eigen -analysis, while the red area indicates the stability 
+
+region identified by semi -di stributed criterion . The shaded red area represents the distributed stability 
+
+region predicted by fully -distributed criterion . The close alignment between the predicted and actual 
+
+stability boundaries highlights the high accuracy of the proposed semi -distr ibuted criterion. Moreover, a 
+
+comparison between the matrix -valued passivity index –based criterion (Theorem  1) and the scalar -
+
+valued counterpart (Theorem  2) shows that using matrix -valued passivity indices improves precision 
+
+and reduces conservativeness in stability assessment. 
+
+Fig. 7 Small -signal stability regions of the three -bus system identified by eigen -analysis and the 
+
+pro posed criteria: (a ) without cross -loop control ; (b ) with cross -loop control .
+
+To illustrate the complementarity mechanism, we examine the parameter setting marked as "Case 
+
+P" in Fig.  7(a). The corresponding passivity matrices of three dynamical devices are shown be low: 1 2 3
+
+1.86 0 2.68 0 3.47 0, ,0 2.68 0 2.68 0 2.68 
+
+                 
+
+As shown in Fig.  6, the P
+
+ channel of SG exhibits a passivity shortage, CD shows a surplus, 
+
+and QD remains balanced. Although some device channels lack sufficient passiv ity, the system remains 
+
+stable due to inter -device passivity compensation, which cannot be captured by scalar -valued passivity 
+
+indices. 
+
+Next, the cross -loop control (18 ) and (22 ) are applied under lossy network conditions with fixed vK
+
+> 
+
+and vK 
+
+> 
+
+, an d the results are sho wn in Fig.  7(b ). It is observed that cross -loop control increases the 
+
+conservativeness of the fully distributed criterion, whereas the semi -distributed criterion remains 
+
+accurate. This stems from the fact that the fully distri buted criterion utilizes the minimum eigenvalue of 
+
+the passivity matrix, thereby neglecting the coupling between different input -output channels. 
+
+To further illustrate the coupling mechanism, we examine the parameter setting marked as "Case 
+
+Q" in Fig.  7(b ). The corresponding passivity matrices of three dynamical devices are shown below: 1 2 3
+
+2.15 0.07 2.68 0.21 2.15 0.16 , ,0.11 2.68 0.21 2.68 0.22 2.68 
+
+                 
+
+Although diagonal entries of all device -level passivity matrices do not compensate for network side 
+
+index net 2.68 
+
+   , indicating that the intern al passivity of each individual P
+
+ and -Q V  channel is ` ARTICLE ARTICLE 
+
+> 1
+> 3
+
+insufficient, the system remains stable. This is enabled by the presence of cross -channel coupling, 
+
+which allows the system to satisfy passivity in the MIMO sense. It is worth noting that such internal 
+
+coupling is not always beneficial to system stability, highlighting the need for appropriate control design 
+
+and evaluation. The proposed framework provides a so lid basis for this purpose. 
+
+5.2 IEEE -118 bus system with heterogeneous devices 
+
+We evaluate the proposed criteria in the modified IEEE 118 -bus system, which comprises 41 SG 
+
+buses, 18 CD buses, and 15 QD buses. The remaining buses are modeled as interconnect ion/load 
+
+buses without dynamic device models. The basic network and power flow settings come from [35] . To 
+
+examine how system passivity varies under changing operating conditions, the total load is scaled by a 
+
+load scenario index s . In each scenario, the diagonal elements of the ODP matrices (as defined in 
+
+Propositions  1–3) are set to the minimum values that satisfy the semi -distributed stability cri terion. The 
+
+cross -control parameters remain unchanged. 
+
+Fig.  8(a ) compares the stability boundaries computed based on the proposed passivity -based semi -
+
+distributed criterion (Theorem  1) with those obtained by eigen -analysis. The y -axis shows the minimum 
+
+eigenvalue of the ODP matrix dev S at marginal stability, obtained via either the passivity -based or 
+
+eigenvalue -based method. It is observed that the two methods yield clo sely aligned stability boundaries. 
+
+The discrepancy increases slightly at higher load levels, indicating a slightly larger conservativeness of 
+
+the passivity -based criterion under heavier load. Such mild conservatism is acceptable in engineering 
+
+practice, as power system operation prioritizes security over tight stability margins. 
+
+Similarly to Fig.  7, we further compare the stability results of the proposed criteria with those 
+
+obtained by eigen -analysis under varying control para meters at 1s  . Specifically, the self -control 
+
+parameters of the devices are adjusted to represent different parameter scenarios. The comparison of 
+
+stability regions, shown in Fig.  8(b ), demonstrates th e high accuracy and low conservativeness of the 
+
+proposed criterion. 
+
+Fig. 8 Comparison of stability boundaries under different load levels ( a) and stability regions of 
+
+the IEEE 118 -bus system identified by eigenanalysis and the prop osed criterion ( b). 
+
+We further justify the proposed criteria and methods within the context of nonlinear dynamics. Here, 
+
+a small ground fault is applied at bus 5 with a fault resistance of 0.5 p.u. The trajectories of  and the 
+
+co rresponding minimum eigenvalue dev, i
+
+ of the passivity indices dev, i for the three representative 
+
+cases are depicted i n Figs.  9. In the figures illustrating the passivity indices, the outer circle labels 
+
+represent the device IDs, while the inner radial values correspond to the scalar passivity indices of each 
+
+device. The dashed red circle indicates the IDP index of the network. The transient responses suggest 
+
+that larger values of the device -level passivity indices are generally associated with improved dynamic 
+
+performance and stronger stability support in these cases. ARTICLE ARTICLE Passivity matrix -based distributed stability a nalysis 
+
+> 1
+> 4
+
+Fig. 9 Simulation results of three cases with varying passivity indices. (a), ( c) and ( e) show the 
+
+trajectories of phase deviations under the Unstable Case and Stable Cases 1 -2, respectively. (b), 
+
+(d) and ( f) give the distributions of the minimum eigenvalues of the matrix -valued passivity 
+
+indices. ` ARTICLE ARTICLE 
+
+> 1
+> 5
+
+6 Conclusion 
+
+This paper presents a matrix -valued diff erential passivity index and the corresponding 
+
+distributed stability analysis framework. As an extension of conventional scalar indices, the proposed 
+
+matrix -valued index characterizes passivity in MIMO systems more comprehensively by capturing inter -
+
+channe l coupling and passivity complementarity. Based on this formulation, system -level stability 
+
+criteria are established and further decomposed into device -level conditions. The criteria rely on the 
+
+passivity complementarity principle: system stability is ensu red when the passivity surplus of devices 
+
+compensates for the passivity shortage of the network. Compared with conventional scalar -index -based 
+
+methods, the matrix -valued approach yields higher accuracy and lower conservatism in stability 
+
+assessment. 
+
+In pra ctical implementation, the stability assessment is carried out using the symmetric parts of the 
+
+computed differential passivity matrices as an approximate treatment. The proposed matrix -valued 
+
+differential -passivity -based stability as sessment provides a th eoretical basis for operating -point -
+
+dependent stability evaluation and stability identification in large -scale power systems, and its broader 
+
+applications will be further explored in future work. 
+
+Appendix 
+
+The Jacobian matrix blocks in (27 ) are shown below: cos ,[ ]cos ,sin ,[ ]sin ,,/ [ ] cos ,             
+
+> ikik ik kiij ijij ij kik ik kiij iij ij ij ij ij ij
+
+VV B i jPA AVV B i jV B i jPD DV V B i jB i jQ VC C B i jV
+
+
+
+> 
+
+                      
+
+# 
+
+The Jacobian matrix blocks in (28 ) are shown below: ARTICLE ARTICLE Passivity matrix -based distributed stability a nalysis 
+
+> 1
+> 6
+
+[ ]( cos sin ), ( cos sin ), [ ]2 ( sin cos ), ( sin cos ), ( / ) [ ]( sin                         
+
+> ij ikik ik ik ik kiijij ij ij ij ij ii ikik ik ik ik kiiij ij ij ij ij kik ki
+
+PA AVV B G i jVV B G i jPD DVG V V B G i jV B G i jQ VE EV B
+
+ 
+
+> 
+
+                  
+
+#  cos ), ( sin cos ), / [ ],cos sin ,         
+
+> ik ik ik jij ij ij ij ij ij ij ij ij ij
+
+G i jV B G i jQ VC CVB i jB G i j
+
+           
+
+Acknowledgements 
+
+This research is supported by the Science and Technology Project of China Southern Power Grid Co., 
+
+Ltd under Grant 036000KC23090004 (GDKJXM20231026). 
+
+Declaration of competing interest 
+
+The a uthors declare that they have no known competing financial interests or personal relationships 
+
+that could have appeared to influence the work reported in this paper. 
+
+References 
+
+[1] F. Milano, Power system modelling and scripting . Springer Science & Business Media, 2010. 
+
+[2] M. J. Gibbard, P. Pourbeik, and D. J. Vowles, Small -signal stability, control and dynamic 
+
+performance of power systems . University of Adelaide press, 2015. 
+
+[3] A. R. Bergen and D. J. Hill, “A Structure Preserving Model for Power System Stability Analysis,” 
+
+IEEE Transactions on Power Apparatus and Systems , vol. PAS -100, no. 1, pp. 25 –35, Jan. 1981, 
+
+doi: 10.1109/TPAS.1981.316883. 
+
+[4] P. Kundur, “Power system sta bility,” Power system stability and control , vol. 10, no. 1, pp. 7 –1, 
+
+2007. 
+
+[5] L. Meegahapola, A. Sguarezi, J. S. Bryant, M. Gu, E. R. Conde D., and R. B. A. Cunha, “Power 
+
+System Stability with Power -Electronic Converter Interfaced Renewable Power Generat ion: 
+
+Present Issues and Future Trends,” Energies , vol. 13, no. 13, p. 3441, Jul. 2020, doi: 
+
+10.3390/en13133441. 
+
+[6] M. A. Basit, S. Dilshad, R. Badar, and S. M. Sami ur Rehman, “Limitations, challenges, and 
+
+solution approaches in grid -connected renewable e nergy systems,” International Journal of Energy 
+
+Research , vol. 44, no. 6, pp. 4132 –4162, 2020. 
+
+[7] S. Impram, S. V. Nese, and B. Oral, “Challenges of renewable energy penetration on power 
+
+system flexibility: A survey,” Energy strategy reviews , vol. 31, p. 100539, 2020. 
+
+[8] J. Shair, H. Li, J. Hu, and X. Xie, “Power system stability issues, classifications and research ` ARTICLE ARTICLE 
+
+> 1
+> 7
+
+prospects in the context of high -penetration of renewables and power electronics,” Renewable and 
+
+Sustainable Energy Reviews , vol. 145, p. 111 111, Jul. 2021, doi: 10.1016/j.rser.2021.111111. 
+
+[9] H. K. Khalil, Nonlinear systems . Prentice Hall, 2002. 
+
+[10] R. Estrada and C. Desoer, “Passivity and stability of systems with a state representation,” 
+
+International Journal of Control , vol. 13, no. 1, pp . 1 –26, 1971. 
+
+[11] P. Borja, J. Ferguson, and A. Van Der Schaft, “Interconnection Schemes in Modeling and Control,” 
+
+IEEE Control Syst. Lett. , vol. 7, pp. 2287 –2292, 2023, doi: 10.1109/LCSYS.2023.3286124. 
+
+[12] C. Spanias, P. Aristidou, and M. Michaelides, “ A Passivity -Based Framework for Stability Analysis 
+
+and Control Including Power Network Dynamics,” IEEE Systems Journal , vol. 15, no. 4, pp. 5000 –
+
+5010, Dec. 2021, doi: 10.1109/JSYST.2020.3007582. 
+
+[13] X. He and F. Dörfler, “Passivity and Decentralized Stabi lity Conditions for Grid -Forming 
+
+Converters,” IEEE Trans. Power Syst. , pp. 1 –4, 2024, doi: 10.1109/TPWRS.2024.3360707. 
+
+[14] P. Yang, F. Liu, Z. Wang, and C. Shen, “Distributed Stability Conditions for Power Systems With 
+
+Heterogeneous Nonlinear Bus Dynamics ,” IEEE Transactions on Power Systems , vol. 35, no. 3, 
+
+pp. 2313 –2324, May 2020, doi: 10.1109/TPWRS.2019.2951202. 
+
+[15] F. Zhu, M. Xia, and P. J. Antsaklis, “Passivity analysis and passivation of feedback systems using 
+
+passivity indices,” in 2014 American Co ntrol Conference , Jun. 2014, pp. 1833 –1838. doi: 
+
+10.1109/ACC.2014.6858850. 
+
+[16] M. Li, L. Su, and G. Chesi, “Consensus of Heterogeneous Multi -Agent Systems With Diffusive 
+
+Couplings via Passivity Indices,” IEEE Control Systems Letters , vol. 3, no. 2, pp. 43 4–439, Apr. 
+
+2019, doi: 10.1109/LCSYS.2019.2893490. 
+
+[17] M. Xia, P. J. Antsaklis, and V. Gupta, “Passivity indices and passivation of systems with 
+
+application to systems with input/output delay,” in 53rd IEEE Conference on Decision and Control ,
+
+Los Angeles, CA, USA: IEEE, Dec. 2014, pp. 783 –788. doi: 10.1109/CDC.2014.7039477. 
+
+[18] N. Kottenstette, M. J. McCourt, M. Xia, V. Gupta, and P. J. Antsaklis, “On relationships among 
+
+passivity, positive realness, and dissipativity in linear systems,” Automatica , vol. 50, no. 4, pp. 
+
+1003 –1016, Apr. 2014, doi: 10.1016/j.automatica.2014.02.013. 
+
+[19] L. Harnefors, X. Wang, A. G. Yepes, and F. Blaabjerg, “Passivity -Based Stability Assessment of 
+
+Grid -Connected VSCs —An Overview,” IEEE Journal of Emerging and Selected Topics i n Power 
+
+Electronics , vol. 4, no. 1, pp. 116 –125, Mar. 2016, doi: 10.1109/JESTPE.2015.2490549. 
+
+[20] S. Plesnick and P. Singh, “A Generalized Passivity -Based Stability Criterion for Assessing Large 
+
+Signal Stability of Interconnected DC Power Systems,” IEEE T ransactions on Aerospace and 
+
+Electronic Systems , vol. 59, no. 1, pp. 30 –38, Feb. 2023, doi: 10.1109/TAES.2022.3189328. 
+
+[21] G. Wu et al. , “Passivity -Based Stability Analysis and Generic Controller Design for Grid -Forming 
+
+Inverter,” IEEE Transactions on Pow er Electronics , vol. 38, no. 5, pp. 5832 –5843, May 2023, doi: 
+
+10.1109/TPEL.2023.3237608. 
+
+[22] X. Ru, P. Yang, F. Liu, and H. Mao, “Distributed stability analysis for power systems under 
+
+persistent disturbance,” in 2022 41st Chinese Control Conference (CCC) , IEEE, 2022, pp. 6160 –
+
+6165. 
+
+[23] K. Dey and A. M. Kulkarni, “Passivity -Based Decentralized Criteria for Small -Signal Stability of 
+
+Power Systems with Converter -Interfaced Generation,” IEEE Transactions on Power Systems , pp. 
+
+1–14, 2022, doi: 10.1109/TPWRS.2 022.3192302. 
+
+[24] X. Ru, X. Peng, X. Chen, Z. Wang, P. Yang, and F. Liu, “Matrix -Valued Passivity Indices: 
+
+Foundations, Properties, and Stability Implications,” arXiv preprint arXiv:2601.04796 , 2026. 
+
+[25] T. Stegink, C. De Persis, and A. van der Schaft, “A unifying energy -based approach to stability of 
+
+power grids with market dynamics,” IEEE Transactions on Automatic Control , vol. 62, no. 6, pp. 
+
+2612 –2622, 2016. 
+
+[26] Y. Zhang and L. Xie, “Online Dynamic Security Assessment of Microgrid Interconnections in S mart 
+
+Distribution Systems,” IEEE Transactions on Power Systems , vol. 30, no. 6, pp. 3246 –3254, Nov. 
+
+2015, doi: 10.1109/TPWRS.2014.2374876. 
+
+[27] J. W. Simpson -Porco, F. Dörfler, and F. Bullo, “Voltage Stabilization in Microgrids via Quadratic 
+
+Droop Control,” IEEE Transactions on Automatic Control , vol. 62, no. 3, pp. 1239 –1253, Mar. 2017, 
+
+doi: 10.1109/TAC.2016.2585094. 
+
+[28] M. Farrokhabadi, C. A. Cañizares, and K. Bhattacharya, “Frequency control in isolated/islanded 
+
+microgrids through voltage regulation,” IEEE Transactions on Smart Grid , vol. 8, no. 3, pp. 1185 –ARTICLE ARTICLE Passivity matrix -based distributed stability a nalysis 
+
+> 1
+> 8
+
+1194, 2015. 
+
+[29] W. Zhong, G. Tzounas, and F. Milano, “Improving the power system dynamic response through a 
+
+combined voltage -frequency control of distributed energy resources,” IEEE Tr ansactions on Power 
+
+Systems , vol. 37, no. 6, pp. 4375 –4384, 2022. 
+
+[30] X. Peng, C. Fu, P. Yang, X. Ru, and F. Liu, “Impact of Angle -voltage Coupling on Stability of 
+
+Inverter -dominated Power Systems: A Damping Perspective,” Authorea Preprints , 2024. 
+
+[31] H. -D. Chiang, “Study of the existence of energy functions for power systems with losses,” IEEE 
+
+Transactions on Circuits and Systems , vol. 36, no. 11, pp. 1423 –1429, Nov. 1989, doi: 
+
+10.1109/31.41298. 
+
+[32] H. -D. Chang, C. -C. Chu, and G. Cauley, “Direct stabili ty analysis of electric power systems using 
+
+energy functions: theory, applications, and perspective,” Proceedings of the IEEE , vol. 83, no. 11, 
+
+pp. 1497 –1529, 1995, doi: 10.1109/5.481632. 
+
+[33] Y. -H. Moon, B. -H. Cho, T. -H. Rho, and B. -K. Choi, “The developm ent of equivalent system 
+
+technique for deriving an energy function reflecting transfer conductances,” IEEE Transactions on 
+
+Power Systems , vol. 14, no. 4, pp. 1335 –1341, Nov. 1999, doi: 10.1109/59.801893. 
+
+[34] H. -D. Chiang, J. Tong, and Y. Tada, “On -line tr ansient stability screening of 14,000 -bus models 
+
+using TEPCO -BCU: Evaluations and methods,” in IEEE PES General Meeting , 2010, pp. 1 –8. doi: 
+
+10.1109/PES.2010.5590026. 
+
+[35] R. D. Zimmerman, C. E. Murillo -Sánchez, and R. J. Thomas, “MATPOWER: Steady -state 
+
+op erations, planning, and analysis tools for power systems research and education,” IEEE 
+
+Transactions on Power Systems , vol. 26, no. 1, pp. 12 –19, 2010. 
+
+
