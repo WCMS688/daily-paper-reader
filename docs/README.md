@@ -6,29 +6,22 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-05-09
-- 运行时间：2026-05-09 20:18:55 UTC
+- 最新运行日期：2026-05-10
+- 运行时间：2026-05-10 20:00:17 UTC
 - 运行状态：成功
-- 本次总论文数：2
+- 本次总论文数：0
 - 精读区：0
-- 速读区：2
+- 速读区：0
 
 ### 今日简报（AI）
-今日聚焦电力系统分布式稳定性分析的优化，以及非标准系统图纸的端到端自动识别技术。
-重点关注利用矩阵值微分无源性指标降低电网分析的保守性，以及 DiagramNet 框架对复杂系统图识别的性能突破。
-建议关注能源互联网安全与文档 AI 自动化的读者，深入了解这两项提升复杂系统处理效率的新方案。
-- 详情：[/202605/09/README](/202605/09/README)
+> 今日无新推荐，系统未产出可展示论文。
+- 详情：[/202605/10/README](/202605/10/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Toward less conservative distributed stability analysis of power systems via matrix-valued differential passivity indices](/202605/09/2605.04821v1-toward-less-conservative-distributed-stability-analysis-of-power-systems-via-matrix-valued-differential-passivity-indices)  
-   标签：评分：6.5/10、query:bga-xtalk
-   evidence：用于通道特性和通道间耦合的矩阵值公式
-2. [DiagramNet: An End-to-End Recognition Framework and Dataset for Non-Standard System-Level Diagrams](/202605/09/2605.01338v1-diagramnet-an-end-to-end-recognition-framework-and-dataset-for-non-standard-system-level-diagrams)  
-   标签：评分：6.0/10、query:si-pi
-   evidence：芯片设计系统级图表识别与电路问答
+- 本次无速读推荐。
 
 
 <div class="dpr-home-promo-card">
