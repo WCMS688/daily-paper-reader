@@ -1,0 +1,230 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.06952v1/fig-001.webp",
+      "caption": "Table 1. List of circuit features represented by the EDA-Schema-V2 datamodel. Each entity is associated with a set of attributes, corresponding data types, and units where applicable. The Stages column indicates the design stages where each attribute is available, which includes floorplan (FP), global placement (GP), placement resize (PR), detailed placement (DP), clock tree synthesis (CTS), global routing (GR), detailed routing (DR), and final layout (F).",
+      "page": 6,
+      "index": 1,
+      "width": 823,
+      "height": 1044
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06952v1/fig-002.webp",
+      "caption": "Table 2. Characteristics of the circuit of the IWLS’05 benchmark suite used with EDA-Schema-V2. The listed attributes are derived from pre-synthesis RTL (Verilog) descriptions.",
+      "page": 11,
+      "index": 2,
+      "width": 498,
+      "height": 414
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06952v1/fig-003.webp",
+      "caption": "Fig. 25. Inter-design stage correlation of QoR and timing metrics across all benchmark circuits in the IHP130 technology node. Columns compare intermediate design stages with the final stage, with intermediate-stage values on the x-axis and final-stage values on the y-axis. Rows correspond to metrics including area, power, wirelength, timing, and arc delays. Scatter plots aggregate all circuits and operating points; the red line denotes the (y=x) reference and the green line represents a least-squares fit.",
+      "page": 38,
+      "index": 3,
+      "width": 824,
+      "height": 1031
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06952v1/fig-004.webp",
+      "caption": "Table 6. Dataset composition and final-stage quality metrics across technology nodes. Quality metrics are reported as minimum to maximum values across all final-stage design instances.",
+      "page": 15,
+      "index": 4,
+      "width": 802,
+      "height": 391
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06952v1/fig-005.webp",
+      "caption": "Fig. 26. Inter-design stage correlation of QoR and timing metrics across all benchmark circuits in the ASAP7 technology node. Columns compare intermediate design stages with the final stage, with intermediate-stage values on the x-axis and final-stage values on the y-axis. Rows correspond to metrics including area, power, wirelength, timing, and arc delays. Scatter plots aggregate all circuits and operating points; the red line denotes the (y=x) reference and the green line represents a least-squares fit.",
+      "page": 39,
+      "index": 5,
+      "width": 806,
+      "height": 1000
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06952v1/fig-006.webp",
+      "caption": "Table 7. (page 1/2) Features used in prior machine learning based digital circuit design automation for power prediction, wirelength prediction, timing prediction, parasitic impedance prediction, routability prediction, and analysis of EM/IR. Features are categorized as Available when directly provided in EDA-Schema-V2, Derivable Features when obtained from structural or spatial representations, and Other Features/Contraints when reported in prior work but are not presently available in the schema.",
+      "page": 22,
+      "index": 6,
+      "width": 1204,
+      "height": 598
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06952v1/fig-007.webp",
+      "caption": "Fig. 19. Distribution of final-stage QoR metrics for total area, total power, worst-case slack, total negative slack, number of slack violating endpoints, total wirelength, and total net capacitance for the ac97_ctrl circuit with variations in clock period, core aspect ratio, core utilization, and placement density using the ASAP7 technology node.",
+      "page": 34,
+      "index": 7,
+      "width": 806,
+      "height": 466
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06952v1/fig-008.webp",
+      "caption": "Fig. 18. Distribution of Pearson correlation coefficients between QoR metrics and design parameters across all circuits in the IHP130 dataset. The correlation coefficient are shown with violin plots for each parametermetric pair.",
+      "page": 34,
+      "index": 8,
+      "width": 806,
+      "height": 462
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06952v1/fig-009.webp",
+      "caption": "Table 5. Constraints and parameters utilized to generate the dataset.",
+      "page": 14,
+      "index": 9,
+      "width": 681,
+      "height": 282
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06952v1/fig-010.webp",
+      "caption": "Fig. 1. Block representation of the automated physical design flow.",
+      "page": 3,
+      "index": 10,
+      "width": 702,
+      "height": 338
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06952v1/fig-011.webp",
+      "caption": "Fig. 16. Distribution of Pearson correlation coefficients between QoR metrics and design parameters across all circuits in the SKY130 dataset. The correlation coefficient are shown with violin plots for each parametermetric pair.",
+      "page": 33,
+      "index": 11,
+      "width": 806,
+      "height": 466
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06952v1/fig-012.webp",
+      "caption": "Fig. 17. Distribution of final-stage QoR metrics for total area, total power, worst-case slack, total negative slack, number of slack violating endpoints, total wirelength, and total net capacitance for the ac97_ctrl circuit with variations in clock period, core aspect ratio, core utilization, and placement density using the IHP130 technology node.",
+      "page": 33,
+      "index": 12,
+      "width": 806,
+      "height": 467
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06952v1/fig-013.webp",
+      "caption": "Fig. 20. Distribution of Pearson correlation coefficients between QoR metrics and design parameters across all circuits in the ASAP7 dataset. The correlation coefficient are shown with violin plots for each parameter-metric pair.",
+      "page": 35,
+      "index": 13,
+      "width": 806,
+      "height": 466
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06952v1/fig-014.webp",
+      "caption": "Fig. 21. Change in the distribution of (a) total area, (b) total power, (c) worst slack, (d) total negative slack, (e) number of violating endpoints, and (f) total wirelength across physical design stages for the ac97_ctrl circuit implemented in the SKY130 technology node.",
+      "page": 35,
+      "index": 14,
+      "width": 781,
+      "height": 372
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06952v1/fig-015.webp",
+      "caption": "Fig. 11. Distribution of final-stage quality-of-results metrics for total area, total power consumption, worstcase slack, total negative slack, number of endpoints that violate slack, total wirelength, and total net capacitance for the ac97_ctrl circuit with variations in clock period, core aspect ratio, core utilization, and placement density using the NG45 technology node.",
+      "page": 18,
+      "index": 15,
+      "width": 827,
+      "height": 477
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06952v1/fig-016.webp",
+      "caption": "Table 8. Averaged baseline results of evaluated metrics between design stages for the NG45, SKY130, IHP130, and ASAP7 datasets. The error obtained when using the initial-stage tool estimate to predict the final post-routing QoR metric is listed in each column. Metrics include Mean Absolute Error (MAE), Mean Absolute Percentage Error (MAPE), coefficient of determination (𝑅2), and timing-specific metrics of Mean Positive Error (MPE), Mean Negative Error (MNE), True Positive Rate (TPR), and True Negative Rate (TNR).",
+      "page": 28,
+      "index": 16,
+      "width": 1185,
+      "height": 712
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06952v1/fig-017.webp",
+      "caption": "Table 4. Initial barely pass and barely fail target clock periods (TCP), worst slack (WS), and calculated slack to clock period ratio (SCPR) for each circuit across the four PDKs. All clock periods and worst slacks are in ns.",
+      "page": 13,
+      "index": 17,
+      "width": 819,
+      "height": 692
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06952v1/fig-018.webp",
+      "caption": "Fig. 22. Change in the distribution of (a) total area, (b) total power, (c) worst slack, (d) total negative slack, (e) number of violating endpoints, and (f) total wirelength across physical design stages for the ac97_ctrl circuit implemented in the IHP130 technology node.",
+      "page": 36,
+      "index": 18,
+      "width": 777,
+      "height": 371
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06952v1/fig-019.webp",
+      "caption": "Fig. 23. Change in the distribution of (a) total area, (b) total power, (c) worst slack, (d) total negative slack, (e) number of violating endpoints, and (f) total wirelength across physical design stages for the ac97_ctrl circuit implemented in the ASAP7 technology node.",
+      "page": 36,
+      "index": 19,
+      "width": 777,
+      "height": 372
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06952v1/fig-020.webp",
+      "caption": "Fig. 12. Distribution of Pearson correlation coefficients between quality-of-results metrics and design parameters across all circuits in the NG45 dataset. The correlation coefficient are shown with violin plots for each parameter–metric pair.",
+      "page": 19,
+      "index": 20,
+      "width": 827,
+      "height": 474
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06952v1/fig-021.webp",
+      "caption": "Fig. 10. Analysis of timing-clean and timing-violating path distributions after completion of the final design stage. Subfigures (a)–(d) correspond to NG45, SKY130, IHP130, and ASAP7, respectively.",
+      "page": 17,
+      "index": 21,
+      "width": 793,
+      "height": 449
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06952v1/fig-022.webp",
+      "caption": "Fig. 15. Distribution of final-stage QoR metrics for total area, total power, worst-case slack, total negative slack, number of slack violating endpoints, total wirelength, and total net capacitance for the ac97_ctrl circuit with variations in clock period, core aspect ratio, core utilization, and placement density using the SKY130 technology node.",
+      "page": 32,
+      "index": 22,
+      "width": 806,
+      "height": 464
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06952v1/fig-023.webp",
+      "caption": "Table 3. Configuration of PDN parameters across PDKs. All values are in micrometers (µm) unless otherwise noted. (V/H) denotes the vertical and horizontal PDN metal layers, respectively.",
+      "page": 12,
+      "index": 23,
+      "width": 560,
+      "height": 306
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06952v1/fig-024.webp",
+      "caption": "Fig. 14. Inter-design stage correlation of QoR and timing metrics across all benchmark circuits in the NG45 technology node. Columns compare intermediate design stages with the final stage, with intermediate-stage values on the x-axis and final-stage values on the y-axis. Rows correspond to metrics including area, power, wirelength, timing, and arc delays. Scatter plots aggregate all circuits and operating points; the red line denotes the (y=x) reference and the green line represents a least-squares fit.",
+      "page": 27,
+      "index": 24,
+      "width": 806,
+      "height": 1000
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06952v1/fig-025.webp",
+      "caption": "Fig. 24. Inter-design stage correlation of QoR and timing metrics across all benchmark circuits in the SKY130 technology node. Columns compare intermediate design stages with the final stage, with intermediate-stage values on the x-axis and final-stage values on the y-axis. Rows correspond to metrics including area, power, wirelength, timing, and arc delays. Scatter plots aggregate all circuits and operating points; the red line denotes the (y=x) reference and the green line represents a least-squares fit.",
+      "page": 37,
+      "index": 25,
+      "width": 806,
+      "height": 1000
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06952v1/fig-026.webp",
+      "caption": "Fig. 13. Change in the distribution of (a) total area, (b) total power, (c) worst slack, (d) total negative slack, (e) number of violating endpoints, and (f) total wirelength across physical design stages for the ac97_ctrl circuit implemented in the NG45 technology node.",
+      "page": 20,
+      "index": 26,
+      "width": 735,
+      "height": 721
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06952v1/fig-027.webp",
+      "caption": "Fig. 2. EDA-Schema-V2 entity relationship diagram. Entities in yellow represent the Design Flow Hierarchy (flow, stage, and constraints). Entities in blue correspond to structural design data, while entities in green capture performance and quality-of-results metrics.",
+      "page": 5,
+      "index": 27,
+      "width": 498,
+      "height": 397
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06952v1/fig-028.webp",
+      "caption": "Fig. 9. Distribution of post-routing quality-of-results (QoR) metrics across benchmark circuits for each technology node. Box plots characterize (from top to bottom) total area, total power, worst slack (WNS), total negative slack (TNS), total routed wirelength, and total capacitance. Total area, total power, total routed wirelength, and total capacitance are shown on a logarithmic scale. Subfigures (a)–(d) correspond to NG45, SKY130, IHP130, and ASAP7, respectively.",
+      "page": 16,
+      "index": 28,
+      "width": 823,
+      "height": 735
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.06936v1/fig-001.webp",
+      "caption": "Table 3: Overall performance on POSTEDA-BENCH. For both SR and VRR/NIS, all values are in % and larger is better. Within each column, the best score is shown in bold and the second-best is underlined; tied entries share the same rank. “–” indicates that the framework does not apply to that dimension (ORFS-Agent targets PPA only).",
+      "page": 6,
+      "index": 1,
+      "width": 830,
+      "height": 458
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06936v1/fig-002.webp",
+      "caption": "Table 1: Comparison with related benchmarks.",
+      "page": 2,
+      "index": 2,
+      "width": 830,
+      "height": 269
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06936v1/fig-003.webp",
+      "caption": "Table 4: DRC-Bench per-level performance. SR/VRR for representative ReAct backbones on L1–L3; parenthesized ∆ values report the difference from the corresponding overall DRC score. The best score in each column is bolded, with ties sharing bold.",
+      "page": 7,
+      "index": 3,
+      "width": 830,
+      "height": 267
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06936v1/fig-004.webp",
+      "caption": "Table 5: PPA-Bench per-level performance. SR/NIS for representative backbones on PPAPerformance and PPA-Multi; parenthesized ∆ values report the difference from the corresponding dimension-level overall score. The best score in each column is bolded, with ties sharing bold.",
+      "page": 8,
+      "index": 4,
+      "width": 830,
+      "height": 326
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06936v1/fig-005.webp",
+      "caption": "Figure 5: Effect of vision modality on DRC-Bench. SR and VRR are combined in each subfigure for four backbones under text-only and text+vision settings.",
+      "page": 8,
+      "index": 5,
+      "width": 812,
+      "height": 252
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06936v1/fig-006.webp",
+      "caption": "Figure 2: Overview of POSTEDA-BENCH construction process.",
+      "page": 4,
+      "index": 6,
+      "width": 822,
+      "height": 186
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06936v1/fig-007.webp",
+      "caption": "Figure 7: Full PPA-Bench per-level performance. SR (top) and NIS (bottom) per construction-time level. Row 1 decomposes PPA-Mono into Performance / Power / Area; row 2 summarizes PPA-Mono per sub-dimension and reports PPA-Multi.",
+      "page": 19,
+      "index": 7,
+      "width": 806,
+      "height": 377
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06936v1/fig-008.webp",
+      "caption": "Figure 6: Effect of iteration cap and Reflexion on Gemma-4-31B-it. Left: DRC combines DRCEssential and DRC-Reasoning. Right: PPA combines PPA-Mono and PPA-Multi. Colors encode metrics; solid lines use the left y-axis and dashed lines use the right y-axis.",
+      "page": 9,
+      "index": 8,
+      "width": 768,
+      "height": 311
+    },
+    {
+      "url": "assets/figures/arxiv/2605.06936v1/fig-009.webp",
+      "caption": "Figure 4: Two-objective Pareto fronts for representative PPA-Multi designs. Gray dots denote non-Pareto solutions; blue stars indicate Pareto-optimal points. The combined panels summarize representative period–power and period–area trade-off fronts.",
+      "page": 5,
+      "index": 9,
+      "width": 817,
+      "height": 258
+    }
+  ]
+}

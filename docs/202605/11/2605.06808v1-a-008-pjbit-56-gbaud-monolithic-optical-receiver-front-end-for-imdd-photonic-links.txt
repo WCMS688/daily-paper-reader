@@ -1,0 +1,1652 @@
+Title: 2605.06808v1.pdf
+
+URL Source: https://arxiv.org/pdf/2605.06808v1
+
+Published Time: Mon, 11 May 2026 00:06:16 GMT
+
+Number of Pages: 10
+
+Markdown Content:
+1
+
+> REPLACE THIS LINE WITH YOUR MANUSCRIPT ID NUMBER (DOUBLE -CLICK HERE TO EDIT) < 
+
+# A 0.08 pJ/bit 56 GBaud Monolithic Optical Receiver 
+
+# Front End for IMDD Photonic Links 
+
+Robert P. Pesch, Graduate Student Member, IEEE , Arjun Khurana, Graduate Student Member, IEEE , Joshua J. Wong, Graduate 
+
+Student Member, IEEE , Joel Slaby, Graduate Student Member, IEEE , and Stephen E. Ralph, Senior Member, IEEE 
+
+Abstract —We present the design, fabrication, and measurement 
+
+of a monolithically integrated optical receiver analog front end, 
+
+where low power operation is a primary consideration with a goal 
+
+of supporting 56 Gbaud intensity modulated direct detect 
+
+transceiver s. The need for l ow -power consumption and low -noise 
+
+operation motivates a monolithic, layout driven design a pproach 
+
+which begins with circuit topology selection and analysis. Various 
+
+transistor unit cel l layout configurations are explored, minimizing 
+
+parasitics, enabling wide analog bandwidth and reduced input 
+
+referred noise. The post -layout analog front end achieves a 28.9 
+
+GHz bandwidth with a low -frequency gain o f 6 1.7 dBΩ. This 
+
+circuit was designed within the GlobalFoundries Fotonix TM 
+
+monolithic silicon photonics platform. The fabricated device is 
+
+characterized by its DC operation, noise characteristics, and time 
+
+domain behavior. The final design was validat ed by on -off keyed 
+
+and PAM -4 electrical eye diagram measurements to 64 GBaud, 
+
+consuming 9.22 mW of power from a 1.2 V supply with less than 
+
+737 nA RMS integrated input referred noise current and 0.08 
+
+pJ/bit .
+
+Index Terms —Transimpedance amplifier, optical rece iver, 
+
+integrated photonics, low -power, low -noise, aerospace systems ,
+
+AI datacenters 
+
+I. INTRODUCTION 
+
+IGH capacity optical links are increasingly deployed 
+
+in systems where baud rate scaling is constrained not 
+
+only by bandwidth (BW), but also by power 
+
+consumption, thermal management, and integration complexity 
+
+[1 -2]. Two notable examples are artificial intelligence (AI) 
+
+datacenters and aerospace platforms. Power and thermal 
+
+considerations have become dominant barriers to scaling of AI 
+
+networks creating strong demand for dense, high -throughput 
+
+optical interconnects with low energy per bit [1]. Similarly, 
+
+aerospace systems, including satellites, require high -capacity 
+
+data distribution under stringent size, weight, power, and cost 
+
+(SWaP -C) constraints [2]. In both domains , intensity modulated 
+
+direct detect (IMDD) photonic links remain attractive due to 
+
+their reach, low latency , and power efficiency [3,4]. 
+
+Despite these advantages, power consumption, heat 
+
+dissipation, and pa ckaging complexity remain challenges for 
+
+deployed optical transceivers. In datacenter optical modules, 
+
+optical receiver power directly contributes to module heat 
+
+density and system level cooling demand. This problem is 
+
+exacerbated on satellite platforms wh ere total payload power is 
+
+limited and heat removal is challenging due to the absence of 
+
+> This material is based upon work supported by the National Science
+> Foundation Graduate Research Fellowship under Grant No. DGE -2039655 and
+> National Science Foundation “EPICA”, Grant No. 252808. The authors are
+
+convective cooling. Active thermal control solutions, such as 
+
+thermo -electric coolers (TECs), can stabilize component 
+
+temperatures at the cost of additional system com plexity and 
+
+increased power consumption. Therefore, reducing optical 
+
+receiver power is beneficial not only for energy efficiency but 
+
+also thermal management and scalability. 
+
+Here , we address these concerns through the design of a 
+
+monolithically integrated optical rec eiver analog front end 
+
+(AFE). Monolithic integration significantly reduces both 
+
+packaging parasitics and system complexity , compensating for 
+
+the reduced transit frequency (f t) relative to radio frequency 
+
+(RF) CMOS platforms. The proposed receiver integrate s a
+
+germanium photodiode, a modified active voltage -current 
+
+feedback (AVCF) transimpedance amplifier (TIA), cascaded 
+
+broadband post amplifier stages, and an output buffer to achieve 
+
+record low power consumption , low noise, and wideband 
+
+operation . These characteristics make the receiver well suit ed 
+
+for power constrained IMDD optical links in AI datacenter and 
+
+aerospace applications. 
+
+Section II describes the system -level receiver requirements 
+
+and the circuit -level design of the analog front -end blocks. 
+
+Section III discusses the physical design, transistor layout, and 
+
+parasitic -aware optimization technique. Section IV pres ents the 
+
+experimental characterization, including DC power, noise, and 
+
+time -domain eye -diagram measurements, and compares the 
+
+results with the state of the art. Here w e focus on the pure 
+
+electrical characterization to emphasize the design 
+
+considerations l aid out in Sections II and III. Finally, Section V 
+
+identifies future challenges and discusses ongoing work. 
+
+II. RECEIVER DESIGN 
+
+A conventional AFE consists of the following , Fig. 1 :
+
+1) Photodiode (PD) 
+
+The photodiode is characterized b y a capacitance , a transit 
+
+time , and a responsivity , operating under a reverse bias . For 
+
+PAM -4 operation optical power is limited to ensure 
+
+operation in the linear regime. 
+
+2) Transimpedance Amplifier (TIA) 
+
+The TIA presents a low input impedance to the photodiode 
+
+to minimize the associated RC time constant . It dominates 
+
+the noise characte ristics of the total AFE. 
+
+3) Post Amplifier (PA) 
+
+Additional gain is often necessary to reach the required 
+
+voltage for subsequent digital circuitry . th e PA is    
+
+> with the Georgia Institute of Technology, Atla nta, GA, 30332 USA (email:
+> pesch@gatech.edu ,jwong338@gatech.edu ,akhurana9@gatech.edu ,
+> joelslaby@gatech.edu ,stephen.ralph@ece.gatech.edu .)
+
+# H2
+
+> REPLACE THIS LINE WITH YOUR MANUSCRIPT ID NUMBER (DOUBLE -CLICK HERE TO EDIT) < 
+
+implemented in several cascaded low gain stages to 
+
+maintain bandwidth .
+
+4) Output Buffer (OB) 
+
+An output buffer is optimized to efficiently drive the load 
+
+(Z L) by both sourcing sufficient drive current and 
+
+impedance matching to maximize power transfer while 
+
+minimizing back reflections. 
+
+We note that many AFEs deployed in ultra -high data rate 
+
+systems also include a continuous time linear equalizer (CTLE) 
+
+between the TIA and the PA [ 6]. This maximize s the net 
+
+bandwidth of the receiv er while minimiz ing the input referred 
+
+noise current (IRNC ). Here we focus on the low -power 
+
+requirement , noting that a CTLE can be included later .
+
+The specific circuit architectures for the TIA, PA, and OB, 
+
+depend on the target baud rate. For the chosen monolithic 
+
+platform, 56 GBaud is potentially feasible requiring a BW of at 
+
+least 28 GHz .
+
+Second, the total transimpedance gain of the receiver must be 
+
+determined from the expected input optical power and required 
+
+output voltage swing. For CMOS circuitry operating with ~1 V 
+
+supply , the desired output swing is on the order of several 
+
+hundred mill i-Volts. Whereas, for integrated photonic systems 
+
+optical powers on th e order of hundreds of micro -Watts are 
+
+reasonable. Therefore, we seek a transimpedance gain on the 
+
+order of 60 dB Ω with an assumed near unity photodiode 
+
+responsivity. This metric includes both the TIA transimpedance 
+
+gain as well as the subsequent PA and OB voltage gain. The 
+
+optimization and tradeoffs between allocating gain to each of 
+
+these stages is detailed su bsequently. 
+
+Mitigating noise is a primary design goal . Noting that optical 
+
+links may be optical noise limited here we focus on minimizing 
+
+the electrical noise associated with the AFE . In the context of 
+
+optical receiver front ends, the most useful representation of 
+
+noise is the input referred noise current (IRNC). The IRNC is 
+
+found by combining all the effects of every noise source in the 
+
+entire cascade of amplifiers within the AFE and referring this 
+
+to the input node as a current source in parallel with the input 
+
+current to the TIA, Fig. 2. 
+
+The IRNC is often defined by a power spectral density (PSD) 
+
+A2/Hz, or square root PSD . However, for circuit design it is 
+
+more convenient to refer to the total RMS noise current found 
+
+by integrating IRNC PSD over the effective bandwidth . To 
+
+achieve a useful sensitiv ity with the target bandwidth an IR NC 
+
+of less th an 10 pA/Hz 1/2 . I t is noted that state of the art TIAs 
+
+with gain of 60 dB Ω and bandwidth in excess of 30 GHz 
+
+achieve IRNC PSDs of tens of pA/Hz 1/2 [7]. 
+
+Finally, the most critical design target for this AFE is the total 
+
+power consumption. Subject to the gain, ban dwidth, and noise 
+
+targets, the total power consumption will be minimi zed. Based 
+
+upon designs in the literature [7], total power consumption of 
+
+less than 10 mW is a reasonable target. 
+
+A. Photodiode 
+
+Photodiodes within a silicon photonic platfo rm are typically 
+
+compr ised of germanium and have e xcelle nt responsivity from 
+
+O-band (1300nm) to L band (1625nm) . The photodiode in 
+
+Global Foundries Fotonix TM platform [8 ] has a responsivity of 
+
+~0.9 A/W, an opto -electronic bandwidth of 40 GHz, and a dark 
+
+current of less than 40 nA . The PD is operated under a reverse 
+
+bias condition and is directly coupled to the subsequent TIA 
+
+stage. 
+
+B. Transimpedance Amplifier 
+
+Many TIA topologies have been explored with applications 
+
+in fields beyond photonics (e.g. biomedical engineering, 
+
+microelectromechanical systems, etc.) [9], all with inherent 
+
+gain, noise, and 3-dB bandwidth trade -offs . We seek a topology 
+
+that balances BW and IRNC while minimizing power . The gain 
+
+of this stage needs to be sufficient to reduce the impact of the 
+
+noise from the PA and OB but cannot be so large to overly 
+
+reduce the BW . For a total transimpedance gain of 60 dB Ω, a 
+
+45 -50 dB Ω is a sufficient starting point .
+
+While conventional TIA s utilize a high gain forward 
+
+amplifier and shunt -shunt feedback through a resistor , other 
+
+feedb ack topologies offer better bandwidth and power tradeoffs 
+
+[9]. Additionally, topologies with inductors will not be explored 
+
+due to their large footprint . In this work, we elect a modified 
+
+version of the active voltage -current feedback (AV CF) TIA 
+
+topology, Fig. 3a [10] due to its potential for low -power high 
+
+speed operation . The associated small -signal model, Fig. 3b ,
+
+was analyzed to derive the frequency response of the 
+
+transimpedance gain, Z T(s). This function can be modelled as a 
+
+second order low -pass filter (LPF), with a resonant frequency 
+
+and a damping facto r. Z T(s) can further be broken down into the 
+
+input impeda nce frequency response Z in (s) and the voltage gain              
+
+> Fig. 1. Block diagram of conventional photonic receiver AFE with
+> input photodiode ,TIA for current to voltage conversion, post
+> amplifier for voltage gain, and output buffer for impedance matching.
+> Fig. 2. Schematic diagram of AFE driven by output current of the
+> photodiode (i PD ), highlighting the various noise contrib utions from
+> the TIA (consisting of voltage amplifier A 1and feedback resistor
+> RFB ), as well as the subsequent PA and OB (captured together as an
+> effective voltage amplifier A 2). The input referred noise current
+> PSD is composed of the feedback resistor thermal curre nt noise and
+> the noise of both amplifier stages referred to the input as a Norton
+> equivalent current source. By making the gain of the TIA stage
+> large, we can neglect the noise contributions from subsequent
+> stages (Section II.B).
+
+3
+
+> REPLACE THIS LINE WITH YOUR MANUSCRIPT ID NUMBER (DOUBLE -CLICK HERE TO EDIT) < 
+
+Av. The full low -frequency input impedance is the parallel 
+
+combination of the impedance looking into the drains of M N1 
+
+and M P1 .
+
+Z!" (0) = r#$% (1 + g&$% R'$ ) + R'$ 
+
+1 + A(g&$% r#$% 
+
+∥ r#)% (1 + g&)% R') ) + R') 
+
+1 + A(g&)% r#)% 
+
+(1) 
+
+Where r oN1 (r oP1 ) and g mN1 (g mP1 ) represent the small -signal 
+
+output resistance and transconductance for the transistor M N1 
+
+(M P1 ) as illustrated in the equivalent small -signal model, Fig. 
+
+2b. Th e MOSFET small -signal output resistances are included 
+
+for the fi rst stage to highlight how the R S resistors modify the 
+
+input impedance, while the 2 and 3 stage resistances can be 
+
+excluded to simplify the intuition behind design trade -offs. 
+
+From Fig. 2b, A v is calculated as: 
+
+A( = G&* R+, − G&* /G&- (2) 
+
+Here, G m2 and G m3 are the effective transconductances of the 
+
+second and third stages respectively, where G mi = g mNi + g mPi .
+
+With proper sizing and biasing, the respective small -sign al 
+
+parameters of each stage’s NMOS and PMOS can be 
+
+re asonably approximated as equal. That is, g mN1 = g mP1 = g m1 and 
+
+roN1 = r oP1 = r o1 . Setting R SN = R SP = R S, for symmetry, the input 
+
+impedance can be re -written as: 
+
+𝑍 ./ (0) = 𝑟 0%(1 + 𝑔 1%𝑅 2) + 𝑅 2
+
+2(1 + 𝐴 3𝑔 1%𝑟 0%) (3) 
+
+Since, vin = Z in (s) ´ iin , the full transimpedance transfer function 
+
+of the TIA core can be expressed as Z T(s) = A v ´ Zin (s) :
+
+𝑍 4(𝑠 ) = 1
+
+𝐶 ./ 
+
+∙ 1
+
+𝑠 + 1
+
+𝑍 ./ (0)𝐶 ./ 
+
+× 1
+
+𝐶 5
+
+∙ 𝐺 1*𝐺 1-𝑅 67 − 𝐺 1*
+
+𝑠 + 𝐺 1-
+
+𝐶 5
+
+(4a) 
+
+𝑍 4 (𝑠 ) = 1
+
+𝐶 ./ 𝐶 5
+
+∙ 𝐺 1*𝐺 1-𝑅 67 − 𝐺 1*
+
+𝑠 * + 2𝜉 𝜔 /𝑠 + 𝜔 / 
+
+> *
+
+(4b) 
+
+𝜔 / = > 1
+
+𝐶 ./ 𝐶 5
+
+∙ 2𝑔 1%(𝐺 1*𝐺 1-𝑅 67 − 𝐺 1*)
+
+1 + 𝑔 1%𝑅 2
+
+(5) 
+
+𝜉 = ?
+
+𝐶 ./ 
+
+8𝐶 5
+
+∙ 𝐺 1-(1 + 𝑔 1%𝑅 2)
+
+𝑔 1%(𝐺 1*𝑅 67 − 𝐺 1*
+
+𝐺 1-) (6) 
+
+Where C in is the total effective capacitance at the input node, C L
+
+is the output capacitance, wn is the resonant frequency of the 
+
+second order transfer function and x is a damping coeffic ient. 
+
+From (4a) the poles of Z in (s) and A v(s) can be identified as p 1 =
+
+-1/(Z in (0)C in ) and p 2 = -Gm3 /C L respectively. Equations (5) and 
+
+(6) assume that the magnitude of p 2 is significantly larger than 
+
+that of p 1. This assumption is va lid for this design because the 
+
+DC input impedance is on the order of 1/G m3 and the load 
+
+capacitance is large compared to the input capacitance. The 
+
+latter statement is true in general because transistor widths will 
+
+increase in each stage of the AFE to steadily increase current 
+
+sourcing capabilities until the output stager finally drives a large 
+
+output pad capacitance ( ~60 fF ) w ith respect to the photodiode 
+
+output capacitance ( ~10fF ). 
+
+Another consideration regarding the frequency response of 
+
+this circuit is the Miller effect. Since each individual stage is an 
+
+inverting amplifier, capacitive feedback between the input and 
+
+output (primarily the sum of the NMOS and PMOS gate -source 
+
+capacitances) will be effectively amplified [11] reducing the 3 -
+
+dB bandwidth of the circuit. However, since the intrinsic gain 
+
+and gate -source capacitances of the final sized M N1 and M P1 are 
+
+small (less than 7 V/V and several hundred attofarads 
+
+respectively) the amplified Miller capacitance is less than a few 
+
+femtofarads and does not noticeably inhibit performance. Other 
+
+works have explored buffering the output voltage before 
+
+feeding it back to the first s tage of the AVCF structure [12] to 
+
+reduce the Miller effect, yet for this work, buffering offered no 
+
+appreciable performance benefits and was not pursued to 
+
+minimize power consumption. 
+
+Next, the small -sign al model must be analyzed for the 
+
+circuit’s noise behavior. Following the results from [10] the 
+
+IRNC PSD can be written as: 
+
+𝚤 8/ 
+
+> *
+
+BBB = 4𝑘𝑇 Γ𝐺 1% + 8𝑘𝑇 
+
+𝑅 2
+
++ 4𝑘𝑇 Γ𝐶 ./  
+
+> *
+
+𝜔 *
+
+𝐺 1*
+
++ 4𝑘𝑇 Γ𝐶 ./  
+
+> *
+
+𝜔 *
+
+𝐺 1* 
+
+> *
+
+𝑅 67 
+
++ 4𝑘𝑇 Γ𝐶 ./  
+
+> *
+
+𝜔 *
+
+𝐺 1* 
+
+> *
+
+𝐺 1-𝑅 67 
+
+(7) 
+
+Fig. 3 . Schematic diagram of modified AV CF TIA topology (a) and 
+
+associated small -signal model (b) utilized for circuit analysis. 4
+
+> REPLACE THIS LINE WITH YOUR MANUSCRIPT ID NUMBER (DOUBLE -CLICK HERE TO EDIT) < 
+
+Where k is Boltzmann’s constant, T is the temperature in 
+
+Kelvin, G is Ogawa’s excess noise factor [13], and w is radial 
+
+frequency. This exp ression neglects transistor flicker noise due 
+
+to the anticipated high frequency operation. Instead, (7) is 
+
+domin ated by both a white noise component, terms one and 
+
+two, and a violet noise component, terms three through five. For 
+
+TIAs designed with sub 10 GHz bandwidths, the violet 
+
+component is often negligible; however, for high data rate 
+
+photonic applications , the rapid increase of the noise PSD after 
+
+this point leads to a measurable increase in the RMS output 
+
+noise voltage. 
+
+As for actual design considerations, the tuning resistors of the 
+
+TIA core enable both high gain and ultra -wide BW operation. 
+
+By increasing the feedback resistance R FB , the gain and BW 
+
+both increase, and the damping factor decreases. If x becomes 
+
+too small , the resulting loop phase margin becomes less than 
+
+45 ° leading to ringing in the step response . However, by 
+
+decreasing x without entering the unstable regime, the resulting 
+
+peaking in the frequency domain can be utilized with a
+
+subsequent post -amplifier and output buffer to result in a flat 
+
+wide -band response (Fig. 5). In this design, we chose a 
+
+moderate value of R FB which exhibits slight peaking ( x = 0.55 )
+
+in the core response but not the cascaded response, ensuring 
+
+stable operation. Additionally, the series resistors R SN and R SP 
+
+give the designer flexibility to tune the gain and bandwidth of 
+
+the TIA without affecti ng the stability of the frequency 
+
+response. However, increasing these resistances will also 
+
+increase the PSD of the resistor based thermal noise in the first 
+
+stage of the TIA core, increasing the IRNC .
+
+The next design choi ce to address is transistor sizing and 
+
+biasing. Because each stage is symmetric about the respective 
+
+input and output stages , the DC level of each node will be close 
+
+to half V DD , the supply voltage , if the transistors are siz ed 
+
+properly . The input stage is sized small but not minimally , to 
+
+reduce the parasitic capacitance between the output and input 
+
+nodes while keeping the input impedance small compared to the 
+
+photodiode output impedance. As for the second and third 
+
+stages, an exponential horn structure [ 14 ] is employed to size 
+
+the stages relative to one another. No external bias circuitry is 
+
+required with this architecture, re ducing power that would be 
+
+consumed by current mirror or bandga p references. With the 
+
+tuning resistor values chosen and the transistors sized, the TIA 
+
+core is complete. 
+
+C. Post Amplifier and Output Buffer Design 
+
+A simple cascade of several Cherry -Hooper amplifiers serves 
+
+as both a post amplifier and outp ut buffer in this design, Fig 4a. 
+
+Each individual gain stage, Fig 4b, consists of a CMOS inverter 
+
+followed by an inverter with resistive feedback. The first 
+
+inverter acts as a transconductance element which converts the 
+
+input small -signal voltage to a sma ll -signal current that is then 
+
+amplified and converted to an output voltage through the 
+
+second inverter by way of resistive feedback. This second stage 
+
+is effectively another TIA and extends the BW of the inverter 
+
+cascade by reducing the impedance seen at the output node, 
+
+costing gain. By then further cascading amplifier unit cells, the 
+
+desired total gain can be achieved without significantly 
+
+sacrifi cing BW. The voltage gain transfer function of each stage 
+
+can be computed and simplified (assuming sma ll -sign al 
+
+MOSFET output resistances are negligible) to: 
+
+A((s) = 𝑔 1% + 𝑔 1*
+
+𝑔 1- + 𝑔 19
+
+∙ (𝑔 1- + 𝑔 19)R+, − 1
+
+1 + 𝑠 𝐶 % + 𝐶 *
+
+𝑔 1- + 𝑔 19
+
++ 𝑠 * R+, 𝐶 %𝐶 *
+
+𝑔 1- + 𝑔 19
+
+(8) 
+
+Where gmN is the small -signal transconductances of M N, C 1 is 
+
+the total capacitance at the drain of M 1, and C 2 is the total 
+
+capacitance at the output node. Note that for sufficiently large 
+
+RFB , the DC voltage gain can be reduced to: 
+
+A((0) = (𝑔 1% + 𝑔 1*)R+, (9) 
+
+Due to the second order LPF type response, a 3-dB ban dwidth 
+
+can also be computed; however, in practice it is more 
+
+convenient to maximize the bandwidth given a fixed gain and 
+
+power budget. Additionally, noise analysis for the PA and OB 
+
+is neglected because the TIA gain is sufficiently large to make 
+
+the contri bution for each amplifier stage negligible when 
+
+referred to the input node of the AFE. For this design, a single 
+
+stage gain of ~ 5 dB is sufficient to meet design targets, 
+
+requiring three total stages. Note that the transistor sizing in the 
+
+combined PA and OB follows the same exponenti al horn 
+
+structure referenced in Section II B. 
+
+D. Design Finalization 
+
+After sizing all transistors and selecting all resistor values to 
+
+ensure target gain, bandwidth, noise, stability, and power 
+
+consumption the initial design w as simulated. The frequency 
+
+domain behavior of the AFE, Fig 5, highlights the ideal 
+
+response prior to layout considerations . Note how the slight 
+
+gain peaking in the TIA core extends the lesser BW of the PA 
+
+and OB to achieve a near Butterworth total transimpedance gain 
+
+response. Th e initial simulations demonstrate 63 dB Ω
+
+transimpedance gain with an analog bandwidth of 30 GHz.  
+
+> Fig. 4. Block diagram of cascaded Cherry -Hooper amplifier -based
+> PA and OB architecture (a) with single gain stage schematic (b).
+
+5
+
+> REPLACE THIS LINE WITH YOUR MANUSCRIPT ID NUMBER (DOUBLE -CLICK HERE TO EDIT) < 
+
+III. PHYSICAL DESIGN 
+
+Although circuit and system level considerations are critical 
+
+in the initial phases of AFE design, the physical implementation 
+
+must be considered to anticipate and leverage layout parasitics 
+
+for optimal measur ed perform ance. We utilize a methodical co -
+
+optimization approach for sizing transistors and selecting 
+
+component values. Tradeoffs between different layout styles 
+
+will be discussed and the final post -layout simulation results 
+
+will be presented. 
+
+The so -called g m-over -ID methodology [15] was employed to 
+
+determine preliminary transistor gate widths (W). The g m-over -
+
+ID method is a systematic approach to transistor sizing that 
+
+involves simulating various device metrics (intrinsic gain, 
+
+transit frequency, parasitic capacit ances, etc.) as a function of 
+
+the ratio of the small -signal transconductance (g m) to the drain -
+
+source current (I D), otherwise known as the transconductance 
+
+efficiency (g m/I D). Additionally, the width of the device is swept 
+
+to extract a relationship between gm/I D ID, and W. Together, this 
+
+method enables the efficient and precise sizing of transistors to 
+
+match simulated circuit behavior with analytic computations. 
+
+Once a fixed width has been chosen for a given device, layout 
+
+optimization and simulation feedback are performed. For 
+
+amplifiers operating on signals with BW above several 
+
+gigahertz, layout, and routing parasitics can greatly decrease 
+
+overall system perfor mance. This performance degradation 
+
+comes primarily in the form of stray capacitance and routing 
+
+resistance. Moreover, the combination of excess resistance and 
+
+capacitance form chains of LPFs which may limit the 3 -dB B W
+
+of an amplifier to well below the BW designed for. To combat 
+
+these challenges, various unit -cell topologies have been 
+
+explored to maximize post -layout device performance, Fig 6 
+
+[16]. The first configuration, the simple device, is the naïve 
+
+device layout, Fig 6a. The transistor source and drain terminals 
+
+contact the doped silicon regions through Ohmic contacts to the 
+
+bottom most metal and are separated by a fixed channel length. 
+
+The gate is defined by a polysilicon region directly above the 
+
+channel with a width specifi ed by the designer. The primary 
+
+issue with this design is the high gate resistance introduced by 
+
+the narrow polysilicon gate and is exacerbated for very wide 
+
+devices [17]. To combat this high gate resistance, the multiple 
+
+parallel device configuration is i ntroduced, Fig 6b. By splitting 
+
+the width of the transistor in half, and doubling the number of 
+
+independent devices, the bias current remains the same, while 
+
+reducing the parasitic gate resistance by a factor of four. This 
+
+process requires additional metal routing to the second lowest 
+
+metal layer to short both source and drain terminals together. 
+
+The overlap region of the drain and source routing adds 
+
+additional parasitic capacitances, yet this effect is negligible 
+
+when compared to the improvement by the dr astic gate 
+
+resistance reduction. A more compact version of the multiple 
+
+parallel devices is the so -called multi -finger device, Fig 6c. 
+
+Instead of having two fully separate transistors, the multi -finger 
+
+device defines different devices with overlapping sour ce and 
+
+drain regions. Again, this reduces the gate resistance, but 
+
+slightly increase s the parasitic capacitances because the gate 
+
+polysilicon and drain/source electrodes are now interdigitated .
+
+Note that due to the partial sharing o f drain and source diffusion 
+
+regions, the bias will not scale exactly linearly like the parallel 
+
+structure. Nevertheless, one benefit to the multi -finger structure 
+
+over the pure parallel configuration is the smaller overall 
+
+footprint. However, f or extremely wide devices, the increasing                     
+
+> Fig. 5. Schematic simulated transfer functions for various stages of
+> the AFE including the TIA core, post amplifier and buffer, and the
+> total response. Fig. 6. Transistor unit -cell layouts including simple (a), multiple
+> parallel devices (b), multi -finger folded device (c), and multiple
+> parallel multi -finger devices (d). RX is silicon, PC is the
+> polysilicon, M1 is the first me tal layer, and M2 is the second metal
+> layer.
+> Fig. 7. Schematic of 32 μm wide transistor consisting of 4 parallel
+> transistors each with eight, 1 μm wide fingers (a) and nominal top -
+> down metallization structure (b).
+
+6
+
+> REPLACE THIS LINE WITH YOUR MANUSCRIPT ID NUMBER (DOUBLE -CLICK HERE TO EDIT) < 
+
+gate resistance can still be prohibitively large. To mitigate this, 
+
+the final combined configuration is utilized, Fig 6d. A multiple 
+
+parallel multi -finger device leverages the compact footprint of 
+
+the multi -finger device with the reduced effective gate 
+
+resistance of the parallel transistors to achieve a more optimal 
+
+final design. We selected this fourth configuration for all 
+
+transistors. As an example, four parallel eight 1 μm-finger 
+
+NMOS devices were utilized to form a transistor with an 
+
+effective width of 32 μm, Fig 7. Note that this implementation 
+
+includes routing from the bottom metal layer to the top metal 
+
+layer for int erstage component routing. After the initial 
+
+transistor -unit cell was designed, the layout parasitics were 
+
+extracted using a full -wave 3D simulation tool [18] to create an 
+
+effective model of the physical device. This process is repeated 
+
+for each transistor in the AFE. 
+
+Next, the effective model is integrated into the schematic 
+
+simulation tool and the base performance is reassessed. 
+
+Component values and the transistor widths are adjusted to 
+
+maximize the overall performance. This often results in 
+
+reducing extr insic resistances to account for resistance in the 
+
+vias and metal traces between components. Once the devices 
+
+are accurately sized and the base performance meets the design 
+
+targets , the full system is laid out including ground planes, 
+
+decoupling capacitors , and DC and RF pads. Finally, the full 
+
+layout is simulated using the same full -wave 3D simulation tool 
+
+as before, Fig 8. The final, worst -case (maximum parasitic 
+
+resistance and capacitance models) post -layout simulated 
+
+design achieved a low -frequency tran simpedance gain of 61.7 
+
+dB Ω, a 3-dB BW of 28.9 GHz, and a minimum IRNC PSD of 
+
+7.4 pA/Hz 1/2 . This simulation result includes the finite BW, 
+
+capac itance, and contact resistance of the monolithic 
+
+photodiode on the input. We then expect the measured electrical 
+
+design to outperform this simulation . The total footprint 
+
+(including pads an d decoupling capacitors) i s 650 μm x 750 
+
+μm, while the core footprint was only 20 μm x 135 μm. 
+
+IV. EXPERIMENTAL RESULTS 
+
+Two variants of the final AFE design w ere taped out on the 
+
+GlobalFoundries Fotonix TM platform. One variant with the 
+
+input conn ected to a photodiode and the other with RF pads at 
+
+the input. The pure electronic version is characterized here by 
+
+three metrics . First, the DC operation and power consumption 
+
+were analyzed. Next, the noise behavior of the circuit was 
+
+investigated. Finall y, a time -domain study was performed to 
+
+demonstrate functionality of the receiver front end for various 
+
+baud rates of on -off keyed non -return -to -zero (OOK -NRZ) and 
+
+four level pulse -amplitude modulation (PAM -4) signals. The 
+
+basic experimental setup, Fig 9, centers around the device -
+
+under -test (DUT) which was fixed in place to the top of a probe 
+
+station. 
+
+The supply voltage was sourced through a GS probe from a 
+
+source meter to record the current draw, while the RF input and 
+
+output were coupled throu gh bias tees to a 40 GHz BW GSG 
+
+probe s. The RF signal was sourced by the Keysight M819 8A 
+
+arbitrary waveform generator (AWG), while the DC input 
+
+voltage was set to one half V DD . On the output, the DC voltage 
+
+was monitored , while the RF signal was coupled to a 60 GHz 
+
+BW Infinium DCA -X 86100D sampling oscilloscope. 
+
+A. DC Operation 
+
+To ensure low -power operation the AFE current and power 
+
+consumption as measured as a function of the supply voltage, 
+
+Fig 10. The receiv er was designed with transistors that utilize 
+
+a nominal supply voltage of 1 V; however, due to the 
+
+symmetric nature of the CMOS inverter amplifiers within the 
+
+TIA, PA and OB, the system can be powered with a V DD 
+
+ranging from 0.8 V up to 1.2 V. For both the time domain and 
+
+noise experiments, the system was powered with the 1.2 V. At 
+
+this operating point, the DC current consumption was 
+
+measured to be 7.68 mA consuming only 9.22 mW of power. 
+
+For specific data constrained applications requiring even l ess 
+
+power consumption, the device can be powered with a 0.9 V             
+
+> Fig. 8. Post -layout simulated AFE performance spectra including the
+> transimpedance gain (a) and the IRNC (b).
+> Fig. 9. Block diagram of experimental setup for electrical
+> characterization of the optical receiver (a) and microscope image of
+> the fabricated die with three device s-under -test (b).
+
+7
+
+> REPLACE THIS LINE WITH YOUR MANUSCRIPT ID NUMBER (DOUBLE -CLICK HERE TO EDIT) < 
+
+supply consuming 2.5 mW, while still supporting 32 GBaud 
+
+signaling schemes. 
+
+B. Noise 
+
+The noise behavior of the AFE was determined by measuring 
+
+the output voltage of the TIA with no input current. To includ e
+
+the impact of the photodiode noise on the total AFE noise, the 
+
+receiver with the optical input was measured. A histogram of 
+
+the output voltage was taken and fitted to a Gaussian 
+
+distribution, Fig 11a. The mean was measured as 2.05 mV, 
+
+while the RMS stand ard deviation was measured as 896 μV
+
+RMS. This corresponds to an input referred noise current of 737 
+
+nA RMS. The receiver sensitivity (P sense ) was computed as a 
+
+function of desired Q -factor for an OOK -NRZ signal, Fig 11b, 
+
+from the relationship [19]: 
+
+P!"#!" = 2𝑄 𝑖 $
+
+> %&'
+
+𝑅 (10) 
+
+Where Q is the desired Q -factor, i nRMS is the RMS IRNC, and 
+
+R is the photodiode responsivity. Note (10), assumes the noise 
+
+associated with both a logical zero and one are identical. It 
+
+also neglects eye width reduction as baud rates increa se and is 
+
+thus a minim um value. 
+
+C. Time -Domain Behavior 
+
+Finally, the AFE was validated by a full electrical eye 
+
+diagram measurement. The input signal was varied between 
+
+OOK -NRZ and PAM -4 modulation formats while the baud rate 
+
+was swept from 10 -64 GBaud for each modulation format, with                 
+
+> Fig. 10. Measured DC current (left) and computed DC power
+> consumption (right) as a function of supply voltage.
+> Fig. 11. Measured output noise voltage histogram (a) and the
+> computed receiver sensitivity as a function of Q for an OOK -NRZ
+> signaling scheme (b).
+> Fig. 12. Measured eye diagrams at the output of the optical receiver with de -embedding of all external circuitry excluding RF probes and the DUT .
+> Columns from left to right correspond to 32 GBaud (a ,b ), 56 GBaud (c,d), and 64 GBaud (e,f) respectively, while the top (a,c,e) and bottom (b,d,f)
+> row s are NRZ -OOK and PAM -4 respectively.
+
+8
+
+> REPLACE THIS LINE WITH YOUR MANUSCRIPT ID NUMBER (DOUBLE -CLICK HERE TO EDIT) < 
+
+an emphasis on 32, 56 and 64 GBaud. The recorded eye 
+
+diagrams demonstrate high -performance out to 64 GBaud, Fig 
+
+12. Additionally, the RF cables, conne ctors, and bias tee 
+
+responses were de -embedded , highlighting the pure GSG probe 
+
+and DUT response. The 32 GBaud and 56 GBaud eye diagrams 
+
+yield error free performance when accounting for forward error 
+
+correction (FEC) . As for the 64 GBaud PAM -4, the individual 
+
+levels are discernable but require additional equalization fo r
+
+error -free operation. Therefore , we determine the maximum bit 
+
+rate to be 112 Gbps with the 56 GBaud PAM -4 signaling ,
+
+corresponding to 0 .08 pJ /bit. 
+
+D. Comparison with State of the Art 
+
+Many optical receiver analog front ends have been proposed 
+
+and discussed in the literature, Table 1. We present a design that 
+
+achieves the lowest energy per bit of any receiver reviewed at 
+
+0.0 8 pJ/bit . Additionally, this design attains the second lowest 
+
+sensitivity, requiring only -19. 57 dBm input optical power for 
+
+a bit error ratio (BER) of 10 -12 . Although this figure is for the 
+
+ideal case, in raw BW and transimpedance gain, this design 
+
+performs alongside state of the art with a greater energy 
+
+efficiency. This is accomplished by designing for a relatively 
+
+small transimpedance gain of 61.7 dB Ω, but due to the low 
+
+IRNC the overal l receiver sen sitivity is near the best reviewed. 
+
+Additionally, the die area of the AFE is smaller than most 
+
+designs reviewed enabling ultra -dense system integration. 
+
+Separately, it is worth noting the comparatively large BW and 
+
+data -rates of the SiGe BiCM OS receivers [20,23]. Although 
+
+these designs achieve analog bandwidths that are nearly 
+
+impossible for conventional CMOS platforms, the challenges 
+
+associated with photonic integration, including wire bond 
+
+inductance and large discrete photodiode capacitance , will 
+
+lessen final system level data -rates and noise performance, 
+
+making monolithic CMOS a strong choice for this application .
+
+V. CONCLUSION 
+
+This work presents a compact, low -noise and low -power 
+
+monolithic optical receiver analog front end that operate s at less 
+
+than 0.08 pJ/bit. Our modified AV CF architecture was shown 
+
+to be an ideal topology for implement ing a low -power TIA in a 
+
+monolithic platform. Together with a multistage inverter -based 
+
+Cherry -Hooper post amplifier and output buffer , the amplifi er 
+
+cascade forms a n AFE that achieves record energy per bit 
+
+compared to similar designs in the literature . Moreover, a 
+
+systematic layout aware transistor sizing scheme was 
+
+introduced to maximize post -fabricated system performance ,
+
+leveraging the inhere nt routing resistance and capacitances. 
+
+Ongoing work includes the full system level demonstration 
+
+with edge coupled fiber attach and a similarly designed optical 
+
+transmitter. Additionally , methods for reducing transceiver 
+
+footprint in parallel with power consumption are being explor ed 
+
+[23 ]. Overall, this work demonstrates the utility of monolithic 
+
+electronic -photonic opt ical transceiver systems for the SWaP -
+
+C constrained AI datacenter and aerospace platforms of the 
+
+future. 
+
+ACKNOWLEDGMENT 
+
+This material is based upon work supported by the National 
+
+Science Foundation Graduate Research Fellowship under Grant 
+
+No. DGE -2039655 a nd National Science Foundation “EPICA”, 
+
+Grant No. 2052808. 
+
+REFERENCES 
+
+[1] F. Fayza, C. Demirkiran, S. P. Rao, D. Bunandar, U. Gupta, and A. 
+
+Joshi, “Photonics for sustainable AI,” Communications Physics, vol. 
+
+8, Art. no. 403, 2025, doi: 10.1038/s42005 -025 -02300 -0.
+
+[2] Wayne DT, Rahimzadeh S, Cote N, Kepler D, Butterfield M, Smith 
+
+J, et al. Connecting the warfighter with lasers in Space: The space 
+
+development agency and the Optical Communications Terminal 
+
+Standard. Free -Space Laser Communications XXXVI. 2024 Mar 12; 
+
+doi:10.1117/12.3005520 .
+
+[3] Plant J, Lee B. Environmental conditions for space flight hardware: 
+
+A survey - NASA technical reports server (NTRS) [Internet]. 
+
+NASA; 2005 [cited 2024 Jul 26]. Available from: 
+
+https://ntrs.nasa.gov/citations/20060013394 .
+
+[4] L. Torrijos -Morán and D. Pérez -López, “Industry insight: Photonics 
+
+to scale AI data centers,” npj Nanophotonics, vol. 3, Art. no. 8, 
+
+2026, doi: 10.1038/s44310 -025 -0010 5-1
+
+[5] M. Liu, L. Pei, and Z. Hu, “Integrated Sensing and communication 
+
+for seamless fiber -optic and free -space optical networks,” 2025 
+
+Photonics Global Conference (PGC) , pp. 1 –3, Dec. 2025. 
+
+doi:10.1109/pgc68487.2025.11319468 
+
+[6] D. Abdelrahman and M. Atef, “Ac curate characterization for 
+
+continuous -time linear equalization in CMOS optical receivers,”                                                                                                         
+
+> TABLE I
+> PERFORMANCE METRICS FOR STATE OF THE ART OPTICAL RECEIVERS IN THE LITERATURE
+> References [10] (2021) [12] (2024) [20] (2024) [21] (2024) [22] (2025) [7] (2025) This Work
+> Process 40 nm CMOS 65 nm CMOS 130 nm SiGe
+> BiCMOS
+> 28 nm CMOS 28 nm CMOS 55 nm SiGe
+> BiCMOS
+> 40 nm CMOS
+> ft(GHz) 250 a160 a260 300 a300 a320 a280
+> TIA Architecture AVCF AVCF Shunt Feedback Multistage
+> Inverter
+> Multistage
+> Inverter
+> Travelling
+> Wave
+> AVCF
+> Supply Voltage (V) 11.2 3.3 1/0.7 1.05 2.5 1.2
+> ZT(dB Ω)63.8 70.7 74 82 92 77 61.7
+> BW (GHz) 24.3 16.3 40 75.3 64 28.9
+> IRNC (pA/Hz 1/2 )95.6 a--11 3.6 18.8 7.4
+> Data Rate (Gbit/s) 30 25 112 12.5 10 224 c112
+> Sens itivity (dBm),
+> BER = 10 −12
+> -5.84 b--9.7 -10.7 -20.7 -5.9 -19. 57 b
+> Area (mm 2)0.63 0.45 0.816 0.0007 d0.6 1.125 0.44
+> Power (mW) 37.5 22.6 180 1.38 121 487.5 9.2
+> Energy Efficiency
+> (pJ/bit)
+> 1.25 0.90 1.61 0.11 12.1 2.18 0.08
+> aestimated from available data ,bcomputed from IRNC ,cincluding channel equalization ,dcore area not including pads or decoupling capacitors
+
+9
+
+> REPLACE THIS LINE WITH YOUR MANUSCRIPT ID NUMBER (DOUBLE -CLICK HERE TO EDIT) < 
+
+IEEE Access , vol. 10, pp. 129019 –129028, Dec. 2022. 
+
+doi:10.1109/access.2022.3227934 
+
+[7] J. Declercq et al. , “A 64 -GHz optical receiver for 128 -GBD links 
+
+using a 55 -nm sige bicmos traveling -wave linear transimpedance 
+
+amplifier,” Journal of Lightwave Technology , vol. 43, no. 9, pp. 
+
+4139 –4148, May 2025. doi:10.1109/jlt.2025.3533200 
+
+[8] K. Giewont et al ., "300 -mm Monolithic Silicon Photonics Foundry 
+
+Technology," in IEEE Journa l of Selected Topics in Quantum 
+
+Electronics , vol. 25, no. 5, pp. 1 -11, Sept. -Oct. 2019, Art no. 
+
+8200611, doi: 10.1109/JSTQE.2019.2908790. 
+
+[9] Kumar S, Vanita. A review of Transimpedance amplifiers used in 
+
+biomedical applications. 2021 5th International Conference on 
+
+Computing Methodologies and Communication (ICCMC). 2021 
+
+Apr 8; doi:10.1109/iccmc51019.2021.9418377 
+
+[10] Zhou G, Mao L, Xie S, Min C. A 30Gbps 1.25PJ/B CMOS receiver 
+
+analog front -end with low supply voltage. IEICE Electronics 
+
+Express. 2021 Apr 25;18(8):20210114 –20210114. 
+
+doi:10.1587/elex.18.20210114 
+
+[11] Miller JM. The dependence of the input impedance of a three -
+
+electrode vacuum tube upon the load in the plate circuit. Journal of 
+
+the Franklin Institute. 1919 Dec;188(6):814. doi:10.1016/s0016 -
+
+0032(19)90474 -1
+
+[12] Tominaga K, Takahashi Y. Low -power, 25 -GB/s active voltage 
+
+current feedback transimpedance amplifier in 65 -NM CMOS. 2024 
+
+International Conference on Electronics, Information, and 
+
+Commun ication (ICEIC). 2024 Jan 28; 
+
+doi:10. 1109/iceic61013.2024.10457095 
+
+[13] E. Sackinger, "On the Excess Noise Factor Γ of a FET Driven by a 
+
+Capacitive Source," in IEEE Transactions on Circuits and Systems 
+
+I: Regular Papers , vol. 58, no. 9, pp. 2118 -2126, Sept. 201 1, doi: 
+
+10.1109/TCSI.2011.2112870. Mae kawa T, Amakawa 
+
+[14] S, Ishihara N, Masu K. Design of CMOS inverter -based output 
+
+buffers adapting the cherry -hooper broadbanding technique. 2009 
+
+European Conference on Circuit Theory and Design. 2009 Oct 2; 
+
+doi:10.1109/ecctd.2009.5275025 
+
+[15] P. Jespers, The gm/IDg_ m/I_D gm /ID Methodology: A Sizing Tool 
+
+for Low -Voltage Analog CMOS Circuits —The Semi -Empirical and 
+
+Compact Model Approaches . New York, NY, USA: Springer 
+
+Science & Business Media, 2009. 
+
+[16] U. Kalita, C. Tueckmantel, T. Riedl and U. R. Pfeiffer, "A Multi -
+
+Finge r GHz F requency Doubler Based on Amorphous Indium 
+
+Gallium Zinc Oxide Thin Film Transistors," in IEEE Access , vol. 
+
+11, pp. 70668 -70678, 2023, doi: 10.1109/ACCESS.2023.3294428. 
+
+[17] B. Razavi, Ran -Hong Yan and K. F. Lee, "Impact of distributed gate 
+
+resistance on the performance of MOS devices," in IEEE 
+
+Transactions on Circuits and Systems I: Fundamental Theory and 
+
+Applications , vol. 41, no. 11, pp. 750 -754, Nov. 1994, doi: 
+
+10.1109/81.331530. 
+
+[18] J. M. Dunn, S. Kapur and D. Long, "EMX: Overcoming Silicon 
+
+Chip EM Simulation Challenges for Passive Circuit Analysis and 
+
+Model Development," 2021 International Applied Computational 
+
+Electromagnetics Society Symposium (ACES) , Hamilton, ON, 
+
+Canada, 2021, pp. 1 -4. 
+
+[19] J. Kim and J. F. Buckwalter, "A 40 -Gb/s Optical Tran sceiver Front -
+
+End in 45 nm SOI CMOS," in IEEE Journal of Solid -State Circuits ,
+
+vol. 47, no. 3, pp. 615 -626, March 2012, doi: 
+
+10.1109/JSSC.2011.2178723. 
+
+[20] W. Chen et al ., "A 4 × 56 -Gbaud PAM -4 Optical Receiver 
+
+Integrated With SiGe -BiCMOS TIA," in IEEE Photon ics 
+
+Technology Letters , vol. 36, no. 24, pp. 1481 -1484, 15 Dec.15, 
+
+2024, doi: 10.1109/LPT.2024.3482566. 
+
+[21] P. Yan et al. , A 12.5 GB/s 1.38 MW All -inverter -based optical 
+
+receiver with multi -stage feedback TIA and continuous -time linear 
+
+equalizer , Feb. 2023. do i:10.21203/rs.3.rs -2557778/v1 
+
+[22] S. Ma et al ., "A 10 -Gb/s 3.6 -pA/√ Hz Input Noise Optical Receiver 
+
+in 28 -nm CMOS," in IEEE Transactions on Circuits and Systems II: 
+
+Express Briefs , vol. 72, no. 11, pp. 1585 -1589, Nov. 2025, doi: 
+
+10.1109/TCSII.2025.3575733. 
+
+[23] R. P. Pesch, J. J. Wong and S. E. Ralph, "Co mpact Monolithic 
+
+Arrayed Optical Receivers for Ultra -High Density Photonic 
+
+Interconnects," 2025 Optical Interconnects and Packaging 
+
+Conference (OIP), Fort Collins, CO, USA, 2025, pp. 1 -2, doi: 
+
+10.1 109/OIP65843.2025.11081609. 
+
+Robert P. Pesch (M’24) received the B.S. 
+
+(2024) and M.S. (2025) degrees in 
+
+electrical engineering from the Georgia 
+
+Institute of Technology, Atlanta, USA. He 
+
+is currently a graduate researcher pursuing 
+
+his Ph.D. in Electrical and Computer 
+
+Engineering at the Georgia Institute of 
+
+Technology under the advisement of Dr. 
+
+Stephen Ralph. His research interests 
+
+include the design of ultra -wideband CMOS optical 
+
+transceivers and RF and microwave photonic systems. Robert 
+
+is a current NSF graduate research fellow and IE EE 
+
+graduate student me mber. 
+
+Arjun Khurana (M’21) was born in Plano, 
+
+Texas. He graduated with a Bachelor of 
+
+Science in Computer Science and a minor 
+
+in Physics from the University of Texas at 
+
+Dallas in 2021. Since then, he has been a 
+
+Ph.D. student working with Dr . Stephen 
+
+Ralp h specializing in optical 3D 
+
+heterogeneous integration and novel 
+
+VCESL architectures. This is strongly backed by his extensive 
+
+internship experiences at Dallas Quantum Devices and Finisar 
+
+Corporation. He has authored several publications relating to 
+
+photonics inverse design and no vel VCSEL structures. 
+
+Joshua J. Wong received the B.S. degree 
+
+in Computer Engineering from the Georgia 
+
+Institute of Technology in spring 2023 and 
+
+received his M.S. degree in Electrical and 
+
+Computer Engineering at the Georgia 
+
+Institute of Technology in fall 2024. He is 
+
+currently pursuing in Ph.D. in ECE at 
+
+Georgia Tech under the advisement of Dr. 
+
+Stephen E. Ralph. His research interests include integrated 
+
+photonics, inverse design, solid -state physics, and 
+
+electromagnetics. Joshua is a graduate student member of the 
+
+IEEE and a re cipient of the National Defense Science a nd 
+
+Engineering Graduate (NDSEG) Fellowship. 
+
+Joel B. Slaby was born in Pittsburgh, 
+
+Pennsylvania. He received his master’s and 
+
+bachelor’s degree in electrical engineering 
+
+from Georgia Institute of Technology in 
+
+2022 and 2021, respectively, where he is 
+
+curr ently pursuing a Ph.D. in electrical 
+
+engineering. He has been a member of Dr. 
+
+Stephen Ralph’s ultrafast optical 
+
+communications laboratory for six years and is currently 
+
+developing novel methods for designing foundry compatible 
+
+integrated silicon photonic c omponents and systems. He is 
+
+investigating and designing integrated circuits robust to harsh 
+
+environments through the NSF IUCRC Electronic and Photonic 
+
+Integrated Circuits for Aerospace (EPICA). He has co -authored 10 
+
+> REPLACE THIS LINE WITH YOUR MANUSCRIPT ID NUMBER (DOUBLE -CLICK HERE TO EDIT) < 
+
+several journals related to density -based topology optimization 
+
+and presented at several conferences for similar work. 
+
+Stephen E. Ralph (Senior Member) 
+
+received the B.E.E. degree (Hons.) in 
+
+electrical engineering from Georgia 
+
+Institute of Technology (Georgia Tech), 
+
+Atlanta, GA, USA, in 1980, and the Ph.D. 
+
+degree in electrical engineering from 
+
+Cornell University, Ithaca, NY, USA, in 
+
+1998. His research focused on the optical 
+
+detection of highly nonequilibrium 
+
+transport in heterojunction devices. In 1988, he began a
+
+postdoctoral position at AT&T Bell Laboratories. In 1990, he 
+
+joined the IBM T. J. Watson Research Center, Yorkt own 
+
+Heights, NY, USA. In 1992, he joined as a Faculty Member 
+
+with the Phy sics Department, Emory University, Atlanta. In 
+
+1998, he was an Associate Professor of electrical and computer 
+
+engineering with Georgia Tech, where his work currently 
+
+focuses on the development of ultrafast optical devices for 
+
+telecommunications. He is a me mber of American Physical 
+
+Society, the IEEE Lasers and Electro -Optics Society, and the 
+
+Optical Society of America.

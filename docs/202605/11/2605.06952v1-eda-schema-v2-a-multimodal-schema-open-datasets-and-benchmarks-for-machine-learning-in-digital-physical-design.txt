@@ -1,0 +1,691 @@
+Title: EDA-Schema-V2: A Multimodal Schema, Open Datasets, and Benchmarks for Machine Learning in Digital Physical Design
+
+URL Source: https://arxiv.org/pdf/2605.06952v1
+
+Published Time: Mon, 11 May 2026 00:25:55 GMT
+
+Number of Pages: 39
+
+Markdown Content:
+# EDA-Schema-V2: A Multimodal Schema, Open Datasets, and Benchmarks for Machine Learning in Digital Physical Design 
+
+PRATIK SHRESTHA, Drexel University, USA 
+
+ALEC AVERSA, Drexel University, USA 
+
+IOANNIS SAVIDIS, Drexel University, USA The continuous scaling of CMOS technology has significantly increased the complexity of very large-scale integrated (VLSI) circuits, driving growing interest in applying machine learning (ML) algorithms to electronic design automation (EDA). However, the limited availability of open datasets and the absence of standardized data representations present major challenges to the research community. In particular, the lack of interoper-ability and comparability among ML-based research in digital physical design hinders reproducibility and collaborative advancement. This paper introduces EDA-Schema-V2 , an open and comprehensive multimodal graph and image-based schema designed to address interoperability and comparability by providing a struc-tured framework for the representation and analysis of datasets in digital physical design. The schema includes representations of both physical attributes and quality-of-results (QoR) metrics of circuits across multiple stages of the design flow, including logic synthesis, floorplanning, placement, clock network synthesis, and routing. Utilizing the SkyWater 130 nm, Nangate 45 nm, IHP SG13G2 130 nm, and ASAP 7 nm open-source process design kits (PDKs), together with the OpenROAD tool flow, datasets of physical designs of circuits from the IWLS’05 benchmark suite are generated and analyzed. The dataset is comprised of approximately 7,800 design instances spanning 18 benchmark circuits and includes stage-resolved representations from synthesis through detailed routing. The design instances are generated through systematic parameter sweeps over clock period, core utilization, and aspect ratio, while capturing both timing clean and timing violating implementations across technology nodes. The dataset contains over 275 million gates, 75 million nets, and more than 36 million extracted timing paths. Multimodal data is provided in the form of circuit graphs, spatial layout images, and detailed quality of results metrics. The resulting datasets are publicly released to support reproducible ML research and to establish standardized benchmarks for the evaluation of ML-based approaches in digital physical design. In addition, twelve representative prediction tasks are identified across technology nodes and benchmark circuits, spanning timing, power, area, and routing metrics. A comprehensive baseline analysis of the identified tasks is provided to characterize stage-to-stage predictability across the physical design flow. The resulting baseline establishes standardized reference points for benchmarking and evaluating future machine learning (ML) methods. CCS Concepts: • Hardware → Physical design (EDA) ; Very large scale integration design ; • Computing methodologies → Machine learning ; • Information systems → Database design and models .
+
+1 Introduction 
+
+With the continued scaling of CMOS technology, the design complexity of integrated circuits (ICs) has increased substantially, challenging traditional design methodologies. While electronic design automation (EDA) has long relied on heuristic, statistical, and optimization-based techniques that implicitly capture design patterns, such approaches are often rule-based, expert-engineered, and limited in the ability to generalize across designs and technology nodes. To address the growing complexity, researchers have increasingly applied machine learning (ML) techniques, which enable automated pattern extraction and more scalable, data-driven prediction from large datasets [ 1 ]. However, the lack of accessible and curated circuit datasets, along with the lack of a standardized schema to organize and share data, has resulted in significant obstacles. Variations across technology nodes, the limited availability of open-source resources, time-consuming data  
+
+> Authors’ Contact Information: Pratik Shrestha, Drexel University, Philadelphia, USA, ps937@drexel.edu; Alec Aversa, Drexel University, Philadelphia, USA, aja367@drexel.edu; Ioannis Savidis, Drexel University, Philadelphia, USA, is338@drexel.edu.
+> arXiv:2605.06952v1 [cs.AR] 7 May 2026 2Pratik Shrestha, Alec Aversa, and Ioannis Savidis
+
+preparation, inconsistent preprocessing, and the lack of a unified benchmarking framework all limit the development of consistent and reproducible ML approaches for physical design. While early initiatives including METRICS2.1 [ 2] have advanced openness and standardization in EDA research, the scope of such efforts remains limited. METRICS2.1 introduces standardized metrics for RTL-to-GDSII workflows, but reports only aggregate performance data rather than detailed, stage-wise, or structural representations. More recent efforts, including CircuitNet [ 3]and CircuitOps [ 4], extend open workflows by integrating machine learning with EDA algorithms. CircuitNet provides graph and image-based datasets generated using commercial design tools and proprietary process design kits (PDKs). However, the use of closed-source environments restricts reproducibility and public accessibility. CircuitOps, built entirely on an open-source design flow and open PDKs, targets dataset generation, feature extraction, and ML integration. The datasets generated by CircuitOps primarily target the post–placement and routing stages. CircuitOps captures circuit graphs and QoR metrics, but excludes pre-route representations and image modalities. This paper introduces EDA-Schema-V2 , an open-source, multi-stage, and multimodal schema and dataset for digital physical design. Generated using the OpenROAD tool flow [ 5 ] and open process design kits (PDKs), the open datasets enable fully reproducible and standardized machine learning methodologies for physical design automation. Building on the original EDA-Schema framework [ 6], this work extends beyond graph-based representations to include image modalities and data from multiple stages of the RTL-to-GDSII flow. The key contributions of this work are summarized as follows: 
+
+• Standardized and extensible schema: A unified, stage-aware data model defining struc-tures, relationships, and properties of digital circuits and corresponding subcomponents. 
+
+• Open-source multimodal dataset: A comprehensive set of physical designs of circuits from the IWLS’05 benchmark suite [ 7] generated using the OpenROAD flow [ 5 ] and the SkyWater 130 nm, Nangate 45 nm, IHP SG13G2 130 nm, and ASAP 7 nm open-source PDKs. 
+
+• Comprehensive dataset analysis: A quantitative characterization of the dataset demon-strating completeness and data diversity. 
+
+• Baseline ML benchmark tasks: A comprehensive profiling of the dataset and standardized metrics for baseline evaluation of representative prediction tasks to support a transparent and reproducible comparison of models. The formatted dataset of physical designs and the source code of the data model schema are released on GitHub 1.The remainder of this paper is organized as follows. Background on the design automation flow and the data generated through each stage of the flow is provided in Section 2. The EDA-Schema-V2 
+
+data model, including the property-graph structure and corresponding entities are described in Section 3. The open datasets, including details on the data-generation process, benchmark circuits, utilized tools, and applied setup parameters are discussed in Section 4, followed by an analysis of the dataset in Section 5. The applicability of the proposed schema and dataset for machine-learning–based EDA tasks, including baseline analysis across multiple design stages and technology nodes, is discussed in Section 6. Finally, some concluding remarks are provided in Section 7. 
+
+2 Electronic Design Automation Flow 
+
+The digital circuit design flow includes a sequence of automated stages to achieve functionally correct and power, performance, and area (PPA) optimized circuit implementations. PDKs provide  
+
+> 1A processed dataset of physical designs along with code to access and represent the data as an EDA-schema data model have been made available on https://github.com/drexel-ice/EDA-schema EDA-Schema-V2: Multimodal Schema, Open Datasets, and Benchmarks for ML in Digital Physical Design 3
+
+technology-specific device models and layout rules, which guide EDA tools in generating and optimizing circuit layouts. This work utilizes the open-source OpenROAD toolchain, an RTL-to-GDSII flow built on open PDKs and standardized file formats. As shown in Fig. 1, which depicts the design stage structure provided by OpenROAD [ 5], the flow progresses through logic synthesis, floorplanning, placement (global, resizing, detailed), clock tree synthesis, routing (global and detailed), and final filler cell insertion. Each stage affects design quality, with outputs from the previous stage impacting current stage outcomes. 
+
+> Fig. 1. Block representation of the automated physical design flow.
+
+The completion of each stage generates specific files and reports that describe the logical, physical, and analytical aspects of the design: (1) Logical netlist is represented by technology-specific Verilog or VHDL files that utilize standard cells defined in the Liberty (.lib) files of a process technology node. The netlist files describe the logical structure of the circuit. The Liberty files provide detailed timing and electrical characteristics of digital standard cells for a given PDK, which are used to optimize the circuit and verify that design constraints are satisfied. (2) Physical netlist is described using the Library Exchange Format (LEF) and Design Exchange Format (DEF) files. The LEF and DEF files define technology-specific layout information, including the physical coordinates of input and output pins, standard cell placements, and the path of interconnect routes. (3) Quality-of-results (QoR) reports summarize key design metrics, including power, area, and timing, at each stage of the physical design flow. The reports provide generalized, stage-level overviews of design quality, with reports during synthesis providing preliminary estimates while later design stages yield more accurate and detailed results. (4) Timing reports are generated using the static timing analysis (STA) tool OpenSTA [8]. The OpenSTA reports provide detailed path-level analysis of signal arrival times, required times, and path delays, which enables precise evaluation of both critical and non-critical timing paths. (5) Net parasitics are extracted using OpenRCX [ 9 ]. The resulting Standard Parasitic Ex-change Format (SPEF) files [ 10 ] include the resistance and capacitance of nets and devices, which provide an accurate estimate of the post-routed delay and power consumption. 4 Pratik Shrestha, Alec Aversa, and Ioannis Savidis 
+
+(6) Power delivery network (PDN) analysis is performed using PDNSim [11 ], which evalu-ates IR-drop (voltage drop due to current flow through resistances) and electromigration (EM) through current density analysis. The results of the EM analysis are stored as gridded CSV data, while heatmaps are used to visualize the IR-drop and current density. (7) Design rule checking (DRC) ensures that the layout adheres to the manufacturing con-straints defined by the PDK. Execution of DRC returns geometric or spacing violations in frontend and backend of the line layers including vias and other layout structures, which ensures that the design is compliant with foundry rules. 
+
+3 EDA DataModel Schema 
+
+The physical design flow shown in Fig. 1 provides two main classes of data that define circuit quality. The first is structural data of the circuit, which is provided in the Liberty (.lib), LEF/DEF, and SPEF files that describe logical connectivity, physical geometry, and parasitic impedance, respectively. The second is analysis data included in power, timing, and area reports, along with reports generated from analysis of the PDN, which include IR-drop and EM profiling. The resulting reports are also used to generate spatial representations of placements and routing, as well as heatmaps of analyzed circuit features. EDA-Schema-V2 organizes such artifacts into a unified multimodal schema that models each circuit as a collection of related entities with graph-structured and image-based attributes, forming a taxonomy of design flow components, structural elements, and performance metrics. Graph relationships between the entities capture logical and physical connectivity among components while image attributes represent spatial patterns and heatmaps of performed analyses. The entity–relationship structure is shown in Figure 2 and the attributes associated with each entity are summarized in Table 1. The schema is defined using standard EDA file formats and technology layer conventions to ensure compatibility across different design platforms. All geometric coordinates are expressed in DEF database units, and technology layers are derived directly from LEF definitions to maintain consistent interpretation across tools and PDKs. 
+
+Although EDA-schema is instantiated on OpenROAD and open-source PDKs, the schema remains compatible with commercial design tools that utilize the same data exchange standards. 
+
+The schema defines three types of entities: organizational entities that capture the design flow and the associated netlist and design and performance metrics, structural entities that represent the logical and physical composition of the circuit, and metric entities that store performance and quality-of-results data. The design flow and metric entities included in EDA-Schema-V2 are described in Section 3.1, while structural entities including Netlist , Clock Network , Power Delivery Network , and Timing Path are detailed in Sections 3.2, 3.3, 3.4, and 3.5, respectively. Routability features and metrics are discussed in Section 3.6. 
+
+3.1 Design Flow and Metrics 
+
+At the top level, the schema represents an RTL-to-GDSII execution of the design flow through three interdependent entities, DesignFlow , DesignStage , and DesignConstraint , which together define the progression of a circuit design through the various stages of the automated flow. DesignFlow 
+
+represents high level metadata of the executing flow including the name of the design, the PDK, and the tool versions, along with the sequence of design stages. DesignConstraint defines timing and physical area limits, including clock periods, I/O delays, and transition or latency bounds with SDC-style specifications. DesignStage captures each stage of the digital design flow, including synthesis, placement, routing, and signoff. In OpenROAD, the stages are further partitioned into floorplanning ( floorplan ), global placement ( global_place ), resizing ( place_resize ), detailed EDA-Schema-V2: Multimodal Schema, Open Datasets, and Benchmarks for ML in Digital Physical Design 5
+
+> Fig. 2. EDA-Schema-V2 entity relationship diagram. Entities in yellow represent the Design Flow Hierarchy (flow, stage, and constraints). Entities in blue correspond to structural design data, while entities in green capture performance and quality-of-results metrics.
+
+placement ( detailed_place ), clock tree synthesis ( cts ), global routing ( global_route ), detailed routing ( detailed_route ), and final filler insertion ( final ). At each stage, the quality-of-results metrics are grouped with the corresponding metrics entities, which include Cell Metrics , Area Metrics , Power Metrics , Timing Metrics , and Routability Metrics .The integrated representation of flow, constraints, stages, and metrics provides a consistent and extensible framework for provenance, reproducibility, and performance evaluation across tools and PDKs. 
+
+3.2 Netlist 
+
+LEF and DEF files provide structural information on logic gates, input/output ports, standard cells, coordinates of the placed gates and macros, and routing connectivity. The information is captured in the netlist entity, which represents the complete logical and physical composition of the circuit as a heterogeneous graph described by 𝑁 𝐿𝐺 = (𝑉 , 𝐸 ), where nodes 𝑣 ∈ 𝑉 correspond to gates ( 𝐺 ), pins ( 𝑃 ), nets ( 𝑁 ), and I/O ports ( 𝐼𝑂 ), and edges 𝑒 ∈ 𝐸 define the logical and physical connections between nodes. An example of a circuit and the corresponding netlist graph is shown in Fig. 3.  
+
+> Fig. 3. Sample circuit represented as a netlist graph 𝑁 𝐿𝐺 .
+
+6 Pratik Shrestha, Alec Aversa, and Ioannis Savidis 
+
+Table 1. List of circuit features represented by the EDA-Schema-V2 datamodel. Each entity is associated with a set of attributes, corresponding data types, and units where applicable. The Stages column indicates the design stages where each attribute is available, which includes floorplan (FP), global placement (GP), placement resize (PR), detailed placement (DP), clock tree synthesis (CTS), global routing (GR), detailed routing (DR), and final layout (F). 
+
+Entity Feature Datatype Unit Stages Entity Feature Datatype Unit Stages 
+
+id string name string FP - F toolchain string is_special_net bool FP - F design string no_of_fanouts int FP - F 
+
+Design Flow run_status string x_min float μm GP - F clock_period float ns y_min float μm GP - F clock_uncertainty float ns x_max float μm GP - F clock_latency float ns y_max float μm GP - F clock_transition float ns length float μm DR - F input_delay float ns hpwl float μm GP - F output_delay float ns resistance float ohm DR - F aspect_ratio float capacitance float fF DR - F 
+
+Constraints 
+
+utilization float 
+
+Net 
+
+total_coupling_capacitance float fF DR - F name string name string FP - F Design Stage run_status string direction string FP - F width float μm FP - F x_min float μm GP - F height float μm FP - F y_min float μm GP - F no_of_inputs int FP - F x_max float μm GP - F no_of_outputs int FP - F y_max float μm GP - F no_of_cells int FP - F is_startpoint bool FP - F no_of_nets int FP - F is_endpoint bool FP - F no_of_pins int FP - F setup_rise_slew float ns FP - F utilization float FP - F setup_fall_slew float ns FP - F total_wirelength float μm DR - F hold_rise_slew float ns FP - F total_hpwl float μm FP - F hold_fall_slew float ns FP - F cell_placement binary map GP - F setup_rise_slack float ns FP - F cell_placement_combinational binary map GP - F setup_fall_slack float ns FP - F cell_placement_sequential binary map GP - F hold_rise_slack float ns FP - F cell_placement_filler binary map F hold_fall_slack float ns FP - F pin_placement binary map GP - F load_capacitance float fF FP - F routing binary map DR - F 
+
+Pin 
+
+switching_activity float FP - F 
+
+Netlist 
+
+routing_by_metal_layers list[binary map] DR - F startpoint string FP - F clock_source string FP - F endpoint string FP - F no_of_buffers int CTS - F path_type string FP - F no_of_clock_sinks int CTS - F arrival_time float ns FP - F cell_placement binary map CTS - F required_time float ns FP - F cell_placement_combinational binary map CTS - F slack float ns FP - F cell_placement_sequential binary map CTS - F no_of_pins int FP - F pin_placement binary map CTS - F 
+
+Timing Path 
+
+is_critical_path bool FP - F routing binary map DR - F gate Gate Instance FP - F 
+
+Clock Tree 
+
+routing_by_metal list[binary map] DR - F delay float ns FP - F pdn_routing_vdd binary map FP - F arrival_time float ns FP - F pdn_routing_vss binary map FP - F 
+
+Cell Arc 
+
+slew float ns FP - F voltage_source binary map FP - F net Net FP - F ir_drop_vdd scalar map mV DR - F delay float ns FP - F ir_drop_vss scalar map mV DR - F arrival_time float ns FP - F em_vdd scalar map mV DR - F slew float ns FP - F 
+
+Power Delivery Network 
+
+em_vss scalar map mV DR - F 
+
+Net Arc 
+
+capacitance float fF FP - F name string FP - F no_of_combinational_cells int FP - F direction string FP - F no_of_sequential_cells int FP - F x float μm GP - F no_of_buffers int FP - F Port 
+
+y float μm GP - F no_of_inverters int FP - F name string no_of_fillers int FP - F function string no_of_tap_cells int FP - F width float μm no_of_diodes int FP - F height float μm no_of_macros int FP - F no_of_input_pins int 
+
+Cell Metrics 
+
+no_of_total_cells int FP - F no_of_output_pins int combinational_cell_area float μm−2 FP - F is_sequential bool sequential_cell_area float μm−2 FP - F is_inverter bool buffer_area float μm−2 FP - F is_buffer bool inverter_area float μm−2 FP - F is_filler bool filler_area float μm−2 FP - F is_diode bool tap_cell_area float μm−2 FP - F drive_strength float diode_area float μm−2 FP - F input_capacitance_min float fF macro_area float μm−2 FP - F input_capacitance_max float fF cell_area float μm−2 FP - F output_capacitance_min float fF 
+
+Area Metrics 
+
+total_area float μm−2 FP - F output_capacitance_max float fF combinational_power float μW FP - F leakage_power_min float μW sequential_power float μW FP - F 
+
+Standard Cell 
+
+leakage_power_max float μW macro_power float μW FP - F name string FP - F internal_power float μW FP - F standard_cell StandardCell FP - F switching_power float μW FP - F x_min float μm GP - F leakage_power float μW FP - F y_min float μm GP - F 
+
+Power Metrics 
+
+total_power float μW FP - F x_max float μm GP - F total_negative_slack float ns FP - F y_max float μm GP - F worst_slack float ns FP - F no_of_inputs int FP - F worst_arrival_time float ns FP - F no_of_outputs int FP - F worst_required_time float ns FP - F internal_power float μW FP - F critical_path_startpoint string FP - F switching_power float μW FP - F critical_path_endpoint string FP - F leakage_power float μW FP - F no_of_endpoints int FP - F total_power float μW FP - F 
+
+Timing Metrics 
+
+no_of_violating_endpoints int FP - F ir_drop_vdd float mV DR - F rudy_net scalar map DR - F 
+
+Gate 
+
+ir_drop_vss float mV DR - F rudy_net_long scalar map DR - F rudy_net_short scalar map DR - F 
+
+Routability Metric rudy_pin scalar map DR - F EDA-Schema-V2: Multimodal Schema, Open Datasets, and Benchmarks for ML in Digital Physical Design 7
+
+Gate entities represent placed instances of standard cells and serve as the primary functional components of the netlist graph. Each gate entity is associated with a technology-specific standard-cell type, with cell geometry and library information derived from LEF files. Pin entities represent the input and output terminals of gate entities and capture timing and electrical-related attributes including slew, slack, and load capacitances, obtained from static timing analysis (STA) reports and SPEF files. I/O port entities represent the external interface of the circuit or circuit-block and specify signal direction and physical location. For net entities, structural attributes are extracted from DEF files, while parameters relating to parasitic impedance are obtained from SPEF files, together modeling physical routing and electrical parasitics. Prior to placement, net entities represent only logical connections among gate pins. After placement and routing, the physical geometry of each net is established, which results in semi-fixed or fixed net locations and enables the computation of metrics including half-perimeter wire length (HPWL) after placement and total true wire length after routing. The netlist entity also maintains relationships with primary analysis entities. The PDN entity models the spatial and electrical properties of the power grid, while clock tree and timing path entities describe clock propagation and timing dependencies, respectively. The relationships be-tween the netlist and analysis entities allow the schema to represent both circuit structure and performance behavior consistently across the design hierarchy. In addition to graph-based representations, the netlist entity includes image attributes that capture spatial views of the physical layout as two-dimensional binary maps. The images provide visualization of cell placement (overall, combinational, sequential, and filler), pin locations, and detailed routing, including routing on each metal layer. The image attributes associated with the netlist entity for the ac97_ctrl circuit implemented in the Nangate 45 nm (NG45) technology node are illustrated in Fig. 4. Each pixel of the images corresponds to a fixed physical region of the layout, represented as a square with side lengths equal to the minimum width of metal 1 for the given PDK. Defining each pixel length with respect to the width of metal 1 ensures consistent physical scaling across technology nodes. The image resolution is defined as 
+
+(Resolution 𝑥 , Resolution 𝑦 ) =
+
+ 𝐿 𝑤 𝑀 1
+
+, 𝑊 𝑤 𝑀 1
+
+
+
+, (1) where 𝐿 and 𝑊 denote the length and width of the circuit layout, respectively, and 𝑤 𝑀 1 denotes the minimum width of metal 1.         
+
+> (a) (b) (c) (d) (e) (f) Fig. 4. Image attributes associated with the netlist entity for the ac97_ctrl circuit implemented in the Nangate 45 nm technology node, with each image represented as binary spatial maps capturing key physical aspects of the circuit layout at the final design stage. Subfigures depict (a) combinational cell placement, (b) sequential cell placement, (c) pin locations, (d) overall routing, (e) metal 1 routing, and (f) metal 5 routing. 8Pratik Shrestha, Alec Aversa, and Ioannis Savidis
+
+3.3 Clock Networks 
+
+Clock networks are substructures derived from the netlist and capture the distribution of the clock signal from source node to all sequential elements. Clock network graphs ( 𝐶𝑁𝐺 ), similar in structure to netlist graphs, are composed of nodes 𝑣 ∈ 𝑉 representing input/output ports ( 𝐼𝑂 ), gates (𝐺 ), pins ( 𝑃 ), and nets ( 𝑁 ), and edges 𝑒 ∈ 𝐸 denoting logical and physical connections between components. In addition to the graph representation, the spatial layout of the clock tree is stored as a binary mask of the completed placement and routing of the clock network, as shown in Fig. 5. The images capture clock buffer locations, locations of sequential elements, and clock routing across multiple metal layers. All clock network image attributes utilize the same resolution as defined by (1), which ensures consistent physical scaling and alignment with netlist image representations.     
+
+> (a) (b) (c) Fig. 5. Binary spatial maps associated with the clock network entity for the ac97_ctrl circuit implemented in the Nangate 45 nm technology node after completing the final design stage. Subfigures depict (a) clock buffer placement, (b) sequential cell placement, and (c) clock routes.
+
+3.4 Power Delivery Networks 
+
+The PDN entity represents the physical and electrical network responsible for distributing power across the integrated circuit (IC). The PDN entity captures the structure of the power grid through metal routing information of both the supply and ground networks (VDD and VSS), with geometry and metal-layer assignments extracted from the DEF and LEF technology files. Results from electrical analysis, including metrics evaluating IR-drop and electromigration (EM), are obtained from PDNSim within the OpenROAD flow. The PDN entity includes two classes of images: images of physical routing and heatmaps of analyzed circuit data. Images of physical routing are represented as two-dimensional binary maps that capture VDD metal routing, VSS metal routing, and locations of power sources, and follow the same spatial resolution as defined by (1), which ensures consistent physical alignment with other layout-level image entities. In contrast, heatmaps of IR-drop and EM are stored as scalar-valued maps that represent spatially aggregated electrical quantities. For image entities stored as scalar maps, each pixel corresponds to a square physical region with side length equal to 𝑘𝑤 𝑀 1, where 
+
+𝑤 𝑀 1 denotes the minimum width of metal 1 and 𝑘 is a downsampling factor that controls the level of spatial aggregation. The resolution, with the downsampling factor accounted for, is defined by 
+
+(Resolution scalar  
+
+> 𝑥
+
+, Resolution scalar  
+
+> 𝑦
+
+) =
+
+ 𝐿 𝑘𝑤 𝑀 1
+
+, 𝑊 𝑘𝑤 𝑀 1
+
+
+
+, (2) where 𝐿 and 𝑊 denote the length and width of the circuit layout, respectively. The coarser resolution reflects the sampling granularity provided by the analysis performed by PDNSim while preserving spatial agreement with the underlying physical circuit. EDA-Schema-V2: Multimodal Schema, Open Datasets, and Benchmarks for ML in Digital Physical Design 9
+
+(a) (b) (c) (d) (e) Fig. 6. Image attributes associated with the power delivery network (PDN) entity after the completion of the final design stage for the ac97_ctrl circuit implemented using the Nangate 45 nm technology node. Subfigures depict (a) VSS routing represented as a binary spatial map, (b) VDD routing represented as a binary spatial map, (c) power source locations for PDNsim represented as a binary spatial map, (d) IR-drop represented as a scalar heatmap, and (e) electromigration (EM) represented as a scalar heatmap. For scalar maps, each pixel corresponds to an aggregated physical region of size 𝑘 × 𝑤 𝑀 1 by 𝑘 × 𝑤 𝑀 1, where 𝑘 = 50 and 𝑤 𝑀 1 denotes the minimum width of metal 1. 
+
+3.5 Timing Paths 
+
+The timing path entity represents individual signal paths extracted from static timing analysis (STA). Each timing path is modeled as a directed graph represented by 𝑇 𝑃𝐺 = (𝑉 , 𝐸 ), where nodes 
+
+𝑣 ∈ 𝑉 correspond to pins ( 𝑃 ), I/O ports ( 𝐼𝑂 ), cell timing arcs ( 𝐺𝐴 ), and net timing arcs ( 𝑁 𝐴 ), and edges 𝑒 ∈ 𝐸 represent signal propagation between two successive elements on the timing path. Cell timing arcs model delay and slew propagation through logic elements between an input pin and an output pin of a gate, capturing the gate delay and the output transition produced by the cell. Net timing arcs capture interconnect propagation between a driving pin and one or more receiving pins, modeling both the interconnect delay and the resulting slew at the sink pin after accounting for the 𝑅𝐶 delay of the wire. The dichotomy between cell and net timing arcs reflects the structure of STA reports, in which contributions from the gates and interconnects are evaluated and reported as distinct components of a timing path. A subset of the timing paths annotated with STA-derived data for the circuit shown in Figure 3 are depicted in Figure 7. 
+
+Fig. 7. Timing path graphs 𝑇 𝑃𝐺 extracted from the netlist graph 𝑁 𝐿𝐺 of the circuit shown in Fig. 3. 
+
+3.6 Routability Metrics 
+
+Routability metrics quantify routing demand and congestion characteristics that affect the ability of a tool to complete routing without violations. The RoutabilityMetrics entity captures scalar-valued spatial maps derived from Rectangular Uniform wire DensitY (RUDY) [ 12 ] scores, which provide an estimate of routing demand by uniformly distributing net bounding-box contributions across the layout. For a net 𝑛 with bounding-box dimensions (𝑤 𝑛 , ℎ 𝑛 ), the net-based and pin-based RUDY contributions to a spatial tile (𝑖, 𝑗 ) are defined as, respectively, 
+
+RUDY 𝑛 (𝑖, 𝑗 ) = 𝑤 𝑛 + ℎ𝑛 
+
+𝑤 𝑛 · ℎ𝑛 
+
+· 𝐴 𝑛,𝑖,𝑗 , and (3) 
+
+RUDY pin (𝑖, 𝑗 ) = 𝑤 𝑛 + ℎ𝑛 
+
+𝑤 𝑛 · ℎ𝑛 
+
+, (4) where 𝐴 𝑛,𝑖,𝑗 denotes the area of overlap between the bounding box of net 𝑛 and tile (𝑖, 𝑗 ). Each tile 
+
+(𝑖, 𝑗 ) corresponds to a spatial region of size 𝑘𝑤 𝑀 1 × 𝑘𝑤 𝑀 1 as defined by the scalar-map resolution 10 Pratik Shrestha, Alec Aversa, and Ioannis Savidis 
+
+given by (2). Values for each tile (𝑖, 𝑗 ) are obtained by summing contributions from all overlapping nets or pins within the tile. Additional RUDY-based variants, namely long-range and short-range RUDY, separate routing demand based on whether nets span multiple tiles, which enables analysis of routing demand across different spatial scales. Long-range and short-range RUDY are defined as, respectively, 
+
+RUDY long (𝑖, 𝑗 ) =∑︁ 
+
+> 𝑛 ∈ N long
+
+𝑤 𝑛 + ℎ𝑛 
+
+𝑤 𝑛 · ℎ𝑛 
+
+· 𝐴 𝑛,𝑖,𝑗 , (5) 
+
+RUDY short (𝑖, 𝑗 ) =∑︁ 
+
+> 𝑛 ∈ N short
+
+𝑤 𝑛 + ℎ𝑛 
+
+𝑤 𝑛 · ℎ𝑛 
+
+· 𝐴 𝑛,𝑖,𝑗 . (6) where, Nlong and Nshort denote the sets of long-range and short-range nets, respectively, where long-range nets span at least two tiles and short-range nets are confined to a single tile. All RUDY-based attributes are stored in EDA-Schema-V2 as two-dimensional scalar maps using the scalar-map resolution defined by (2). RUDY-based routability maps for the ac97_ctrl circuit implemented in the nangate 45 nm technology node are shown in Fig. 8.              
+
+> (a) (b) (c) (d) Fig. 8. Routability metrics represented as scalar-valued RUDY maps at the final design stage for the ac97_ctrl
+> circuit implemented using the Nangate 45 nm technology node. Subfigures depict (a) net-based RUDY, (b) pin-based RUDY, (c) long-range net-based RUDY, and (d) short-range net-based RUDY. All maps are generated using a scalar-map resolution with aggregation factor 𝑘 set to 50, where each pixel corresponds to a 50 ×𝑤 𝑀 1
+> width by 50 ×𝑤 𝑀 1width region of the layout.
+
+4 Open Dataset 
+
+Publication or open profiling of datasets generated using commercial EDA tools and proprietary PDKs is often limited by terms of use restrictions. Generating open data by utilizing open-source tools and publicly available PDKs and benchmark circuits allows for the unrestricted sharing of the generated data, which enables broader research and collaboration. In this section, open datasets of physical designs of public benchmark circuits generated across four open-source PDKs are described. The benchmark circuits and technology nodes used to construct the dataset are presented in Section 4.1. The design constraints used to generate baseline physical implementations are described in Section 4.2. An expansion of baseline physical designs is performed by varying key physical design parameters, as described in Section 4.3. 
+
+4.1 Benchmarks and Technology Nodes 
+
+The dataset is based on the IWLS’05 sequential benchmark suite with circuits and corresponding number of inputs, outputs, and registers as summarized in Table 2. The IWLS05 suite offers diverse circuit types with varying functional and structural characteristics, which enables a broad evaluation of physical design properties. To capture variability across technology nodes, the dataset is generated with four publicly available PDKs: EDA-Schema-V2: Multimodal Schema, Open Datasets, and Benchmarks for ML in Digital Physical Design 11 
+
+• Nangate 45 nm (NG45) [ 13 ]: An academic PDK that bridges modern process challenges with accessible design flows. NG45 contains 10 metal routing layers. 
+
+• Skywater 130 nm (SKY130) [ 14 ]: A mature process node widely used in academic and open-source EDA research. SKY130 contains 5 metal routing layers. 
+
+• IHP SG13G2 130 nm (IHP130) [ 15 ]: A SiGe BiCMOS PDK that supports research in RF, analog, and mixed-signal circuit design. IHP130 contains 7 metal routing layers. 
+
+• ASAP 7 nm (ASAP7) [ 16 ]: A predictive process node that enables exploration and analysis of advanced scaling challenges. ASAP7 contains 9 metal routing layers. Circuits complete physical design using the open-source OpenROAD toolchain. 
+
+Table 2. Characteristics of the circuit of the IWLS’05 benchmark suite used with EDA-Schema-V2. The listed attributes are derived from pre-synthesis RTL (Verilog) descriptions.                                                          
+
+> Circuits No. of inputs No. of outputs No. of Registers ac97_ctrl 84 48 2211
+> aes_core 259 129 562
+> des3_area 240 64 64
+> ethernet 96 115 10544
+> i2c 19 14 129
+> jpeg 20 27 4383
+> mem_ctrl 115 152 1083
+> pci 162 207 3220
+> sasc 16 12 118
+> simple_spi 16 12 131
+> spi 47 45 229
+> ss_pcm 19 987
+> systemcaes 260 129 670
+> systemcdes 132 65 190
+> tv80 14 32 361
+> usb_funct 128 121 1740
+> usb_phy 15 18 108
+> wb_dma 217 215 521
+
+4.2 Barely-Pass and Barely-Fail Operating Points 
+
+Dataset generation begins by identifying two critical operating points for each circuit: the Barely Pass (BP) point, where the generated circuit just meets timing constraints, and the Barely Fail (BF) point, where the generated circuit slightly violates timing constraints. The two classifications of BP and BF are defined based on the Slack to Clock Period Ratio (SCPR) , which is given as SCPR = Worst Slack Clock Period × 100% (7) Designs are categorized using the following thresholds: 
+
+• Barely Fail: SCPR ∈ (–10%, 0%), which indicates slight negative slack. 
+
+• Barely Pass: SCPR ∈ (0%, +10%), which indicates slight positive slack. Initial BP and BF points are identified for all PDKs using default configurations of the OpenROAD Flow Scripts (ORFS), where the aspect ratio is fixed to 1.0 and the placement density is assumed uniform. Core utilization is set to 40% for ASAP7 and NG45, while SKY130 and IHP130 are set to a lower utilization of 30% to account for the smaller number of metal layers available in each PDK. For constraints on the clock network, the transition time of the clock signal for each PDK is defined as 12.5% of the fastest clock period of any of the IWLS’05 benchmark circuits analyzed, 12 Pratik Shrestha, Alec Aversa, and Ioannis Savidis 
+
+which is that of the ss_pcm circuit. Constraining the transition time to the clock period of the fastest circuit provides a consistent yet technology-aware baseline across the dataset. Input and output delays are fixed to 20% of the target clock period, clock latency is fixed to 1% of the target clock period but capped to a maximum of 50 ps, and clock uncertainty is set to 5% of the clock period with a maximum of 250 ps. Similarly, the configuration of the parameters of the PDN for the barely pass and barely fail design points is defined per PDK using technology-aware properties. Each configuration of the stripes and rings of the PDN is based on minimum width and spacing constraints of the metal layers used to form the PDN, with exceptions made to maintain symmetry in the power network. For all PDKs, alternating, interdigitated VDD and VSS stripes are placed on intermediate routing layers, while core rings are formed around the placement boundary using semi-global or global metal layers. The width of the vertical and horizontal metal stripes are set to five times the minimum width of the corresponding metal layer. An exception is applied to the SKY130 PDK, where the width of the horizontal stripe is adjusted to the nearest allowable multiple of the minimum width of the given metal layer that best matches the width of the vertical stripe due to the large disparity between the minimum widths of the metals used for the stripes. Ring widths are set to three times the minimum width of the metal layer with the largest minimum width. An exception is applied to the ASAP7 PDK as design rules restrict the allowable metal widths to every other odd integer multiple of the minimum width, which results in ring widths that are set to the maximum permitted value for each layer. The spacing between power and ground stripes and rings is set to the minimum allowed spacing between two metals on the same layer as specified in the LEF files. An exception is applied to the SKY130 PDK, where the spacing between vertical stripes and rings is set to five times the minimum allowed value to more closely match the spacing of the horizontal stripe and ring. Finally, the pitch between interdigitated stripe pairs is set to twenty times the rail-rail pitch of the standard cells. Detailed PDN parameters for each PDK are listed in Table 3. For the analysis of IR-drop and electromigration (EM) analysis using PDNSim, voltage sources are placed at the origin of the layout, which is set to the lower left corner boundary of the circuit, and at regularly spaced intervals of twice the power-strap pitch in both dimensions. Using the defined configurations and constraints for general circuit parameters, the clock network, and the power network, the corresponding Barely-Pass (BP) and Barely-Fail (BF) operating points are determined for each circuit. The resulting initial BP and BF operating points are listed in Table 4. 
+
+Table 3. Configuration of PDN parameters across PDKs. All values are in micrometers ( μm) unless otherwise noted. (V/H) denotes the vertical and horizontal PDN metal layers, respectively.                                                 
+
+> PDN Metric NG45 SKY130 IHP130 ASAP7
+> Core Offset ( μm) 5.6 22.5 28 1.8 Rail to Rail Pitch ( μm) 1.4 2.72 3.78 0.27
+> Stripes
+> Metal Layers (V/H) M4 / M5 M4 / M5 M3 / M4 M5 / M6 Min. metal width ( μm) 0.14 / 0.14 0.3 / 1.6 0.2 / 0.2 0.024 / 0.032 Width ( μm) 0.7 / 0.7 1.5 / 1.6 1.0 / 1.0 0.12 / 0.16 Spacing ( μm) 0.14 / 0.14 1.5 / 1.6 0.21 / 0.21 0.072 / 0.072 Pitch ( μm) 28.0 / 28.0 54.4 / 54.4 75.6 / 75.6 5.4 / 5.4
+> Rings
+> Metal Layers (V/H) M8 / M7 M4 / M5 TM2 / TM1 M7 / M8 Min. metal width ( μm) 0.4 / 0.4 0.3 / 1.6 2.0 / 2.0 0.032 / 0.04 Width ( μm) 1.2 / 1.2 4.8 / 4.8 6.0 / 6.0 0.288 / 0.288 Spacing ( μm) 0.4 / 0.4 1.5 / 1.6 2.0 / 2.0 0.072 / 0.072
+
+EDA-Schema-V2: Multimodal Schema, Open Datasets, and Benchmarks for ML in Digital Physical Design 13 
+
+Table 4. Initial barely pass and barely fail target clock periods (TCP), worst slack (WS), and calculated slack to clock period ratio (SCPR) for each circuit across the four PDKs. All clock periods and worst slacks are in ns. 
+
+Circuit PDK Barely Pass Barely Fail PDK Barely Pass Barely Fail TCP WS SCPR TCP WS SCPR TCP WS SCPR TCP WS SCPR ac97_ctrl NG45
+
+0.6 0.0078 1.30% 0.5 -0.0425 -8.50% 
+
+ASAP7
+
+0.375 0.0030 0.80% 0.35 -0.0066 -1.90% 
+
+aes_core 1.5 0.1158 7.72% 1.25 -0.0412 -3.30% 0.75 0.0074 0.99% 0.725 -0.0105 -1.45% 
+
+des3_area 2.5 0.0006 0.02% 2.25 -0.0411 -1.83% 1.225 0.0014 0.11% 1.2 -0.0042 -0.35% 
+
+ethernet 1.65 0.0204 1.24% 1.5 -0.022 -1.47% 0.75 0.0166 2.22% 0.725 -0.0404 -5.57% 
+
+i2c 0.65 0.0103 1.58% 0.55 -0.0154 -2.79% 0.375 0.0042 1.13% 0.35 -0.0079 -2.27% 
+
+jpeg 1.8 0.0483 2.68% 1.6 -0.0117 -0.73% 1.125 0.0343 3.05% 1.1 -0.0234 -2.13% 
+
+mem_ctrl 1.75 0.0202 1.15% 1.25 -0.0558 -4.46% 0.875 0.0006 0.07% 0.85 -0.0043 -0.51% 
+
+pci 1 0.0398 3.98% 0.75 -0.0328 -4.37% 0.825 0.0378 4.58% 0.81 -0.0257 -3.17% 
+
+sasc 0.6 0.0252 4.19% 0.5 -0.0392 -7.84% 0.4 0.0177 4.43% 0.375 -0.0031 -0.82% 
+
+simple_spi 0.55 0.0258 4.69% 0.45 -0.0421 -9.35% 0.325 0.0039 1.20% 0.3 -0.0052 -1.73% 
+
+spi 1.5 0.0595 3.96% 1.25 -0.0142 -1.14% 0.775 0.0047 0.61% 0.75 -0.0012 -0.16% 
+
+ss_pcm 0.38 0.0111 2.92% 0.325 -0.0133 -4.08% 0.275 0.0044 1.58% 0.25 -0.0110 -4.40% 
+
+systemcaes 1.75 0.0809 4.62% 1.5 -0.0064 -0.43% 0.85 0.0059 0.70% 0.825 -0.0031 -0.37% 
+
+systemcdes 1.45 0.1219 8.41% 1.25 -0.0143 -1.15% 0.75 0.0066 0.88% 0.725 -0.0062 -0.86% 
+
+tv80 2.25 0.094 4.18% 1.9 -0.0028 -0.15% 1.2 0.0058 0.48% 1.175 -0.0217 -1.85% 
+
+usb_funct 1 0.0035 0.35% 0.8 -0.0068 -0.85% 0.425 0.0041 0.97% 0.4 -0.0010 -0.25% 
+
+usb_phy 0.45 0.0068 1.51% 0.35 -0.0193 -5.52% 0.3 0.0040 1.32% 0.275 -0.0066 -2.41% 
+
+wb_dma 1.25 0.023 1.84% 0.9 -0.0683 -7.59% 0.7 0.0063 0.90% 0.675 -0.0003 -0.04% 
+
+ac97_ctrl SKY130
+
+2.5 0.0233 0.93% 2.25 -0.0341 -1.52% 
+
+IHP130
+
+2.35 0.0415 1.77% 2.3 -0.0612 -2.66% 
+
+aes_core 4.75 0.0723 1.52% 4.5 -0.0889 -1.98% 4.25 0.1046 2.46% 4 -0.3553 -8.88% 
+
+des3_area 7.75 0.0138 0.18% 7.5 -0.2478 -3.30% 8.5 0.2 2.35% 8.25 -0.0561 -0.68% 
+
+ethernet 5.25 0.0856 1.63% 5 -0.1807 -3.61% 5.5 0.1467 2.67% 5.25 -0.1679 -3.20% 
+
+i2c 2.75 0.0772 2.81% 2.5 -0.1254 -5.02% 2.25 0.0197 0.88% 2 -0.0857 -4.29% 
+
+jpeg 6 0.0228 0.38% 5.75 -0.372 -6.47% 9.5 0.375 3.95% 9.25 -0.1166 -1.26% 
+
+mem_ctrl 6.25 0.0185 0.30% 6 -0.1917 -3.20% 5.25 0.256 4.88% 5 -0.1356 -2.71% 
+
+pci 3.75 0.0861 2.30% 3.5 -0.2461 -7.03% 3.5 0.2581 7.37% 3.25 -0.0176 -0.54% 
+
+sasc 2.25 0.0785 3.49% 2 -0.0914 -4.57% 2 0.0537 2.69% 1.75 -0.0443 -2.53% 
+
+simple_spi 2.25 0.0828 3.68% 1.9 -0.1071 -5.64% 1.75 0.0709 4.05% 1.5 -0.0196 -1.31% 
+
+spi 4.75 0.1341 2.82% 4.5 -0.1181 -2.62% 4.75 0.1467 3.09% 4.5 -0.0779 -1.73% 
+
+ss_pcm 1.5 0.0594 3.96% 1.35 -0.0174 -1.29% 1.4 0.1014 7.24% 1.2 -0.0859 -7.16% 
+
+systemcaes 5.75 0.1246 2.17% 5.5 -0.1404 -2.55% 5.5 0.0415 0.75% 5.25 -0.3941 -7.51% 
+
+systemcdes 5 0.1677 3.35% 4.8 -0.0352 -0.73% 4 0.2955 7.39% 3.75 -0.0634 -1.69% 
+
+tv80 8.25 0.0655 0.79% 8 -0.2718 -3.40% 7.5 0.2298 3.06% 7.25 -0.1341 -1.85% 
+
+usb_funct 2.75 0.0229 0.83% 2.5 -0.0448 -1.79% 3.25 0.1478 4.55% 3 -0.1618 -5.39% 
+
+usb_phy 1.75 0.1531 8.75% 1.5 -0.0402 -2.68% 1.4 0.0876 6.26% 1.25 -0.036 -2.88% 
+
+wb_dma 4.25 0.0602 1.42% 4 -0.0645 -1.61% 4.5 0.1333 2.96% 4.25 -0.0114 -0.27% 
+
+4.3 Dataset Expansion Through Parameter Sweeps 
+
+After identifying the clock periods for the IWLS benchmark circuits considered under the barely-pass (BP) and barely-fail (BF) design scenarios, additional baseline physical circuit designs are generated through a systematic sweep of parameters. For each benchmark circuit, multiple layouts are generated by varying a selected set of physical design parameters, including the target clock period, the core aspect ratio, and the core utilization, while all other settings are held constant. Configurations with relaxed clock periods relative to the BP point are denoted as BP + , while configurations with tighter clock periods relative to the BF point are denoted as BF −. The sweeps provide a sample of design points around the baseline operating conditions, producing a diverse set of layouts that maintain timing characteristics and reflect realistic physical design trade-offs. The complete set of constraints and parameter values used to generate the dataset is listed in Table 5. The resulting raw outputs (i.e DEF files, SPEF files, reports, etc) produced by the OpenROAD flow are processed and mapped into the EDA-Schema-V2 representation, which enables consistent multi-modal analysis across circuits, design stages, and technology nodes. For scalar map representations, including IR-drop, electromigration (EM), and routability (RUDY) metrics, the downsampling factor 14 Pratik Shrestha, Alec Aversa, and Ioannis Savidis 
+
+𝑘 in (2) is fixed to 50, which ensures consistent spatial aggregation for computational efficiency across all designs. 
+
+Table 5. Constraints and parameters utilized to generate the dataset.                                     
+
+> Parameters Values or Ranges
+> Target clock periods (ns) {0.8 ×BF, BF, BP, 1.2 ×BP} Aspect ratio {0.5, 1, 1.5} NG45 SKY130 IHP130 ASAP7 Core Utilization {0.3, 0.4, 0.5} {0.2, 0.3, 0.4} {0.2, 0.3, 0.4} {0.3, 0.4, 0.5} NG45 SKY130 IHP130 ASAP7 Core Margin ( μm) 5.72 22.4 22.72 2.29 Placement Density Uniform, 1.25 ×Uniform, 1.5 ×Uniform Input/Output Delay (ns) 20% of Target clock period (TCP) Clock Latency (ns) 1% of TCP (capped at 50 ps) NG45 SKY130 IHP130 ASAP7 Clock Transition (ns) (12.5% of TCP of the fastest circuit for a PDK) 0.05 0.1875 0.1875 0.02375 Clock Uncertainty (ns) 5% of TCP (capped at 50 ps)
+
+5 Dataset Analysis 
+
+In this section, an in-depth analysis of the generated dataset is provided. The objective is to characterize key aspects of the dataset while also providing insights into the composition of the generated circuits. A high-level overview of the dataset is presented in Section 5.1, with the summary of the size, composition, and coverage of the data provided. A quantitative analysis of the generated designs, including the timing, power, and area distributions across technology nodes is provided in Section 5.2. The effect of design and flow parameters including clock period, core utilization, aspect ratio, and placement density on physical and performance metrics is analyzed in Section 5.3. The change in the metric scores across different physical design stages is described in Section 5.4. 
+
+5.1 Dataset Overview 
+
+The composition of the dataset across all technology nodes, including the number of design instances, structural elements, timing outcomes, and the numerical range of the final-stage quality-of-results for each PDK are listed in Table 6. For each technology node, the dataset contains physical implementations of 18 benchmark circuits evaluated across 108 parameter configurations, yielding 1,944 design instances per PDK. Across the four supported PDKs (NG45, SKY130, IHP130, and ASAP7), a total of 7,776 design instances are generated spanning all major stages of the digital physical design flow. A small subset of flows did not complete the global routing stage due to routing congestion and failure, which resulted in missing data for global routing, detailed routing, and the final design stages for 25 design instances (3 in NG45, 17 in SKY130, 3 in IHP130, and 2 in ASAP7). However, data from all preceding stages, up to and including clock tree synthesis (CTS) remain available for the incomplete instances. The generated dataset includes multimodal artifacts such as circuit graphs, images of spatial layouts, and detailed quality-of-results reports. Structural and metric data is stored in a columnar Parquet format that supports efficient analytical queries and scalable processing, while spatial layout representations are stored as NumPy arrays for compact storage and fast loading in numerical and machine learning workflows. The size of the dataset for the 1,944 design instances per PDK is approximately 69 GB for NG45, 78 GB for SKY130, 92 GB for IHP130, and 81 GB for ASAP7. In aggregate, across all technology nodes, the dataset is comprised of over 275 million gates (82 million excluding filler cells) and 75 million nets, along with more than 36 million timing EDA-Schema-V2: Multimodal Schema, Open Datasets, and Benchmarks for ML in Digital Physical Design 15 
+
+paths, reflecting a broad range of circuit sizes, architectural complexities, and operating conditions. Final-stage timing outcomes indicate that both timing-clean and timing-violating designs are well represented across all PDKs, with approximately 36.7 million timing-clean paths and 1.02 million timing-violating paths in aggregate across the dataset, which reflects a balanced coverage of designs that pass and fail timing. The properties of the dataset demonstrate that an extensive and diverse coverage is provided of realistic physical designs across multiple process technologies, which enables a robust analysis of performance, power, and area behavior, as well as timing, routing, and physical design characteristics under varied design conditions. 
+
+Table 6. Dataset composition and final-stage quality metrics across technology nodes. Quality metrics are reported as minimum to maximum values across all final-stage design instances.                                                     
+
+> PDK NG45 SKY130 IHP130 ASAP7 Dataset Composition Total gates 39136357 74270175 108913101 53204206
+> Total gates (excluding filler cells) 17579912 21359517 21027098 22055351
+> Total nets 17793857 14838301 20241099 23086812
+> Total pins 61430010 50825641 69281157 73797773
+> Total timing paths 7959170 10877094 10147368 8223683
+> Timing clean designs 7707993 10525557 9981539 7968189
+> Timing violating designs 251177 351537 165829 255494
+> Final stage Quality-of-Results Total area ( μm2) 723 to 100505 3576 to 513155 16056 to 5592904 58 to 9333
+> Total power ( μW) 2230 to 456000 3690 to 700000 3410 to 383000 654 to 115000
+> Worst slack (ns) -0.3474 to 0.5806 -4.792 to 0.5328 -1.555 to 2.102 -0.4188 to 0.2555
+> Total negative slack (ns) -463.9339 to 0 -3045.1636 to 0 -1672.6881 to 0 -434.9989 to 0
+> Violating endpoints 0 to 4034 0 to 9917 0 to 3910 0 to 12123
+> Total wirelength ( μm) 2326.59 to 900314.625 5639.58 to 2137809.055 10166.155 to 3621758.23 751.681 to 591701.235
+
+5.2 Quality-of-Results (QoR) Analysis 
+
+An analysis of the quality-of-results (QoR) after completion of the final stage of the physical design flow provides characterization of the dataset by examining circuit-level power, performance, and area metrics. The objective of the analysis is to assess the diversity and coverage of the dataset across benchmark circuits and technology nodes, and to verify that the generated designs span a range of physically meaningful operating conditions. Final-stage QoR metrics that are analyzed include total area, total power, worst slack (WNS), total negative slack (TNS), number of violating timing endpoints, and total routed wirelength. The observed range of each metric and for each technology node is listed in Table 6, while per-design distributions across all four PDKs using box and violin plots are provided in Fig. 9d. The distributions shown in Fig. 9d indicate an achieved target level of variation in the QoR metrics of the final design stage across the benchmark circuits. The dataset includes both small and large circuits with metric distributions spanning multiple orders of magnitude, as indicated by the area violin plot in Fig. 9d. Some circuits occupy only tens to thousands of square microns with relatively short routed interconnect, while other circuits occupy several million square microns and exhibit extremely large wirelengths, as indicated by the range of values listed in Table 6. The observed distributions indicate that the dataset spans a wide range of sizes and physical complexities across benchmark circuits and technology nodes. 16 Pratik Shrestha, Alec Aversa, and Ioannis Savidis 
+
+While many generated designs cluster within relatively narrow ranges of values, a smaller subset of circuits produce extreme values that dominate the overall distribution of data, particularly for area, power, and wirelength. Across all technology nodes ethernet and jpeg consistently appear at the upper extremes of the area and wirelength distributions. Both ethernet and jpeg are larger circuits, include more interconnects, and provide behavior that is consistent across PDKs despite a difference in absolute scale. Across technology nodes, the relative order of circuits in terms of area and wirelength remains consistent, indicating that architectural characteristics dominate absolute scaling effects introduced by the PDK. The timing behavior after completion of the final design stage is summarized in Fig. 10, which reports results from analysis of timing-clean and timing-violating path counts per circuit along with the corresponding percentage of paths that include timing violations. The results indicate       
+
+> (a) (b) (c) (d) Fig. 9. Distribution of post-routing quality-of-results (QoR) metrics across benchmark circuits for each technology node. Box plots characterize (from top to bottom) total area, total power, worst slack (WNS), total negative slack (TNS), total routed wirelength, and total capacitance. Total area, total power, total routed wirelength, and total capacitance are shown on a logarithmic scale. Subfigures (a)–(d) correspond to NG45, SKY130, IHP130, and ASAP7, respectively. EDA-Schema-V2: Multimodal Schema, Open Datasets, and Benchmarks for ML in Digital Physical Design 17
+> (a) (b)
+> (c) (d) Fig. 10. Analysis of timing-clean and timing-violating path distributions after completion of the final design stage. Subfigures (a)–(d) correspond to NG45, SKY130, IHP130, and ASAP7, respectively.
+
+that the dataset captures both fully timing-clean designs and designs that exhibit non-zero timing violations, and that the fraction of violating paths varies across circuits and technologies. The inclusion of timing paths that both meet and violate the timing budget provides a comprehensive range of timing behaviors, which enhances the usefulness of the dataset for timing analysis and modeling. Overall, the analysis of the final-stage QoR indicates that the dataset covers a wide range of physical design characteristics across circuits and technologies. The observed variation in circuit size, power, and timing behavior confirms that the dataset includes both simple and complex designs and provides sufficient data diversity to study power, performance, area, timing closure, and routability trade-offs through all stages of the physical design flow. 
+
+5.3 Parameter Sensitivity Analysis 
+
+An evaluation of the effects of design parameters (clock period, core aspect ratio, core utilization, and placement density) on key quality metrics (total area, total power, worst slack, total negative slack, total wirelength, and net capacitance) is performed. The characterization of the effects of the parameters on the metrics is utilized to validate the inclusion of each parameter as a component of the dataset. Distributions of the quality metrics as a function of design parameters for the ac97_ctrl circuit physically designed in the NG45 technology node are shown in Fig. 11. Results indicate that changes in clock period, core aspect ratio, core utilization, and placement density lead to observable variations in the evaluated quality metrics. For each parameter, boxplots capture the variability across runs, while the overlaid trend lines mark the mean value of the corresponding metric as a function of the design parameter. Modifications in design parameters lead to consistent shifts in mean values and changes in the variance of the distribution, which indicates a systematic effect on the post-routing quality of results. In particular, variations in clock period result in pronounced 18 Pratik Shrestha, Alec Aversa, and Ioannis Savidis 
+
+changes in timing-related metrics, while core utilization and placement density introduce increased dispersion reflecting effects due to congestion and routability. The observed variation in mean values and distributions confirms the effect of each considered design parameter on the evaluated metrics and motivates the inclusion of each parameter and corresponding metric in the dataset.   
+
+> Fig. 11. Distribution of final-stage quality-of-results metrics for total area, total power consumption, worst-case slack, total negative slack, number of endpoints that violate slack, total wirelength, and total net capacitance for the ac97_ctrl circuit with variations in clock period, core aspect ratio, core utilization, and placement density using the NG45 technology node.
+
+To quantitatively characterize the relationship between design parameters and quality of results metrics across the dataset, a correlation analysis is performed using all circuits included in EDA-Schema-V2. For each circuit implemented in a given PDK, the Pearson correlation coefficient ( 𝑟 )is computed between the design parameters used to generate the circuit and the corresponding quality metrics values observed across the parameterized design instances. The Pearson correlation coefficient ( 𝑟 ) is computed for each parameter-metric pair to determine the strength and direction of the corresponding linear relationships. The Pearson correlation coefficient is given by 
+
+𝑟 =
+
+Í𝑛 𝑖 =1 (𝑥 𝑖 − ¯𝑥 )( 𝑦 𝑖 − ¯𝑦 )√︁ Í𝑛 𝑖 =1 (𝑥 𝑖 − ¯𝑥 )2√︁ Í𝑛 𝑖 =1 (𝑦 𝑖 − ¯𝑦 )2 (8) where 𝑥 𝑖 and 𝑦 𝑖 are the values of the two variables being compared, ¯𝑥 and ¯𝑦 are the mean values of each variable, and 𝑛 is the number of observations. The correlation between design parameters and quality metrics across all circuits generated in the NG45 technology node is shown in Fig. 12. Violin plots of the distributions of the Pearson correlation coefficients for each parameter–metric pair are provided, which captures the overall shape and spread of correlated parameter-metric pairs across circuits. Analysis of the distributions demonstrates that the effect of design parameters on quality metrics is consistently observed across the dataset and is not limited to a single circuit. Many parameter–metric pairs exhibit large EDA-Schema-V2: Multimodal Schema, Open Datasets, and Benchmarks for ML in Digital Physical Design 19 
+
+> Fig. 12. Distribution of Pearson correlation coefficients between quality-of-results metrics and design param-eters across all circuits in the NG45 dataset. The correlation coefficient are shown with violin plots for each parameter–metric pair.
+
+correlations, often approaching ±1, which indicates a strong linear relationship between design parameters and post-routing quality metrics across a broad set of circuits. Clock period is strongly correlated with timing-related metrics and total power, with average correlation magnitudes greater than ±0.4. Clock period also exhibits measurable correlation with total area, with average correlation magnitudes greater than ±0.1. Similarly, placement density exhibits measurable correlations ( ≥ ± 0.1)with timing metrics and total power, while core utilization exhibits measurable correlation with total wirelength. The remaining parameter–metric pairs exhibit weak correlations ( ≤ ± 0.1), which, while small in magnitude, still indicate minor but consistent variation across circuits. The observed relationships between design parameters and QoR metrics are consistent across different technology nodes, as demonstrated from analysis provided in Appendix A.1. Overall, the results from analysis of the Pearson correlation coefficients confirm that parameterization systematically influences quality of results across the dataset and captures meaningful, parameter-induced variation rather than isolated circuit behavior. 
+
+5.4 Inter-Design Stage Analysis 
+
+Similar to the parameter sensitivity analysis, inter-design stage analysis provides an evaluation of quality metrics at each stage of the physical design flow, characterizing the effect of each design stage on circuit performance. The analysis characterizes the evolution of total area, total power consumption, total wirelength, total net capacitance, and timing-related metrics as the circuit progresses through successive stages of the physical design flow. The analysis also quantifies the contribution of individual stages to the final quality of results. The change in quality metrics for the ac97_ctrl circuit across stages of the physical design flow is shown in Fig. 13. The distributions of total area, total power, worst slack, total negative slack, number of violating endpoints, and net length for each design stage is analyzed. Trend lines indicate 20 Pratik Shrestha, Alec Aversa, and Ioannis Savidis 
+
+the mean value of each metric at each stage of the flow. The results indicate that quality metrics change as the circuit progresses from floorplanning through placement, clock tree synthesis, and routing. Total area and total power exhibit incremental changes during early design stages, followed by more significant changes during clock tree synthesis and routing due to the insertion of clock buffers and additional physical resources (metals, gates, and gate sizes). Timing-related metrics, including worst slack and total negative slack, demonstrate design stage-dependent behavior. Significant improvements typically occur after optimizing placement and clock tree synthesis, followed by stable or minor degradation in timing parameters during detailed routing. Across all evaluated metrics, variability increases during later design stages, reflecting the cumulative effects of physical optimization and the influence of multiple design constraints. The distributions indicate that each physical design stage produces distinct and measurable changes in circuit quality. The observed behavior motivates the inclusion of data from intermediate design stages of the physical design flow.       
+
+> (a) (b)
+> (c) (d)
+> (e) (f) Fig. 13. Change in the distribution of (a) total area, (b) total power, (c) worst slack, (d) total negative slack, (e) number of violating endpoints, and (f) total wirelength across physical design stages for the ac97_ctrl circuit implemented in the NG45 technology node. EDA-Schema-V2: Multimodal Schema, Open Datasets, and Benchmarks for ML in Digital Physical Design 21
+
+6 EDA-schema for Machine Learning 
+
+The primary aim of this work is to provide a foundational dataset for machine learning applications. In Section 6.1, the datasets and feature sets utilized in prior research efforts are analyzed, assessing the effectiveness of the proposed data model in achieving interoperability and comparability. A baseline analysis of three prediction tasks that utilize metrics provided by EDA-Schema-V2 and the open datasets are described in Section 6.2. 
+
+6.1 Feature Coverage Analysis 
+
+Machine learning methods are increasingly applied to a wide range of electronic design automation (EDA) problems, including power prediction, wirelength estimation, timing prediction, parasitic parameter prediction, routability analysis, and electromigration (EM) or IR-drop estimation. Prior studies utilize a diverse set of modeling approaches, including convolutional neural networks (CNNs) [ 17 – 19 ], graph neural networks (GNNs) [ 20 – 26 ], encoder–decoder models [ 27 – 30 ], and hybrid multimodal architectures that combine graph and image representations [ 31 ]. Each modeling approach operates on different stages of the physical design flow and relies on structural, spatial, and analytic features extracted from circuit representations. Compatibility between prior modeling approaches and the proposed schema is evaluated through a feature coverage analysis of represen-tative prior work. The selected studies span six predictive tasks in digital physical design: power prediction, wirelength prediction, timing prediction, parasitic impedance prediction, routability prediction, and EM or IR-drop analysis. Features used across the predictive tasks, together with the associated design stage, modeling technique, toolchain assumptions, and required inputs, are listed in Table 7. Features directly provided by the schema are classified as Available Features . Each attribute corresponds to values stored within the structural, metric, and spatial entities defined in EDA-Schema-V2. Additional features frequently used in prior work are classified as Derivable Features . Derivable features are not available explicitly but are computed from the structural graphs and spatial layout representations contained in EDA-Schema-V2. Examples include fan-in and fan-out statistics, cell and pin density maps, congestion indicators such as RUDY scores, Manhattan distances between cells, and neighborhood statistics used in graph-based models. As the schema stores complete netlist graphs, placement coordinates, routing geometries, and spatial layout images, derived quantities are computed consistently across different predictive tasks. The analysis of feature coverage indicates that most features used in existing machine learning pipelines map naturally to the graph-based structural entities, spatial image entities, and metric entities defined in EDA-Schema-V2. Structural entities, spatial image entities, and metric entities provide multimodal representations of circuit designs by combining structural graph information, spatial layout images, and stage-level analytic metrics. The proposed representation, therefore, supports a wide range of model architectures reported in prior work, including GNN-based models that utilize circuit topology for prediction of structural-based tasks, CNN-based models for spatial congestion and routability analysis, and hybrid graph–image architectures for timing and parasitic impedance estimation. Certain features, including number of fanouts, pin or net density measures, and distance-based attributes, are not stored explicitly in EDA-Schema-V2. Such quantities are derived from the netlist graphs and spatial layout representations contained in the schema. The proposed data model, therefore, satisfies the feature requirements of the representative studies listed in Table 7 while supporting consistent derivation of features and reuse of data and representations across predictive tasks. 22 Pratik Shrestha, Alec Aversa, and Ioannis Savidis 
+
+> Table 7. (page 1/2) Features used in prior machine learning based digital circuit design automation for power prediction, wirelength prediction, timing prediction, parasitic impedance prediction, routability prediction, and analysis of EM/IR. Features are categorized as  Available  when directly provided in EDA-Schema-V2,  Derivable Features  when obtained from structural or spatial representations, and  Other Features/Contraints  when reported in prior work but are not presently available in the schema.
+> Prediction Task  Ref  Problem Type Metric to Predict Initial Stage Final Stage  Toolset  PDK  Features  Network Architecture Power Prediction
+> [20]  Regression  total power  Post-placement, CTS, initial routing Post final routing  Synopsys ICC2  TSMC 28nm Available Features: - Standard Cell: switching power, internal power, leakage power - Pin: slew, delay, slack GNN + LSTM [21]  Regression Total power, internal power, switching power, leakage power Post-placement  Post-routing  CircuitNet 14 nm dataset Available Features: - Gate: drive strength, is sequential, number of fanout, x/y co-ordinates - Pin: capacitance, rise/fall slew - Net: HPWL, x/y co-ordinates - Routability Metrics: RUDY Derivable Features: cell density Other Features: macro regions, non-linear power model (NLPM) LUT data GNN
+> Wirelength Prediction
+> [22]  Regression  net length  Pre-synthesis  Post-floorplan Synopsys DC Compiler, Cadence Innovus Nangate 45nm Available Features: - Net: number of fan-in and number of fan-out - Gate: area Derivable Features: cluster-based edge features from hMETIS [32] GAT [23]  Regression  net length  Post-placement  Post-routing Synopsys DC Compiler, IC Compiler commercial 28nm Available Features: - Net: number of fan-in, number of fan-out, x/y co-ordinates - Gate: number of fan-in, number of fan-out, width, x/y co-ordinates GNN
+> Timing Prediction
+> [24]  Regression  gate arc delay  Post floorplan, placement, CTS  Post-routing Synopsys DC Compiler, IC Compiler, PrimeTime commercial 65nm Available Features: - Constraints: clock period, aspect ratio, utilization - Gate: functionality - Net: number of fanout, capacitance - Gate Arc: logic level, initial phase delay, arrival time Other Constraints: max skew, max fanout, max clock network capacitance, max latency GNN [17]  Regression  arc delay, arc output slew  Post-placement  Post-routing  Synopsys ICC2 Nangate 15nm Available Features - Net: fanout, length, resistance, capacitance - Timing Path: arc delay, output slew, rise/fall - RoutabilityMetrics: net RUDY, long range net RUDY Derivable Features: - cell RUDY map, net density map, source/sink location map, pin capacitance location map CNN [31]  Regression arc delay, endpoint arrival time Post-placement  Post-routing Synopsys IC Compiler, PrimeTime TSMC 22nm Available Features: - Standard Cell: function, drive strength, number of fanins, number of fanouts - Pin: is output pin?, x/y co-ordinates, rise/fall capacitance, rise/fall slew, rise/fall slack - Cell arc: delay, slew - Net: length - threshold voltage type is uniform (RVT-TT) across the whole dataset Other Features: is cell sizable (boolean) Heterogeneous GAT + U-net
+
+EDA-Schema-V2: Multimodal Schema, Open Datasets, and Benchmarks for ML in Digital Physical Design 23  
+
+> Table 7. (page 2/2) Features used in prior machine learning based digital circuit design automation for power prediction, wirelength prediction, timing prediction, parasitic impedance prediction, routability prediction, and analysis of EM/IR. Features are categorized as  Available  when directly provided in EDA-Schema-V2,  Derivable Features  when obtained from structural or spatial representations, and  Other Features/Contraints  when reported in prior work but are not presently available in the schema.
+> Prediction Task  Ref  Problem Type Metric to Predict Initial Stage Final Stage  Toolset  PDK  Features  Network Architecture Parasitic Prediction
+> [25]  Regression  net capacitance  Post-placement  Post-routing Synopsys DC/ IC Compiler, PrimeTime commercial 65nm Available Features: - Net: capacitance, length, x/y co-ordinates Derivable Features: pin density, net density Spatial GCN [26]  Regression  net resistance, net capacitance  Post-placement  Post-routing Synopsys DC/ IC Compiler, PrimeTime ASAP 7nm Available Features: - Pin: x/y co-ordinates, rise/fall capacitance - Net: bounding box, area, length, degree (number of fanins + fanouts) Hybrid HGNN + Graph Transformer
+> Routability Prediction
+> [18]  Regression / Classification #DRV and congestion hotspot Post–global placement, detailed placement Post–global routing Cadence Encounter  NA Available Features: - Routability Metrics: long-range RUDY, short-range RUDY, RUDY-pins Derivable Features: cell density, pin density Other Features: - Macro: macro region map, macro pin density (per metal layer) - Track Route / Global Route congestion map CNN / Spatial CNN [27]  Regression / Classification Tile-level routing overflow, DRC hotspots Post–global placement, detailed placement Post–global routing, Post–placement CircuitNet 28 nm dataset Available Features: - Routability Metrics: RUDY-nets, RUDY-pins Derivable Features: cell density, pin density Other Features: - Macro: macro region map, macro pin density (per metal layer) - Congestion map (global routing overflow) Inception-Boosted U-Net [19]  Classification  DRV  Initial detail routing iteration Post-global routing OpenROAD, Cadence Innovus Nangate 45nm Derivable Features: pin density, pin neighborhood density Other Features: vertical/horizontal routing overflow CNN
+> EM/IR Prediction
+> [28]  Generation  IR drop map EM hotspot map Post-routing/ Pre-IR drop analysis Post-routing/ Post-IR drop analysis OpeNPDN, PDNSim commercial 12 nm FinFET Available Features: - Power Delivery Network: power bump pattern Derivable Features: Power distributions map, PDN density map Encoder-Decoder (U-Net, LSTM, 3D U-Net) [29]  Generation  IR drop map Post-routing/ Pre-IR drop analysis Post-routing/ Post-IR drop analysis OpenROAD/ ICCAD 2023 dataset Nangate 45nm Derivable Features: PDN density map, resistance map, effective distance map, current map, shortest path resistance map, shortest path voltage map Encoder-Decoder (U-Net with Inception) [30]  Generation  IR drop map Post-routing/ Pre-IR drop analysis Post-routing/ Post-IR drop analysis CircuitNet 14 nm dataset  Derivable Features: power map, effective resistance to power/ground net, minimum path resistance to power/ground net Rebuilder Encoder-Decoder (LaRED) 24 Pratik Shrestha, Alec Aversa, and Ioannis Savidis
+
+Despite promising open and reproducible results, benchmarking across prior work remains challenging. The primary limitation arises from the reliance on commercial EDA tools and propri-etary process design kits (PDKs), together with the use of closed or internal benchmark datasets. Many studies rely on industrial designs without releasing the associated netlists, constraints, or technology information. Other studies depend on commercial signoff tools provided by vendors including Synopsys and Cadence [ 17 –20 , 22 – 26 , 31 ], or on proprietary foundry PDKs [ 20 , 21 , 23 –25 , 27 , 28 , 30 , 31 ] including from GlobalFoundries, Intel, Samsung, and TSMC for feature extraction and label generation. Commercial environments used to generate intermediate representations and ground-truth metrics are, therefore, legally constrained and/or difficult to reproduce. In several cases, studies refer only to a “commercial” design flow without specifying the configuration of the toolchain or the PDK. Confidentiality requirements often restrict the release of such details; however, the absence of toolchain and dataset information limits reproducibility. Training data, intermediate representations, and extracted features are frequently unavailable, preventing inde-pendent validation and fair comparison across machine learning based methods and algorithms. The proposed schema and dataset instead provide standardized and open representations of cir-cuit structure, layout, and results from analysis, which enables reproducible experimentation and consistent benchmarking of machine learning approaches for digital physical design. 
+
+6.2 Baseline Analysis 
+
+Baseline analysis is performed across multiple quality-of-results (QoR) metrics using EDA-Schema-V2. Prediction is considered for circuit-level metrics including total area , total power , and total wirelength , routing metrics including per-net interconnect length , timing-related metrics including 
+
+worst arrival time , worst slack , and total negative slack (TNS) , and path-level timing metrics including 
+
+timing path arrival time and timing path slack . In addition, timing arc quantities including net arc delay , cell arc delay , and cell arc slew are evaluated to capture delay and transition time behavior at the detail of individual timing arcs. Given the results of metrics evaluated in the initial stages of the physical design flow (floorplan, global_place, place_resize, detailed_place, cts, and global_route) and the final-stage ( detailed_route ), values reported by the design tools at earlier stages are treated as baseline estimates for the given metrics evaluated in the final-stage. Baseline error is evaluated by comparing stage-level estimates to final-stage values across the dataset. Half-perimeter wirelength (HPWL) prior to global routing is treated as the baseline estimate for both total circuit wirelength and per-net interconnect length. For metrics evaluated on timing-paths, the paths from the initial and final stages are matched using the startpoint name, endpoint name, and type of timing check (setup or hold). For metrics evaluated on timing arcs, cell arcs and net arcs are matched using associated pin pairs along the timing path. For metrics evaluated on interconnect, nets are matched using the net name. Paths, arcs, and nets that are added, removed, or structurally modified across stages are excluded from the comparison. Machine learning models developed to address the aforementioned prediction problems are expected to outperform the baseline estimates produced by EDA tools. The correlation between values from the initial-stage and final-stage of evaluated QoR metrics for all circuits in the NG45 dataset is shown in Fig. 14. The diagonal 𝑥 = 𝑦 line denotes perfect prediction, where the baseline exactly matches the final metric. Points above the diagonal indicate 
+
+underestimation , where the baseline value is smaller than the final actual value, while points below the diagonal indicate overestimation , where the baseline value is larger that in the final actual value. Across most metrics, agreement with the final-stage values improves as the circuit progresses through later stages of the physical design flow. Early-stage estimates frequently underestimate 
+
+total power, arrival time, and routing-related metrics as parasitic effects, buffering, and detailed routing structures are not yet captured. As the design progresses through detailed placement, clock EDA-Schema-V2: Multimodal Schema, Open Datasets, and Benchmarks for ML in Digital Physical Design 25 
+
+tree synthesis, and routing, additional physical effects are applied and accounted for, resulting in closer alignment with the QoR values reported from the final stage of the physical design flow. Several metric-dependent trends are evident. Circuit-level metrics such as total area and total power exhibit strong linear correlation with final-stage values even at early stages, indicating that coarse physical characteristics are largely determined early in the design flow. In contrast, wirelength-related metrics exhibit systematic underestimation at early design stages, with slopes significantly greater than unity, which reflect the absence of effects due to detailed routing and parasitic impedance. Timing metrics exhibit more complex behavior: arrival time exhibits moderate correlation beginning at placement and improves across later stages, whereas slack-based metrics cluster near zero with weak correlation in early design stages. Similarly, path-level and arc-level timing quantities exhibit substantial dispersion early in the design flow and only converge toward final values after clock tree synthesis and routing. The described observations demonstrate that prediction accuracy depends strongly on both the evaluated metric and the design stage, and motivate the need for the evaluation of metrics that remain stable across design stages. The accuracy of baseline predictions is first evaluated using standard regression metrics including Mean Absolute Error (MAE), Mean Absolute Percentage Error (MAPE), and the coefficient of determination ( 𝑅 2), as defined by 
+
+𝑀𝐴𝐸 = 1
+
+𝑛 
+
+> 𝑛
+
+∑︁ 
+
+> 𝑖 =1
+
+|𝑀 𝑖 − 𝑀 𝑏,𝑖 |, (9) 
+
+𝑀𝐴𝑃𝐸 = 100% 
+
+𝑛 
+
+> 𝑛
+
+∑︁ 
+
+> 𝑖 =1
+
+1 − 𝑀 𝑏,𝑖 
+
+𝑀 𝑖 
+
+, and (10) 
+
+𝑅 2 = 1 −
+
+Í𝑛 𝑖 =1 (𝑀 𝑖 − 𝑀 𝑏,𝑖 )2
+
+Í𝑛 𝑖 =1 (𝑀 𝑖 − ¯𝑀 )2 (11) where 𝑀 𝑖 denotes the value of metric 𝑀 after the final design stage, 𝑀 𝑏,𝑖 is the baseline estimate obtained from an intermediate stage, ¯𝑀 is the mean of the final-stage metric values, and 𝑛 is the number of samples in the dataset. The MAE, MAPE, and R 2 provide a first-order characterization of the accuracy of the prediction and are primarily applicable to circuit-level features including area, power, total wirelength, and interconnect length. However, evaluating early-stage estimates of physical design metrics presents several additional challenges. Metrics such as per-net interconnect length and per timing path arrival time exhibit long-tailed behavior. For example, many nets are short while only a small number are very long in length, and most paths provide moderate arrival times while a small fraction arrive very late. In practice, the few long interconnects are more significant than the large number of short interconnects, and similarly, the relatively small number of late-arriving timing paths are more critical than the many early-arriving paths, since long wires and late arrivals disproportionately impact delay, congestion, and timing risk. To characterize the robustness of a prediction in long-tailed distributions, the 
+
+95 𝑡ℎ percentile absolute error is reported in addition to mean-based statistics for metrics evaluated for wirelength and arrival time. In addition, to directly evaluate the accuracy of a prediction on the most critical interconnects and timing paths, error metrics are also computed on the longest 
+
+5% of nets and the slowest 5% of timing paths. The additional analysis narrows the prediction of performance parameters on the design instances that most strongly effect circuit timing and physical design quality. Timing-related metrics including worst slack and total negative slack assume both positive and negative values and frequently cluster near zero as designs approach timing closure. In such cases, percentage-based metrics including MAPE become unstable and produce misleading values. Similarly, 𝑅 2 becomes unreliable when the variance of the values from the final-stage is extremely 26 Pratik Shrestha, Alec Aversa, and Ioannis Savidis 
+
+small. As indicated by the results shown in Fig. 14, timing-related metrics evaluated at earlier design stages often cluster tightly near zero relative to values from the final design stage, resulting in very limited spread and unstable estimates of variance. Consequently, MAPE is not reported for slack-based metrics, and 𝑅 2 is omitted for all timing-based metrics. Slack-based metrics including worst slack and total negative slack are inherently relative quanti-ties, defined by the difference between arrival time and required time. As a result, absolute error metrics alone do not fully characterize the quality of the prediction. In timing analysis, the direction of the prediction error is also important. In general, prediction behavior is ranked as follows: per-fect prediction is ideal, conservative predictions that slightly overestimate delay or underestimate slack are preferred as such predictions are less likely to hide timing violations, and optimistic predictions that underestimate delay or overestimate slack are least desirable as such predictions may incorrectly indicate timing closure. To analyze the directional bias of a prediction, overestimation and underestimation are separated as distinct error metrics. Let 𝑀 𝑏,𝑖 denote the baseline estimate and 𝑀 𝑖 the metric value of the final design stage for sample 𝑖 . Overestimation occurs when 𝑀 𝑏,𝑖 > 𝑀 𝑖 , while underestimation occurs when 𝑀 𝑏,𝑖 < 𝑀 𝑖 . Directional bias is quantified using the Mean Positive Error (MPE) and Mean Negative Error (MNE), which are given by, respectively, 
+
+𝑀𝑃𝐸 = 1
+
+𝑛 𝑝 ∑︁ 𝑀 𝑏,𝑖 >𝑀 𝑖 
+
+(𝑀 𝑏,𝑖 − 𝑀 𝑖 ), and (12) 
+
+𝑀𝑁 𝐸 = 1
+
+𝑛 𝑛 ∑︁ 𝑀 𝑏,𝑖 <𝑀 𝑖 
+
+(𝑀 𝑖 − 𝑀 𝑏,𝑖 ), (13) where 𝑛 𝑝 and 𝑛 𝑛 denote the number of overestimated samples and underestimated samples, re-spectively. The metrics separately quantify pessimistic and optimistic prediction behavior in the baseline estimates. For arc-level timing metrics including net arc delay , cell arc delay , and cell arc slew , similar limitations are considered when using percentage-based or correlation-based metrics. Arc delays and slews at early stages of the design flow are often small valued and exhibit weak correlation with the final-stage values due to incomplete placement, incomplete buffering, and inaccurate estimation of parasitic impedance. As a result, many samples contain values that are close to zero, which results in percentage-based metrics, including MAPE, that evaluate the excessively large or unstable values. In addition, arc delay and slew values at early design stages are often close to zero, resulting in limited variance and a coefficient of determination score ( 𝑅 2) that is unreliable and highly sensitive to minor deviations in predicted values. Under such considerations, 𝑅 2 produces large negative values that do not meaningfully reflect the performance of the prediction. To avoid reporting numerically unstable results, extreme values are thresholded in the reported tables. MAPE values exceeding 10000% are denoted using >10000%, and very negative 𝑅 2 values are denoted using <-1. Evaluation, therefore, focuses primarily on measures that utilize absolute error, which provide more stable and interpretable comparisons across design stages. Finally, to measure the ability of baseline estimates to correctly identify timing violations, the True Positive Rate (TPR) and True Negative Rate (TNR) are used as given by, respectively, 
+
+𝑇 𝑃𝑅 = 𝑇 𝑃 𝑇 𝑃 + 𝐹 𝑁 , and (14) 
+
+𝑇 𝑁 𝑅 = 𝑇 𝑁 𝑇 𝑁 + 𝐹 𝑃 , (15) where 𝑇 𝑃 and 𝑇 𝑁 represent correctly predicted violating and non-violating instances, respectively, and 𝐹 𝑃 and 𝐹 𝑁 denote false positives and false negatives. EDA-Schema-V2: Multimodal Schema, Open Datasets, and Benchmarks for ML in Digital Physical Design 27 
+
+Fig. 14. Inter-design stage correlation of QoR and timing metrics across all benchmark circuits in the NG45 technology node. Columns compare intermediate design stages with the final stage, with intermediate-stage values on the x-axis and final-stage values on the y-axis. Rows correspond to metrics including area, power, wirelength, timing, and arc delays. Scatter plots aggregate all circuits and operating points; the red line denotes the (y=x) reference and the green line represents a least-squares fit. 28 Pratik Shrestha, Alec Aversa, and Ioannis Savidis  
+
+> Table 8. Averaged baseline results of evaluated metrics between design stages for the NG45, SKY130, IHP130, and ASAP7 datasets. The error obtained when using the initial-stage tool estimate to predict the final post-routing QoR metric is listed in each column. Metrics include Mean Absolute Error (MAE), Mean Absolute Percentage Error (MAPE), coefficient of determination ( 𝑅 2), and timing-specific metrics of Mean Positive Error (MPE), Mean Negative Error (MNE), True Positive Rate (TPR), and True Negative Rate (TNR).
+> floorplan to detailed route  global place to detailed route  detailed place to detailed route  CTS to detailed route  global route to detailed route Metrics  NG45  SKY130  IPH130  ASAP7  NG45  SKY130  IPH130  ASAP7  NG45  SKY130  IPH130  ASAP7  NG45  SKY130  IPH130  ASAP7  NG45  SKY130  IPH130  ASAP7 MAE  1,781.97 18,567.03  48,738.62  225.06  871.07  8,385.61  35,724.45  73.79  571.13  7,505.03 19,487.21  47.23  49.02  854.81  2,339.67  1.98  0.00  0.00  0.00  0.00
+> MAPE  12.43 %  22.51 %  20.74 %  15.35 %  7.07 %  11.71 %  13.60 %  7.50 %  4.14 %  9.27 %  5.56 %  3.79 %  0.49 %  1.22 %  0.72 %  0.24 %  0.00 %  0.00 %  0.00 %  0.00 %
+> Total Area ( μm2) R2 0.989  0.957  0.912  0.969  0.997  0.991  0.945  0.997  0.998  0.991  0.979  0.998  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000
+> MAE  11,875.86 46,947.57  17,699.64  6,071.61  5,670.15 19,274.83  16,651.34  2,266.72  5,043.04 19,382.95 15,644.47  2,177.82  280.22  2,270.66  123.65  55.15  0.00  0.00  0.00  0.00
+> MAPE  27.89 %  50.85 %  23.71 %  33.47 %  16.70 %  31.36 %  18.87 %  19.23 %  15.37 %  30.00 %  16.83 %  17.57 %  0.57 %  1.67 %  0.24 %  0.29 %  0.00 %  0.00 %  0.00 %  0.00 %
+> Total Power ( μW)  R2 0.948  0.648  0.807  0.823  0.987  0.946  0.781  0.976  0.989  0.944  0.798  0.977  1.000  0.997  1.000  1.000  1.000  1.000  1.000  1.000
+> MAE  30,529.92 83,777.43 117,233.52  6,460.04 20,115.77 61,602.30 57,977.64  3,479.88 13,920.52 40,751.29 26,046.32  2,562.35 13,698.67 38,941.02 25,473.38  2,491.87
+> MAPE  29.21 %  34.24 %  24.43 %  17.17 %  19.61 %  24.30 %  11.49 %  7.05 %  13.16 %  16.18 %  5.51 %  3.40 %  12.53 %  14.86 %  5.33 %  3.28 %
+> Total wirelength (μm)  R2 0.916  0.902  0.928  0.987  0.959  0.939  0.977  0.995  0.980  0.975  0.996  0.997  0.981  0.977  0.996  0.997
+> MAE  4.83  12.41  13.19  1.45  4.13  11.8  11.09  1.41  4.19  12.01  11.25  1.44  4.19  11.84  11.17  1.43
+> MAPE  87.59 %  94.04 %  72.60 %  113.14 %  81.33 %  86.04 %  73.29 %  125.55 %  78.68 %  72.85 %  71.34 %  123.19 %  78.20 %  69.82 %  70.16 % 122.69 %
+> R2 0.735  0.751  0.89  0.886  0.77  0.773  0.916  0.892  0.777  0.791  0.915  0.893  0.779  0.798  0.918  0.895
+> MAE P95  12.72  38.53  53.88  5.57  10.32  39.23  46.46  5.44  10.82  41.92  46.28  5.85  10.79  41.09  46.08  5.83
+> MAPE P95  230.82 %  293.66 %  339.20 %  410.10 %  186.85 %  247.83 %  326.04 %  403.03 %  181.48 %  238.43 %  291.33 %  402.78 %  180.77 %  234.56 %  291.33 % 402.78 %
+> MAE TOP5  44.73  116.02  86.57  11.67  46.91  117.87  79.59  11.37  47.4  121.41  80.45  11.65  47.61  121.04  80.05  11.61
+> Interconnect length ( μm) MAPE TOP5
+> Estimated wirelength is not available as cells have not been placed yet 24.45 %  25.39 %  19.20 %  18.59 %  23.99 %  24.99 %  18.51 %  18.19 %  24.18 %  25.04 %  18.56 %  19.03 %  24.12 %  24.74 %  18.49 %  18.90 %
+> MAE  3.10  10.84  8.55  0.09  0.16  0.77  0.41  0.06  0.13  1.21  0.34  0.06  0.01  0.14  0.06  0.01  0.00  0.00  0.00  0.00 Worst Arrival Time (ns)  MAPE  192.92 %  183.71 %  331.31 %  15.78 %  16.19 %  21.48 %  16.98 %  11.17 %  13.81 %  33.30 %  15.82 %  10.44 %  1.60 %  4.69 %  2.32 %  2.14 %  0.00 %  0.00 %  0.00 %  0.00 %
+> MAE  3.18  11.28  8.83  0.03  0.21  1.15  0.27  0.05  0.15  1.62  0.31  0.05  0.01  0.09  0.04  0.01  0.00  0.00  0.00  0.00
+> MPE  0.06  0.30  0.30  0.04  0.09  0.27  0.27  0.04  0.04  0.17  0.20  0.03  0.01  0.03  0.04  0.00
+> MNE  3.68  12.15  9.35  0.02  0.24  1.26  0.26  0.05  0.17  1.68  0.36  0.06  0.02  0.12  0.13  0.01 No positive or negative error
+> 𝑛 𝑝  = 𝑛 𝑛  = 0
+> TPR  95.67 %  96.32 %  94.52 %  67.94 %  95.67 %  96.21 %  64.38 %  93.08 %  95.67 %  98.53 %  58.90 %  99.45 %  100.00 %  99.47 %  96.58 %  100.00 %  100.00 %  100.00 %  100.00 % 100.00 %
+> Worst Slack (ns) TNR  28.70 %  15.76 %  28.11 %  97.70 %  57.56 %  21.39 %  95.54 %  63.75 %  56.26 %  8.39 %  91.58 %  58.79 %  93.24 %  60.59 %  99.22 %  91.53 %  100.00 %  100.00 %  100.00 % 100.00 %
+> MAE  1,764.18 17,768.52  3,755.75  1.09  57.74  727.04  0.57  5.65  22.45  959.12  1.05  5.75  2.11  70.22  0.04  1.01  0.00  0.00  0.00  0.00
+> MPE  1.26  4.74  2.50  3.92  24.60  5.30  1.82  3.76  23.22  2.74  1.88  4.68  4.81  22.51  0.17  1.56
+> Total Negative Slack (ns)  MNE  2,296.57 20,176.54  5,201.66  2.10  101.63  849.90  7.15  11.49  37.22  1,031.87  9.00  10.54  6.34  123.39  0.76  3.78 No positive or negative error
+> 𝑛 𝑝  = 𝑛 𝑛  = 0
+> MAE  0.4756  2.9814  1.7195  0.1836  0.2313  0.9552  0.6682  0.1509  0.2398  0.9151  0.6392  0.1462  0.0022  0.0319  0.0041  0.0012  0.0000  0.0000  0.0000  0.0000
+> MAPE  75.89 %  92.31 %  95.11 %  51.92 %  46.25 %  39.61 %  43.00 %  42.55 %  45.63 %  37.87 %  41.34 %  41.05 %  0.27 %  0.80 %  0.18 %  0.22 %  0.00 %  0.00 %  0.00 %  0.00 %
+> MAE P95  1.0541  7.1590  4.6540  0.3296  0.3600  1.5150  0.8949  0.2385  0.3570  1.5320  0.8899  0.2387  0.0107  0.1980  0.0220  0.0036  0.0000  0.0000  0.0000  0.0000
+> MAPE P95  133.31 %  169.45 %  241.72 %  74.00 %  69.54 %  64.36 %  65.89 %  70.09 %  69.32 %  64.39 %  65.77 %  70.06 %  1.27 %  4.81 %  0.98 %  0.68 %  0.00 %  0.00 %  0.00 %  0.00 %
+> MAE TOP5  2.6279  10.1956  1.8427  0.3048  0.2398  0.9467  0.7733  0.1986  0.1971  1.0037  0.7550  0.1975  0.0107  0.1110  0.0246  0.0037  0.0000  0.0000  0.0000  0.0000
+> Timing Path Arrival Time (ns) MAPE TOP5  208.58 %  164.89 %  58.23 %  36.41 %  15.32 %  14.73 %  24.60 %  23.24 %  12.57 %  15.69 %  23.97 %  23.01 %  0.70 %  1.68 %  0.73 %  0.42 %  0.00 %  0.00 %  0.00 %  0.00 %
+> MAE  0.2450  2.6909  1.8879  0.0400  0.0532  0.2179  0.0736  0.0166  0.0280  0.2873  0.0975  0.0203  0.0023  0.0316  0.0040  0.0012  0.0000  0.0000  0.0000  0.0000
+> MPE  0.0361  1.7111  0.9992  0.0788  0.0282  0.0851  0.0556  0.0150  0.0299  0.1210  0.0741  0.0167  0.0125  0.0351  0.0159  0.0080
+> MNE  0.2749  2.8765  2.8290  0.0222  0.0641  0.4140  0.1082  0.0203  0.0273  0.5783  0.1349  0.0296  0.0217  0.1342  0.0167  0.0149 No positive or negative error
+> 𝑛 𝑝  = 𝑛 𝑛  = 0
+> TPR  98.01 %  96.65 %  74.89 %  70.21 %  96.50 %  98.01 %  74.19 %  83.93 %  94.90 %  97.61 %  73.80 %  85.13 %  93.04 %  95.99 %  84.56 %  95.92 %  100.00 %  100.00 %  100.00 % 100.00 %
+> Timing Path Slack (ns) TNR  88.69 %  77.61 %  93.99 %  99.96 %  96.00 %  90.69 %  99.93 %  98.69 %  97.65 %  89.43 %  99.92 %  98.56 %  99.63 %  98.34 %  99.99 %  99.73 %  100.00 %  100.00 %  100.00 % 100.00 %
+> MAE  0.1128  0.7713  0.4259  0.0105  0.0200  0.0631  0.0306  0.0066  0.0122  0.0466  0.0165  0.0039  0.0005  0.0046  0.0004  0.0002  0.0000  0.0000  0.0000  0.0000
+> MAPE  >10000 %  403.06 %  547.23 %  39.38 % >10000 %  28.21 %  31.14 %  20.69 % >10000 %  19.99 %  8.91 %  11.16 % >10000 %  2.36 %  0.32 %  0.95 %  0.00 %  0.00 %  0.00 %  0.00 %
+> Net Arc Delay (ns)  R2 <-1  <-1  <-1  <-1  <-1  -0.029  <-1  -0.402  -0.024  0.748  0.876  0.777  0.976  0.981  0.999  0.979  1.000  1.000  1.000  1.000
+> MAE  0.0011  0.0031  0.0003  0.0018  0.0008  0.0016  0.0002  0.0003  0.0009  0.0013  0.0001  0.0002  0.0001  0.0003  0.0000  0.0000  0.0000  0.0000  0.0000  0.0000
+> MAPE  >10000 % >10000 % >10000 % >10000 % >10000 % >10000 %  >10000 % >10000 % >10000 % >10000 % >10000 % >10000 % >10000 % >10000 % >10000 % >10000 %  0.00 %  0.00 %  0.00 %  0.00 %
+> Cell Arc Delay (ns)  R2 -0.308  <-1  <-1  -0.141  0.928  0.873  0.641  0.851  0.875  0.894  0.657  0.925  0.987  0.974  0.975  0.952  1.000  1.000  1.000  1.000
+> MAE  0.0761  0.8919  0.4735  0.0152  0.0082  0.0415  0.0059  0.0026  0.0028  0.0392  0.0011  0.0017  0.0003  0.0054  0.0004  0.0003  0.0000  0.0000  0.0000  0.0000
+> MAPE  183.03 %  462.31 % 1134.69 %  34.33 %  27.44 %  37.69 %  11.05 %  7.44 %  13.43 %  35.60 %  2.05 %  5.89 %  1.27 %  4.66 %  0.53 %  1.01 %  0.00 %  0.00 %  0.00 %  0.00 %
+> Cell Arc Slew (ns)  R2 <-1  <-1  <-1  <-1  0.332  0.414  0.965  0.878  0.786  0.427  0.987  0.911  0.973  0.938  0.994  0.964  1.000  1.000  1.000  1.000 EDA-Schema-V2: Multimodal Schema, Open Datasets, and Benchmarks for ML in Digital Physical Design 29
+
+The resulting baseline values across all metrics, design stages, and technology nodes are listed in Table 8. The baseline values establish a standardized point of comparison for future research efforts that utilize the EDA-Schema-V2 dataset. Machine learning methods and other predictive techniques targeting the listed tasks will benefit from evaluation with the provided baselines and are expected to demonstrate improved prediction accuracy across the reported metrics. Consequently, Table 8 serves as a reference benchmark leaderboard for early-stage QoR prediction problems in physical design and provides a consistent target for the evaluation of subsequent work. 
+
+7 Conclusion 
+
+This paper presents EDA-Schema-V2, a standardized multimodal schema for machine-learning applications in digital physical design. The schema organizes artifacts generated throughout the RTL-to-GDSII design flow within a unified entity–relationship structure that captures both structural and spatial circuit characteristics. Graph representations model logical and physical connectivity among design elements, while image-based representations capture spatial layout characteristics and analyzed circuit properties are provided as heatmaps. By relying on widely adopted electronic design automation (EDA) interchange formats and technology layer conventions, the schema remains compatible with both open-source and commercial physical design tool flows. A large-scale dataset is generated using the OpenROAD tool chain together with the four open process design kits (SkyWater 130 nm, Nangate 45 nm, ASAP7 7 nm, and IHP SG13G2 130 nm). The dataset is generated from IWLS’05 benchmark circuits through systematic sweeps of key physical design parameters. The resulting dataset contains approximately 7,800 physical design instances derived from 18 benchmark circuits and spans more than 275 million gates, 75 million nets, and over 36 million extracted timing paths. Stage-resolved information across the physical design flow from synthesis through detailed routing is captured together with multimodal representations that include circuit graphs, spatial layout images, and quality-of-results (QoR) metrics. A baseline analysis is provided to quantify the accuracy of predicted final post-routing QoR metrics during execution of intermediate stages of the physical design flow and across different process design kits (PDKs). The evaluated baseline metrics establish a standardized reference for early-stage QoR prediction and provide a consistent benchmark for evaluating future machine learning algorithms and methods. To support reproducibility and broader community adoption, the EDA-Schema-V2 specification, dataset, and supporting tooling are publicly released through an open repository available at https://github.com/drexel-ice/EDA-schema. EDA-Schema-V2 together with the accompanying dataset improves reproducibility, comparability, and accessibility in machine-learning-for-EDA research while providing a scalable foundation for future data-driven digital design automation. 
+
+References         
+
+> [1] G. Huang, J. Hu, Y. He, J. Liu, M. Ma, Z. Shen, J. Wu, Y. Xu, H. Zhang, and K. Zhong, “Machine learning for electronic design automation: A survey,” ACM Transactions on Design Automation of Electronic Systems (TODAES) , Vol. 26, No. 5, pp. 1–46, Jun. 2021. [2] J. Jung, A. B. Kahng, S. Kim, and R. Varadarajan, “METRICS2.1 and flow tuning in the IEEE CEDA robust design flow and OpenROAD,” Proceedings of the IEEE/ACM International Conference On Computer Aided Design (ICCAD) , pp. 1–9, Nov. 2021. [3] Z. Chai, Y. Zhao, W. Liu, Y. Lin, R. Wang, and R. Huang, “CircuitNet: An open-source dataset for machine learning in VLSI CAD applications with improved domain-specific evaluation metric and learning strategies,” IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems , Vol. 42, No. 12, pp. 5034–5047, Jun. 2023. [4] R. Liang, A. Agnesina, G. Pradipta, V. A. Chhabria, and H. Ren, “CircuitOps: An ML infrastructure enabling generative AI for VLSI circuit optimization,” Proceedings of the IEEE/ACM International Conference on Computer Aided Design (ICCAD) , pp. 1–6, Oct. 2023.
+
+30 Pratik Shrestha, Alec Aversa, and Ioannis Savidis 
+
+[5] T. Ajayi and D. Blaauw, “OpenROAD: Toward a self-driving, open-source digital layout implementation tool chain,” 
+
+Proceedings of the Government Microcircuit Applications and Critical Technology Conference , pp. 1–6, Mar. 2019. [6] P. Shrestha, A. Aversa, S. Phatharodom, and I. Savidis, “EDA-schema: A graph datamodel schema and open dataset for digital design automation,” Proceedings of the ACM Great Lakes Symposium on VLSI (GLSVLSI) , pp. 1–8, Jun. 2024. [7] C. Albrecht, “IWLS 2005 benchmarks,” In International Workshop for Logic Synthesis (IWLS): http://www.iwls.org , Jun. 2005. [8] The OpenROAD Project, “OpenSTA: Static timing analysis tool,” https://github.com/The-OpenROAD-Project/ OpenSTA, 2025. [9] The OpenROAD Project, “OpenRCX: Parasitic extraction tool,” https://github.com/The-OpenROAD-Project/OpenRCX, 2025. [10] “IEEE standard for integrated circuit (IC) open library architecture (OLA),” IEEE Std 1481-2019 (Revision of IEEE Std 1481-2009) , pp. 1–641, Mar. 2020. [11] The OpenROAD Project, “PDNSim: Power delivery network analysis tool,” https://github.com/The-OpenROAD-Project/PDNSim, 2019. [12] P. Spindler and F. M. Johannes, “Fast and accurate routing demand estimation for efficient routability-driven placement,” 
+
+Proceedings of the Design, Automation & Test in Europe Conference & Exhibition (DATE) , pp. 1–6, Apr. 2007. [13] “FreePDK45,” https://eda.ncsu.edu/freepdk/freepdk45, 2011. [14] Google and SkyWater Technology Foundry, “SkyWater SKY130 Open Source PDK,” https://github.com/google/ skywater-pdk, 2025. [15] “IHP-Open-PDK,” https://github.com/IHP-GmbH/IHP-Open-PDK, 2026. [16] “ASAP: Arizona State Predictive PDK,” https://asap.asu.edu, 2017. [17] J. Ahn, K. Chang, K.-M. Choi, T. Kim, and H. Park, “DTOC-P: Deep-learning-driven timing optimization using commercial EDA tool with practicality enhancement,” IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems , Vol. 43, No. 8, pp. 2493–2506, Feb. 2024. [18] Z. Xie, Y.-H. Huang, G.-Q. Fang, H. Ren, S.-Y. Fang, Y. Chen, and J. Hu, “RouteNet: Routability prediction for mixed-size designs using convolutional neural network,” Proceedings of the IEEE/ACM International Conference on Computer-Aided Design (ICCAD) , pp. 1–8, Nov. 2018. [19] S. F. Almeida, R. Netto, T. A. Fontana, E. Aghaeekiasaraee, U. Gandhi, A. F. Tabrizi, J. L. Güntzel, L. Behjat, and C. Meinhardt, “Eh-DRVP: Combining placement and global routing data in a hyper-image-based DRV predictor,” 
+
+Integration, the VLSI Journal , Vol. 101, pp. 1–14, Mar. 2025. [20] Y.-C. Lu, W.-T. Chan, V. Khandelwal, and S. K. Lim, “Driving early physical synthesis exploration through end-of-flow total power prediction,” Proceedings of the ACM/IEEE Workshop on Machine Learning for CAD (MLCAD) , pp. 97–102, Sept. 2022. [21] Y. Du, Z. Guo, X. Jiang, Z. Chai, Y. Zhao, Y. Lin, R. Wang, and R. Huang, “PowPrediCT: Cross-stage power prediction with circuit-transformation-aware learning,” Proceedings of the ACM/IEEE Design Automation Conference , pp. 1–6, Nov. 2024. [22] Z. Xie, R. Liang, X. Xu, J. Hu, Y. Duan, and Y. Chen, “Net2: A graph attention network method customized for pre-placement net length estimation,” Proceedings of the Asia and South Pacific Design Automation Conference (ASPDAC) ,pp. 671–677, Jan. 2021. [23] Z. Wu, P. Shrestha, S. Phatharodom, and I. Savidis, “Differentiable graph neural networks for wirelength estimation,” 
+
+Proceedings of the IEEE International Symposium on Circuits and Systems (ISCAS) , pp. 1–5, May 2025. [24] P. Shrestha, S. Phatharodom, and I. Savidis, “Graph representation learning for gate arrival time prediction,” Proceedings of the ACM/IEEE Workshop on Machine Learning for CAD (MLCAD) , pp. 127–133, Sept. 2022. [25] P. Shrestha and I. Savidis, “Graph representation learning for parasitic impedance prediction of the interconnect,” 
+
+Proceedings of the IEEE International Symposium on Circuits and Systems (ISCAS) , pp. 1–5, May 2023. [26] J. Yoon, J. Lee, D. Kim, J. Hur, and S. Kang, “ParaFormer: A hybrid graph neural network and transformer approach for pre-routing parasitic RC prediction,” Proceedings of the Asia and South Pacific Design Automation Conference (ASPDAC) ,pp. 513–519, Mar. 2025. [27] H. Li, Y. Huo, Y. Wang, X. Yang, M. Hao, and X. Wang, “A lightweight inception boosted U-net neural network for routability prediction,” Proceedings of the International Symposium of Electronics Design Automation (ISEDA) , pp. 648–653, May 2024. [28] V. A. Chhabria, V. Ahuja, A. Prabhu, N. Patil, P. Jain, and S. S. Sapatnekar, “Encoder-decoder networks for analyzing thermal and power delivery networks,” ACM Transactions on Design Automation of Electronic Systems , Vol. 28, No. 3, pp. 1–27, Dec. 2022. [29] Y. Chen, Z. Cai, M. Wei, Z. Lin, and J. Chen, “Global and local attention-based inception U-Net for static IR drop estimation,” pp. 673–680, Nov. 2024. EDA-Schema-V2: Multimodal Schema, Open Datasets, and Benchmarks for ML in Digital Physical Design 31 
+
+[30] C. Yu, Y. Teng, W. Dai, Y. Li, W. W. Xing, X. Wu, D. Niu, and Z. Jin, “LaRED: Efficient IR drop predictor with layout-preserving rebuilder-encoder-decoder architecture,” Proceedings of the Design, Automation & Test in Europe Conference (DATE) , pp. 1–7, Mar. 2025. [31] P. Cao, Y. Qin, G. He, W. Ding, X. Cheng, Z. Zhang, and Y. Ye, “An optimization-aware prerouting timing prediction framework based on multimodal learning,” IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems , Vol. 44, No. 10, pp. 3896–3909, Oct. 2025. [32] G. Karypis, R. Aggarwal, V. Kumar, and S. Shekhar, “Multilevel hypergraph partitioning: Application in VLSI domain,” 
+
+Proceedings of the Design Automation Conference (DAC) , pp. 526–529, Jun. 1997. 32 Pratik Shrestha, Alec Aversa, and Ioannis Savidis 
+
+A Appendix 
+
+The appendix provides additional analyses that support the characterization of the dataset and evaluation of baseline metrics presented in the paper. Three complementary aspects of the dataset are examined across the SKY130, IHP130, and ASAP7 (NG45 provided in paper) technology nodes. First, the sensitivity of quality-of-results (QoR) metrics to variations in physical design parameters is analyzed in Section A.1. Second, the evolution of QoR metrics across stages of the physical design flow are evaluated in Section A.2. Third, correlations between intermediate-stage estimates and final detailed-routing results are analyzed in Section A.3. 
+
+A.1 Parameter Sensitivity Analysis 
+
+The results of the parameter sensitivity analysis for the SKY130, IHP130, and ASAP7 technology nodes are provided in Figures 15 and 16, Figures 17 and 18, and Figures 19 and 20, respectively. The statistical distribution of the final-stage QoR metrics due to sensitivity to design parameters is analyzed for total area, total power, worst-case slack, total negative slack, number of slack violating endpoints, total wirelength, and total net capacitance for the ac97_ctrl circuit with variations in clock period, core aspect ratio, core utilization, and placement density. Plots of the Pearson correlation coefficients between QoR metrics and design parameters across all benchmark circuits of each dataset are provided for SKY130, IHP130, and ASAP7 technology nodes in Figures 16, 18, and 20, respectively.    
+
+> Fig. 15. Distribution of final-stage QoR metrics for total area, total power, worst-case slack, total negative slack, number of slack violating endpoints, total wirelength, and total net capacitance for the ac97_ctrl circuit with variations in clock period, core aspect ratio, core utilization, and placement density using the SKY130 technology node. EDA-Schema-V2: Multimodal Schema, Open Datasets, and Benchmarks for ML in Digital Physical Design 33
+
+Fig. 16. Distribution of Pearson correlation coefficients between QoR metrics and design parameters across all circuits in the SKY130 dataset. The correlation coefficient are shown with violin plots for each parameter-metric pair. 
+
+Fig. 17. Distribution of final-stage QoR metrics for total area, total power, worst-case slack, total negative slack, number of slack violating endpoints, total wirelength, and total net capacitance for the ac97_ctrl circuit with variations in clock period, core aspect ratio, core utilization, and placement density using the IHP130 technology node. 34 Pratik Shrestha, Alec Aversa, and Ioannis Savidis 
+
+Fig. 18. Distribution of Pearson correlation coefficients between QoR metrics and design parameters across all circuits in the IHP130 dataset. The correlation coefficient are shown with violin plots for each parameter-metric pair. 
+
+Fig. 19. Distribution of final-stage QoR metrics for total area, total power, worst-case slack, total negative slack, number of slack violating endpoints, total wirelength, and total net capacitance for the ac97_ctrl circuit with variations in clock period, core aspect ratio, core utilization, and placement density using the ASAP7 technology node. EDA-Schema-V2: Multimodal Schema, Open Datasets, and Benchmarks for ML in Digital Physical Design 35 
+
+Fig. 20. Distribution of Pearson correlation coefficients between QoR metrics and design parameters across all circuits in the ASAP7 dataset. The correlation coefficient are shown with violin plots for each parameter-metric pair. 
+
+A.2 Inter-Design Stage Analysis 
+
+Results from an inter-design stage analysis of the ac97_ctrl circuit across the SKY130, IHP130, and ASAP7 technology nodes are presented in Figures 21, 22, and 23, respectively. The evolution of QoR metrics, including total area, total power, and worst-case arrival time, through the various physical design stages are illustrated in the figure, which provides insight into changes in circuit characteristics with progression through the physical design flow. 
+
+(a) (b) (c) 
+
+(d) (e) (f) Fig. 21. Change in the distribution of (a) total area, (b) total power, (c) worst slack, (d) total negative slack, (e) number of violating endpoints, and (f) total wirelength across physical design stages for the ac97_ctrl circuit implemented in the SKY130 technology node. 36 Pratik Shrestha, Alec Aversa, and Ioannis Savidis 
+
+(a) (b) (c) 
+
+(d) (e) (f) Fig. 22. Change in the distribution of (a) total area, (b) total power, (c) worst slack, (d) total negative slack, (e) number of violating endpoints, and (f) total wirelength across physical design stages for the ac97_ctrl circuit implemented in the IHP130 technology node. 
+
+(a) (b) (c) 
+
+(d) (e) (f) Fig. 23. Change in the distribution of (a) total area, (b) total power, (c) worst slack, (d) total negative slack, (e) number of violating endpoints, and (f) total wirelength across physical design stages for the ac97_ctrl circuit implemented in the ASAP7 technology node. 
+
+A.3 Baseline Analysis 
+
+The correlation between intermediate-stage QoR estimates and the final detailed-routing results across all benchmark circuits for the SKY130, IHP130, and ASAP7 technology nodes are shown in Figures 24, 25, and 26, respectively. The comparison of baselines highlights the change in key design metrics across stages of the design flow and evaluates the predictive consistency of intermediate-stage estimates relative to metric scores from the final design stage. EDA-Schema-V2: Multimodal Schema, Open Datasets, and Benchmarks for ML in Digital Physical Design 37 
+
+Fig. 24. Inter-design stage correlation of QoR and timing metrics across all benchmark circuits in the SKY130 technology node. Columns compare intermediate design stages with the final stage, with intermediate-stage values on the x-axis and final-stage values on the y-axis. Rows correspond to metrics including area, power, wirelength, timing, and arc delays. Scatter plots aggregate all circuits and operating points; the red line denotes the (y=x) reference and the green line represents a least-squares fit. 38 Pratik Shrestha, Alec Aversa, and Ioannis Savidis 
+
+Fig. 25. Inter-design stage correlation of QoR and timing metrics across all benchmark circuits in the IHP130 technology node. Columns compare intermediate design stages with the final stage, with intermediate-stage values on the x-axis and final-stage values on the y-axis. Rows correspond to metrics including area, power, wirelength, timing, and arc delays. Scatter plots aggregate all circuits and operating points; the red line denotes the (y=x) reference and the green line represents a least-squares fit. EDA-Schema-V2: Multimodal Schema, Open Datasets, and Benchmarks for ML in Digital Physical Design 39 
+
+Fig. 26. Inter-design stage correlation of QoR and timing metrics across all benchmark circuits in the ASAP7 technology node. Columns compare intermediate design stages with the final stage, with intermediate-stage values on the x-axis and final-stage values on the y-axis. Rows correspond to metrics including area, power, wirelength, timing, and arc delays. Scatter plots aggregate all circuits and operating points; the red line denotes the (y=x) reference and the green line represents a least-squares fit.

@@ -1,0 +1,316 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-05-11T21:03:39.041519+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 2,
+    "deep_divecandidates": 1,
+    "deep_cap": 7,
+    "deep_selected": 1,
+    "quick_candidates": 6,
+    "quick_skim_target": 12,
+    "quick_selected": 6
+  },
+  "deep_dive": [
+    {
+      "id": "2605.07486v1",
+      "source": "arxiv",
+      "title": "Spying Across Chiplets: Side-Channel Attacks in 2.5/3D Integrated Systems",
+      "abstract": "Advanced packaging and chiplet-based integration are increasingly adopted to build complex heterogeneous systems beyond the limits of monolithic scaling. While these architectures offer major benefits in terms of modularity, yield, and performance, they also introduce new physical attack surfaces. In this paper, we show that side-channel attacks can be mounted across chiplets within the same package or stack. Our key idea is that a communication-oriented chiplet, originally intended to interact with the external environment through an antenna, an RFID-like element, or another contactless coupling structure, can be repurposed as an internal observation platform. We formalize this threat through a realistic adversary model, describe the corresponding attack principle, and experimentally assess its feasibility. The obtained results demonstrate that signals captured through such a communication-oriented interface can reveal information correlated with the activity of a neighboring victim chiplet.",
+      "authors": [
+        "Giorgio Di Natale",
+        "Christelle Rabache",
+        "Pierre-Louis Hellier",
+        "Florence Podevin",
+        "Sylvain Bourdel",
+        "Romain Siragusa",
+        "Paolo Maistri"
+      ],
+      "primary_category": "cs.CR",
+      "categories": [
+        "cs.CR"
+      ],
+      "published": "2026-05-08T09:27:24+00:00",
+      "link": "https://arxiv.org/pdf/2605.07486v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:BGA-XTALK",
+        "query:si-pi"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "side-channel attacks in 2.5D/3D chiplet-based integrated systems",
+      "llm_evidence_cn": "2.5D/3D Chiplet集成系统中的侧信道攻击",
+      "llm_evidence": "2.5D/3D Chiplet集成系统中的侧信道攻击",
+      "canonical_evidence": "2.5D/3D Chiplet集成系统中的侧信道攻击",
+      "llm_tldr_en": "Investigates physical side-channel attack surfaces in advanced 2.5D/3D chiplet packaging architectures.",
+      "llm_tldr_cn": "研究了先进2.5D/3D Chiplet封装架构中的物理侧信道攻击面。",
+      "llm_tldr": "研究了先进2.5D/3D Chiplet封装架构中的物理侧信道攻击面。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "SI/PI challenges and solutions for Chiplet and 3D heterogeneous integration",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2605.06808v1",
+      "source": "arxiv",
+      "title": "A 0.08 pJ/bit 56 GBaud Monolithic Optical Receiver Front End for IMDD Photonic Links",
+      "abstract": "We present the design, fabrication, and measurement of a monolithically integrated optical receiver analog front end, where low power operation is a primary consideration with a goal of supporting 56 Gbaud intensity modulated direct detect transceivers. The need for low-power consumption and low-noise operation motivates a monolithic, layout driven design approach which begins with circuit topology selection and analysis. Various transistor unit cell layout configurations are explored, minimizing parasitics, enabling wide analog bandwidth and reduced input referred noise. The post-layout analog front end achieves a 28.9 GHz bandwidth with a low-frequency gain of 61.7 dBΩ. This circuit was designed within the GlobalFoundries FotonixTM monolithic silicon photonics platform. The fabricated device is characterized by its DC operation, noise characteristics, and time domain behavior. The final design was validated by on-off keyed and PAM-4 electrical eye diagram measurements to 64 GBaud, consuming 9.22 mW of power from a 1.2 V supply with less than 737 nA RMS integrated input referred noise current and 0.08 pJ/bit.",
+      "authors": [
+        "Robert P. Pesch",
+        "Arjun Khurana",
+        "Joshua J. Wong",
+        "Joel Slaby",
+        "Stephen E. Ralph"
+      ],
+      "primary_category": "physics.optics",
+      "categories": [
+        "physics.optics",
+        "eess.SP"
+      ],
+      "published": "2026-05-07T18:08:20+00:00",
+      "link": "https://arxiv.org/pdf/2605.06808v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:BGA-XTALK",
+        "query:si-pi"
+      ],
+      "llm_score": 7.5,
+      "llm_evidence_en": "Layout driven design minimizing parasitics for 56 GBaud high-speed optical receiver",
+      "llm_evidence_cn": "针对56 GBaud高速光接收机的寄生参数最小化布局驱动设计",
+      "llm_evidence": "针对56 GBaud高速光接收机的寄生参数最小化布局驱动设计",
+      "canonical_evidence": "针对56 GBaud高速光接收机的寄生参数最小化布局驱动设计",
+      "llm_tldr_en": "Describes a 56 GBaud optical receiver design focusing on parasitic minimization and high-speed signal integrity.",
+      "llm_tldr_cn": "描述了一种56 GBaud光接收机设计，重点在于寄生参数最小化和高速信号完整性。",
+      "llm_tldr": "描述了一种56 GBaud光接收机设计，重点在于寄生参数最小化和高速信号完整性。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Signal integrity analysis for high-speed interconnects",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2605.06055v2",
+      "source": "arxiv",
+      "title": "Relay Buffer Independent Communication over Pooled HBM for Efficient MoE Inference on Ascend",
+      "abstract": "Mixture-of-Experts (MoE) inference requires large-scale token exchange across devices, making dispatch and combine major bottlenecks in both prefill and decode. Beyond network transfer, routing-driven layout transformation, temporary relay, and output restoration can add substantial overhead. Existing MoE communication paths are often buffer-centric, using explicit inter-process relay and reordering buffers around collective transfer. This report presents a relay-buffer-free communication design for MoE inference acceleration on Ascend systems. The design reorganizes dispatch and combine around direct placement into destination expert windows and direct reading from remote expert windows. Built on globally pooled high-bandwidth memory and symmetric-memory allocation, it removes most intermediate relay and reordering buffers while retaining only lightweight control state, including counts, offsets, and synchronization metadata. We instantiate the design as two schedules for the main phases of MoE inference: a prefill schedule with richer planning state for throughput-oriented execution, and a compact decode schedule for latency-sensitive execution. Experiments on Ascend-based MoE workloads show reduced dispatch and combine latency in both settings. At the serving level, the implementation improves time to first token (TTFT), preserves competitive time per output token (TPOT), and enlarges the feasible scheduling space under practical latency constraints. These results indicate that, on platforms with globally addressable device memory, reducing intermediate buffering and output restoration around expert execution is an effective direction for accelerating MoE inference.",
+      "authors": [
+        "Tianlun Hu",
+        "Tiancheng Hu",
+        "Shengsheng Litang",
+        "Sheng Wang",
+        "Xiaoming Bao",
+        "Yuxing Li",
+        "Wei Wang",
+        "Zhongzhe Hu",
+        "Lijun Li",
+        "Hongwei Sun",
+        "Jingbin Zhou"
+      ],
+      "primary_category": "cs.DC",
+      "categories": [
+        "cs.DC",
+        "cs.LG"
+      ],
+      "published": "2026-05-07T11:41:18+00:00",
+      "link": "https://arxiv.org/pdf/2605.06055v2",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:BGA-XTALK",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "communication over pooled HBM for MoE inference",
+      "llm_evidence_cn": "基于池化HBM的MoE推理通信",
+      "llm_evidence": "基于池化HBM的MoE推理通信",
+      "canonical_evidence": "基于池化HBM的MoE推理通信",
+      "llm_tldr_en": "Optimizes MoE inference communication using direct placement into pooled High-Bandwidth Memory (HBM).",
+      "llm_tldr_cn": "利用直接放置到池化高带宽内存（HBM）的方法优化了MoE推理通信。",
+      "llm_tldr": "利用直接放置到池化高带宽内存（HBM）的方法优化了MoE推理通信。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "SerDes DDR and HBM channel modeling and simulation",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.06936v1",
+      "source": "arxiv",
+      "title": "Bridging the Last Mile of Circuit Design: PostEDA-Bench, a Hierarchical Benchmark for PPA Convergence and DRC Fixing",
+      "abstract": "LLM-based agents are increasingly applied to the \"last mile\" of Electronic Design Automation (EDA): repairing residual sign-off Design Rule Check (DRC) violations and converging Power-Performance-Area (PPA) targets after tool runs. Existing EDA-LLM benchmarks, however, omit DRC fixing entirely and rely on flat hierarchies tied to a single toolchain. We introduce PostEDA-Bench, a hierarchical benchmark with 145 tasks across DRC-Essential, DRC-Reasoning, PPA-Mono, and PPA-Multi, supported by EDA toolchains with machine-checkable evaluation. Across eight commercial and open-source LLMs under multiple agent scaffolds, we find that agents handle synthetic DRC-Essential and single-objective PPA-Mono reasonably well but degrade sharply on the more practical DRC-Reasoning, where the best success rate is 36.66%, and PPA-Multi, where the best success rate is 20.00%; vision augmentation consistently enhances DRC-Bench; and trade-off reasoning, rather than knob knowledge, is the dominant PPA-Multi bottleneck.",
+      "authors": [
+        "Pengju Liu",
+        "Nuo Xu",
+        "Jinwei Tang",
+        "Yu Cao",
+        "Caiwen Ding"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR",
+        "cs.AI",
+        "cs.MA"
+      ],
+      "published": "2026-05-07T20:54:07+00:00",
+      "link": "https://arxiv.org/pdf/2605.06936v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:BGA-XTALK",
+        "query:si-pi"
+      ],
+      "llm_score": 7.5,
+      "llm_evidence_en": "EDA benchmark for PPA convergence and DRC fixing",
+      "llm_evidence_cn": "用于PPA收敛和DRC修复的EDA基准测试",
+      "llm_evidence": "用于PPA收敛和DRC修复的EDA基准测试",
+      "canonical_evidence": "用于PPA收敛和DRC修复的EDA基准测试",
+      "llm_tldr_en": "Introduces a benchmark for LLM agents to handle post-EDA circuit design optimization and repair.",
+      "llm_tldr_cn": "引入了一个基准，用于评估LLM智能体处理EDA后电路设计优化和修复的能力。",
+      "llm_tldr": "引入了一个基准，用于评估LLM智能体处理EDA后电路设计优化和修复的能力。",
+      "llm_tags": [
+        "query:si-pi:composite"
+      ],
+      "matched_query_tag": "query:si-pi:composite",
+      "matched_query_text": "Papers central to 板级、封装级、芯片级信号完整性与电源完整性（SI/PI）相关论文检索，涵盖高速互连、建模、PDN优化及机器学习应用。, especially work that connects or combines: Power integrity and PDN modeling optimization; Signal integrity analysis for high-speed interconnects; SerDes DDR and HBM channel modeling and simulation; PDN impedance modeling and decoupling capacitor design; SI/PI analysis for 2.5D 3D and Chiplet packaging; Machine learning methods for SI/PI analysis and optimization; Advanced modeling and optimization techniques for SI/PI in high speed systems; Machine learning applications for signal and power integrity analysis; SI/PI challenges and solutions for Chiplet and 3D heterogeneous integration; High speed channel characterization for SerDes and HBM interfaces.",
+      "matched_requirement_id": "req-composite-si-pi",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2605.07750v1",
+      "source": "arxiv",
+      "title": "Accelerating Precise End-to-End Simulation: Latency-Sensitive Many-core System Modeling",
+      "abstract": "Modern large language model workloads put increasing demands on parallel compute capability and on-chip memory capacity, while also stressing fine-grained data movement and synchronization. These trends motivate exploring and designing many-core accelerators with tightly coupled scratchpad memory (SPM) for scalable compute and predictable, explicitly managed data access. However, this architectural shift raises two challenges: cycle-accurate register-transfer level (RTL) simulation becomes prohibitively slow as system complexity grows, and performance estimation requires precise modeling of latency-sensitive interconnect behavior. This paper presents a fast yet accurate end-to-end modeling approach for latency-sensitive many-core architectures, targeting large-scale instances such as TeraNoC with 1024 cores and a 4MiB globally shared L1 SPM. The approach captures timing behavior of latency-sensitive SPM accesses across multiple interconnect scales, while abstracting non-essential hardware details. Across diverse benchmarks, the model tracks a cycle-accurate RTL golden model with errors below 7%, while delivering up to 115x faster simulation. The framework also provides detailed profiling across processing elements and interconnect, enabling efficient end-to-end software development and hardware design exploration. Two case studies demonstrate its practicality: profiling-guided optimization of FlashAttention-2 to reduce interconnect stalls and synchronization overhead, and design space exploration of network-on-chip (NoC) router remapping to alleviate traffic imbalance and improve throughput.",
+      "authors": [
+        "Yinrong Li",
+        "Zexin Fu",
+        "Yichao Zhang",
+        "Germain Haugou",
+        "Chi Zhang",
+        "Marco Bertuletti",
+        "Bowen Wang",
+        "Luca Benini"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR",
+        "cs.DC"
+      ],
+      "published": "2026-05-08T13:56:26+00:00",
+      "link": "https://arxiv.org/pdf/2605.07750v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:BGA-XTALK",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "modeling of latency-sensitive interconnect behavior",
+      "llm_evidence_cn": "延迟敏感型互连行为建模",
+      "llm_evidence": "延迟敏感型互连行为建模",
+      "canonical_evidence": "延迟敏感型互连行为建模",
+      "llm_tldr_en": "Proposes fast end-to-end modeling for latency-sensitive interconnects in many-core systems.",
+      "llm_tldr_cn": "提出了一种针对多核系统中延迟敏感互连的快速端到端建模方法。",
+      "llm_tldr": "提出了一种针对多核系统中延迟敏感互连的快速端到端建模方法。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Signal integrity analysis for high-speed interconnects",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.06952v1",
+      "source": "arxiv",
+      "title": "EDA-Schema-V2: A Multimodal Schema, Open Datasets, and Benchmarks for Machine Learning in Digital Physical Design",
+      "abstract": "The continuous scaling of CMOS technology has significantly increased the complexity of very large-scale integrated circuits, driving interest in applying machine learning (ML) to electronic design automation (EDA). However, the limited availability of open and standardized datasets limits interoperability, comparability, and reproducibility in ML-based research. This paper introduces EDA-Schema-V2, an open multimodal schema that provides a structured framework for representing and analyzing datasets in digital physical design. The schema includes representations of physical attributes and quality-of-results metrics across multiple stages of the design flow, including logic synthesis, floorplanning, placement, clock network synthesis, and routing.   Utilizing the SkyWater 130nm, Nangate 45nm, IHP SG13G2 130nm, and ASAP 7nm open-source process design kits with the OpenROAD tool flow, datasets of physical circuit designs from the IWLS'05 benchmark suite are generated and analyzed. The dataset comprises 7,776 design instances spanning 18 benchmark circuits and includes stage-resolved representations from synthesis through detailed routing, generated through parameter sweeps over clock period, core utilization, and aspect ratio. The dataset contains over 275 million gates, 75 million nets, and more than 36 million extracted timing paths. In addition, twelve representative prediction tasks spanning timing, power, area, and routing metrics are identified, along with baseline analyses that characterize stage-to-stage predictability across the design flow. The resulting datasets and baselines are publicly released to support reproducible ML research and establish standardized benchmarks for evaluating ML-based approaches in digital physical design.",
+      "authors": [
+        "Pratik Shrestha",
+        "Alec Aversa",
+        "Ioannis Savidis"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR"
+      ],
+      "published": "2026-05-07T21:14:54+00:00",
+      "link": "https://arxiv.org/pdf/2605.06952v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:BGA-XTALK",
+        "query:si-pi"
+      ],
+      "llm_score": 7.5,
+      "llm_evidence_en": "Machine learning for digital physical design and EDA datasets",
+      "llm_evidence_cn": "用于数字物理设计和EDA数据集的机器学习",
+      "llm_evidence": "用于数字物理设计和EDA数据集的机器学习",
+      "canonical_evidence": "用于数字物理设计和EDA数据集的机器学习",
+      "llm_tldr_en": "Introduces a multimodal schema and datasets for ML in digital physical design and EDA.",
+      "llm_tldr_cn": "为数字物理设计和EDA中的机器学习引入了多模态模式和数据集。",
+      "llm_tldr": "为数字物理设计和EDA中的机器学习引入了多模态模式和数据集。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2605.06929v1",
+      "source": "arxiv",
+      "title": "Physics-Based Flow Matching for Full-Field Prediction of Silicon Photonic Devices",
+      "abstract": "Designing photonic integrated circuits requires accurate electromagnetic field simulations, which remain computationally expensive even for simple device geometries. We present PIC-Flow, a generative neural surrogate that predicts electromagnetic field distributions for photonic devices given their geometry and operating wavelength as an alternative to costly finite-difference time-domain (FDTD) simulations. Our approach combines three key ideas: (i) conditional flow matching as the generative framework, learning a velocity field that transports Gaussian noise to physically valid field solutions; (ii) a real-valued U-Net operating on split real and imaginary field channels; and (iii) physics-constrained training through a Helmholtz residual loss enforcing $\\nabla^2 E_z + k_0^2 \\varepsilon E_z = 0$. We introduce an interface-aware masking scheme for the Helmholtz residual that excludes dielectric boundary pixels where finite-difference stencil errors dominate, yielding a physically meaningful compliance metric. The data set consists of 22,500 ground-truth FDTD simulations split evenly between multimode interferometers, Y-branches, and directional couplers at $λ=1.55\\,μ$m in an 80/10/10 split between training, validation, and test sets. We evaluate ablations on the network against the held out test devices and also show that the model generalizes to held out device classes such as S-bends, tapers, and cascaded Y-branches. Rather than a drop-in replacement for FDTD, this work establishes a foundation that, with broader data coverage, more compute, and further training optimization, could scale toward broadband, device-agnostic field prediction with dramatically improved runtime for rapid design-space exploration of complex photonic devices and circuits.",
+      "authors": [
+        "Joseph Quaratiello",
+        "Anthony Rizzo"
+      ],
+      "primary_category": "physics.optics",
+      "categories": [
+        "physics.optics",
+        "cs.LG"
+      ],
+      "published": "2026-05-07T20:40:24+00:00",
+      "link": "https://arxiv.org/pdf/2605.06929v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:BGA-XTALK",
+        "query:si-pi"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "generative neural surrogate for electromagnetic field prediction in photonic devices",
+      "llm_evidence_cn": "用于光子器件电磁场预测的生成式神经代理模型",
+      "llm_evidence": "用于光子器件电磁场预测的生成式神经代理模型",
+      "canonical_evidence": "用于光子器件电磁场预测的生成式神经代理模型",
+      "llm_tldr_en": "Uses physics-based flow matching to predict EM fields, offering a surrogate for costly simulations.",
+      "llm_tldr_cn": "利用物理约束的流匹配技术预测电磁场分布，为昂贵的仿真提供神经代理模型。",
+      "llm_tldr": "利用物理约束的流匹配技术预测电磁场分布，为昂贵的仿真提供神经代理模型。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
