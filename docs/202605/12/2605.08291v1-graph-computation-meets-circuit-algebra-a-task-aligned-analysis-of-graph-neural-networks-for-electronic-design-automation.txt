@@ -1,0 +1,508 @@
+Title: Graph Computation Meets Circuit Algebra: A Task-Aligned Analysis of Graph Neural Networks for Electronic Design Automation
+
+URL Source: https://arxiv.org/pdf/2605.08291v1
+
+Published Time: Tue, 12 May 2026 00:07:17 GMT
+
+Number of Pages: 16
+
+Markdown Content:
+# Graph Computation Meets Circuit Algebra: A Task-Aligned Analysis of Graph Neural Networks for Electronic Design Automation 
+
+Hyunmog Kim ∗
+
+## Abstract 
+
+EDA problems are graph-structured, but not all graph-structured problems call for the same GNN computation. We argue that successful GNN-for-EDA methods are those whose propagation, aggregation, and supervision align with the native algebra of the target task. Concretely: static timing analysis is a max-plus / min-plus recurrence on a topologically ordered DAG, structurally aligned with asynchronous DAG-GNNs; placement is governed by hypergraph wirelength and density penalties and is exploited by differentiable placers rather than by message-passing GNNs alone; routing congestion is a sparse demand-supply field over a layout grid; switching-activity propagation is a probabilistic recurrence on a directed netlist; IR drop is a linear system on the power-delivery network; and analog symmetry extraction is a discrete constraint-prediction problem on schematic graphs. Through these task-by-task alignments we (i) review the GNN architectural toolkit relevant to circuits, (ii) formalize how circuit graphs differ from generic graphs (directed, heterogeneous, multi-scale, with sequential and clock structure), (iii) characterize where current methods succeed and where the algebra–architecture mismatch limits them, and (iv) identify failure modes—stage leakage, proxy-to-signoff gap, calibration, and design-distribution shift—that we believe are likely to dominate the next phase of work. We position the paper as a GNN-for-EDA, task-aligned analysis rather than a comprehensive AI-for-chip-design survey. Continuous SE(3)-equivariant geometric GNNs are usually mismatched to Manhattan digital layout, and LLM-for-RTL, HLS, and RL/diffusion-based topology generation are outside our scope. 
+
+## 1 Introduction 
+
+Modern semiconductor design is at a difficult inflection. The slowdown of Dennard scaling has not reduced demand for new chips—if anything, AI accelerators, automotive SoCs, and chiplet-based systems have accelerated it—but it has dramatically raised the cost of physical realization. Designs at advanced nodes routinely contain tens to hundreds of millions of placeable instances, dozens of routing layers, and intricate constraints on power, timing, signal integrity, and manufacturability. Place-and-route iterations frequently take days, and full sign-off-quality runs can take weeks. Within this loop, design teams must explore enormous configuration spaces under tight schedules, and the cost of late-stage iteration motivates earlier, faster predictions. Graph neural networks (GNNs) have repeatedly been proposed as a tool for this loop. The argument is appealing: circuits are graphs—a netlist is a hypergraph of cells and nets, a placement annotates that graph with coordinates, a clock tree is a directed tree, and a 2.5D chiplet system is a hierarchical graph of dies, interposers, and through-silicon vias. Flat-vector and image-based models throw away  
+
+> ∗Independent Researcher. Correspondence to: Hyunmog Kim <hyunmog2020@kaist.ac.kr> .Preprint. May 12, 2026.
+> arXiv:2605.08291v1 [cs.LG] 8 May 2026
+
+the relational structure that experts use to reason about timing paths, fan-out cones, and buffer trees. GNNs, in principle, were designed for this kind of reasoning. 
+
+Thesis. Yet success has been uneven. Some GNN-for-EDA results—Google’s AlphaChip as a publicly reported production floorplanning case, and NVIDIA’s GRANNITE as an industrial-authored power-estimation result evaluated against commercial-flow references—have made a credible case for stage-specific industrial relevance, while many academic claims have been hard to reproduce or have failed to generalize across designs and technology nodes. We argue that the difference is rarely about the message-passing variant chosen. Rather: 
+
+Successful GNN-for-EDA methods are not defined by using message passing; they are defined by matching the graph computation to the algebra of the target EDA task. 
+
+Concretely: static timing analysis (STA) is a max-plus / min-plus recurrence on a directed acyclic graph (DAG); placement is the optimization of a hypergraph wirelength functional under a density constraint; congestion is a sparse demand-supply field; power is a probabilistic recurrence; IR drop is a linear system on a Laplacian; and analog symmetry extraction is a discrete constraint-prediction problem. Each task has a native algebraic shape, and useful GNNs are those whose forward computation respects that shape. 
+
+Contributions. This paper makes four contributions: 1. A compact, EDA-relevant tour of the GNN architectural toolkit (§3), emphasizing the heteroge-neous, hypergraph, and topological-DAG variants that recent EDA papers actually use. 2. A formal characterization of circuit graphs as multi-typed, partially ordered, multi-scale objects (§4), with explicit caveats on where the DAG / homogeneous / clique-expansion assumptions of generic graph models break down. 3. A task-by-task algebraic analysis (§5) connecting each major EDA stage—logic synthesis, place-ment, congestion, timing, power and IR drop, analog symmetry—to graph-computation primitives aligned with its mathematical structure, using explicit task notation and calibrated industrial-evidence claims. 4. A characterization of the open challenges that, in our view, will determine whether GNNs become a durable fixture of EDA flows: stage leakage (using post-route features for pre-route prediction), the proxy-to-signoff gap , calibration and uncertainty for high-cost wrong predictions, and design-distribution shift across PDK / library / tool (§7). 
+
+Scope. This paper is not a comprehensive survey of AI for chip design: LLMs for RTL, high-level synthesis, RL/diffusion topology generation, and EDA agent workflows are out of scope, as are non-GNN ML predictors that do not define a graph, except as baselines or flow context. We position the paper as a GNN-for-EDA, task-aligned analysis (inclusion criteria in Appendix A); analog appears only via the discrete symmetry-constraint extraction line. Broad surveys of GNNs and of their real-world challenges [ 1, 2 ] provide complementary coverage. We deliberately do not cover continuous SE(3)/E(3)-equivariant geometric GNNs (SchNet, EGNN, MACE, Equiformer) [ 36 – 39 ]: digital layout obeys a Manhattan grid with discrete cell orientations and direction-preferred metal layers, breaking the continuous rotational symmetry these architectures encode. Where 2D symmetry does exist—in lithographic hotspot patterns or analog matched-device pairs—the relevant group is a finite subgroup of E(2) (typically C4 or D4), better captured by 2D group-equivariant CNNs or by augmentation over the discrete legal orientation set than by point-cloud equivariant message passing. Weaker symmetries (translation invariance, reflections, analog matching constraints) remain relevant and are discussed where they appear. 
+
+## 2 Preliminaries 
+
+A graph G = ( V, E) has nodes V (|V| = n) and edges E (|E| = m). Nodes carry feature vectors 
+
+xv ∈ Rd; edges may carry attributes euv ∈ Rc. Three structural variants are central for circuits: 
+
+directed graphs (driver-to-load signal flow), heterogeneous graphs (cells, nets, pins; signal, clock, power as distinct types), and hierarchical graphs (chiplet super-nodes over within-die netlists). 2The standard message-passing primitive [8] is 
+
+h(ℓ+1)  
+
+> v
+
+= ϕ
+
+
+
+h(ℓ) 
+
+> v
+
+, AGG 
+
+
+
+{h(ℓ) 
+
+> u
+
+: u ∈ N (v)}
+
+ 
+
+, (1) where AGG is permutation-invariant. After K rounds, every node aggregates information from its 
+
+K-hop neighborhood. Choices for AGG (sum, mean, attention) and for whether N (v) respects edge type or direction define the architectural landscape we review next. 
+
+## 3 GNN Toolkit for Circuits 
+
+We summarize only the architectural ideas that are actually load-bearing for EDA work. A more detailed review, including spectral foundations, GAT/GIN derivations, and theoretical pathologies, is in Appendix B. 
+
+Spatial message passing. GCN [ 7 ] performs degree-normalized neighbor aggregation; Graph-SAGE [ 9] introduces inductive sampling crucial for circuit-scale graphs (full-batch GCN does not fit on a single GPU at industrial scale). GAT [ 10 , 11 ] replaces fixed weights with learned attention— attractive in EDA because different fan-in sources, timing-critical arcs, or typed relations may deserve different weights. GIN [ 12 ] gives the maximum expressive power of standard message passing by combining sum aggregation with an MLP update, and matches the 1-WL graph isomorphism test as an upper bound. 
+
+Heterogeneous and relational variants. Real netlists are not type-homogeneous, and conflating types loses essential structure. R-GCN [13] applies relation-specific weight matrices, 
+
+h(ℓ+1)  
+
+> v
+
+= σ
+
+X
+
+> r∈R
+
+X  
+
+> u∈N r(v)1
+> cv,r
+
+W(ℓ) 
+
+> r
+
+h(ℓ) 
+
+> u
+
++ W(ℓ)0 h(ℓ)
+
+> v
+
+ , (2) with basis decomposition for parameter sharing. The Heterogeneous Graph Transformer (HGT) [ 14 ]replaces these typed weights with relation-specific Q/K/V projections, giving data-adaptive ag-gregation at the cost of more parameters. EDA-specific instantiations distinguish at minimum driver-pin →net, net →load-pin, and pin →cell relations on the signal-flow graph (Fig. 1); clock and power-delivery connections are typically modeled on separate graphs (clock tree, PDN), since their physics and constraints differ from signal nets. 
+
+Topological / asynchronous DAG message passing. The most consequential modeling choice for many EDA tasks is whether to respect topological order. Standard MPNNs (Eq. 1) update every node in parallel, regardless of position. An alternative respects the topological order π of the DAG: each node is visited once, in order, aggregating from predecessors that have already been visited: 
+
+hv = ϕ xv , AGG  {hu : u ∈ N −(v)} , v visited in order π. (3) A single forward pass makes information from the entire transitive fan-in cone reachable at every node, though it is still compressed into a finite-width hidden state and is therefore not immune to over-squashing. D-VAE [ 28 ], DAGNN [ 29 ], DeepGate [ 40 ], and PreRoutGNN [ 57 ] all adopt this asynchronous variant. The reason is algebraic: arrival time, signal probability, and AIG functional simulation are themselves topological recurrences (§5), and synchronous GNNs must approximate them with a fixed-depth stack of layers, while an async DAG-GNN aligns with the recurrence ordering—though whether the learned aggregation reproduces the underlying max/min algebra exactly is a separate question of operator and hidden-state capacity. Appendix B contrasts the two regimes graphically. 
+
+Hypergraph nets. A multi-pin net is naturally a hyperedge e ⊆ V . Most EDA-GNN papers reduce nets to ordinary graphs by one of three transformations: clique expansion (every pin pair becomes an edge, inflating high-fanout nets), star expansion (introduce a virtual node per net), or 
+
+bipartite cell-net incidence (pins or cells on one side, nets on the other). Each has different bias: clique expansion overweights high-fanout nets unless edge weights are normalized; star and bipartite formulations preserve the multi-way structure but require careful attribute encoding (pin offset, net degree, routing context) to recover pairwise geometric information [ 15 , 55 ]. Hierarchical pooling methods (DiffPool [ 16 ], SAGPool [ 17 ]) developed in the broader graph-ML literature are less directly used in EDA but motivate the multi-scale formulations of §4. 3Cell A N1 
+
+Cell B 
+
+Cell C    
+
+> driver
+> load
+> load
+> = Cell = Net = Pin contains
+
+Figure 1: A minimal heterogeneous signal graph with typed nodes (cells, nets, pins) and typed edges (driver, load, containment): a driver cell exposes a driver pin onto a net that fans out to load pins of downstream cells. Industrial graphs add clock-tree, PDN, hierarchy, physical coordinates, and timing-arc edges, typically modeled on separate graphs rather than overloaded onto the signal graph. 
+
+Graph transformers and pathologies. Graph transformers (Graphormer [ 30 ], GraphGPS [ 31 ]) by-pass local message passing for global attention; scalable variants (NodeFormer [ 32 ], Exphormer [ 33 ], SGFormer [ 34 ], Polynormer [ 35 ]) attack the O(n2) cost. Their evidence in graph-ML benchmarks is strong, but their evidence on full-chip industrial EDA is much thinner. Three pathologies—the 1-WL expressiveness ceiling [ 12 ], with higher-order extensions (k-WL GNNs [ 18 ], PPGN [ 19 ]) at O(nk)
+
+cost, over-smoothing [ 20 , 21 ] (with mitigations such as JKNet [ 22 ], GCNII [ 23 ], PairNorm [ 24 ], DropEdge [ 25 ]), and over-squashing [ 26 , 27 ]—constrain depth and reach. In EDA practice, augment-ing node features with structural descriptors (degree, hop distance to PIs/POs, position in clock tree) often raises effective expressiveness more cheaply than algorithmic upgrades; over-smoothing is often less visible at the shallow K ∈ [2 , 8] depths commonly used in EDA papers, while over-squashing remains salient and argues for graph rewiring or transformer-style global attention when long-range circuit phenomena (global timing, IR drop) matter. 
+
+## 4 Circuits as Graphs: Representation Choices 
+
+How a circuit is encoded as a graph profoundly shapes what a GNN can learn from it. 
+
+Combinational DAG vs. full netlist. A combinational fan-in cone, with sequential elements cut at flip-flop boundaries, is naturally a DAG: nodes are gates, edges are driver-to-load wires, no cycles. Full chip netlists, however, contain sequential feedback through state elements, scan logic, latches, generated clocks, and clock-gating cells; treating the entire design as a DAG is incorrect. A robust convention is to apply DAG-based message passing to a task-specific subgraph —a timing combinational cone, an AIG fragment, a single clock domain—rather than to the entire physical design. Recent work specifically targets the sequential case: DeepSeq2 [ 90 ] disentangles structural, functional, and sequential-behavior embeddings rather than collapsing them into a single representation. 
+
+And-Inverter Graphs. In logic synthesis, AIGs offer a normalized representation amenable to functional reasoning and rewriting. Each internal node is an AND of two literals with input-polarity bits, supporting structural hashing and functional fingerprinting. AIGs are the canonical input for the DeepGate line [40–42] and for symbolic-reasoning approaches such as Gamora [43]. 
+
+Heterogeneous cell-net-pin graphs. For physical-design tasks, a uniform "cells as nodes, wires as edges" view loses important structure. Modern formulations distinguish at least three node types— cells (logic gates, macros, flip-flops), nets, and pins—with edge types for driver pin →net, net →load pin, and pin →cell containment (Fig. 1). R-GCN-style relation-specific weights or HGT-style typed attention treat these distinctions as first-class. 
+
+Standard-cell heterogeneity. Modern libraries are themselves a source of heterogeneity. Mixed-cell-height libraries place single- and multi-row cells together [ 67 ], breaking the simplifying assump-tion of a uniform row pitch. Multi-bit flip-flop (MBFF) cells share clock buffers across bits to reduce 4power, and come in irregular geometries including L- and T-shaped layouts whose footprint is not captured by a bounding box [ 68 ]. Capturing these correctly demands node features beyond a single 
+
+(w, h ) tuple: occupancy masks over standard rows and tracks, per-side pin-access flags, row-span, and orientation-dependent legality. GNNs that ignore them risk misrepresenting L- and T-shaped MBFFs and their downstream impact on clock-tree and routing closure. 
+
+Hierarchical and multi-die graphs. 2.5D and 3D integration introduces a second graph level: chiplets are super-nodes containing within-die netlist sub-graphs; interposer routes and through-silicon vias (TSVs) are inter-chiplet edges. Heterogeneous GNNs in principle reason simultaneously at within-die scale (logic, cell-level timing) and inter-die scale (signal integrity, thermal coupling). Published GNN-for-EDA work that addresses this regime explicitly is still limited; multi-die EDA flows such as Pin-3D [ 73 ] are a context for future learned models, not themselves GNN methods. Appendix C sketches a more complete multi-scale taxonomy. 
+
+## 5 Task-Aligned GNN Methods Across EDA Tasks 
+
+We now connect each EDA stage to the algebraic structure of its target and the GNN computation that matches it. Table 1 summarizes representative methods, separating GNN models from non-GNN optimization baselines and from EDA flow contexts. 
+
+5.1 Logic Synthesis 
+
+Logic synthesis transforms an RTL description into an optimized gate-level netlist. The optimization— rewriting, restructuring, technology mapping—is combinatorial; the broader use of GNNs to learn variable-selection policies for branch-and-bound MILP solvers [ 79 ] is a natural conceptual neighbor. The relevant algebra is Boolean rather than metric: useful embeddings should preserve functional equivalence, polarity, reconvergent structure, and simulation-like propagation, not merely local graph neighborhoods. DeepGate [ 40 ] introduced learned AIG embeddings supervised by simulated signal probabilities, yielding a functional representation alongside a structural one. DeepGate2 [ 41 ]sharpens this with pairwise truth-table-difference supervision and a scalable functionality-aware loss; DeepGate3 [ 42 ] adds Transformer-style attention over the AIG and additional structural objectives, scaling toward larger circuits. Gamora [ 43 ] extends graph-based symbolic reasoning to recover high-level operator structure (adders, multipliers) from gate-level AIGs; PolarGate [ 44 ] explicitly addresses the polarity-aware aggregation step. MGVGA [ 87 ] is particularly aligned with our thesis: it observes that generic graph masking is algebraically unsafe for circuits because it can break logical equivalence, and instead constrains pretraining through masked gate modeling and Verilog-AIG alignment. Sequential circuits, where state-element feedback is essential, are addressed by DeepSeq2 [ 90 ], which disentangles structure, function, and sequential behavior. For AIG-based functional embeddings, the recurrence structure of simulation makes asynchronous DAG message passing (Eq. 3) the natural primitive. 
+
+5.2 Placement and Floorplanning 
+
+Placement decides cell coordinates subject to legality constraints and an objective combining wire-length, congestion, timing, and power. The textbook wirelength surrogate is the half-perimeter wirelength (HPWL), 
+
+HPWL( x, y) = X
+
+> e∈E
+
+
+
+max  
+
+> v∈e
+
+xv − min  
+
+> v∈e
+
+xv + max  
+
+> v∈e
+
+yv − min  
+
+> v∈e
+
+yv
+
+
+
+. (4) For differentiable optimization, the non-smooth max / min is replaced by a log-sum-exp (LSE) approximation along each axis: 
+
+LSE x(e; β) = β log 
+
+ X 
+
+> v∈e
+
+exv /β 
+
++β log 
+
+ X 
+
+> v∈e
+
+e−xv /β 
+
+, fW (e; β) = LSE x(e; β)+LSE y (e; β),
+
+(5) with β > 0 a smoothing parameter; weighted-average wirelength (WA) variants use a different form and we refer to [ 45 , 47 ] for the WA family. Density is enforced via a Poisson penalty ∇2ψ = −ρ. The full placement objective min x,y
+
+P 
+
+> e
+
+fW (e; β) + λ Φdens (x, y), where Φdens denotes a differentiable 5density-overflow penalty, is solved by differentiable placers such as ePlace [ 47 ] and DREAMPlace / DREAMPlace 4.0 [ 45 , 46 ]; these are optimization baselines , not GNN methods, and we list them separately in Table 1. GNN-based macro placement is exemplified by AlphaChip [ 48 ], which combines an edge-based GCN encoder with a reinforcement-learning policy maximizing 
+
+R = − cw HPWL norm + cc Cong norm + cd Density norm 
+
+, (6) with cw, c c, c d ≥ 0 task-specific weights (distinct from the LSE smoothing β above). AlphaChip remains the most visible public case of graph-based learning for floorplanning, but its evaluation has been debated [ 50 , 51 ] because comparisons depend strongly on benchmark choice, compute budget, human baselines, and proprietary constraints; the original Nature paper carries an editorial note and a 2024 Addendum that names AlphaChip and qualifies parts of the original methodology [ 49 ]. ChiPFormer [52] provides a transformer-based, offline-decision alternative. 
+
+5.3 Routing Congestion 
+
+Global routers discretize the chip into routing-cell (gcell) edges eg with demand D(eg ) and supply 
+
+S(eg ):
+
+Cong( eg ) = max  0, D (eg ) − S(eg ), Overflow = X
+
+> eg
+
+Cong( eg ). (7) A common analytical demand prior is RUDY (Rectangular Uniform wire DensitY); a simplified form is 
+
+RUDY( g) = X 
+
+> e:g∈bbox( e)
+
+w(e) + h(e)
+
+w(e) h(e) , (8) with practical variants normalizing by routing layers, blockages, and net-decomposition rules; de-generate single-row or single-column nets are floored by bin dimensions or an ϵ term to keep the denominator nonzero. CongestionNet [ 53 ] uses a deep GNN on the netlist graph; LHNN [ 55 ]respects the lattice-hypergraph structure of nets directly; RouteGNN [ 56 ] extends to detailed-routing prediction. Resource scarcity at advanced nodes makes early predictions valuable: even post-route fixes can require creative use of middle-of-line metal in filler cells [54], illustrating how thin design margins have become. 
+
+5.4 Static Timing Analysis 
+
+The textbook STA recurrences are graph-structured operations on the netlist DAG. Forward-propagated arrival times accumulate worst-case delay; backward-propagated required times ac-cumulate the latest a signal may arrive while still meeting the endpoint requirement Treq (which folds the clock period, endpoint setup time, and clock uncertainty into a single boundary): 
+
+AT (v) = max 
+
+> u∈fanin( v)
+
+ AT (u) + d(u → v), AT (vPI ) = 0 , (9) 
+
+RAT (v) = min 
+
+> w∈fanout( v)
+
+ RAT (w) − d(v → w), RAT (vend ) = Treq , (10) 
+
+slack( v) = RAT (v) − AT (v). (11) Equation 9 is a max-plus semiring recurrence; Eq. 10 is its min-plus dual. Both motivate asynchronous topological propagation (Eq. 3); a synchronous GNN must approximate them with a fixed-depth stack. This abstraction is single-corner and setup-only : industrial STA additionally models slew/load-dependent delay through library timing arcs, hold checks, multiple corners, common-path pessimism removal, and on-chip variation derating. Even within this toy abstraction, edge delay decomposes as 
+
+d(u → v) = dcell (u, slew u, C load ) + dnet (u → v), (12) motivating two-stage models [ 58 , 57 , 59 , 60 ]. PreRoutGNN [ 57 ] predicts pre-routing slack with 
+
+R2 = 0 .93 via global pre-training and attentional cell modeling. Transformer-based delay predictors such as TF-Predictor [ 61 ] and heterogeneous graph-transformer approaches such as ParaFormer [ 91 ]predict pre-routing path delay or parasitic RC respectively, feeding into the cell- and net-delay decomposition of Eq. 12; an optimization-aware variant [ 92 ] couples timing prediction directly to downstream optimizer decisions, addressing the actionability gap discussed in §7. Figure 2 visualizes the propagation on a small DAG. A persistent methodological pitfall is stage leakage —using post-route or signoff features as inputs to a "pre-route" predictor—which inflates accuracy but offers no real lead time; we return to this in §7. 6PI 1
+
+PI 2
+
+g1
+
+g2
+
+g3 PO                    
+
+> d=1
+> d=2
+> d=1
+> d=1
+> d=2
+> AT =0 , RAT =2
+> AT =0 , RAT =1
+> AT =1 , RAT =3
+> AT =2 , RAT =3
+> AT =3 , RAT =4
+> AT =5 , RAT =6
+> forward AT (Eq. 9) backward RAT (Eq. 10)
+> Slack (g3) = RAT −AT = 4 −3 = 1
+
+Figure 2: Toy AT/RAT/slack propagation on a combinational DAG with Tclk = 6 . The max-plus / min-plus recurrence structure motivates asynchronous topological message passing (Eq. 3); industrial STA additionally handles slew, multi-corner, hold, and OCV derating not shown here. 
+
+5.5 Power and IR Drop 
+
+Per-node dynamic power follows 
+
+Pdyn (v) = αv Cv V 2 
+
+> dd
+
+f, (13) where αv is the 0 →1 switching activity per cycle. (If α is instead defined as the total transition probability counting both 0 →1 and 1 →0 events, an equivalent convention introduces a factor of  
+
+> 12
+
+.) Estimating αv at every internal net of a large design is the bottleneck. GRANNITE [ 62 ] casts switching-activity inference as a learned propagation on the directed netlist, 
+
+α(ℓ+1)  
+
+> v
+
+= ϕ
+
+
+
+α(ℓ) 
+
+> v
+
+, (α(ℓ) 
+
+> u
+
+, τ u, c uv ) u∈fanin( v)
+
+
+
+, (14) where τu encodes the gate’s type or Boolean transfer function and cuv structural correlation context (notation chosen to avoid conflict with the dynamic-power symbol Pdyn above). GRANNITE reports 
+
+> 18 .7× speedup with < 5.5% error against a commercial reference and remains one of the clearest industrial-authored, commercial-reference-evaluated demonstrations of directed GNNs for power estimation. Earlier learning-based power estimators such as PRIMAL [ 63 ] attacked related problems with non-graph-structured ML; we cite them as broader context, not as instances of toggle-rate propagation in the sense above. The power-delivery network admits a complementary linear-system view: Gv = i on the conductance Laplacian, with IR drop ∆VIR (n) = Vdd − vn. PGNN [ 64 ] embeds the residual ∥Gv − i∥ into the loss; MAVIREC [65] provides ML-aided vectored estimation. 
+
+5.6 Analog Symmetry Extraction 
+
+Analog circuits depend on matching : differential pairs, current mirrors, and common-centroid arrays must be placed and routed so that systematic mismatch cancels. Identifying these matched groups directly from a schematic netlist is a graph-classification / pairing subproblem for which standard MPNNs have shown useful empirical performance, though downstream layout feasibility still depends on constraint-aware placement and routing. Gao et al. [ 70 ] and Chen et al. [ 71 ] formulate symmetry / matching extraction as supervised prediction over schematic graphs using standard MPNNs (GCN, GraphSAGE, GAT). The "symmetry" captured here is a discrete pairing constraint between devices, not a continuous rotation/reflection—the relevant group is a finite subgroup of E(2) , and standard message passing plus augmentation over the small legal orientation set is often a reasonable modeling choice for this subproblem. ALIGN [ 69 ] is an open-source analog-layout flow that consumes such constraints; it is a flow framework rather than a GNN method, and we list it as such in Table 1. CktGNN [ 72 ] formulates analog topology search itself as a graph-generation problem, and recent analog-topology efforts increasingly combine GNN encoders with diffusion or LLM decoders. 7Table 1: Representative methods across EDA tasks and flow contexts. The evidence column inten-tionally separates academic-benchmark research, non-GNN baselines, flow frameworks, industrial-authored evaluations, and publicly reported production use, so that GNN-specific deployment evi-dence is not conflated with broader ML-EDA adoption.                                                                 
+
+> Stage Method Type Learning target Evidence
+> Logic synthesis DeepGate / DeepGate2 / DeepGate3 [40–42] GNN on AIG Functional + structural embed. Research Logic synthesis Gamora [43] Multi-task GNN Operator recovery Research Logic synthesis PolarGate [44] Polarity-aware DAG-GNN AIG functional embedding Research Floorplanning AlphaChip [48, 49] GCN + RL policy Macro placement Publicly reported production use* Floorplanning ChiPFormer [52] Decision Transformer Cross-design transfer Research Placement (baseline) ePlace / DREAMPlace / DREAMPlace 4.0 [47, 45, 46] Differentiable placer Wirelength + density opt. Non-GNN baseline Congestion CongestionNet / LHNN / RouteGNN [53, 55, 56] GNN / hyper-GNN Demand / overflow prediction Research Timing PreRoutGNN, Guo et al. [57, 58] Async DAG-GNN Pre-route slack Research Timing TimingPredict, ParaFormer [59, 60, 91] GNN / hetero-GT Path / wire delay, parasitic RC Research Power GRANNITE [62] Directed GNN Switching activity Industrial-authored, public evaluation IR drop PGNN, MAVIREC [64, 65] Physics-informed / ML Voltage drop, hotspot Research MBFF clustering Jeong & Kim [66] GNN on FF graph Power-aware clustering Research Analog symmetry Gao et al., Chen et al. [70, 71] GNN on schematic Constraint extraction Research Analog flow (context) ALIGN [69] Open-source flow SPICE-to-GDS automation Flow framework Multi-die (context) Pin-3D [73] Physical-design flow 3D physical design Flow context
+
+*Public industrial reports are not equivalent to open, independently reproducible benchmarks. “Industrial-authored, public evaluation” indicates that an industrial group has authored the method and reported results against a commercial-flow reference, without an explicit production-deployment claim. 
+
+## 6 Industrial Evidence and the Benchmark Gap 
+
+It is tempting to read the union of GNN-for-EDA results plus the integration of machine learning into commercial flows as evidence of broad industrial GNN adoption. The two should be separated. 
+
+GNN-specific public evidence is narrow and uneven: AlphaChip [ 48 , 49 ] is a publicly reported production floorplanning case, while GRANNITE [ 62 ] is an industrial-authored power-estimation result evaluated against commercial-flow references with reported speed and accuracy gains, but not accompanied by a comparably explicit production-deployment claim. The same task-alignment lens explains why the strongest public results—both industrial cases and high-performing task-specific research—are stage-specific rather than universal: floorplanning, power estimation, and timing prediction each expose different algebraic structure and different available features, and a single backbone for all of them does not yet exist. Broader ML-EDA evidence is wider—Synopsys’ DSO.ai and Cadence’s Cerebrus are well-publicized commercial offerings—but their internal model classes are not publicly disclosed, and reading them as endorsements of GNNs in particular is unwarranted. Earlier broad surveys of ML-for-EDA [3] and book-length treatments [4] document this distinction. 
+
+Benchmarks. Reproducibility has been a persistent bottleneck. Most industrial netlists are propri-etary, and academic GNN-for-EDA results have historically been validated on small open designs whose statistics differ markedly from production netlists. CircuitNet [ 74 ] provides an open benchmark with thousands of RISC-V samples for congestion, IR-drop, and timing-related prediction; CircuitNet 2.0 [ 75 ] extends to 28 nm and 14 nm CPU, GPU, and AI-chip blocks, but task availability differs across subsets (for instance, the 14 nm subset supports congestion, IR drop, and net delay, but DRC violation prediction is not currently supported). The empirical gap between dense-prediction tasks on current benchmarks and rare-event signoff tasks such as IR-drop hotspot recall or DRC violation prediction is precisely what motivates the proxy-to-signoff and calibration challenges in §7; we view CircuitNet’s continued development as a high-leverage activity, particularly given the access asymmetry created by largely proprietary industrial flows and signoff data. 
+
+## 7 Open Challenges 
+
+We highlight the issues we believe are likely to dominate the next phase of GNN-for-EDA work. Each is more concrete than "more architectures" and is tied to the algebra–task framework of §5. 
+
+Stage leakage. A pre-routing prediction is only useful if its inputs are actually available before routing. Many published pre-route timing or congestion models are trained or evaluated using post-route features (parasitics, post-route congestion maps), inflating reported accuracy without offering real lead time. Auditing predictors at the stage where their inputs are obtainable is a basic but underemphasized hygiene requirement. 8Proxy-to-signoff gap. Models trained against proxy targets—HPWL, RUDY, early-stage slack estimates—can over-fit to those proxies and underperform on signoff QoR. Joint training against signoff metrics, or calibration of proxy-trained predictors against signoff distributions, is largely open. 
+
+Calibration and uncertainty. In EDA, a confidently wrong prediction at signoff is far more costly than an uncertain hedge. GNNs in EDA are routinely reported with pointwise MAE / R2 but rarely with calibrated uncertainty intervals or rare-event metrics (timing-violation tail, EM/IR hotspot recall). Bayesian or ensembling approaches, rare-event-aware loss design, and conformal prediction are under-explored; Bayesian GNN posteriors such as the Graph Posterior Network [ 85 ] are a natural starting point. Concretely, future EDA-GNN benchmarking should report 95% confidence intervals over multiple seeds, paired non-parametric tests (e.g., Wilcoxon signed-rank) against baselines, and rare-event metrics (tail recall, hotspot precision-at-K) alongside pointwise MAE/ R2.
+
+Distribution shift across PDK / library / tool. A model trained on 28 nm designs typically does not generalize to 5 nm without retraining, and the labeled data needed for retraining is precisely what is scarce. Cross-design, cross-PDK, cross-library, and cross-tool generalization—and how much of a model is genuinely transferable versus must be re-fitted—is the central open question for industrial deployment. Causal-invariance and OOD methods for graphs (e.g., CIGA [ 84 ]), graph structure-learning approaches against structural noise (Pro-GNN [ 83 ]), and topology-imbalance mitigations (GraphSMOTE [ 81 ], ReNode [ 82 ]) developed for citation networks address recognizable EDA problems and are under-exploited here. 
+
+Scale: a systems issue, not only a modeling one. Beyond model scaling, training heterogeneous circuit GNNs on industrial designs is itself a systems bottleneck. DR-CircuitGNN [ 93 ] reports that GPU-kernel-level optimization of heterogeneous-graph forward and backward passes is necessary to make CircuitNet-scale training tractable, suggesting that EDA-GNN scalability progress will require attention to both algorithmic abstraction and infrastructure. Industrial-scale graph engineering at the level of PinSage [ 80 ] (3 B nodes, 17 B edges) is instructive about what such infrastructure looks like in another domain. 
+
+Actionability. A predictor that only produces a number is less useful than one that exposes the gradient or ranking that an optimizer can act on. Aligning predictor outputs with the inputs that downstream optimizers (placers, routers, sizers) consume is a software-architecture problem as much as a learning problem. 
+
+Multi-die regime. 2.5D and 3D integration introduce graph hierarchies that current single-die models do not address. Heterogeneous GNNs at chiplet →die →cell scale—and benchmarks for the same—are nearly absent. 
+
+Foundation models for circuits. Public evidence so far does not establish that cross-domain graph foundation models [ 77 , 78 ] match specialist EDA models on stage-specific tasks; the heterogeneity between AIGs, heterogeneous netlists, and PDN graphs may resist any single representation. Recent circuit-specific encoders (CircuitFusion [ 86 ], NetTAG [ 88 ], stage-aligned encoders [ 89 ]) move beyond AIG-only models, suggesting the most promising near-term direction is narrower than “circuit GPT”: stage-specific or modality-aligned backbones rather than unified ones. Domain-adapted LLMs for chip design [76] are an orthogonal but related line. 
+
+## 8 Conclusion 
+
+The strongest public GNN-for-EDA results arise when graph computation respects the algebra of the target task: max-plus/min-plus DAGs for timing, hypergraph wirelength for placement, demand-supply fields for congestion, probabilistic recurrences for switching activity, Laplacian systems for IR drop, and discrete constraints for analog symmetry. The open agenda—stage leakage, proxy-to-signoff gap, calibration, distribution shift, scale, multi-die—reflects not a crisis but maturity. 9References 
+
+[1] Z. Wu, S. Pan, F. Chen, G. Long, C. Zhang, and P. S. Yu. A comprehensive survey on graph neural networks. IEEE Trans. Neural Netw. Learn. Syst. , 32(1):4–24, 2021. [2] W. Ju, S. Yi, Y. Wang, Z. Xiao, Z. Mao, H. Li, Y. Gu, Y. Qin, N. Yin, S. Wang, X. Liu, P. S. Yu, and M. Zhang. A survey of graph neural networks in real world: Imbalance, noise, privacy and OOD challenges. arXiv:2403.04468v2 , 2025. [3] G. Huang, J. Hu, Y. He, J. Liu, M. Ma, Z. Shen, J. Wu, Y. Xu, H. Zhang, K. Zhong, X. Ning, Y. Ma, H. Yang, B. Yu, H. Yang, and Y. Wang. Machine learning for electronic design automation: A survey. ACM TODAES , 26(5):40:1–40:46, 2021. [4] H. Ren and J. Hu (Eds.). Machine Learning Applications in Electronic Design Automation .Springer, 2023. [5] J. Bruna, W. Zaremba, A. Szlam, and Y. LeCun. Spectral networks and locally connected networks on graphs. In Proc. ICLR , 2014. [6] M. Defferrard, X. Bresson, and P. Vandergheynst. Convolutional neural networks on graphs with fast localized spectral filtering. In Proc. NeurIPS , pp. 3837–3845, 2016. [7] T. N. Kipf and M. Welling. Semi-supervised classification with graph convolutional networks. In Proc. ICLR , 2017. [8] J. Gilmer, S. S. Schoenholz, P. F. Riley, O. Vinyals, and G. E. Dahl. Neural message passing for quantum chemistry. In Proc. ICML , pp. 1263–1272, 2017. [9] W. L. Hamilton, Z. Ying, and J. Leskovec. Inductive representation learning on large graphs. In 
+
+Proc. NeurIPS , 2017. [10] P. Veliˇ ckovi´ c, G. Cucurull, A. Casanova, A. Romero, P. Liò, and Y. Bengio. Graph attention networks. In Proc. ICLR , 2018. [11] S. Brody, U. Alon, and E. Yahav. How attentive are graph attention networks? In Proc. ICLR ,2022. [12] K. Xu, W. Hu, J. Leskovec, and S. Jegelka. How powerful are graph neural networks? In Proc. ICLR , 2019. [13] M. Schlichtkrull, T. N. Kipf, P. Bloem, R. van den Berg, I. Titov, and M. Welling. Modeling relational data with graph convolutional networks. In Proc. ESWC , pp. 593–607, 2018. [14] Z. Hu, Y. Dong, K. Wang, and Y. Sun. Heterogeneous graph transformer. In Proc. WWW ,pp. 2704–2710, 2020. [15] Y. Feng, H. You, Z. Zhang, R. Ji, and Y. Gao. Hypergraph neural networks. In Proc. AAAI ,33(01):3558–3565, 2019. [16] R. Ying, J. You, C. Morris, X. Ren, W. L. Hamilton, and J. Leskovec. Hierarchical graph representation learning with differentiable pooling. In Proc. NeurIPS , pp. 4800–4810, 2018. [17] J. Lee, I. Lee, and J. Kang. Self-attention graph pooling. In Proc. ICML , pp. 3734–3743, 2019. [18] C. Morris, M. Ritzert, M. Fey, W. L. Hamilton, J. E. Lenssen, G. Rattan, and M. Grohe. Weis-feiler and Leman go neural: Higher-order graph neural networks. In Proc. AAAI , 33(01):4602– 4609, 2019. [19] H. Maron, H. Ben-Hamu, H. Serviansky, and Y. Lipman. Provably powerful graph networks. In 
+
+Proc. NeurIPS , pp. 2153–2164, 2019. [20] Q. Li, Z. Han, and X.-M. Wu. Deeper insights into graph convolutional networks for semi-supervised learning. In Proc. AAAI , pp. 3538–3545, 2018. [21] K. Oono and T. Suzuki. Graph neural networks exponentially lose expressive power for node classification. In Proc. ICLR , 2020. 10 [22] K. Xu, C. Li, Y. Tian, T. Sonobe, K. Kawarabayashi, and S. Jegelka. Representation learning on graphs with jumping knowledge networks. In Proc. ICML , 2018. [23] M. Chen, Z. Wei, Z. Huang, B. Ding, and Y. Li. Simple and deep graph convolutional networks. In Proc. ICML , pp. 1725–1735, 2020. [24] L. Zhao and L. Akoglu. PairNorm: Tackling oversmoothing in GNNs. In Proc. ICLR , 2020. [25] Y. Rong, W. Huang, T. Xu, and J. Huang. DropEdge: Towards deep graph convolutional networks on node classification. In Proc. ICLR , 2020. [26] U. Alon and E. Yahav. On the bottleneck of graph neural networks and its practical implications. In Proc. ICLR , 2021. [27] J. Topping, F. Di Giovanni, B. P. Chamberlain, X. Dong, and M. M. Bronstein. Understanding over-squashing and bottlenecks on graphs via curvature. In Proc. ICLR , 2022. [28] M. Zhang, S. Jiang, Z. Cui, R. Garnett, and Y. Chen. D-VAE: A variational autoencoder for directed acyclic graphs. In Proc. NeurIPS , 2019. [29] V. Thost and J. Chen. Directed acyclic graph neural networks. In Proc. ICLR , 2021. [30] C. Ying, T. Cai, S. Luo, S. Zheng, G. Ke, D. He, Y. Shen, and T.-Y. Liu. Do transformers really perform badly for graph representation? In Proc. NeurIPS , 2021. [31] L. Rampášek, M. Galkin, V. P. Dwivedi, A. T. Luu, G. Wolf, and D. Beaini. Recipe for a general, powerful, scalable graph transformer. In Proc. NeurIPS , 2022. [32] Q. Wu, W. Zhao, Z. Li, D. P. Wipf, and J. Yan. NodeFormer: A scalable graph structure learning transformer for node classification. In Proc. NeurIPS , 2022. [33] H. Shirzad, A. Velingker, B. Venkatachalam, D. J. Sutherland, and A. K. Sinop. Exphormer: Sparse transformers for graphs. In Proc. ICML , 2023. [34] Q. Wu, W. Zhao, C. Yang, H. Zhang, F. Nie, H. Jiang, Y. Bian, and J. Yan. SGFormer: Simplifying and empowering transformers for large-graph representations. In Proc. NeurIPS ,2023. [35] C. Deng, Y. Li, Z. Feng, H. Ren, and Z. Zhang. Polynormer: Polynomial-expressive graph transformer in linear time. In Proc. ICLR , 2024. [36] K. T. Schütt, P.-J. Kindermans, H. E. Sauceda, S. Chmiela, A. Tkatchenko, and K.-R. Müller. SchNet: A continuous-filter convolutional neural network for modeling quantum interactions. In Proc. NeurIPS , pp. 991–1001, 2017. [37] V. G. Satorras, E. Hoogeboom, and M. Welling. E(n) equivariant graph neural networks. In 
+
+Proc. ICML , pp. 9323–9332, 2021. [38] I. Batatia, D. P. Kovács, G. N. C. Simm, C. Ortner, and G. Csányi. MACE: Higher order equivariant message passing neural networks for fast and accurate force fields. In Proc. NeurIPS ,pp. 11423–11436, 2022. [39] Y.-L. Liao, B. Wood, A. Das, and T. Smidt. EquiformerV2: Improved equivariant transformer for scaling to higher-degree representations. In Proc. ICLR , 2024. [40] M. Li, S. Khan, Z. Shi, N. Wang, H. Yu, and Q. Xu. DeepGate: Learning neural representations of logic gates. In Proc. DAC , 2022. [41] Z. Shi, H. Pan, S. Khan, M. Li, Y. Liu, J. Huang, H.-L. Zhen, M. Yuan, Z. Chu, and Q. Xu. DeepGate2: Functionality-aware circuit representation learning. In Proc. ICCAD , 2023. [42] Z. Shi, Z. Zheng, S. Khan, J. Zhong, M. Li, and Q. Xu. DeepGate3: Towards scalable circuit representation learning. In Proc. ICCAD , 2024. [43] N. Wu, Y. Li, C. Hao, S. Dai, C. Yu, and Y. Xie. Gamora: Graph learning based symbolic reasoning for large-scale Boolean networks. In Proc. DAC , 2023. 11 [44] J. Liu, J. Zhai, M. Zhao, Z. Lin, B. Yu, and C. Shi. PolarGate: Breaking the functionality representation bottleneck of And-Inverter graph neural network. In Proc. ICCAD , 2024. [45] Y. Lin, S. Dhar, W. Li, H. Ren, B. Khailany, and D. Z. Pan. DREAMPlace: Deep learning toolkit-enabled GPU acceleration for modern VLSI placement. In Proc. DAC , 2019. [46] P. Liao, S. Liu, Z. Chen, W. Lv, Y. Lin, and B. Yu. DREAMPlace 4.0: Timing-driven global placement with momentum-based net weighting. In Proc. DATE , 2022. [47] J. Lu, P. Chen, C.-C. Chang, L. Sha, D. J.-H. Huang, C.-C. Teng, and C.-K. Cheng. ePlace: Electrostatics-based placement using fast Fourier transform and Nesterov’s method. ACM TODAES , 20(2):17:1–17:34, 2015. [48] A. Mirhoseini, A. Goldie, M. Yazgan, J. W. Jiang, E. M. Songhori, S. Wang, Y.-J. Lee, E. John-son, O. Pathak, A. Nova, J. Pak, A. Tong, K. Srinivasa, W. Hang, E. Tuncer, Q. V. Le, J. Laudon, R. Ho, R. Carpenter, and J. Dean. A graph placement methodology for fast chip design. Nature ,594:207–212, 2021. [49] A. Goldie, A. Mirhoseini, M. Yazgan, et al. Addendum: A graph placement methodology for fast chip design. Nature , 634:E10–E11, 2024. [50] I. L. Markov, D. Lee, and C.-K. Cheng. Is chip floorplanning a solved problem? Commun. ACM , 67(11):66–74, 2024. [51] C.-K. Cheng, A. B. Kahng, S. Kundu, Y. Wang, and Z. Wang. Assessment of reinforcement learning for macro placement. In Proc. ISPD , 2023. [52] Y. Lai, J. Liu, Z. Tang, B. Wang, J. Hao, and P. Luo. ChiPFormer: Transferable chip placement via offline decision transformer. In Proc. ICML , 2023. [53] R. Kirby, S. Godil, R. Roy, and B. Catanzaro. CongestionNet: Routing congestion prediction using deep graph neural networks. In Proc. IFIP/IEEE International Conference on Very Large Scale Integration (VLSI-SoC) , 2019. [54] J. Jeong and T. Kim. Utilizing middle-of-line resource in filler cells for fixing routing failures. In Proc. IEEE/ACM International Conference on Computer-Aided Design (ICCAD) , 2021. [55] B. Wang, G. Shen, D. Li, J. Hao, W. Liu, Y. Huang, H. Wu, Y. Lin, G. Chen, and P. A. Heng. LHNN: Lattice hypergraph neural network for VLSI congestion prediction. In Proc. DAC ,2022. [56] S. Liu, P. Liao, P. Sun, Y. Lin, and B. Yu. RouteGNN: Learning to route via graph neural networks. In Proc. ICCAD , 2023. [57] R. Zhong, J. Ye, Z. Tang, S. Kai, M. Yuan, J. Hao, and J. Yan. PreRoutGNN for timing prediction with order preserving partition. In Proc. AAAI , 38(15):17087–17095, 2024. [58] Z. Guo, M. Liu, J. Gu, S. Zhang, D. Z. Pan, and Y. Lin. A timing engine inspired graph neural network model for pre-routing slack prediction. In Proc. DAC , 2022. [59] Y. Ye, T. Chen, Y. Gao, H. Yan, B. Yu, and L. Shi. TimingPredict: GNN-based pre-routing path delay prediction. In Proc. ICCAD , 2023. [60] Y. Ye, T. Chen, Y. Gao, H. Yan, B. Yu, and L. Shi. Fast and accurate wire timing estimation on tree and non-tree net structures. In Proc. DAC , 2023. [61] P. Cao, G. He, and T. Yang. TF-Predictor: Transformer-based prerouting path delay prediction framework. IEEE Trans. Comput.-Aided Design Integr. Circuits Syst. , 42(7):2227–2237, 2023. [62] Y. Zhang, H. Ren, and B. Khailany. GRANNITE: Graph neural network inference for transfer-able power estimation. In Proc. DAC , pp. 1–6, 2020. [63] Y. Zhou, H. Ren, Y. Zhang, B. Keller, B. Khailany, and Z. Zhang. PRIMAL: Power inference using machine learning. In Proc. DAC , 2019. 12 [64] Y. C. Pao and M. D. F. Wong. PGNN: Physics-inspired graph neural network for dynamic IR-drop prediction. In Proc. DAC , 2023. [65] V. A. Chhabria, V. Ahuja, A. Prabhu, N. Patil, P. Jain, and S. S. Sapatnekar. MAVIREC: ML-aided vectored IR-drop estimation and classification. In Proc. DATE , 2021. [66] J. Jeong and T. Kim. Machine learning driven early clustering for multi-bit flip-flop allocation. In Proc. ACM/IEEE Symposium on Machine Learning for CAD (MLCAD) , 2025. [67] J. Jeong and T. Kim. Placement legalization for heterogeneous cells of non-integer multiple-heights. Integration , 97:102177, 2024. [68] J. Jeong and T. Kim. Binding multi-bit flip-flop cells through design and technology co-optimization. In Proc. DAC , 2024. [69] K. Kunal, M. Madhusudan, A. K. Sharma, W. Xu, S. M. Burns, R. Harjani, J. Hu, D. A. Kirkpatrick, and S. S. Sapatnekar. ALIGN: Open-source analog layout automation from the ground up. In Proc. DAC , 2020. [70] X. Gao, C. Deng, M. Liu, Z. Zhang, D. Z. Pan, and Y. Lin. Layout symmetry annotation for analog circuits with graph neural networks. In Proc. ASP-DAC , 2021. [71] H. Chen, K. Zhu, M. Liu, X. Tang, N. Sun, and D. Z. Pan. Universal symmetry constraint extraction for analog and mixed-signal circuits with graph neural networks. In Proc. DAC , 2021. [72] Z. Dong, W. Cao, M. Zhang, D. Tao, Y. Chen, and X. Zhang. CktGNN: Circuit graph neural network for electronic design automation. In Proc. ICLR , 2023. [73] S. M. P. D. Pentapati, K. Chang, V. Gerousis, R. Sengupta, and S. K. Lim. Pin-3D: A physical synthesis and post-layout optimization flow for heterogeneous 3D ICs. In Proc. ICCAD , 2023. [74] Z. Chai, Y. Zhao, Y. Lin, W. Liu, R. Wang, and R. Huang. CircuitNet: An open-source dataset for machine learning applications in electronic design automation. Sci. China Inf. Sci. ,65(12):227401, 2022. [75] X. Jiang, Z. Chai, Y. Zhao, Y. Lin, R. Wang, and R. Huang. CircuitNet 2.0: An advanced dataset for promoting machine learning in VLSI EDA. In Proc. ICLR , 2024. [76] M. Liu, T.-D. Ene, R. Kirby, C. Cheng, N. Pinckney, R. Liang, J. Alben, H. Anand, S. Banerjee, et al. ChipNeMo: Domain-adapted LLMs for chip design. arXiv:2311.00176, 2024. [77] H. Liu, J. Feng, L. Kong, N. Liang, D. Tao, Y. Chen, and M. Zhang. One for all: Towards training one graph model for all classification tasks. In Proc. ICLR , 2024. [78] L. Xia and C. Huang. AnyGraph: Graph foundation model in the wild. arXiv:2408.10700, 2024. [79] M. Gasse, D. Chételat, N. Ferroni, L. Charlin, and A. Lodi. Exact combinatorial optimization with graph convolutional neural networks. In Proc. NeurIPS , 2019. [80] R. Ying, R. He, K. Chen, P. Eksombatchai, W. L. Hamilton, and J. Leskovec. Graph convo-lutional neural networks for web-scale recommender systems. In Proc. KDD , pp. 974–983, 2018. [81] T. Zhao, X. Zhang, and S. Wang. GraphSMOTE: Imbalanced node classification on graphs with graph neural networks. In Proc. WSDM , pp. 833–841, 2021. [82] D. Chen, Y. Lin, G. Zhao, X. Ren, P. Li, J. Zhou, and X. Sun. Topology-imbalance learning for semi-supervised node classification. In Proc. NeurIPS , 34:29885–29897, 2021. [83] W. Jin, Y. Ma, X. Liu, X. Tang, S. Wang, and J. Tang. Graph structure learning for robust graph neural networks. In Proc. KDD , pp. 66–74, 2020. [84] Y. Chen, Y. Zhang, Y. Bian, H. Yang, K. Ma, B. Xie, T. Liu, B. Han, and J. Cheng. Learning causally invariant representations for out-of-distribution generalization on graphs. In Proc. NeurIPS , 2022. 13 [85] M. Stadler, B. Charpentier, S. Geisler, D. Zügner, and S. Günnemann. Graph posterior network: Bayesian predictive uncertainty for node classification. In Proc. NeurIPS , pp. 18033–18048, 2021. [86] W. Fang, S. Liu, J. Wang, and Z. Xie. CircuitFusion: Multimodal circuit representation learning for agile chip design. In Proc. ICLR , 2025. [87] H. Wu, H. Zheng, Y. Pu, and B. Yu. Circuit representation learning with masked gate modeling and Verilog-AIG alignment. In Proc. ICLR , 2025. [88] W. Fang, W. Li, S. Liu, Y. Lu, H. Zhang, and Z. Xie. NetTAG: A multimodal RTL-and-layout-aligned netlist foundation model via text-attributed graph. In Proc. DAC , 2025. DOI: 
+
+10.1109/DAC63849.2025.11133349 .[89] W. Fang, S. Liu, H. Zhang, and Z. Xie. A self-supervised, pre-trained, and cross-stage-aligned circuit encoder provides a foundation for various design tasks. In Proc. ASP-DAC , pp. 505–512, 2025. DOI: 10.1145/3658617.3697597 .[90] S. Khan, Z. Shi, Z. Zheng, M. Li, and Q. Xu. DeepSeq2: Enhanced sequential circuit learning with disentangled representations. In Proc. ASP-DAC , pp. 498–504, 2025. DOI: 10.1145/ 3658617.3697594 .[91] J. Yoon, J. Lee, D. Kim, J. Hur, and S. Kang. ParaFormer: A hybrid graph neural network and transformer approach for pre-routing parasitic RC prediction. In Proc. ASP-DAC , pp. 513–519, 2025. DOI: 10.1145/3658617.3697599 .[92] G. He, W. Ding, Y. Ye, X. Cheng, Q. Song, and P. Cao. An optimization-aware pre-routing timing prediction framework based on heterogeneous graph learning. In Proc. ASP-DAC ,pp. 177–182, 2024. DOI: 10.1109/ASP-DAC58780.2024.10473937 .[93] Y. Luo, S. Li, J. Tao, K. G. Thorat, X. Xie, H. Peng, N. Xu, C. Ding, and S. Huang. DR-CircuitGNN: Training acceleration of heterogeneous circuit graph neural network on GPUs. In Proc. ACM International Conference on Supercomputing (ICS) , pp. 221–235, 2025. DOI: 
+
+10.1145/3721145.3734528 .
+
+## A Survey Methodology and Inclusion Criteria 
+
+We surveyed papers from EDA venues (DAC, ICCAD, DATE, ASP-DAC, MLCAD, ISPD, IEEE TCAD, ACM TODAES) and graph-learning venues (NeurIPS, ICLR, ICML, AAAI, KDD, WWW) appearing through early May 2026, to the extent that stable public bibliographic metadata were available; very recent works with unstable bibliographic metadata were excluded from primary claims. A paper was included if it satisfied at least one of: (i) it proposes or uses a graph neural architecture for an EDA task; (ii) it defines a graph-structured representation of a circuit and uses it for a learning problem; or (iii) it provides an open benchmark, dataset, or critical assessment of GNN-for-EDA methods. Purely tabular ML predictors that do not define a graph were excluded; non-GNN optimization baselines (e.g., differentiable placers) are listed separately in Table 1 as context. We additionally exclude continuous-equivariant geometric GNNs, for the reasons in §1. 
+
+## B Detailed GNN Architecture Overview 
+
+Spectral methods. The earliest GNNs derived graph convolution from the Laplacian eigendecom-position [ 5]; ChebNet [ 6 ] approximated the spectral filter with Chebyshev polynomials at O(K|E| )
+
+cost; GCN [ 7] simplified to first-order. The spectral story is largely subsumed by spatial methods in EDA practice. 
+
+Synchronous vs. asynchronous DAG message passing. Figure 3 contrasts the two regimes. Syn-chronous propagation is regime-independent; asynchronous propagation aligns with the topological ordering of the underlying recurrence, at the cost of a serialized forward pass; whether the learned aggregation reproduces the exact max/min algebra of the target task is a separate question of operator and capacity. 14 a
+
+b
+
+c d
+
+Synchronous 
+
+> all nodes update in parallel per layer
+
+a
+
+b
+
+c d 
+
+> step 1
+> step 2
+> step 3 step 4
+
+Asynchronous  
+
+> visit in topological order π
+
+Figure 3: Synchronous vs. asynchronous DAG message passing on a small DAG. The asynchronous variant (Eq. 3) makes the entire transitive fan-in cone reachable in a single forward pass; step labels indicate the topological visit order π.
+
+GAT and GIN equations. For completeness: GAT computes 
+
+αij = exp  LeakyReLU( a⊤[Wh i∥Wh j ]) P  
+
+> k∈N (i)
+
+exp(LeakyReLU( a⊤[Wh i∥Wh k])) ,
+
+with GATv2 [ 11 ] swapping the order of LeakyReLU and projection to give dynamic (query-dependent) attention. GIN updates with h(k) 
+
+> v
+
+= MLP (k) (1 + ϵ(k))h(k−1)  
+
+> v
+
++ P  
+
+> u∈N (v)
+
+h(k−1) 
+
+> u
+
+ and matches 1-WL. 
+
+HGT typed attention. For relation r ∈ R , HGT [ 14 ] computes per-relation qrv = WrQhv , kru =
+
+WrK hu, vru = WrV hu, with αrvu = softmax u
+
+ ⟨qrv , kru⟩/√d and h′ 
+
+> v
+
+= P
+
+> r
+
+P  
+
+> u∈N r(v)
+
+αrvu vru.
+
+Hypergraph two-phase aggregation. HGNN [ 15 ] uses he = ψ({hv : v ∈ e}) followed by 
+
+h′ 
+
+> v
+
+= ϕ(hv , {he : v ∈ e}).
+
+## C Multi-Die Graph Taxonomy 
+
+A 2.5D / 3D system supports several graph views, which we list explicitly because no single representation captures all relevant constraints: • Die-level graph : chiplets / dies as super-nodes; interposer routes, micro-bumps, TSV stacks as edges with their own electrical and reliability attributes. • Block-level graph : chiplet floorplan, thermal domains, and power-domain hierarchy. • Net-level graph : cross-die timing paths through inter-chiplet connections. • PDN graph : vertical current paths through TSVs and micro-bumps; couples to thermal. • Thermal graph : heat-diffusion coupling between stacked dies and across the interposer. • Packaging graph : substrate / interposer routing resources and reliability constraints. Heterogeneous GNNs that simultaneously reason at within-die and across-die scales remain rare; multi-die EDA flow examples such as Pin-3D [73] provide a context for future learned approaches. 
+
+## D Digital Design Flow Reference Map 
+
+15 Chiplet A Chiplet B 
+
+Silicon interposer 
+
+(a) 2.5D integration 
+
+Die 1 
+
+Die 2 
+
+Die 3 
+
+TSV 
+
+(b) 3D integration 
+
+Chiplet A Chiplet B 
+
+interposer link 
+
+(c) Two-level hierarchical graph 
+
+Figure 4: Multi-die systems as hierarchical graphs. (a) 2.5D integration: chiplets share a silicon interposer with high-density inter-chiplet routing. (b) 3D integration: dies are stacked vertically with through-silicon vias (TSVs). (c) Both map to a two-level hierarchical graph in which chiplet super-nodes contain within-die netlist sub-graphs (shaded regions, dashed containment edges); heterogeneous GNNs can in principle reason at both scales simultaneously. 
+
+RTL Logic synth. 
+
+Floor-plan 
+
+Place-ment CTS Routing STA & Power   
+
+> AIG-GNNs: DeepGate, DeepGate2/3, Gamora, PolarGate
+> GCN+RL / Transformer: AlphaChip, ChiPFormer
+> Differentiable placers (non-GNN baselines): ePlace, DREAMPlace
+> (emerging) GNN / hyper-GNN: CongestionNet, LHNN, RouteGNN
+> Async DAG-GNN: PreRoutGNN, GRANNITE, PGNN
+> AIG / Boolean DAG
+> Macro / netlist graph
+> Bipartite / hypergraph
+> Hypergraph / grid Timing DAG / PDN
+
+Figure 5: The digital design flow with representative GNN methods (and non-GNN baselines) at each stage. Italics above each stage indicate the dominant graph representation; lists below each stage give representative methods discussed in the body. 16

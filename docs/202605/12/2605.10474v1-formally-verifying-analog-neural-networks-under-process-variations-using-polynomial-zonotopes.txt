@@ -1,0 +1,494 @@
+Title: Formally Verifying Analog Neural Networks Under Process Variations Using Polynomial Zonotopes
+
+URL Source: https://arxiv.org/pdf/2605.10474v1
+
+Published Time: Tue, 12 May 2026 02:57:31 GMT
+
+Number of Pages: 7
+
+Markdown Content:
+# Formally Verifying Analog Neural Networks Under Process Variations Using Polynomial Zonotopes 
+
+Yasmine Abu-Haeyeh †1, Tobias Ladner †2, Matthias Althoff 2, Lars Hedrich 1 
+
+> 1
+
+Goethe University Frankfurt, Germany 
+
+{abu-haeyeh,hedrich}@em.uni-frankfurt.de  
+
+> 2
+
+Technical University of Munich, Germany 
+
+{tobias.ladner,althoff}@tum.de 
+
+Abstract —Analog neural networks are gaining attention due to their efficiency in terms of power consumption and processing speed. However, since analog neural networks are implemented as physical circuits, they are highly sensitive to manufacturing process variations, which can cause large deviations from the nominal model. We present a polynomial-based model that resembles the performance of the neuron circuit under process variations. Then, we formally verify the behavior of the circuit-level model using reachability analysis with polynomial zonotopes, thus, avoiding conventional, time-consuming Monte Carlo simulations. We evaluate our proposed verification approach on three different datasets, verifying both fully-connected and convolutional analog neural networks. Our experimental results confirm the effectiveness of our verification approach by reducing the verification time from days to seconds while enclosing 99% of the variation samples. 
+
+Index Terms —Analog neural networks, formal verification, set-based computing, energy-efficient computing, AI hardware. 
+
+I. I NTRODUCTION 
+
+The growing demand for artificial neural networks has driven the need for low-power hardware solutions, such as FPGA accelerators, in-memory computing, and CMOS-based inference circuits [1, 2]. This facilitates the deployment of neural networks in Internet of Things (IoT) devices, such as sensors, mobile devices, and wearable technology, where power consumption is a critical concern [3, 4, 5]. Analog inference hardware demonstrates efficiency in terms of processing speed, energy, and chip area. However, the design and verification of analog devices is challenging due to their vulnerability to perturbations such as noise, mismatch, and process variations [6, 7, 8]. To verify the functionality of analog neural networks, they must be fully validated under these variations to ensure safety, which is usually performed by running time-consuming Monte Carlo simulations [9]. In this work, we focus on analyzing and verifying the characteristics of the analog neural network influenced by varying process parameters. 
+
+A. Related Work 
+
+Modeling and analysis of the influence of varying process parameters on analog circuits have been investigated extensively [10, 11, 12, 13]. However, recent advances in the design and implementation of analog neural networks have opened up new challenges that need to be further addressed: During semiconductor device fabrication, variations, such as gate width, threshold voltage, channel length, and oxide 
+
+> †
+> Equal contribution, sorted alphabetically.
+
+thickness, can occur due to process variations [14]. It is well known that perturbations can significantly impact the accuracy of conventionally implemented neural networks [15], and similar effects have also been observed for process variations on analog neural networks [7, 8, 16, 17]. Hence, modeling the behavior of analog inference circuits under these variations is crucial to ensure the safety of these circuits and improve their design and robustness [18]. The emerging modeling methodologies either rely on device physics or machine learning engines [19]. Since developing accurate physics-based models is a challenging and time-consuming task, many works adopt an analytical approach to quantify the parameter variations. For example, machine learning has been utilized for modeling analog circuits under process variations [12]. While the proposed model provides the capability of identifying the sources of variability in the circuit, it uses a single-transistor model, which is insufficient to reflect the full system behavior and therefore cannot be extended to a system-level modeling approach. Other available analog neural network implementations employ Monte Carlo simulations to analyze the behavior of the network under process variations [9, 20], while being incapable of providing a system-level verification approach that is adaptive to different network architectures. Recently, it was shown that system-level verification of analog neural networks under device mismatch can be achieved by utilizing formal neural network verification [18]. Neural network verification can provide formal guarantees of the prediction of a neural network under perturbations, where usually conventionally implemented neural networks are considered [21, 22]. These guarantees are obtained by rigorous mathematical proofs that enable reasoning about the safety of a neural network under perturbation [23]. Unfortunately, these proofs are usually difficult to obtain for large neural networks as it has been shown that verifying certain properties is NP-hard [24]. Thus, modern verifiers introduce relaxations to remain computationally feasible, where both optimization-based approaches [25, 26, 27, 28] and approaches based on reachability analysis [29, 30, 31, 32] are used. 
+
+B. Contributions 
+
+This work presents a verification method for analog neural networks. To summarize, our contributions are:  
+
+> •
+
+An optimized polynomial-based parametric model that precisely abstracts the analog neuron performance under process variations.  
+
+> arXiv:2605.10474v1 [cs.LG] 11 May 2026 •
+
+The system-level verification of a circuit-level model under process variations using reachability analysis.  
+
+> •
+
+The proposed modeling approach is scalable to various neural network architectures, including fully-connected and convolutional architectures.  
+
+> •
+
+The effectiveness of our variation-aware model and verification approach is demonstrated on benchmark classification tasks, such as the MNIST dataset. II. P RELIMINARIES 
+
+A. Notation 
+
+We denote scalars and vectors by lowercase letters, matrices by uppercase letters, and sets by calligraphic letters. The i-th element of a vector v ∈ Rn is written as v(i). The element in the i-th row and j-th column of a matrix A ∈ Rn×m is written as A(i,j ), the entire i-th row and j-th column are written as A(i, ·) and A(·,j ), respectively. The empty matrix is written as [ ] . We denote with In the identity matrix of dimension 
+
+n ∈ N. The bold symbol 1 refers to matrices with all ones of proper dimensions. Given n ∈ N, we use the shorthand notation 
+
+[n] = {1, . . . , n }. Let S ⊂ Rn be a set and f : Rn → Rm
+
+be a function, then f (S) = {f (x) | x ∈ S} . An interval with bounds a, b ∈ Rn is denoted by [a, b ], where a ≤ b holds element-wise. 
+
+B. Neural Networks 
+
+We initially consider fully-connected neural networks with rectified linear unit (ReLU) activation, and later extend our approach to convolutional neural networks [33, Sec. 5.5.6]. 
+
+Definition 1 (ReLU Neural Network [33, Sec. 5.1]) . Given an input x ∈ Rn0 and an output y ∈ Rnκ , a neural network 
+
+y = Φ( x) with κ ∈ N layers can be formulated as 
+
+h0 = x,
+
+hk = Lk (hk−1) = ReLU (Wkhk−1 + bk), k ∈ [κ],y = hκ,with outputs of hidden layers hk ∈ Rnk , layer Lk : Rnk−1 →
+
+Rnk , weights Wk ∈ Rnk ×nk−1 , and bias bk ∈ Rnk .C. Set-Based Computing 
+
+We bound variations using sets. To efficiently represent them in high-dimensional spaces, we use (matrix) polynomial zonotopes [34, 35] as a set representation. 
+
+Definition 2 (Matrix Polynomial Zonotope [35, Sec. 3]) . Given an offset C ∈ Rn×m, dependent generators G ∈ Rn×m×h,independent generators GI ∈ Rn×m×q , and an exponent matrix E ∈ Np×h 
+
+> 0
+
+, a matrix polynomial zonotope PZ =
+
+⟨C, G, G I , E ⟩P Z ⊂ Rn×m is defined as 
+
+PZ := 
+
+C +
+
+> h
+
+X
+
+> i=1
+> p
+
+Y
+
+> k=1
+
+αE(k,i )
+
+> k
+
+!
+
+G(·,·,i ) +
+
+> q
+
+X
+
+> j=1
+
+βj GI(·,·,j )
+
+αk, β j ∈ [−1, 1] 
+
+
+
+.
+
+Many of the required operations to verify analog neural networks can be computed efficiently using polynomial zonotopes. We discuss them only briefly here due to space limitations, and refer the reader to the example in [35, Appendix A] for further intuition on polynomial zonotopes. Given a polynomial zonotope PZ 1 = ⟨C1, G 1, G I, 1, E 1⟩P Z , a matrix A ∈ Rk×n, and a vector B ∈ Rk×m, an affine map [35, Eq. (6a)] is computed by 
+
+APZ 1 + b = {AX 1 + B | X1 ∈ PZ 1}
+
+= ⟨AC 1 + B, AG 1, AG I, 1, E 1⟩P Z . (1) Without going into details, given a second polynomial zonotope 
+
+PZ 2 with matching dimensions, one can also efficiently compute their sum [35, Eq. (5)] 
+
+PZ 1 ⊕ PZ 2 = {X1 + X2 | X1 ∈ PZ 1, X 2 ∈ PZ 2} , (2) and their multiplication [35, Lemma 1] 
+
+PZ 1PZ 2 = {X1X2 | X1 ∈ PZ 1, X 2 ∈ PZ 2} . (3) 
+
+D. Formal Verification of Neural Networks 
+
+Set-based computing can be used to formally verify neural networks. Here, we try to enclose the possible outputs of a neural network for a given set of inputs. More formally, given an input set X ⊂ Rn0 (e.g., a maximal perturbation 
+
+ϵ ∈ R+ around an input x can be modeled by X =
+
+⟨x, ϵI n0 , [ ] , I n0 ⟩P Z ), the corresponding output set is computed by 
+
+H∗ 
+
+> 0
+
+= X ,
+
+H∗ 
+
+> k
+
+= Lk
+
+ H∗
+
+> k−1
+
+ , k ∈ [κ],
+
+Y∗ = H∗
+
+> κ
+
+.
+
+(4) Unfortunately, it is generally computationally infeasible to obtain these true sets (indicated by □∗) [24]. Thus, the output of each layer is enclosed: 
+
+Proposition 1 (Neural Network Enclosure [30, Sec. 3]) . Given an input set X ⊂ Rn0 to a neural network Φ, we obtain an enclosure of the output set Y = enclose (Φ , X ) ⊇ Y ∗ by iteratively enclosing the output of each layer: 
+
+Hk = enclose (Lk, Hk−1) ⊇ H ∗
+
+> k
+
+, k ∈ [κ],with H0 = X and Y = Hκ.
+
+After an output set enclosure Y ⊇ Y ∗ is obtained, we can use Y to verify given specifications. For example, let S be the set of unsafe outputs, it follows that 
+
+Y ∩ S = ∅ =⇒ Y ∗ ∩ S = ∅, (5) which verifies the safety of the neural network. Many common verification tasks such as image classification can be formulated this way. An example of this procedure is given in Fig. 1. How tightly the obtained enclosures fit the true output sets heavily depends on the chosen set representation. It has been shown that zonotopic enclosures work very well in practice as they obtain tight enclosures and are fast to compute [30, 32, 36]. III. A NALOG NEURAL NETWORKS UNDER VARYING 
+
+PROCESS PARAMETERS 
+
+The schematic view of the analog neuron used in this work is illustrated in Fig. 2, which represents the main building block of our 130 nm, 1.2 V CMOS inference circuit [37]. The neuron circuit functionality can be broken down into three x(1)                
+
+> x(2)
+> (a)
+> hk(1)
+> hk(2)
+> (b)
+> y(1)
+> y(2)
+> (c)
+> True set X/H∗
+> k/Y∗Enclosure Hk/YUnsafe set SFig. 1: Verification of neural networks: (a) input to neural network, (b) output of hidden layer, and (c) output of neural network. As the enclosure does not intersect with the unsafe set, we can also conclude that the unobserved true output set does not intersect with the unsafe set.
+> (a) (b) (c)
+> Wk(i,j )
+> 6-bit register w⟨0:5 ⟩
+> 1/1
+> Vn
+> Vp
+> Iin
+> 1/1
+> w⟨4⟩
+> 1/2
+> w⟨3⟩
+> Vn
+> 1/4
+> w⟨2⟩
+> 1/8
+> w⟨1⟩
+> 1/16 (W/L relations)
+> w⟨0⟩
+> Vdd
+> Vp2
+> w⟨5⟩
+> Iout Fig. 2: Circuit schematic of the analog neuron circuit: (a) current summation block, (b) ReLU activation function, and (c) weight cell. The programming bits
+> w⟨0:5 ⟩are stored in a 6-bit register. The bit w⟨5⟩is used to realize negative weights by inverting the output current.
+
+main parts: (a) summation of input weighted currents with the bias current using Kirchhoff’s laws, (b) a ReLU activation function implemented using the left side of the current mirror to rectify negative currents, and (c) the right side of the current mirror, which is utilized to scale the output current using a 
+
+5-bit programmable weight w⟨0:4 ⟩ and an additional bit w⟨5⟩
+
+to reflect the sign of the weight using another upper PMOS current mirror to invert the current. To maintain the inference circuit functionality for negative inputs, the circuit schematic in Fig. 2 is adapted to not apply a ReLU activation in the first layer and pass the negative input through instead. Additionally, an output layer with a weight of 1 is appended to apply the final ReLU activation at the network output. The inference circuit accommodates an additional bias circuit that maps an 8-bit programmable bias into an analog output current. The neural network training is carried out off-chip using TensorFlow, followed by quantization to produce 6-bit quantized weights in the range of [−2, 2] .
+
+A. Performance Analysis 
+
+Let us first analyze the performance of the circuit under varying process parameters to establish an accurate model of the circuit. In Fig. 3, we visualize Monte Carlo simulations of the neuron netlist under process variations. Fig. 3a shows an irregular variation distribution contrary to the normal 50 60 70      
+
+> 0
+> 50
+> 100
+> 150
+> Output current [nA]
+> Nr. of samples
+> (a)
+> −200 0200 400
+> 0
+> 200
+> 400
+> Input current [nA]
+> Output current [nA]
+> (b)
+> Fig. 3: Monte Carlo analysis of the neuron netlist under process variations: (a) parameter variations in a single neuron for an input current of 50 [nA], (b) output of the neuron impacted by all process parameters.
+
+distribution observed for device mismatch [18, Fig. 4]. We also observe that the distribution varies for each of the 64 
+
+quantized weight values, which is expected as different bits switch different transistor groups. The circuit behavior also deviates depending on the sign of the input to the neuron. All the aforementioned challenging aspects lead to the need for deriving a unique parametric model for each of the 64 weights. 
+
+B. Sensitivity Modeling 
+
+To better understand the impact of varying process parameters on our analog inference circuit, we run a sensitivity analysis with an underlying real process based on the PSP transistor model to identify the parameters that have the most significant impact on the circuit performance. As shown in Fig. 2, the neuron circuit contains both NMOS and PMOS transistors operating in the subthreshold region, which are subject to more than 50 variable model parameters depending on the used technology. As modeling the circuit behavior using such a large number of parameters is infeasible, we need to limit our modeling approach to reduce the model complexity and make it scalable for larger inference circuits. We run Monte Carlo sampling with process variations on the neuron netlist (Fig. 2), and analyze the output current’s variance contribution from all the process parameters. Afterwards, we choose the parameters with the highest contribution as the dominant parameters. For different neuron topologies, this step is repeated to identify the new dominant parameters. For the current neuron topology, the behavior can be well described using two dominant parameters, 
+
+ϕ1 and ϕ2, which represent two parameters influencing the surface potential of the NMOS transistor, which affects the threshold voltage and the overall transistor behavior. While 
+
+ϕ1, ϕ 2 greatly influence NMOS transistors, they only have a negligible effect on PMOS transistors in the upper current mirror in Fig. 2, since the current mirror topology mitigates the impact of surface potential variations. Moreover, we notice in Fig. 4 that the neuron output current is highly sensitive to the variations in ϕ1 and ϕ2.IV. B OUNDING PROCESS VARIATIONS USING SET -B ASED 
+
+COMPUTING 
+
+In this section, we first establish a model describing the effect of process variations on the output of an analog neural network, followed by a description of how these variations can be bounded using set-based computing. 0.6 0.8 1 1.2          
+
+> 55
+> 60
+> 65
+> 70
+> ϕ1
+> Output current [nA]
+> 0.80.911.11.2
+> 55
+> 60
+> 65
+> 70
+> ϕ2
+> Output current [nA] Fig. 4: Monte Carlo analysis of the neuron netlist output current versus the two dominant parameters: (a) ϕ1parameter variations, and (b) ϕ2parameter variations, where ϕ1, ϕ 2are sampled from a normal distribution.
+
+A. Modeling Process Variations 
+
+By analyzing the variance-based sensitivity results in Sec. III, we noticed that out of the more than 50 process parameters influencing the circuit, only two process parameters, ϕ1 and 
+
+ϕ2, contribute significantly to process variations. This enables us to model these variations as a neural network (Def. 1) with respect to ϕ1, ϕ2 and account for all error terms: 
+
+eh0 = x, 
+
+eh1 = fW1eh0 + eb1,
+
+ehk′ = fWk′ ReLU (ehk′−1) + ebk′ , k′ ∈ { 2, . . . , κ },
+
+ey = ReLU (ehκ),
+
+(6) where the weights fWk ∈ Rnk ×nk−1 , k ∈ [κ], are influenced polynomially by ϕ1 and ϕ2:
+
+fWk =
+
+> 3
+
+X
+
+> i=0 3
+
+X
+
+> j=0
+
+Ak,i,j ϕ1iϕ2j + d31, i + j ≤ 3. (7) The influence on the bias term is negligible. For subsequent layers and negative inputs hk′−1 < 0, the output of the respective neuron is reset due to the ReLU activation: 
+
+hk′ =
+
+> 3
+
+X
+
+> i=0 3
+
+X
+
+> j=0
+
+bk,i,j ϕ1iϕ2j , i + j ≤ 3. (8) The coefficients Ak,i,j ∈ Rnk ×nk−1 , bk,i,j ∈ Rnk depend on the respective quantized weight and are obtained through polynomial regression. Please note that this was done for each of the 64 quantized weights individually, and the entries in 
+
+Ak,i,j , b k,i,j are given by the respective entries in Wk of the nominal model (Def. 1). As mentioned before, we deploy a different circuit for the first layer to deal with negative inputs, thus, the coefficients for the respective weights also differ slightly from the ones in all other layers (Fig. 2). The polynomial model is both simple and scalable, as determining the coefficients for each weight only needs to be done once and can be reused for all architectures. Following the analysis conducted in Sec. III, we can account for the amount of process variations by introducing noise variables around the nominal value 1:
+
+ϕ1 = 1 + d1, d1 ∈ D 1 ⊂ R,ϕ2 = 1 + d2, d2 ∈ D 2 ⊂ R, (9) where the domains D1, D2 are chosen to enclose a desired number of Monte Carlo simulations (Fig. 4). In particular, the process parameters ϕ1, ϕ 2 are sampled from a normal 0.6 0.8 1 1.2 1.4 
+
+> 0.8
+> 1
+> 1.2
+> 2
+> 3
+> 4
+> ϕ1
+> ϕ2
+> h1(7)
+> Samples
+> Enclosure
+> Fig. 5: Polynomial zonotope enclosure of the neuron with the maximal value of the first hidden layer according to the nominal value with respect to the main process parameters ϕ1, ϕ 2.
+
+distribution with standard deviations σ1 and σ2, respectively, and we choose, e.g., D1 = [ −3σ1, +3 σ1] to enclose ≈ 99% of the simulations. The subtle variation produced by the rest of the varying process parameters is captured with a single third noise symbol d3 ∈ D 3 ⊂ R (7). By choosing the domains large enough such that all measurements are contained, we say that the model is reachset conformant [38]. We also analyze the influence of process variations on convolutional neural networks [33, Sec. 5.5.6], and we find that our model also generalizes to convolutional neural networks and only requires updating the coefficients Ak,i,j , b k,i,j . Please note that, as a convolution is applied instead of a matrix multiplication in (6), which has far fewer weights, the overall variation is typically much smaller than for feed-forward neural networks. Thus, convolutional neural networks are more robust against process variations. 
+
+B. Bounding Process Variations 
+
+Process variations can be bounded by following the general verification procedure described in Sec. II-D. We start the verification by propagating the input set eH0 = X through the first layer according to (6). In contrast to the general procedure, the weights fW1 of linear layers (7) are no longer matrices but sets fW1 due to the uncertainties introduced in (9). This polynomial model (7) enables us to represent fW1 as polynomial zonotopes, where the noise symbols d1, d 2, d 3 become (scaled) dependent factors α1, α 2, α 3, as given in Def. 2. Given eH0 and fW1, their multiplication can be computed using (3). An example enclosure of the first linear layer is visualized in Fig. 5, where the enclosure is shown with respect to the main process parameters ϕ1, ϕ 2. As these two parameters describe the behavior well, i.e., low variance for each ( ϕ1, ϕ 2)-pair, the enclosure barely has to be enlarged in the z-direction to enclose all points. Thus, the remaining process variations barely influence the final outcome. Please note that the enclosure is represented using a single set eH1 and is only split for visualization purposes. As we proceed to propagate the set through the entire network (6), we repeatedly multiply fWk onto the current set 
+
+eHk−1, k ∈ [κ], and enclose the ReLU nonlinearities using standard techniques (Prop. 1), until we obtain an enclosure of the output set eY. We can then use eY to verify given specifications (5). TABLE I: Time comparison and average enclosure of Monte Carlo simulations of the proposed approach per input pattern.                                  
+
+> Dataset #Classes Approach Time [s] Enclosure
+> Breast Cancer 2Cadence 5,479 .72 –Wisconsin Ours 9.50 99 .08%
+> Iris 3Cadence 865 .64 –Ours 1.15 98 .01%
+> MNIST 10 Cadence 29 ,592 .60 –Ours 1.77 97 .77%
+> MNIST 10 Cadence 84 ,409 .00 –CNN Ours 3.37 99 .51%
+
+V. E XPERIMENTAL RESULTS 
+
+To evaluate our proposed modeling approach, we use three different classification datasets: Wisconsin Breast Cancer [39], Iris [40], and MNIST [41]. We simulate our analog inference circuit and run Monte Carlo simulations in Cadence Spectre [42] on a workstation with dual Intel Xeon E5-2683 v4 CPUs ( 16 cores each). We run the set-based modeling approach implemented in MATLAB using the CORA toolbox [43] on a home computer with an Intel Core i7-1165G7 CPU. To evaluate the effectiveness of our proposed modeling approach for each dataset, we compare it with a Monte Carlo simulations of 1, 000 
+
+samples. If not stated otherwise, all figures and tables are with respect to an enclosure of 3σ (9). 
+
+A. Main Results 
+
+We report the required time to analyze the circuit under process variations in Tab. I. While the Monte Carlo simulations require hours for the Iris and Breast Cancer examples and up to a day for the MNIST CNN example, the proposed approach runs in a few seconds. It is worth mentioning that we employ an additional setup time of 12 minutes to extract the parametric models by running Monte Carlo simulations on a single neuron for 64 different weight values for positive and then negative input individually. However, this is only required once and can be reused for all architectures. As noted from Tab. I, we are able to enclose an average of 99% of the output variation samples, as expected from the enclosed number of Monte Carlo samples in Fig. 3 and Fig. 4. While the considered models are relatively small, we want to stress that this is not a limitation of our proposed verification approach [21], but rather that larger models are not robust enough against process variations and thus difficult to implement as analog circuits. For example, the Breast Cancer neural network consists of three layers, and we have already seen instabilities for such sizes. However, our verification approach can drastically reduce the design cycle of these larger models by avoiding the time-consuming Monte Carlo simulations. Using Tab. II, we can quickly assess the expected performance of the manufactured circuits. For example, circuits deviating up to 2σ retain a verified accuracy competitive with the accuracy of the nominal model, meaning that ≈ 95% of the circuits can be used in production and only ≈ 5% may be faulty. Moreover, the results highlight the need for a more robust circuit design to obtain fewer faults ( 3σ), and any new circuit design can quickly be validated as demonstrated in Tab. I.                                     
+
+> TABLE II: Nominal and verified accuracy under process variations on the input patterns of all test datasets with varying desired enclosure of the Monte Carlo simulations via the standard deviations σ(9).
+> Dataset #Patterns Nominal 1σ2σ3σ
+> Breast Cancer 100 98% 96% 95% 27%
+> Iris 75 92% 88% 83% 48%
+> MNIST 100 87% 78% 71% 59%
+> MNIST CNN 100 93% 81% 64% 28% 0.511.5
+> 0.9
+> 1.1
+> 0
+> 1
+> 2
+> ϕ1
+> ϕ2
+> h1(6)
+> (a)
+> 00.20.40.60.81
+> Prediction
+> Binary classification
+> (b)
+> Enclosure Samples Decision boundary
+> Fig. 6: Enclosure of breast cancer dataset: (a) enclosure of the neuron with the maximal value of the first hidden layer according to the nominal model with respect to the two dominant process parameters, and (b) enclosure of the output layer Monte Carlo samples.
+
+B. Ablation Studies 1) Computing Enclosures and Verified Accuracies: In this ablation study, we detail the training process and results for each dataset. 
+
+a) Diagnostic Breast Cancer Dataset: We trained the Diagnostic Breast Cancer Dataset in TensorFlow using athree-layer feedforward neural network of 30 inputs, a fully-connected layer with 8 hidden neurons, followed by another fully-connected layer with 16 hidden neurons, and a single output neuron for binary classification. An example enclosure with respect to the two dominant parameters ϕ1 and ϕ2 after the first hidden layer is depicted in Fig. 6a, and the enclosure of the entire network is depicted in Fig. 6b. We enclose 99 .8% of the Monte Carlo samples in the output space and thus successfully verify the output simulations with label “1” as the lower bound of our obtained enclosure is above the classification threshold of 
+
+0.5. Doing so for all input patterns yields the verified accuracy. 
+
+b) Iris Dataset: The Iris classification network has 4
+
+inputs, a fully-connected layer with 8 hidden neurons, and an output layer with 3 neurons representing the three classes. Fig. 7a shows the ranges of the individual outputs representing each class. The bounds of the computed output enclosure are shown as intervals for each class. As the bounds for the correct label “0” do not overlap with the other classes, we have verified the example. Additionally, in Fig. 7b, we showcase the enclosure of the two largest dimensions, where we enclose 
+
+99% of the samples, again showing that our enclosure does not cross the decision boundary between the two classes. 
+
+c) MNIST Dataset: For the MNIST handwritten digit recognition benchmark, we implemented two different neural network architectures: a fully-connected network and aconvolutional neural network. We reduced the network input size to 14 × 14 to decrease the circuit complexity and energy 0 2 4 6                 
+
+> 0
+> 1
+> 2
+> Prediction
+> Label
+> (a)
+> 0246
+> 0
+> 2
+> 4
+> 6
+> y(0)
+> y(1)
+> (b)
+> Enclosure Samples Decision boundary Fig. 7: Enclosure of Iris dataset: (a) projection of all dimensions, and (b) enclosure of the two most significant dimensions. 0246810
+> 0
+> 1
+> 2
+> 3
+> 4
+> 5
+> 6
+> 7
+> 8
+> 9
+> Prediction Label (a)
+> 0246810
+> 0
+> 2
+> 4
+> y(6)
+> y(0)
+> (b) Enclosure Samples Decision boundary
+> Fig. 8: Enclosure of the fully-connected model on MNIST: (a) projection of all dimensions, and (b) enclosure of the two most significant dimensions.
+
+consumption. The fully-connected network consists of a fully-connected layer with 10 hidden neurons followed by an output layer with 10 neurons resembling the digit classes. The convolutional network comprises a convolutional layer with a single filter of size 7 × 7, followed by a fully-connected layer of 64 neurons, and finally an output layer with 10 outputs. As shown in Fig. 8a, the fully-connected model inference circuit output shows a high sensitivity to process variations. Nevertheless, the polynomial zonotope is still able to verify the specification while enclosing 99 .1% 
+
+of the samples. The convolutional neural network in Fig. 9a exhibits much less sensitivity (note scaling of x-axis), where our model again verifies the specification and successfully encloses all the samples. In Fig. 8b and Fig. 9b, we again confirm the aforementioned results by showing the enclosure of the most significant outputs for each architecture. 
+
+2) Comparison to Non-Polynomial Modeling: Finally, we also want to demonstrate that it is indeed necessary to have a polynomial model and that just using linear relaxations is not sufficient. To do so, we adapt the previous approach on mismatch variations [18] based on zonotopes [44] and apply it to process variations. In contrast to polynomial zonotopes (Def. 2), zonotopes cannot have dependencies between the individual monomials within their representation (i.e., they only have independent generators GI in Def. 2), and can thus not capture the higher-order polynomial dependencies we observed (Fig. 5). For this reason, we need to limit the highest degree 0 1 2 3                        
+
+> 0
+> 1
+> 2
+> 3
+> 4
+> 5
+> 6
+> 7
+> 8
+> 9
+> Prediction
+> Label
+> (a)
+> 0123
+> 0
+> 2
+> 4
+> y(6)
+> y(0)
+> (b)
+> Enclosure Samples Decision boundary
+> Fig. 9: Enclosure of the CNN model on MNIST: (a) projection of all dimensions, and (b) enclosure of the two most significant dimensions. −2024
+> −1
+> 0
+> 1
+> 2
+> 3
+> Prediction Label (a)
+> 024
+> 0
+> 2
+> y(0)
+> y(1)
+> (b) Enclosure Zonotope Enclosure Polynomial Zonotope Samples Decision boundary
+> Fig. 10: Enclosure comparison using zonotopes (red) and polynomial zonotopes (ours, blue): (a) projection of all dimensions, and (b) enclosure of the two most significant dimensions.
+
+in (8) to 1 for the enclosure based on zonotopes, resulting in much larger enclosures in each layer for zonotopes than for polynomial zonotopes. An example from the Iris dataset is shown in Fig. 10, where we are again able to verify the specifications using polynomial zonotopes, but are unable to do so using zonotopes, as the computed enclosure crosses the decision boundary. This reinforces the need for a polynomial model to effectively verify process variations. VI. C ONCLUSION 
+
+In this paper, we present a scalable modeling approach for analog neural networks that incorporates process variations. We have developed a polynomial-based model by analyzing the neuron circuit under varying process parameters on the transistor level. The model is then deployed in a system-level formal verification approach that encloses the variations in the output of each layer using reachability analysis. We evaluated our approach on three classification benchmarks with different network architectures, including convolutional neural networks, encompassing most of the output variations. In contrast to Monte Carlo simulations, which are not feasible for deeper neural networks (already up to a day for MNIST CNN), our verification approach runs in a few seconds on a normal home computer. Thus, it can be utilized to optimize the inference circuit design and robustness towards process variations, significantly speeding up the design cycle. In future work, we plan to integrate other sources of variation, such as device mismatch and noise, and extend our approach to larger inference circuits. ACKNOWLEDGMENT 
+
+The authors gratefully acknowledge financial support by the project FAI (No. 286525601) funded by the German Research Foundation (Deutsche Forschungsgemeinschaft, DFG). REFERENCES [1] P. Dhilleswararao, S. Boppu, M. S. Manikandan, and L. R. Cenkeramaddi, “Efficient hardware architectures for accelerating deep neural networks: Survey,” IEEE Access , 2022. [2] A. Datar and P. Saha, “The promise of analog deep learning: Recent advances, challenges and opportunities,” arXiv preprint arXiv:2406.12911 , 2024. [3] M. Yan, H. Wang, and S. Venkataraman, “PolyThrottle: Energy-efficient neural network inference on edge devices,” arXiv preprint arXiv:2310.19991 , 2023. [4] P. Gao and M. Adnan, “Overview of emerging electronics technologies for artificial intelligence: A review,” Materials Today Electronics , 2025. [5] B. Tain, R. Millet, R. Lemaire, M. Szczepanski, L. Alacoque, E. Pluchart, S. Choisnet, R. Prasad, J. Chossat, P. Pierunek et al. , “J3DAI: A tiny DNN-based edge AI accelerator for 3D-stacked CMOS image sensor,” 
+
+arXiv preprint arXiv:2506.15316 , 2025. [6] X. Li, J. Le, L. T. Pileggi et al. , “Statistical performance modeling and optimization,” Foundations and Trends in Electronic Design Automation ,2007. [7] Z. Yan, X. S. Hu, and Y. Shi, “Computing-in-memory neural network accelerators for safety-critical systems: Can small device variations be disastrous?” in Proceedings of the 41st IEEE/ACM International Conference on Computer-Aided Design , 2022. [8] T. P. Xiao, B. Feinberg, C. H. Bennett, V. Prabhakar, P. Saxena, V. Agrawal, S. Agarwal, and M. J. Marinella, “On the accuracy of analog neural network inference accelerators,” IEEE Circuits and Systems Magazine , 2023. [9] F. B. Gencer, X. Xhafa, B. B. ˙ Inam, and M. B. Yelten, “Design and validation of an artificial neural network based on analog circuits,” Analog Integrated Circuits and Signal Processing , 2021. [10] E.-D. ¸ Sandru, E. David, I. Kovacs, A. Buzo, C. Burileanu, and G. Pelz, “Modeling the dependency of analog circuit performance parameters on manufacturing process variations with applications in sensitivity analysis and yield prediction,” IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems , 2021. [11] R. Narayanan, B. Akbarpour, M. H. Zaki, S. Tahar, and L. C. Paulson, “Formal verification of analog circuits in the presence of noise and process variation,” in IEEE Design, Automation & Test in Europe Conference & Exhibition , 2010. [12] Y. Lyu, W. Chen, M. Zheng, B. Yin, J. Li, and L. Cai, “Machine learning-assisted device modeling with process variations for advanced technology,” IEEE Journal of the Electron Devices Society , 2023. [13] D. Kim, J. Park, C. Shin, J. Jung, K. Shin, S. Baek, S. Heo, W. Kim, I. Jeong, J. Cho et al. , “Glova: Global and local variation-aware analog circuit design with risk-sensitive reinforcement learning,” arXiv preprint arXiv:2505.11208 , 2025. [14] M. Huff, “Important considerations regarding device parameter process variations in semiconductor-based manufacturing,” ECS Journal of Solid State Science and Technology , 2021. [15] I. Goodfellow, J. Shlens, and C. Szegedy, “Explaining and harnessing adversarial examples,” in International Conference on Learning Representations , 2015. [16] N. Afroz, A. Sayem, G. Volanis, D. Maliuk, H. Stratigopoulos, and Y. Makris, “On the sensitivity of analog artificial neural network models to process variation,” in IEEE 42nd VLSI Test Symposium , 2024. [17] K. Jia, Z. Liu, Q. Wei, F. Qiao, X. Liu, Y. Yang, H. Fan, and H. Yang, “Calibrating process variation at system level with in-situ low-precision transfer learning for analog neural network processors,” in Proceedings of the 55th Annual Design Automation Conference , 2018. [18] Y. Abu-Haeyeh, T. Bartelsmeier, T. Ladner, M. Althoff, L. Hedrich, and M. Olbrich, “Formally verifying analog neural networks with device mismatch variations,” Proceedings of the 28th IEEE Design, Automation and Test in Europe Conference , 2025. [19] X. Li, Z. Wu, G. Rzepa, M. Karner, H. Xu, Z. Wu, W. Wang, G. Yang, Q. Luo, L. Wang et al. , “Overview of emerging semiconductor device model methodologies: From device physics to machine learning engines,” 
+
+Fundamental Research , 2024. [20] R. Nägele, J. Finkbeiner, V. Stadtlander, M. Grözing, and M. Berroth, “Analog multiply-accumulate cell with multi-bit resolution for all-analog ai inference accelerators,” IEEE Transactions on Circuits and Systems I: Regular Papers , 2023. [21] K. Kaulen, T. Ladner, S. Bak, C. Brix, H. Duong, T. Flinkow, T. T. Johnson, L. Koller, E. Manino, T. H. Nguyen et al. , “The 6th international verification of neural networks competition (VNN-COMP 2025): Summary and results,” arXiv preprint arXiv:2512.19007 , 2025. [22] D. M. Lopez, M. Althoff, L. Benet, C. Blab, M. Forets, Y. Jia, T. T. Johnson, M. Kranzl, T. Ladner, and L. Linauer, “ARCH-COMP24 category report: Artificial intelligence and neural network control systems (AINNCS) for continuous and hybrid systems plants,” in Proceedings of the 11th Int. Workshop on Applied Verification for Continuous and Hybrid Systems , 2024. [23] X. Huang, M. Kwiatkowska, S. Wang, and M. Wu, “Safety verification of deep neural networks,” in International Conference on Computer Aided Verification , 2017. [24] G. Katz, C. Barrett, D. L. Dill, K. Julian, and M. J. Kochenderfer, “Reluplex: An efficient SMT solver for verifying deep neural networks,” in International Conference on Computer Aided Verification , 2017. [25] H. Zhang, T.-W. Weng, P.-Y. Chen, C.-J. Hsieh, and L. Daniel, “Efficient neural network robustness certification with general activation functions,” in Advances in Neural Information Processing Systems , 2018. [26] G. Katz, D. A. Huang, D. Ibeling, K. Julian, C. Lazarus, R. Lim, P. Shah, S. Thakoor, H. Wu, A. Zelji´ c, D. L. Dill, M. J. Kochenderfer, and C. Barret, “The Marabou framework for verification and analysis of deep neural networks,” in International Conference on Computer Aided Verification , 2019. [27] P. Henriksen and A. Lomuscio, “Efficient neural network verification via adaptive refinement and adversarial search,” in European Conference on Artificial Intelligence , 2020. [28] G. Singh, T. Gehr, M. Püschel, and M. Vechev, “An abstract domain for certifying neural networks,” in Proceedings of the ACM on Programming Languages , 2019. [29] T. Gehr, M. Mirman, D. Drachsler-Cohen, P. Tsankov, S. Chaudhuri, and M. Vechev, “AI2: Safety and robustness certification of neural networks with abstract interpretation,” in IEEE Symposium on Security and Privacy ,2018. [30] G. Singh, T. Gehr, M. Mirman, M. Püschel, and M. Vechev, “Fast and effective robustness certification,” Advances in Neural Information Processing Systems , 2018. [31] D. M. Lopez, S. W. Choi, H.-D. Tran, and T. T. Johnson, “NNV 2.0: The neural network verification tool,” in International Conference on Computer Aided Verification , 2023. [32] T. Ladner and M. Althoff, “Automatic abstraction refinement in neural network verification using sensitivity analysis,” in Proceedings of the 26th ACM International Conference on Hybrid Systems: Computation and Control , 2023. [33] C. M. Bishop and N. M. Nasrabadi, Pattern recognition and machine learning , 2006. [34] N. Kochdumper and M. Althoff, “Sparse polynomial zonotopes: A novel set representation for reachability analysis,” in IEEE Transactions on Automatic Control , 2020. [35] T. Ladner, M. Eichelbeck, and M. Althoff, “Formal verification of graph convolutional networks with uncertain node features and uncertain graph structure,” Transactions of Machine Learning Research , 2025. [36] L. Koller, T. Ladner, and M. Althoff, “Out of the shadows: Exploring a latent space for neural network verification,” International Conference on Learning Representations , 2026. [37] F. Aul, N. Katsaouni, L. Krischker, S. Schmalhofer, M. H. Schulz, and L. Hedrich, “Schematic generation of programmable analog neural networks for signal proccessing,” in International Conference on SMACD and 16th Conference on PRIME , 2021. [38] H. Roehm, J. Oehlerking, M. Woehrle, and M. Althoff, “Model conformance for cyber-physical systems: A survey,” ACM Transactions on Cyber-Physical Systems , 2019. [39] W. Wolberg, “Breast Cancer Wisconsin (Original),” UCI Machine Learning Repository, 1990. [40] R. A. Fisher, “Iris,” UCI Machine Learning Repository, 1936. [41] Y. LeCun, C. Cortes, and C. J. Burges, “Mnist handwritten digit database,” http://yann.lecun.com/exdb/mnist, 2010. [42] Cadence Design Systems, Inc., “Cadence virtuoso spectre simulator datasheet,” www.cadence.com, 2024. [43] M. Althoff, “An introduction to CORA 2015,” in Proceedings of the Workshop on Applied Verification for Continuous and Hybrid Systems ,2015. [44] A. Girard, “Reachability of uncertain linear systems using zonotopes,” in 
+
+International Workshop on Hybrid Systems: Computation and Control ,2005.

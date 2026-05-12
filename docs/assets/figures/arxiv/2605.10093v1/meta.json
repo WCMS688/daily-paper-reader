@@ -1,0 +1,62 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.10093v1/fig-001.webp",
+      "caption": "Fig. 10. Cumulative simulation cost with error bar over 5 seeds (left); Average per-task simulation cost over 5 seeds (right).",
+      "page": 11,
+      "index": 1,
+      "width": 472,
+      "height": 350
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10093v1/fig-002.webp",
+      "caption": "Fig. 9. Mean number of search and refine per seed of different models (up); Mean number of search and refine per seed of different configuration of RFAmpDesigner (down).",
+      "page": 10,
+      "index": 2,
+      "width": 384,
+      "height": 381
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10093v1/fig-003.webp",
+      "caption": "TABLE V EXPERIMENT RESULTS OF THE LAST 2 TASKS",
+      "page": 10,
+      "index": 3,
+      "width": 1006,
+      "height": 426
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10093v1/fig-004.webp",
+      "caption": "Fig. 7. Design results of Spec 1-9: a) S11 and S22 of Spec 1-3; b) NF, NFmin of Spec 1-3 and 7; c) S11 and S22 of Spec 4-6; d) Gain vs. Input power of Spec 1, 9.",
+      "page": 8,
+      "index": 4,
+      "width": 521,
+      "height": 546
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10093v1/fig-005.webp",
+      "caption": "TABLE I DESIGN TOOLS OVERVIEW.",
+      "page": 4,
+      "index": 5,
+      "width": 1076,
+      "height": 498
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10093v1/fig-006.webp",
+      "caption": "TABLE VI COMPARISON OF EFFECTIVE LATENCY AND MONETARY COST ACROSS DIFFERENT BACKBONES",
+      "page": 12,
+      "index": 6,
+      "width": 524,
+      "height": 236
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10093v1/fig-007.webp",
+      "caption": "TABLE IV EXPERIMENT RESULTS OF THE FIRST 8 TASKS",
+      "page": 9,
+      "index": 7,
+      "width": 990,
+      "height": 236
+    }
+  ]
+}

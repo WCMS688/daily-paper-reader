@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.08768v1/fig-001.webp",
+      "caption": "FIG. 4. Unit cell geometry including the integrated PIN diode. The metasurface is periodically repeated with px = py = 20mm. The central aperture dimensions are wxl = 17mm and wy = 8.35mm, while the central slot width is wxc = 3mm. The diode dimensions are gy = 0.67mm and gx = 1.32mm, according to the physical dimensions of the employed PIN diode (MA4AGP907).",
+      "page": 6,
+      "index": 1,
+      "width": 511,
+      "height": 364
+    },
+    {
+      "url": "assets/figures/arxiv/2605.08768v1/fig-002.webp",
+      "caption": "FIG. 5. Electric field profiles EOFF/ON(x, y) in the (a) OFF, and (b) ON states, both extracted from CST. Parameters of the structure: px = py = 20mm, wxl = 17mm, wxc = 3mm, wy = 8.35mm, gy = 0.67mm, gx = 1.32mm.",
+      "page": 6,
+      "index": 2,
+      "width": 511,
+      "height": 239
+    }
+  ]
+}

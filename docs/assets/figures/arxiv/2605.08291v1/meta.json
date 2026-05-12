@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.08291v1/fig-001.webp",
+      "caption": "Figure 3: Synchronous vs. asynchronous DAG message passing on a small DAG. The asynchronous variant (Eq. 3) makes the entire transitive fan-in cone reachable in a single forward pass; step labels indicate the topological visit order π.",
+      "page": 15,
+      "index": 1,
+      "width": 744,
+      "height": 231
+    },
+    {
+      "url": "assets/figures/arxiv/2605.08291v1/fig-002.webp",
+      "caption": "Figure 2: Toy AT/RAT/slack propagation on a combinational DAG with Tclk = 6. The max-plus / min-plus recurrence structure motivates asynchronous topological message passing (Eq. 3); industrial STA additionally handles slew, multi-corner, hold, and OCV derating not shown here.",
+      "page": 7,
+      "index": 2,
+      "width": 772,
+      "height": 393
+    },
+    {
+      "url": "assets/figures/arxiv/2605.08291v1/fig-003.webp",
+      "caption": "Table 1: Representative methods across EDA tasks and flow contexts. The evidence column intentionally separates academic-benchmark research, non-GNN baselines, flow frameworks, industrialauthored evaluations, and publicly reported production use, so that GNN-specific deployment evidence is not conflated with broader ML-EDA adoption.",
+      "page": 8,
+      "index": 3,
+      "width": 831,
+      "height": 293
+    },
+    {
+      "url": "assets/figures/arxiv/2605.08291v1/fig-004.webp",
+      "caption": "Figure 1: A minimal heterogeneous signal graph with typed nodes (cells, nets, pins) and typed edges (driver, load, containment): a driver cell exposes a driver pin onto a net that fans out to load pins of downstream cells. Industrial graphs add clock-tree, PDN, hierarchy, physical coordinates, and timing-arc edges, typically modeled on separate graphs rather than overloaded onto the signal graph.",
+      "page": 4,
+      "index": 4,
+      "width": 760,
+      "height": 254
+    },
+    {
+      "url": "assets/figures/arxiv/2605.08291v1/fig-005.webp",
+      "caption": "Figure 4: Multi-die systems as hierarchical graphs. (a) 2.5D integration: chiplets share a silicon interposer with high-density inter-chiplet routing. (b) 3D integration: dies are stacked vertically with through-silicon vias (TSVs). (c) Both map to a two-level hierarchical graph in which chiplet super-nodes contain within-die netlist sub-graphs (shaded regions, dashed containment edges); heterogeneous GNNs can in principle reason at both scales simultaneously.",
+      "page": 16,
+      "index": 5,
+      "width": 826,
+      "height": 637
+    }
+  ]
+}

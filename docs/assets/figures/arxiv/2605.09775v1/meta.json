@@ -1,0 +1,94 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.09775v1/fig-001.webp",
+      "caption": "Table 4: Inputs, measurements, and objective evaluation for different baseline methods in the synthetic experiments.",
+      "page": 25,
+      "index": 1,
+      "width": 698,
+      "height": 638
+    },
+    {
+      "url": "assets/figures/arxiv/2605.09775v1/fig-002.webp",
+      "caption": "Figure 4: Comparison of simple regret and cumulative regret for additional test operators under full observations (M = I).",
+      "page": 26,
+      "index": 2,
+      "width": 811,
+      "height": 962
+    },
+    {
+      "url": "assets/figures/arxiv/2605.09775v1/fig-003.webp",
+      "caption": "Figure 9: Daily cost during learning and validation phases.",
+      "page": 30,
+      "index": 3,
+      "width": 808,
+      "height": 258
+    },
+    {
+      "url": "assets/figures/arxiv/2605.09775v1/fig-004.webp",
+      "caption": "Figure 8: Comparison of the confidence bounds of CTBO for the eggholder test operator for different objectives. When the change in the context is small, CTBO can formulate a more informative confidence bound.",
+      "page": 29,
+      "index": 4,
+      "width": 810,
+      "height": 318
+    },
+    {
+      "url": "assets/figures/arxiv/2605.09775v1/fig-005.webp",
+      "caption": "Figure 7: Comparison between vvBO and CTBO for the eggholder test operator for different contexts. When the change in the context is small, CTBO has a lower exploration cost.",
+      "page": 29,
+      "index": 5,
+      "width": 804,
+      "height": 383
+    },
+    {
+      "url": "assets/figures/arxiv/2605.09775v1/fig-006.webp",
+      "caption": "Table 1: Hyperparameters for different test operators.",
+      "page": 22,
+      "index": 6,
+      "width": 842,
+      "height": 262
+    },
+    {
+      "url": "assets/figures/arxiv/2605.09775v1/fig-007.webp",
+      "caption": "Figure 6: Comparison of simple regret and cumulative regret for additional test operators under partial observations (M = Ξ∗).",
+      "page": 28,
+      "index": 7,
+      "width": 811,
+      "height": 962
+    },
+    {
+      "url": "assets/figures/arxiv/2605.09775v1/fig-008.webp",
+      "caption": "Figure 2: Comparison of simple regret and cumulative regret for three test operators with different baseline methods. vvBO with full trajectory measurements has the lowest regret in all scenarios, which indicates that it efficiently accommodates to different objectives.",
+      "page": 8,
+      "index": 8,
+      "width": 811,
+      "height": 483
+    },
+    {
+      "url": "assets/figures/arxiv/2605.09775v1/fig-009.webp",
+      "caption": "Figure 5: Comparison of simple regret and cumulative regret for three test operators under partial observations (M = Ξ∗).",
+      "page": 27,
+      "index": 9,
+      "width": 811,
+      "height": 483
+    },
+    {
+      "url": "assets/figures/arxiv/2605.09775v1/fig-010.webp",
+      "caption": "Table 3: Functional basis Ξi and weights wi defining the objectives Fi(x) = ⟨Ξiwi, f(x)⟩Y across phases. From phase one to two, only the weights wi change, while from phase two to three both Ξi and wi are modified.",
+      "page": 24,
+      "index": 10,
+      "width": 814,
+      "height": 630
+    },
+    {
+      "url": "assets/figures/arxiv/2605.09775v1/fig-011.webp",
+      "caption": "Figure 3: Real-world tuning of an MPC controller for building climate control.",
+      "page": 9,
+      "index": 11,
+      "width": 808,
+      "height": 455
+    }
+  ]
+}

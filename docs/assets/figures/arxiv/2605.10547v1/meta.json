@@ -1,0 +1,102 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.10547v1/fig-001.webp",
+      "caption": "Figure 8: α range ablation. Left: DPP 25 × 25, α-sensitive. Right: CircuitNet NVDLA→Vortex, α-insensitive.",
+      "page": 21,
+      "index": 1,
+      "width": 774,
+      "height": 201
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10547v1/fig-002.webp",
+      "caption": "Figure 9: Attention heatmaps under varying α on 10× 10. Red dot is the query. Smaller α matches data-rich behavior (uniform attention, weak prior); larger α matches data-scarce behavior (sharp local attention, strong prior).",
+      "page": 22,
+      "index": 2,
+      "width": 697,
+      "height": 261
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10547v1/fig-003.webp",
+      "caption": "Figure 10: Per-head α before and after training on DPP 25× 25 supervised. Top: epoch 0, all heads on the diagonal. Bottom: epoch 99, heads fan out; shallow layers (red) diverge most, deeper layers (green) stay roughly symmetric.",
+      "page": 22,
+      "index": 3,
+      "width": 687,
+      "height": 353
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10547v1/fig-004.webp",
+      "caption": "Figure 1: PhysEDA architecture. A single Manhattan-decay kernel (a) modulates linear attention as a learnable multiplicative bias (PSLA, b) and shapes the RL reward potential (PBRS, c), and is validated on three EDA tasks (d).",
+      "page": 3,
+      "index": 4,
+      "width": 814,
+      "height": 288
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10547v1/fig-005.webp",
+      "caption": "Figure 11: Anisotropy of learned α across CircuitNet transfer directions. Each direction learns its own (αx, αy) pattern. The data-richest zero-riscy→Vortex direction collapses α to the floor (green dashed circle), validating the Bayesian-prior-fades-as-data-grows behavior.",
+      "page": 23,
+      "index": 5,
+      "width": 438,
+      "height": 350
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10547v1/fig-006.webp",
+      "caption": "Table 17: Per-experiment training time and aggregate compute. Times are wall-clock for the configurations reported in the main paper.",
+      "page": 23,
+      "index": 6,
+      "width": 798,
+      "height": 306
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10547v1/fig-007.webp",
+      "caption": "Figure 5: DPP encoder inference efficiency vs. sequence length L (RTX 4090, single-batch).",
+      "page": 19,
+      "index": 7,
+      "width": 680,
+      "height": 280
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10547v1/fig-008.webp",
+      "caption": "Table 9: DPP hyperparameters. Imitation learning (IL) and REINFORCE (RL) share backbone optimizer and feature-map settings.",
+      "page": 17,
+      "index": 8,
+      "width": 786,
+      "height": 319
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10547v1/fig-009.webp",
+      "caption": "Table 10: ChiPFormer hyperparameters. RL fine-tuning starts from the best DT pretraining checkpoint by validation HPWL.",
+      "page": 17,
+      "index": 9,
+      "width": 560,
+      "height": 236
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10547v1/fig-010.webp",
+      "caption": "Figure 4: PhysEDA ∆ across 9 settings (a) and inference latency vs. L (b). In (a), light bars are +PSLA only and dark bars the best (PSLA/PBRS) combination, ranging from −1.9% to +65.2%. In (b), RTX 4090 batch-1; PSLA’s O(Ld2) stays flat while softmax O(L2d) rises sharply, with crossover at L=2,500.",
+      "page": 9,
+      "index": 10,
+      "width": 804,
+      "height": 244
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10547v1/fig-011.webp",
+      "caption": "Table 8: Unified ablation of PSLA and PBRS across DPP, ChiPFormer, and CircuitNet. PSLA adds the architectural distance prior; PBRS adds the training-stage potential shaping. Cells marked n/a denote supervised settings to which PBRS does not apply. Best configuration per row in bold; † indicates that PSLA’s hard architectural constraint suppresses exploration during RL fine-tuning, see Section 4.2. Two finer-grained DPP ablations supporting these aggregate numbers (component decomposition and α-range sensitivity) are deferred to App. J.",
+      "page": 9,
+      "index": 11,
+      "width": 776,
+      "height": 246
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10547v1/fig-012.webp",
+      "caption": "Table 14: Per-direction CircuitNet results (5 seeds), expanding Table 6.",
+      "page": 20,
+      "index": 12,
+      "width": 686,
+      "height": 184
+    }
+  ]
+}

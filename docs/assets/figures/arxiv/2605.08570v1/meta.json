@@ -1,0 +1,38 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.08570v1/fig-001.webp",
+      "caption": "Fig. 11. A comparison of the measured and estimated skew of bulk cable.",
+      "page": 7,
+      "index": 1,
+      "width": 529,
+      "height": 397
+    },
+    {
+      "url": "assets/figures/arxiv/2605.08570v1/fig-002.webp",
+      "caption": "Fig. 10. a) The skew measurements setup, b) The propagation time delay difference ∆τ between the even and odd modes as function of frequency, c) Single-ended through S-parameters..",
+      "page": 7,
+      "index": 2,
+      "width": 529,
+      "height": 395
+    },
+    {
+      "url": "assets/figures/arxiv/2605.08570v1/fig-003.webp",
+      "caption": "Fig. 2. (a) Schematic of the cross section of dual-extruded twinax cable with 26 AWG conductors and differing dielectric regions used to model asymmetry. (b) Simulated single-ended through and forward-coupling S-parameters for 0.5m and 1m dual-extruded twinax cables, showing the periodic resonances caused by even and odd mode propagation delays differences. (c) Unwrapped phase plots for common and differential modes, used to extract ∆τ for resonance frequency calculations.",
+      "page": 3,
+      "index": 3,
+      "width": 529,
+      "height": 350
+    },
+    {
+      "url": "assets/figures/arxiv/2605.08570v1/fig-004.webp",
+      "caption": "Fig. 4. Intra-pair skew versus frequency for twinax cables of 0.5m and 1m length, showing the damped oscillatory behavior and zero-skew points predicted by (21) and (22).",
+      "page": 4,
+      "index": 4,
+      "width": 529,
+      "height": 360
+    }
+  ]
+}

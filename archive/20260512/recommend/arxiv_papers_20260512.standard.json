@@ -1,0 +1,413 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-05-12T21:39:37.198386+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 2,
+    "deep_divecandidates": 3,
+    "deep_cap": 7,
+    "deep_selected": 3,
+    "quick_candidates": 7,
+    "quick_skim_target": 12,
+    "quick_selected": 7
+  },
+  "deep_dive": [
+    {
+      "id": "2605.08570v1",
+      "source": "arxiv",
+      "title": "Intra-Pair Skew Propagation Graph (ISPG): An Analytical Model for Cascaded Channels",
+      "abstract": "As data rates scale, intra-pair skew has become a critical bottleneck for high-speed differential signaling. Current analytical models are often limited, while 3D electromagnetic simulations are computationally intensive. This paper presents a comprehensive analytical framework for intra-pair skew in generic asymmetric coupled transmission lines, explicitly integrating skew into S-parameter formulations. We introduce the Intra-pair Skew Propagation Graph (ISPG), a novel graph-based methodology for calculating cumulative skew in complex, cascaded channels. The proposed framework is validated against both S-parameter simulations and empirical measurements of a 2m twinax cable assembly, demonstrating excellent accuracy and robustness for high-speed interconnect design.",
+      "authors": [
+        "David Nozadze",
+        "Zurab Kiguradze",
+        "Srinath Penugonda",
+        "Sayed Ashraf Mamun",
+        "Amendra Koul",
+        "Mike Sapozhnikov"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP"
+      ],
+      "published": "2026-05-09T00:12:53+00:00",
+      "link": "https://arxiv.org/pdf/2605.08570v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 9.5,
+      "llm_evidence_en": "Intra-pair skew analytical model for high-speed differential signaling and cascaded channels",
+      "llm_evidence_cn": "高速差分信号和级联通道的对内偏斜分析模型",
+      "llm_evidence": "高速差分信号和级联通道的对内偏斜分析模型",
+      "canonical_evidence": "高速差分信号和级联通道的对内偏斜分析模型",
+      "llm_tldr_en": "Introduces a graph-based analytical framework for calculating cumulative intra-pair skew in high-speed channels.",
+      "llm_tldr_cn": "引入一种基于图的分析框架，用于计算高速通道中的累积对内偏斜。",
+      "llm_tldr": "引入一种基于图的分析框架，用于计算高速通道中的累积对内偏斜。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Signal integrity analysis for high-speed interconnects",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.10547v1",
+      "source": "arxiv",
+      "title": "PhysEDA: Physics-Aware Learning Framework for Efficient EDA With Manhattan Distance Decay",
+      "abstract": "Electronic design automation (EDA) addresses placement, routing, timing analysis, and power-integrity verification for integrated circuits. Learning methods -- attention (Transformer) and reinforcement learning (RL) -- have recently emerged on EDA tasks, yet face two common bottlenecks: vanilla attention's quadratic complexity limits scaling, and data-scarce models overfit statistical noise and amplify weak long-range correlations against the underlying physics. We observe that EDA tasks share a physical prior -- pairwise electrical and routing interactions decay exponentially along Manhattan distance -- and integrate it as a unified inductive bias into both architecture and training. We propose PhysEDA, comprising two components Physics-Structured Linear Attention (PSLA) folds the separable Manhattan decay into the linear-attention kernel as a multiplicative bias, reducing complexity from quadratic to linear; Potential-Based Reward Shaping (PBRS) constructs a physical potential from the same kernel, providing dense reward signal under sparse RL while preserving the optimal policy via the policy-invariance theorem. Across three EDA scenarios -- decoupling-capacitor placement, macro placement, and IR-drop prediction -- PhysEDA improves zero-shot cross-scale transfer by 56.8% and achieves 14x inference speedup with 98.5% memory savings on 100x100 grids; PBRS adds another 10.8% in sparse-reward DPP.",
+      "authors": [
+        "Zetao Yang"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-05-11T13:24:15+00:00",
+      "link": "https://arxiv.org/pdf/2605.10547v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Physics-aware learning for power-integrity verification in EDA",
+      "llm_evidence_cn": "用于EDA中电源完整性验证的物理感知学习框架",
+      "llm_evidence": "用于EDA中电源完整性验证的物理感知学习框架",
+      "canonical_evidence": "用于EDA中电源完整性验证的物理感知学习框架",
+      "llm_tldr_en": "PhysEDA uses physics-aware learning to optimize EDA tasks like power-integrity verification and routing.",
+      "llm_tldr_cn": "PhysEDA利用物理感知学习优化EDA任务，如电源完整性验证和布线。",
+      "llm_tldr": "PhysEDA利用物理感知学习优化EDA任务，如电源完整性验证和布线。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.08233v1",
+      "source": "arxiv",
+      "title": "Inverse Design of Multi-Layer Sub-Pixel-Resolution RF Passives Through Grayscale Diffusion with Flexible S-Parameter Conditioning",
+      "abstract": "Inverse design of RF passive components from S-parameters is a high-dimensional, ill-posed problem, and prior generative approaches are limited to single-layer binary-metallization structures. This paper presents an inverse design approach that generates passive components from partial S-parameter inputs on an $8\\times8$ mm board discretized at $64\\times64$ pixels with sub-pixel grayscale metallization across 1-20 GHz. The framework generates two-layer copper layouts with vias, with hard physical constraints on feed locations enforced through annealed Langevin projection, flexible multi-modal conditioning on partial S-parameter specifications, port locations, dielectric properties, reference topology, and variable port placement. Candidate designs are generated in seconds, with surrogate-predicted S-parameters matching targets to within $0.77 \\pm 1.28$ dB weighted mean absolute error. We validate the approach with two fabricated designs on RO4003C: a manufacturable alternative to a hairpin filter whose coupling gaps violate fabrication rules, and a combline bandpass filter designed from scratch given only target S-parameters.",
+      "authors": [
+        "Tommaso Dreossi",
+        "Christopher M. Bryant",
+        "Hao Liu",
+        "Nathan Mirman",
+        "Noah Kessler",
+        "Michael Frei",
+        "Harish Krishnaswamy"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP",
+        "cs.LG"
+      ],
+      "published": "2026-05-06T23:25:03+00:00",
+      "link": "https://arxiv.org/pdf/2605.08233v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Inverse design of RF passives and S-parameter conditioning",
+      "llm_evidence_cn": "射频无源器件的逆向设计与S参数调节",
+      "llm_evidence": "射频无源器件的逆向设计与S参数调节",
+      "canonical_evidence": "射频无源器件的逆向设计与S参数调节",
+      "llm_tldr_en": "Proposes a diffusion-based generative approach for inverse design of multi-layer RF passives from S-parameters.",
+      "llm_tldr_cn": "提出一种基于扩散模型的生成式方法，用于根据S参数进行多层射频无源器件的逆向设计。",
+      "llm_tldr": "提出一种基于扩散模型的生成式方法，用于根据S参数进行多层射频无源器件的逆向设计。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Advanced modeling and optimization techniques for SI/PI in high speed systems",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2605.08291v1",
+      "source": "arxiv",
+      "title": "Graph Computation Meets Circuit Algebra: A Task-Aligned Analysis of Graph Neural Networks for Electronic Design Automation",
+      "abstract": "EDA problems are graph-structured, but not all graph-structured problems call for the same GNN computation. We argue that successful GNN-for-EDA methods are those whose propagation, aggregation, and supervision align with the native algebra of the target task. Concretely: static timing analysis is a max-plus/min-plus recurrence on a topologically ordered DAG, structurally aligned with asynchronous DAG-GNNs; placement is governed by hypergraph wirelength and density penalties and is exploited by differentiable placers rather than by message-passing GNNs alone; routing congestion is a sparse demand-supply field over a layout grid; switching-activity propagation is a probabilistic recurrence on a directed netlist; IR drop is a linear system on the power-delivery network; and analog symmetry extraction is a discrete constraint-prediction problem on schematic graphs. Through these task-by-task alignments we (i) review the GNN architectural toolkit relevant to circuits, (ii) formalize how circuit graphs differ from generic graphs (directed, heterogeneous, multi-scale, with sequential and clock structure), (iii) characterize where current methods succeed and where the algebra-architecture mismatch limits them, and (iv) identify failure modes--stage leakage, proxy-to-signoff gap, calibration, and design-distribution shift--that we believe are likely to dominate the next phase of work. We position the paper as a GNN-for-EDA, task-aligned analysis rather than a comprehensive AI-for-chip-design survey. Continuous SE(3)-equivariant geometric GNNs are usually mismatched to Manhattan digital layout, and LLM-for-RTL, HLS, and RL/diffusion-based topology generation are outside our scope.",
+      "authors": [
+        "Hyunmog Kim"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.AR"
+      ],
+      "published": "2026-05-08T08:24:33+00:00",
+      "link": "https://arxiv.org/pdf/2605.08291v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "GNN analysis for EDA tasks including timing and switching activity",
+      "llm_evidence_cn": "针对EDA任务（包括时序和开关活动）的GNN分析",
+      "llm_evidence": "针对EDA任务（包括时序和开关活动）的GNN分析",
+      "canonical_evidence": "针对EDA任务（包括时序和开关活动）的GNN分析",
+      "llm_tldr_en": "Analyzes GNN architectures for EDA tasks like timing and routing, aligning graph computation with circuit algebra.",
+      "llm_tldr_cn": "分析了用于EDA任务（如时序和布线）的GNN架构，将图计算与电路代数相结合。",
+      "llm_tldr": "分析了用于EDA任务（如时序和布线）的GNN架构，将图计算与电路代数相结合。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2605.09775v1",
+      "source": "arxiv",
+      "title": "Bayesian Optimization with Structured Measurements: A Vector-Valued RKHS Framework",
+      "abstract": "Bayesian optimization (BO) is an efficient framework for optimizing expensive black-box functions. However, it is typically formulated as learning an end-to-end mapping from inputs to scalar objectives, thereby discarding the potentially rich information whenever a structured system output is available. In this work, we study Bayesian optimization over a vector-valued operator with structured measurements, where each measurement observes multidimensional or functional outputs, e.g., trajectories or spatial fields, rather than a single scalar value. The objective is then defined as a linear functional of these measurements. This allows each observation to reveal substantially richer information about the underlying system compared to scalar observations. Assuming the unknown operator lies in a vector-valued reproducing kernel Hilbert space (RKHS), we derive high-probability concentration bounds for the kernel ridge regression (KRR) estimator directly in the measurement space, characterizing uncertainty in a general Hilbert space. Building on these results, we propose an algorithm based on the upper confidence bound (UCB) acquisition function with regret guarantees under mild assumptions, recovering sublinear rates for common kernels. Empirically, we demonstrate that leveraging structured measurements leads to improved sample efficiency by enabling efficient transfer of information across objectives and adaptation to time-varying settings.",
+      "authors": [
+        "Wenbin Wang",
+        "Colin N. Jones"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "math.OC"
+      ],
+      "published": "2026-05-10T21:48:09+00:00",
+      "link": "https://arxiv.org/pdf/2605.09775v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.5,
+      "llm_evidence_en": "Bayesian optimization for structured measurements and functional outputs",
+      "llm_evidence_cn": "针对结构化测量和函数输出的贝叶斯优化",
+      "llm_evidence": "针对结构化测量和函数输出的贝叶斯优化",
+      "canonical_evidence": "针对结构化测量和函数输出的贝叶斯优化",
+      "llm_tldr_en": "Develops a Bayesian optimization framework for vector-valued operators, applicable to complex system optimization.",
+      "llm_tldr_cn": "开发了一种针对向量值算子的贝叶斯优化框架，可用于复杂系统的建模与优化。",
+      "llm_tldr": "开发了一种针对向量值算子的贝叶斯优化框架，可用于复杂系统的建模与优化。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Advanced modeling and optimization techniques for SI/PI in high speed systems",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.08725v1",
+      "source": "arxiv",
+      "title": "Single 32-bit Sub-Channel DDR5 DIMMs: Architecture, Performance Bounds, and Standardisation",
+      "abstract": "DDR5 SDRAM partitions each 64-bit memory channel into two independent 32-bit sub-channels. A DIMM populating only one sub-channel halves the die count required for a given module, enabling 8 GB modules with current 16 Gbit dies that the standard topology cannot achieve. The configuration has been used by the enthusiast overclocking community since 2021 to set DDR5 frequency world records on three successive Intel platform generations, and has recently received attention as a candidate for cost-reduced volume modules under the contemporaneous DRAM supply constraints. We derive the transaction-width identity grounding the JEDEC sub-channel design: 32-bit x BL16 transfers exactly one 64-byte x86 cache line per burst. Using a roofline model we quantify performance impact across workload classes (40-60% throughput degradation in bandwidth-bound workloads, < 10% in latency-dominated workloads), and identify a bandwidth inversion at DDR5-4800 below DDR4-3200. Platform analysis shows architectural incompatibility with AMD AM5 as a consequence of the unified 64-bit UMC training model. We further show that the JEDEC SPD specification (JESD400-5D.01) already encodes single sub-channel modules natively in Byte 235, and identify the surrounding ecosystem standardisation gap.",
+      "authors": [
+        "Chih-Hua Ke"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR",
+        "cs.PF"
+      ],
+      "published": "2026-05-09T06:18:26+00:00",
+      "link": "https://arxiv.org/pdf/2605.08725v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "DDR5 SDRAM memory channel architecture and sub-channel design",
+      "llm_evidence_cn": "DDR5 SDRAM 存储通道架构与子通道设计",
+      "llm_evidence": "DDR5 SDRAM 存储通道架构与子通道设计",
+      "canonical_evidence": "DDR5 SDRAM 存储通道架构与子通道设计",
+      "llm_tldr_en": "Explores DDR5 sub-channel architecture, performance bounds, and standardization for memory modules.",
+      "llm_tldr_cn": "探讨了存储模块的DDR5子通道架构、性能边界和标准化。",
+      "llm_tldr": "探讨了存储模块的DDR5子通道架构、性能边界和标准化。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "SerDes DDR and HBM channel modeling and simulation",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2605.08768v1",
+      "source": "arxiv",
+      "title": "Time-Controlled Resonances in 2-D Metasurfaces via Equivalent Circuits",
+      "abstract": "This work introduces a semi-analytical frequency-domain framework for the analysis of two-dimensional, time-modulated (2+1)-D metasurfaces controlled by PIN diodes. The formulation focuses on the unit-cell level, modeled as a waveguide discontinuity problem, where the space-time periodicity of the structure enables the representation of scattered fields via Floquet expansions. After appropriate mathematical treatment, these expansions lead to an equivalent circuit description of the metasurface, providing physical insight into its spatiotemporal scattering behavior and facilitating the design of reconfigurable electromagnetic devices. The model is employed to explore key phenomena present in space-time systems, such as frequency mixing and spatiotemporal scattering. In addition, dynamic tuning is explored in resonant metasurfaces, where time becomes an additional degree of freedom for the design. The dynamic control of resonances opens a new way to explore multi-band and wideband behaviors from very thin metasurfaces under temporal coupling.",
+      "authors": [
+        "J. Rafael Sánchez-Martínez",
+        "Mario Pérez-Escribano",
+        "Antonio Alex-Amor",
+        "Juan F. Valenzuela-Valdés",
+        "Carlos Molero"
+      ],
+      "primary_category": "physics.app-ph",
+      "categories": [
+        "physics.app-ph"
+      ],
+      "published": "2026-05-09T07:52:55+00:00",
+      "link": "https://arxiv.org/pdf/2605.08768v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "equivalent circuit description of metasurface",
+      "llm_evidence_cn": "超表面的等效电路描述",
+      "llm_evidence": "超表面的等效电路描述",
+      "canonical_evidence": "超表面的等效电路描述",
+      "llm_tldr_en": "Develops an equivalent circuit framework for analyzing time-modulated metasurfaces and scattering.",
+      "llm_tldr_cn": "开发了一个等效电路框架，用于分析时间调制超表面及其散射特性。",
+      "llm_tldr": "开发了一个等效电路框架，用于分析时间调制超表面及其散射特性。",
+      "llm_tags": [
+        "query:bga-xtalk"
+      ],
+      "matched_query_tag": "query:bga-xtalk",
+      "matched_query_text": "equivalent circuit modeling",
+      "matched_requirement_id": "req-12",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.08996v1",
+      "source": "arxiv",
+      "title": "Machine Learning-Based Graph Simplification for Symbolic Accelerators",
+      "abstract": "Graph-based accelerators have been widely adopted in symbolic data processing applications such as genomics, cybersecurity, and artificial intelligence. However, these systems often suffer from excessive memory usage and inefficiencies stemming from redundant graph structures. We present AutoSlim, a machine learning-based framework that leverages data-driven methods to prune automata graphs for hardware accelerators. Using features extracted from prior graph executions and a Random Forest classifier, AutoSlim identifies and removes low-impact nodes and edges. When applied to a Non-deterministic Finite Automata overlay architecture (NAPOLY+), AutoSlim reduces FPGA resource usage by up to 40%, with corresponding improvements in throughput and power efficiency. The framework includes a verification step to ensure functional equivalence after pruning and suggests promising directions for both hardware optimization and security.",
+      "authors": [
+        "Tiffany Yu",
+        "Rye Stahle-Smith",
+        "Darssan Eswaramoorthi",
+        "Rasha Karakchi"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-05-09T15:26:06+00:00",
+      "link": "https://arxiv.org/pdf/2605.08996v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Machine learning for hardware accelerator optimization and power efficiency",
+      "llm_evidence_cn": "用于硬件加速器优化和能效提升的机器学习",
+      "llm_evidence": "用于硬件加速器优化和能效提升的机器学习",
+      "canonical_evidence": "用于硬件加速器优化和能效提升的机器学习",
+      "llm_tldr_en": "Uses machine learning to prune automata graphs, reducing FPGA resource usage and power.",
+      "llm_tldr_cn": "利用机器学习剪枝自动机图，显著降低FPGA资源占用和功耗。",
+      "llm_tldr": "利用机器学习剪枝自动机图，显著降低FPGA资源占用和功耗。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.10093v1",
+      "source": "arxiv",
+      "title": "RFAmpDesigner: A Self-Evolving Multi-Agent LLM Framework for Automated Radio Frequency Amplifier Design",
+      "abstract": "Automating radio frequency (RF) amplifier design remains challenging because existing methods suffer from the curse of dimensionality, weak use of domain knowledge, and poor transferability, leading to low data efficiency. Meanwhile, although large language models (LLMs) have shown promise in many scientific domains, applying them directly to RF sizing is nontrivial due to the numerical nature of circuit optimization and the reliance on domain-specific design flows. To address this, this paper proposes RFAmpDesigner, a multi-agent framework that automates RF amplifier sizing. It introduces a resource-allocation middleware that reframes high-dimensional parameter tuning as a low-dimensional resource distribution problem, making it easier to inject sizing knowledge into general-purpose LLMs. The framework also follows standard design practice, enabling LLMs to distinguish between high- and low-cost actions and search in parallel. To realize a self-evolving optimization process, the framework employs retrieval-augmented generation (RAG) to reuse past knowledge and experience from memory base. As a proof of concept, we apply RFAmpDesigner to low noise amplifiers of varying complexity. The experimental results show that it can automatically synthesize designs with fractional bandwidths ranging from 10\\% to 80\\% and center frequencies from 10 GHz to 50 GHz. To the best of our knowledge, this work develops the first LLM-driven approach for RF amplifier sizing that operates on design concepts instead of treating netlists as text, offering a novel solution to mitigate data scarcity in RF design.",
+      "authors": [
+        "Hang Lu",
+        "Guochang Li",
+        "Qianyu Chen",
+        "Huiyan Gao",
+        "Shaogang Wang",
+        "Xuanyu He",
+        "Yiwei Liu",
+        "Gaopeng Chen",
+        "Nayu Li",
+        "Xiaokang Qi",
+        "Chunyi Song",
+        "Zhiwei Xu"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR"
+      ],
+      "published": "2026-05-11T07:11:03+00:00",
+      "link": "https://arxiv.org/pdf/2605.10093v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "LLM framework for automated RF circuit sizing and optimization",
+      "llm_evidence_cn": "用于自动化射频电路尺寸调整和优化的LLM框架",
+      "llm_evidence": "用于自动化射频电路尺寸调整和优化的LLM框架",
+      "canonical_evidence": "用于自动化射频电路尺寸调整和优化的LLM框架",
+      "llm_tldr_en": "Proposes RFAmpDesigner, a multi-agent LLM framework for automated RF amplifier circuit optimization.",
+      "llm_tldr_cn": "提出RFAmpDesigner，一个用于自动化射频放大器电路优化的多智能体LLM框架。",
+      "llm_tldr": "提出RFAmpDesigner，一个用于自动化射频放大器电路优化的多智能体LLM框架。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Advanced modeling and optimization techniques for SI/PI in high speed systems",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.10474v1",
+      "source": "arxiv",
+      "title": "Formally Verifying Analog Neural Networks Under Process Variations Using Polynomial Zonotopes",
+      "abstract": "Analog neural networks are gaining attention due to their efficiency in terms of power consumption and processing speed. However, since analog neural networks are implemented as physical circuits, they are highly sensitive to manufacturing process variations, which can cause large deviations from the nominal model. We present a polynomial-based model that resembles the performance of the neuron circuit under process variations. Then, we formally verify the behavior of the circuit-level model using reachability analysis with polynomial zonotopes, thus, avoiding conventional, time-consuming Monte Carlo simulations. We evaluate our proposed verification approach on three different datasets, verifying both fully-connected and convolutional analog neural networks. Our experimental results confirm the effectiveness of our verification approach by reducing the verification time from days to seconds while enclosing 99% of the variation samples.",
+      "authors": [
+        "Yasmine Abu-Haeyeh",
+        "Tobias Ladner",
+        "Matthias Althoff",
+        "Lars Hedrich"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-05-11T12:37:26+00:00",
+      "link": "https://arxiv.org/pdf/2605.10474v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Circuit-level modeling and verification under process variations",
+      "llm_evidence_cn": "工艺偏差下的电路级建模与验证",
+      "llm_evidence": "工艺偏差下的电路级建模与验证",
+      "canonical_evidence": "工艺偏差下的电路级建模与验证",
+      "llm_tldr_en": "Presents a polynomial-based model and reachability analysis to verify analog neural networks under variations.",
+      "llm_tldr_cn": "提出一种基于多项式的模型和可达性分析，用于验证工艺偏差下的模拟神经网络。",
+      "llm_tldr": "提出一种基于多项式的模型和可达性分析，用于验证工艺偏差下的模拟神经网络。",
+      "llm_tags": [
+        "query:bga-xtalk"
+      ],
+      "matched_query_tag": "query:bga-xtalk",
+      "matched_query_text": "equivalent circuit modeling",
+      "matched_requirement_id": "req-12",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

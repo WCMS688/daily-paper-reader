@@ -1,0 +1,62 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.10474v1/fig-001.webp",
+      "caption": "Fig. 2: Circuit schematic of the analog neuron circuit: (a) current summation block, (b) ReLU activation function, and (c) weight cell. The programming bits w⟨0:5⟩ are stored in a 6-bit register. The bit w⟨5⟩ is used to realize negative weights by inverting the output current.",
+      "page": 3,
+      "index": 1,
+      "width": 531,
+      "height": 370
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10474v1/fig-002.webp",
+      "caption": "Fig. 6: Enclosure of breast cancer dataset: (a) enclosure of the neuron with the maximal value of the first hidden layer according to the nominal model with respect to the two dominant process parameters, and (b) enclosure of the output layer Monte Carlo samples.",
+      "page": 5,
+      "index": 2,
+      "width": 524,
+      "height": 297
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10474v1/fig-003.webp",
+      "caption": "Fig. 8: Enclosure of the fully-connected model on MNIST: (a) projection of all dimensions, and (b) enclosure of the two most significant dimensions.",
+      "page": 6,
+      "index": 3,
+      "width": 521,
+      "height": 300
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10474v1/fig-004.webp",
+      "caption": "Fig. 7: Enclosure of Iris dataset: (a) projection of all dimensions, and (b) enclosure of the two most significant dimensions.",
+      "page": 6,
+      "index": 4,
+      "width": 505,
+      "height": 299
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10474v1/fig-005.webp",
+      "caption": "Fig. 9: Enclosure of the CNN model on MNIST: (a) projection of all dimensions, and (b) enclosure of the two most significant dimensions.",
+      "page": 6,
+      "index": 5,
+      "width": 517,
+      "height": 300
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10474v1/fig-006.webp",
+      "caption": "Fig. 10: Enclosure comparison using zonotopes (red) and polynomial zonotopes (ours, blue): (a) projection of all dimensions, and (b) enclosure of the two most significant dimensions.",
+      "page": 6,
+      "index": 6,
+      "width": 526,
+      "height": 318
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10474v1/fig-007.webp",
+      "caption": "Fig. 5: Polynomial zonotope enclosure of the neuron with the maximal value of the first hidden layer according to the nominal value with respect to the main process parameters ϕ1, ϕ2.",
+      "page": 4,
+      "index": 7,
+      "width": 511,
+      "height": 289
+    }
+  ]
+}
