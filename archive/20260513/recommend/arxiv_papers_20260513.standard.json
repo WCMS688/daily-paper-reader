@@ -1,0 +1,184 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-05-13T21:41:41.519614+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 2,
+    "deep_divecandidates": 0,
+    "deep_cap": 7,
+    "deep_selected": 0,
+    "quick_candidates": 4,
+    "quick_skim_target": 12,
+    "quick_selected": 4
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2605.08047v1",
+      "source": "arxiv",
+      "title": "A Time-Domain Method of Auxiliary Sources for Analyzing Transient Electromagnetic Interactions with GSTC-Modeled Metasurfacess",
+      "abstract": "This paper presents a time domain (TD) formulation for modeling the transient electromagnetic response of two-dimensional (2D) metasurfaces using the Method of Auxiliary Sources (MAS) combined with the Generalized Sheet Transition Condition (GSTC). In the proposed approach, the frequency-domain impedance type GSTC is transformed into a causal, convolution-based TD representation and integrated within the MAS formulation. rfaces.",
+      "authors": [
+        "Minas Kouroublakis",
+        "Nikolaos L. Tsitsas",
+        "Yehuda Leviatan"
+      ],
+      "primary_category": "physics.comp-ph",
+      "categories": [
+        "physics.comp-ph"
+      ],
+      "published": "2026-05-08T17:37:02+00:00",
+      "link": "https://arxiv.org/pdf/2605.08047v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:BGA-XTALK"
+      ],
+      "llm_score": 6.5,
+      "llm_evidence_en": "Time-domain modeling of transient electromagnetic response and impedance transformation",
+      "llm_evidence_cn": "瞬态电磁响应的时域建模与阻抗变换",
+      "llm_evidence": "瞬态电磁响应的时域建模与阻抗变换",
+      "canonical_evidence": "瞬态电磁响应的时域建模与阻抗变换",
+      "llm_tldr_en": "Presents a time-domain method for modeling transient electromagnetic interactions using impedance conditions.",
+      "llm_tldr_cn": "提出了一种利用阻抗条件建模瞬态电磁相互作用的时域方法。",
+      "llm_tldr": "提出了一种利用阻抗条件建模瞬态电磁相互作用的时域方法。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Advanced modeling and optimization techniques for SI/PI in high speed systems",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.11828v1",
+      "source": "arxiv",
+      "title": "PointNeRT: A Physics Aware Neural Ray Tracing Surrogate for Propagation Channel Modeling",
+      "abstract": "Ray tracing (RT) has emerged as a key tool for propagation channel modeling and network planning. Conventional RT is based on electromagnetic (EM) wave theory and its application relies on detailed mesh-based environment representations and material properties. In realistic environments, limited environmental geometry and material uncertainties hinder its scalability to complex scenarios. In this paper, we propose a novel physics aware neural RT surrogate named PointNeRT to address these limitations. The proposed model directly takes point clouds as environmental input, and efficiently reconstruct multipath without explicitly constructing mesh models or manually defining EM interaction rules. PointNeRT adopts a hop-by-hop modeling strategy guided by physical interaction constraints. It supports sequential prediction of multipath propagation and power attenuation. Numerical results and experiments demonstrate that the proposed method implicitly captures surface normal characteristics and EM material effects. It further achieves robust generalization in mobility scenarios and provides a physics-guided neural modeling of multipath propagation.",
+      "authors": [
+        "Zhuoyin Li",
+        "Ruisi He",
+        "Mi Yang",
+        "Ziyi Qi",
+        "Zhengyu Zhang",
+        "Jiahui Han",
+        "Haoxiang Zhang",
+        "Bingcheng Liu"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP"
+      ],
+      "published": "2026-05-12T09:16:55+00:00",
+      "link": "https://arxiv.org/pdf/2605.11828v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:BGA-XTALK",
+        "query:si-pi"
+      ],
+      "llm_score": 6.5,
+      "llm_evidence_en": "Neural surrogate for propagation channel modeling",
+      "llm_evidence_cn": "用于传播信道建模的神经代理模型",
+      "llm_evidence": "用于传播信道建模的神经代理模型",
+      "canonical_evidence": "用于传播信道建模的神经代理模型",
+      "llm_tldr_en": "Proposes a physics-aware neural ray tracing surrogate for efficient propagation channel modeling.",
+      "llm_tldr_cn": "提出了一种物理感知的神经射线追踪代理模型，用于高效的传播信道建模。",
+      "llm_tldr": "提出了一种物理感知的神经射线追踪代理模型，用于高效的传播信道建模。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.05920v1",
+      "source": "arxiv",
+      "title": "LLM-Driven Design Space Exploration of FPGA-based Accelerators",
+      "abstract": "Designing field-programmable gate array (FPGA)-based accelerators for modern artificial intelligence workloads requires navigating a large and complex hardware design space encompassing architectural parameters, dataflow strategies, and memory hierarchies, making the process time-consuming and resource-intensive. While the SECDA methodology enables rapid hardware-software co-design of accelerators through SystemC simulation and FPGA execution, identifying optimal accelerator configurations still requires substantial manual effort and domain expertise. This work presents SECDA-DSE, a framework that integrates Large Language Models (LLMs) into the SECDA ecosystem, comprising tools built around SECDA to automate the design space exploration (DSE) of FPGA-based accelerators. SECDA-DSE combines a structured DSE Explorer for generating accelerator configurations with an LLM Stack that performs reasoning-guided exploration using retrieval-augmented generation and chain-of-thought prompting, alongside a feedback loop that enables reinforced fine-tuning for continuous improvement. We demonstrate the feasibility of SECDA-DSE through an initial high-level synthesis based evaluation of a generated accelerator design that meets synthesis timing and resource constraints on an Zynq-7000 FPGA.",
+      "authors": [
+        "Vinamra Sharma",
+        "Xingjian Fu",
+        "Jude Haris",
+        "José Cano"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR",
+        "cs.AI",
+        "cs.PF"
+      ],
+      "published": "2026-05-07T09:29:59+00:00",
+      "link": "https://arxiv.org/pdf/2605.05920v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:BGA-XTALK",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "LLM-driven design space exploration for hardware accelerators",
+      "llm_evidence_cn": "大语言模型驱动的硬件加速器设计空间探索",
+      "llm_evidence": "大语言模型驱动的硬件加速器设计空间探索",
+      "canonical_evidence": "大语言模型驱动的硬件加速器设计空间探索",
+      "llm_tldr_en": "Automates FPGA-based accelerator design space exploration using Large Language Models to optimize hardware.",
+      "llm_tldr_cn": "利用大语言模型自动化FPGA加速器的设计空间探索，以优化硬件配置。",
+      "llm_tldr": "利用大语言模型自动化FPGA加速器的设计空间探索，以优化硬件配置。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.06936v1",
+      "source": "arxiv",
+      "title": "Bridging the Last Mile of Circuit Design: PostEDA-Bench, a Hierarchical Benchmark for PPA Convergence and DRC Fixing",
+      "abstract": "LLM-based agents are increasingly applied to the \"last mile\" of Electronic Design Automation (EDA): repairing residual sign-off Design Rule Check (DRC) violations and converging Power-Performance-Area (PPA) targets after tool runs. Existing EDA-LLM benchmarks, however, omit DRC fixing entirely and rely on flat hierarchies tied to a single toolchain. We introduce PostEDA-Bench, a hierarchical benchmark with 145 tasks across DRC-Essential, DRC-Reasoning, PPA-Mono, and PPA-Multi, supported by EDA toolchains with machine-checkable evaluation. Across eight commercial and open-source LLMs under multiple agent scaffolds, we find that agents handle synthetic DRC-Essential and single-objective PPA-Mono reasonably well but degrade sharply on the more practical DRC-Reasoning, where the best success rate is 36.66%, and PPA-Multi, where the best success rate is 20.00%; vision augmentation consistently enhances DRC-Bench; and trade-off reasoning, rather than knob knowledge, is the dominant PPA-Multi bottleneck.",
+      "authors": [
+        "Pengju Liu",
+        "Nuo Xu",
+        "Jinwei Tang",
+        "Yu Cao",
+        "Caiwen Ding"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR",
+        "cs.AI",
+        "cs.MA"
+      ],
+      "published": "2026-05-07T20:54:07+00:00",
+      "link": "https://arxiv.org/pdf/2605.06936v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:BGA-XTALK",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "LLM-based agents for PPA convergence and DRC fixing in circuit design",
+      "llm_evidence_cn": "基于大语言模型的代理用于电路设计中的PPA收敛和DRC修复",
+      "llm_evidence": "基于大语言模型的代理用于电路设计中的PPA收敛和DRC修复",
+      "canonical_evidence": "基于大语言模型的代理用于电路设计中的PPA收敛和DRC修复",
+      "llm_tldr_en": "Introduces a benchmark for evaluating LLM agents in automating post-EDA circuit design optimization tasks.",
+      "llm_tldr_cn": "引入了一个基准，用于评估大语言模型代理在自动化EDA后电路设计优化任务中的表现。",
+      "llm_tldr": "引入了一个基准，用于评估大语言模型代理在自动化EDA后电路设计优化任务中的表现。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

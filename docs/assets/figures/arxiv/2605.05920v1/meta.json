@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.05920v1/fig-001.webp",
+      "caption": "Figure 3. LLM Stack Architecture illustrating various components and interactions.",
+      "page": 3,
+      "index": 1,
+      "width": 498,
+      "height": 298
+    },
+    {
+      "url": "assets/figures/arxiv/2605.05920v1/fig-002.webp",
+      "caption": "Figure 1. SECDA-DSE framework architecture showing the interaction between the DSE Explorer and the LLM Stack.",
+      "page": 2,
+      "index": 2,
+      "width": 448,
+      "height": 317
+    }
+  ]
+}

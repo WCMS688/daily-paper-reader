@@ -1,0 +1,1979 @@
+Title: A Time-Domain Method of Auxiliary Sources for Analyzing Transient Electromagnetic Interactions with GSTC-Modeled Metasurfacess
+
+URL Source: https://arxiv.org/pdf/2605.08047v1
+
+Published Time: Mon, 11 May 2026 01:36:04 GMT
+
+Number of Pages: 13
+
+Markdown Content:
+> IEEE TRANSACTIONS ON ANTENNAS AND PROPAGATION 1
+
+# A Time-Domain Method of Auxiliary Sources for Analyzing Transient Electromagnetic Interactions with GSTC-Modeled Metasurfaces 
+
+Minas Kouroublakis, Nikolaos L. Tsitsas, Senior Member, IEEE , and Yehuda Leviatan, Life Fellow, IEEE 
+
+Abstract —This paper presents a time-domain (TD) formu-lation for modeling the transient electromagnetic response of two-dimensional (2-D) metasurfaces using the Method of Aux-iliary Sources (MAS) combined with the Generalized Sheet Transition Condition (GSTC). In the proposed approach, the frequency-domain impedance-type GSTC is transformed into a causal, convolution-based TD representation and integrated within the MAS formulation. The method supports both TM z
+
+and TE z polarizations and accommodates general transient ex-citations, including pulsed plane waves and localized sources. Numerical experiments are presented for several representative cases—anisotropic graphene, black phosphorus, and an artificial Lorentzian metasurface—demonstrating the method’s accuracy, stability, and versatility. Validations against both a frequency-domain MAS solver and full-wave simulations performed in com-mercial software confirm the correctness of the results, estab-lishing the proposed TD-MAS GSTC formulation as an efficient meshless tool for broadband TD analysis of metasurfaces. 
+
+Index Terms —Time-domain electromagnetics, metasurfaces, generalized sheet transition conditions (GSTC), method of aux-iliary sources (MAS), anisotropic graphene, black phosphorus, Lorentzian metasurfaces, transient analysis. 
+
+I. I NTRODUCTION 
+
+# TIME-domain (TD) electromagnetics has become increas-ingly important owing to a broad range of applications in radar systems [1], [2], geophysical exploration [3], [4], non-destructive testing [5], and biomedical imaging [6]. In recent years, it has also emerged as a powerful tool for investigat-ing electromagnetic (EM) metasurfaces—two-dimensional (2-D) arrays of subwavelength features designed to control the behavior of EM waves [7], [8]. TD modeling of such structures is of growing relevance, as metasurfaces need to be designed for broadband, and transient wave manipulation in applications like dynamic beam steering [9], pulse shaping [10], and temporal modulation [11], [12]. TD techniques are advantageous in this context, as they rely on short pulses exciting a wide frequency range, enabling the broadband response of a metasurface to be captured in a single simulation or experiment. The pulse duration governs the spectral bandwidth, with shorter pulses yielding broader frequency coverage; this is essential for an-alyzing metasurfaces under realistic, time-varying excitations. 
+
+Corresponding author: Nikolaos L. Tsitsas 
+
+Minas Kouroublakis and Nikolaos L. Tsitsas are with the School of Informat-ics, Aristotle University of Thessaloniki, 54124 Thessaloniki, Greece (e-mails: mkour2000@yahoo.com; ntsitsas@csd.auth.gr). Yehuda Leviatan is with Department of Electrical and Computer Engi-neering, Technion-Israel Institute of Technology, Haifa, 32000, Israel (e-mail: leviatan@technion.ac.il) 
+
+A broad range of numerical techniques have been proposed for solving TD EM problems [13], encompassing applications from transient scattering to the modeling of dispersive and anisotropic materials. Among the most established approaches, the Finite-Difference Time-Domain (FDTD) method remains a popular choice owing to its straightforward formulation and ability to capture broadband dynamics in complex geome-tries [14], [15]. The Time-Domain Finite Element Method (TD-FEM) represents another mature option and is widely available in commercial solvers such as COMSOL Multiphysics [16]. Additional alternatives include Galerkin-based TD formula-tions [17], [18], as well as TD surface- and volume-integral-equation methods [19], [20], all of which have been extensively developed for transient EM analysis. However, these schemes typically require volumetric or surface meshing, which can lead to significant computational overhead—particularly when modeling electrically thin, spatially dispersive layers such as metasurfaces. The Method of Auxiliary Sources (MAS) [21], [22], also referred to as the Method of Fundamental Solutions (MFS) [23], [24] or the Source Model Technique (SMT) [25], [26], offers a meshless alternative circumventing this limitation. It has demonstrated adequate accuracy and efficiency in TD modeling of 2-D EM structures [27]–[30]. More recently, a TD– MAS implementation was developed incorporating the Stan-dard Impedance Boundary Condition (SIBC) in [31], and the Impedance Matrix Boundary Condition (IMBC) in [32], pro-viding foundations for analyzing more general metasurfaces. The Generalized Sheet Transition Condition (GSTC) gives a rigorous theoretical framework for modeling metasurfaces by relating the discontinuities of the tangential EM fields across an infinitesimally thin sheet to its effective electric and magnetic surface susceptibilities [33]. With this approach, a physically thin but volumetric metamaterial layer is replaced by an equivalent zero-thickness sheet, reducing modeling com-plexity and avoiding the dense meshing requirements typi-cally associated with volumetric representations. The GSTC framework has been extensively implemented in the frequency domain using several numerical schemes, including the Finite Element Method (FEM) [34], integral equation methods [35], [36], and the MAS [37], for planar and cylindrical geome-tries. In parallel, TD GSTC-based techniques have also been developed—most notably using the FDTD method [38]–[40] and Galerkin TD methods [41]. Despite these advances, most existing TD implementations remain grid-based, motivating the development of meshless formulations for the accurate and efficient modeling of metasurfaces under transient excitations.  
+
+> arXiv:2605.08047v1 [physics.comp-ph] 8 May 2026 2IEEE TRANSACTIONS ON ANTENNAS AND PROPAGATION
+
+In this work, we extend the TD-MAS to incorporate the impedance-type GSTC [37], leading to a fully meshless and broadband formulation for transient analysis of metasurfaces. The proposed TD MAS–GSTC method directly models the field discontinuities imposed by electric and magnetic surface susceptibilities, enabling accurate simulation of metasurface behavior without volumetric discretization or numerical mesh-ing. To assess its performance, we investigate three repre-sentative scenarios: (i) a magnetostatically biased anisotropic graphene sheet [42], [43], (ii) a black phosphorus layer ex-hibiting in-plane anisotropy [44], [45], and (iii) an artificial Lorentzian metasurface characterized by dispersive electric and magnetic susceptibilities [40]. These examples collectively val-idate the accuracy, stability, and generality of the proposed formulation while providing implementation guidelines for practical metasurface modeling in the TD. The proposed formulation is developed under a set of as-sumptions that determine the range of validity of the method. The metasurface is assumed to be infinite along the tangential (y and z) directions and to have zero thickness along the normal (x) direction. Under this assumption, the metasurface is repre-sented only through field discontinuities across its plane and the problem is therefore treated as two-dimensional. Hence, only tangential field components and equivalent surface currents are considered, while normal polarizations, finite-size effects, and thickness-related phenomena are not included. Furthermore, the metasurface response is assumed to be local, meaning that the induced surface polarization at each point depends only on the local tangential fields. Spatial dispersion is therefore neglected. Temporal dispersion is included through the convolution re-lations, whereas space–time modulation of the metasurface parameters is outside the scope of the present work. The remainder of this paper is organized as follows. Sec-tion II presents the theoretical framework of the proposed TD MAS–GSTC formulation, including the derivation of the impedance-type GSTC equations, their frequency-to-time do-main transformation, and integration within the MAS scheme. Section III reports a comprehensive set of numerical exper-iments, demonstrating the method’s accuracy and stability across three representative configurations: magnetically biased graphene, black phosphorus, and an artificial Lorentzian meta-surface. Finally, Section IV summarizes the main outcomes of this study and discusses prospective research directions for ex-tending the MAS–GSTC approach to more general metasurface geometries and three-dimensional configurations. II. T HE TD-MAS FOR ZERO THICKNESS METASURACES 
+
+This section presents the theoretical foundation for applying the MAS in conjunction with the impedance-type GSTCs for modeling transient EM interactions with zero-thickness meta-surfaces. The formulation begins with the frequency-domain (FD) representation of the impedance-type GSTC, in which the tangential electric fields on both sides of the sheet are related to the tangential magnetic fields by a surface susceptibility matrix. Then, the transformation of the GSTC into the TD is addressed via the inverse Fourier transform (IFT), properly accounting for the convolutional behavior of the TD operators. Finally, the integration of the TD impedance-type GSTC within the MAS framework is presented, enabling accurate and efficient simulation of broadband transient scattering phenomena from general anisotropic or bianisotropic metasurfaces. 
+
+A. Frequency-Domain Analysis of GSTC 
+
+Figure 1(a) illustrates a zero-thickness infinite planar meta-surface lying on the yz -plane. The surrounding space is divided into two homogeneous regions R1 and R2 of permittivity ε0 and permeability μ0. An incident field originating from region R1
+
+impinges on the metasurface, corresponding either to a plane wave or to a cylindrical wave radiated by an infinitely-long electric current filament near the sheet. When illuminated, the metasurface imposes specified discontinuities on the tangential fields at its location, thereby controlling the transmitted and reflected wavefronts according to its surface parameters. 
+
+## R1
+
+## ε1, μ1
+
+## R2
+
+## ε2, μ2
+
+Metasurface 
+
+Line source 
+
+xyz
+
+Obs. point (xo, 0) 
+
+## C
+
+> (a)
+
+## Caux Caux C (1) (2) 
+
+dmp 
+
+daux     
+
+> (b) Fig. 1. (a) 2-D metasurface and (b) application of TD MAS GSTC. Black dots represent matching points on C, red (yellow) dots sources on C(1) aux (C(2) aux ).
+
+The volumetric response of a metasurface can be homoge-nized and represented by effective surface parameters, which are expressed by susceptibilities relating the induced polariza-tion densities to the average tangential fields at the interface. The behavior of the metasurface—including reflection, trans-mission, and polarization conversion—is characterized by its susceptibility tensors. The impedance-type GSTC [37] relates the tangential electric field components on both sides of the metasurface to the tangential magnetic field ones as follows: 
+
+[L]
+
+
+
+E1y
+
+E2y
+
+E1z
+
+E2z
+
+ = [ R]
+
+
+
+H1z
+
+H2z
+
+H1y
+
+H2y
+
+ , (1) IEEE TRANSACTIONS ON ANTENNAS AND PROPAGATION 3
+
+with 
+
+[L] = 
+
+
+
+A11 A11 A12 A12 
+
+A21 A21 A22 A22 
+
+D11 D11 D12 + 1 D12 − 1
+
+D21 − 1 D21 + 1 D22 D22 
+
+ , (2) 
+
+[R] = −
+
+
+
+B12 − 1 B12 + 1 B11 B11 
+
+B22 B22 B21 + 1 B21 − 1
+
+C12 C12 C11 C11 
+
+C22 C22 C21 C21 
+
+ (3) where Aij , Bij , Cij , and Dij are the elements of the dyadics 
+
+[A] = 1 
+
+> 2
+
+iωε 0
+
+[χyy ee χyz ee 
+
+χzy ee χzz ee 
+
+]
+
+, [B] = 1 
+
+> 2
+
+ik0
+
+[χyy em χyz em 
+
+χzy em χzz em 
+
+]
+
+,
+
+(4) 
+
+[C] = 1 
+
+> 2
+
+iωμ 0
+
+[χyy mm χyz mm 
+
+χzy mm χzz mm 
+
+]
+
+, [D] = 1 
+
+> 2
+
+ik0
+
+[χyy me χyz me 
+
+χzy me χzz me 
+
+]
+
+.
+
+(5) with χee , χmm , χem , and χme the electric and magnetic surface susceptibilities describing the metasurface response to electric or magnetic excitations, respectively, while k0 denotes the free-space wavenumber. We note that normal polarization densities are assumed to be negligible, given the subwavelength thick-ness of the metasurface. Consequently, the four susceptibility tensors [A], [B], [C], and [D] each exhibit a 2 × 2 form, representing purely tangential field interactions. The subscripts “1” and “2” on the fields refer to regions R1 (for incident and reflected fields) and R2 (for transmitted fields), respectively. 
+
+B. Time-Domain Transformation of the GSTC 
+
+The transformation of the impedance-type GSTC from the FD to the TD requires the application of the inverse Fourier transform (IFT) to Eq. (1). It is important to recall that the product of two functions in the frequency domain corresponds to the convolution of their respective inverse Fourier transforms in the time domain. Hence, each element of the surface sus-ceptibility dyadics—such as χee , χmm , χem , and χme —which multiply the field quantities in the FD formulation, becomes a TD convolution operator acting on the corresponding field components. These convolutional terms reflect the dispersive nature of the metasurface, ensuring that the GSTC accurately captures both instantaneous and delayed EM responses within the TD analysis. By applying the IFT to (1), the FD impedance-type GSTC is converted into its TD counterpart, leading to the system of convolution-type integral equations 
+
+a11 (t) ∗ E1y (t) + a11 (t) ∗ E2y (t)+ 
+
+a12 (t) ∗ E1z (t) + a12 (t) ∗ E2z (t) = 
+
+−
+
+(
+
+b12 (t) ∗ H1z (t) − H1z (t) + b12 (t) ∗ H2z (t)+ H2z (t) + b11 (t) ∗ H1y (t) + b11 (t) ∗ H2y (t)
+
+)
+
+, (6a) 
+
+a21 (t) ∗ E1y (t) + a21 (t) ∗ E2y (t)+ 
+
+a22 (t) ∗ E1z (t) + a22 (t) ∗ E2z (t) = 
+
+−
+
+(
+
+b22 (t) ∗ H1z (t) + b22 (t) ∗ H2z (t)+ 
+
+b21 (t) ∗ H1y (t) + H1y (t) + b21 (t) ∗ H2y (t) − H2y (t)
+
+)
+
+,
+
+(6b) 
+
+d11 (t) ∗ E1y (t) + d11 (t) ∗ E2y (t)+ 
+
+d12 (t) ∗ E1z (t) + E1z (t) + d12 (t) ∗ E2z (t) − E2z (t) = 
+
+−
+
+(
+
+c12 (t) ∗ H1z (t) + c12 (t) ∗ H2z (t)+ 
+
+c11 (t) ∗ H1y (t) + c11 (t) ∗ H2y (t)
+
+)
+
+, (6c) 
+
+d21 (t) ∗ E1y (t) − E1y (t) + d21 (t) ∗ E2y (t)+ 
+
+E2y (t) + d22 (t) ∗ E1z (t) + d22 (t) ∗ E2z (t) = 
+
+−
+
+(
+
+c22 (t) ∗ H1z (t) + c22 (t) ∗ H2z (t)+ 
+
+c21 (t) ∗ H1y (t) + c21 (t) ∗ H2y (t)
+
+)
+
+. (6d) Here, the functions aij (t), bij (t), cij (t), and dij (t) represent the IFTs of the corresponding FD coefficients Aij , Bij , Cij , and 
+
+Dij , respectively. The asterisk symbol “ ∗” denotes TD convolu-tion. Causality is inherently enforced in these transformations, implying that the metasurface response at any given instant depends solely on present and past values of the incident fields. This physical constraint justifies setting the lower limit of the convolution integrals to zero. 
+
+C. Time-Domain MAS Implementation of the GSTC 
+
+To solve the time-dependent system of convolutional integral equations (6), the Method of Auxiliary Sources (MAS) is em-ployed, as illustrated in Fig. 1(b), following the implementation approach described in [30]. From this point onward, the analy-sis is restricted to a TM z polarization incident field originating in region R1 and impinging upon the metasurface. MAS introduces two equivalent source configurations: one representing the scattered field in R1 due to sources in R2, and the other representing the transmitted field in R2 due to sources in R1. To this end, two auxiliary surfaces are introduced, de-noted as C(1) aux and C(2) aux , on which flow z-directed electric (for 
+
+TM z polarization) and magnetic (for TE z polarization) current densities. The inclusion of both current types is necessary because the metasurface generally exhibits bianisotropic behav-ior; thus, the generated fields in each region contain both TM z
+
+and TE z components regardless of the incident polarization. The scattered field in R1 is generated by the current densities on C(1) aux , assuming the entire space has the material properties of R1, while the transmitted field in R2 arises from the densities on C(2) aux when the space has the properties of R2. The fields radiated by the equivalent current densities on the auxiliary surfaces are expressed by [30] (in case of TM z polarization 4 IEEE TRANSACTIONS ON ANTENNAS AND PROPAGATION 
+
+with J(q) 
+
+> z
+
+the z-directed electric current density on C(q)aux )
+
+E(q) 
+
+> z
+
+(ρq, t ) = 
+
+− ηq
+
+2π
+
+∫
+
+> C(q)aux
+
+∫ t−Pq /c q
+
+> −∞
+
+1
+
+√
+
+c2 
+
+> q
+
+(t − t′)2 − P 2
+
+> q
+
+∂J (q) 
+
+> z
+
+(ρ′ 
+
+> q
+
+, t ′)
+
+∂t ′ dt′ dl′
+
+> q
+
+,
+
+(7a) 
+
+H(q)(ρq , t ) = cq
+
+2π
+
+∫
+
+> C(q)aux
+
+∫ t−Pq /c q
+
+> −∞
+
+1
+
+√
+
+c2 
+
+> q
+
+(t − t′)2 − P 2
+
+> q
+
+×
+
+{
+
+ˆz × ˆPq
+
+Pq
+
+(t − t′) ∂J (q) 
+
+> z
+
+(ρ′ 
+
+> q
+
+, t ′)
+
+∂t ′
+
+}
+
+dt′ dl′ 
+
+> q
+
+. (7b) In case of TE z polarization, the radiated fields are described via the magnetic current densities M (q) 
+
+> z
+
+by 
+
+H(q) 
+
+> z
+
+(ρq , t ) = − 1
+
+2πη q
+
+×
+
+∫
+
+> C(q)aux
+
+∫ t−Pq /c q
+
+> −∞
+
+1
+
+√
+
+c2 
+
+> q
+
+(t − t′)2 − P 2
+
+> q
+
+∂M (q) 
+
+> z
+
+(ρ′ 
+
+> q
+
+, t ′)
+
+∂t ′ dt′ dl′
+
+> q
+
+,
+
+(8a) 
+
+E(q)(ρq , t ) = − cq
+
+2π
+
+∫
+
+> C(q)aux
+
+∫ t−Pq /c q
+
+> −∞
+
+1
+
+√
+
+c2 
+
+> q
+
+(t − t′)2 − P 2
+
+> q
+
+×
+
+{
+
+ˆz × ˆPq
+
+Pq
+
+(t − t′) ∂M (q) 
+
+> z
+
+(ρ′ 
+
+> q
+
+, t ′)
+
+∂t ′
+
+}
+
+dt′ dl′ 
+
+> q
+
+, (8b) where q = 1 ( q = 2) refers to R1 and C(1) aux (R2 and 
+
+C(2) aux ), while cq and ηq denote the wave velocity and intrinsic impedance of Rq . Vectors ρq and ρ′ 
+
+> q
+
+specify observation and source points, with Pq = |ρq − ρ′
+
+> q
+
+| and ˆPq = ( ρq − ρ′
+
+> q
+
+)/P q .As evident from (7)–(8), the evaluation of the fields in each region requires determining the unknown auxiliary current density derivatives. Hence, the next step in the MAS procedure involves discretizing the fictitious current density derivatives together with establishing a set of boundary (matching) points where the TD-GSTC will be enforced. The surface current densities are represented as superpositions of Nq filamentary sources, each positioned at a discrete location ρ′ 
+
+> qn
+
+on C(q)aux .Furthermore, a set of M pairs of matching points is introduced on the metasurface boundary C where the GSTCs are applied. For TM z polarized reflected and transmitted fields, the aux-iliary sources correspond to infinitely long electric current fila-ments oriented parallel to the z-axis, whereas for TE z polarized fields, they are replaced by equivalent magnetic current fila-ments aligned along the same axis. Applying a straightforward temporal discretization, we get 
+
+∂J (q) 
+
+> z
+
+(ρ′ 
+
+> q
+
+, t ′)
+
+∂t ′ = ∑
+
+> n
+
+∑
+
+> k′
+
+I(k′ ) 
+
+> qn
+
+δs(ρ′ 
+
+> q
+
+− ρ′
+
+> qn
+
+) T (k′ ) 
+
+> qn
+
+(t′), (9) 
+
+∂M (q) 
+
+> z
+
+(ρ′ 
+
+> q
+
+, t ′)
+
+∂t ′ = ∑
+
+> n
+
+∑
+
+> k′
+
+V (k′ ) 
+
+> qn
+
+δs(ρ′ 
+
+> q
+
+− ρ′
+
+> qn
+
+) T (k′ ) 
+
+> qn
+
+(t′), (10) where I(k′ ) 
+
+> qn
+
+and V (k′ ) 
+
+> qn
+
+are the unknown amplitudes of the time derivatives of the electric and magnetic current densities, respectively, evaluated at the k′-th retarded time step on the n-th filamentary source located at position ρ′
+
+> qn
+
+.Function δs(ρ′ 
+
+> q
+
+− ρ′
+
+> qn
+
+) is the surface delta function ensur-ing spatial localization of the source at the discrete filament position. The temporal basis function T (k′) 
+
+> qn
+
+(t′) defines the TD weighting of each source contribution and is chosen here as the simplest (piecewise constant) function 
+
+T (k′) 
+
+> qn
+
+(t′) = 
+
+{1, k′∆t < t ′ + ∆ Tqn < (k′ + 1)∆ t, 
+
+0, otherwise, (11) where ∆t is the uniform time-step size. This representation enables the field integrals to be expressed as discrete time convolutions, which are later assembled into the matrix system that updates the fields at each time step in MAS–GSTC. Here, 
+
+∆Tqn = P (q)˜mn ,n /c q (12) is a source-dependent temporal shift, accounting for the prop-agation delay between each auxiliary source element and its nearest observation point, with 
+
+P (q) 
+
+> mn
+
+= |ρm − ρ′
+
+> qn
+
+| (13) the Euclidean distance between the n-th source point on the q-th auxiliary curve and the m-th matching (observation) point on the physical curve C. The index ˜mn identifies the observation (testing) point that is geometrically closest to the n-th source on the q-th auxiliary curve, ensuring that 
+
+P (q)˜mn ,n = |ρ ˜mn − ρ′
+
+> qn
+
+| (14) corresponds to the minimum distance between the two. This choice guarantees that the temporal offset ∆Tqn represents the smallest possible propagation delay between the n-th auxiliary source and its corresponding testing point, thereby improving the stability and accuracy of the TD marching-on-in-time pro-cess. Since the auxiliary sources are positioned on surfaces displaced from the physical boundaries, the retarded tempo-ral discretization begins at t′ 
+
+> q
+
+= −P (q)˜mn,n /c q. This negative retarded time ensures that the fields radiated by the auxiliary sources reach the physical surface exactly when the incident wavefront arrives, i.e., at t = 0 .Substituting (9)-(10) into (7)-(8) and sampling the resulting equations at discrete time instants ti = ( i + 1)∆ t over the set of M matching points ρqm , we obtain, for each time step, the following discrete expressions for the electric field components 
+
+E(q) 
+
+> z
+
+(ρm, (i + 1)∆ t) = − ηq
+
+2πc q
+
+∑
+
+> n
+
+(i−⌊ κ(q) 
+
+> m,n ⌋− 1
+
+∑ 
+
+> k′=0
+
+I(k′ )
+
+> qn
+
+[W E(q) 
+
+> m,n
+
+(i − k′) − W E(q) 
+
+> m,n
+
+(i − k′ − 1) ]
+
++ I(i−⌊ κ(q)  
+
+> m,n ⌋)
+> qn
+
+W E(q) 
+
+> m,n
+
+(⌊κ(q)
+
+> m,n
+
+⌋)
+
+)
+
+, m = 1 , 2, . . . , M (15) IEEE TRANSACTIONS ON ANTENNAS AND PROPAGATION 5
+
+where κ(q) 
+
+> m,n
+
+= ( P (q) 
+
+> m,n
+
+− P (q)˜mn ,n )/(cq ∆t) and ⌊κ(q)
+
+> m,n
+
+⌋ denotes the greatest integer less than or equal to κ(q)
+
+> m,n
+
+, while 
+
+W E(q) 
+
+> m,n
+
+(x) = acosh 
+
+(
+
+cq ∆t
+
+P (q)
+
+> m,n
+
+[
+
+x + P (q)˜mn ,n 
+
+cq∆t
+
+]
+
++ 1 
+
+)
+
+. (16) Similarly, the magnetic field in each region is computed as 
+
+H(q)(ρm, (i + 1)∆ t) = 1
+
+2πc q
+
+∑
+
+> n
+
+(i−⌊ κ(q) 
+
+> m,n ⌋− 1
+
+∑ 
+
+> k′=0
+
+I(k′ )
+
+> qn
+
+[WH(q) 
+
+> m,n
+
+(i − k′) − WH(q) 
+
+> m,n
+
+(i − k′ − 1) ]
+
++ I(i−⌊ κ(q)  
+
+> m,n ⌋)
+> qn
+
+WH(q) 
+
+> m,n
+
+(⌊κ(q)
+
+> m,n
+
+⌋)
+
+)
+
+, m = 1 , 2, . . . , M (17) where 
+
+WH(q) 
+
+> m,n
+
+(x) = ˆz × ˆPm,n 
+
+√√√√
+
+(
+
+cq ∆t
+
+P (q)
+
+> m,n
+
+[
+
+x + P (q)˜mn ,n 
+
+cq∆t + 1 
+
+]) 2
+
+− 1
+
+(18) These equations provide the time-stepped evaluation of the scattered or transmitted fields in regions R1 and R2, respec-tively, as functions of the discretized auxiliary current ampli-tude derivatives. The same expressions are directly applicable to the TE z case through EM duality, by interchanging the roles of the electric and magnetic quantities. To incorporate the TD GSTC into MAS, the convolution integrals appearing in (6) are discretized in time using a uniform time step ∆t. As an example, the discretization of the first convolution term in the first equation of (6) is expressed as 
+
+a11 (t) ∗ E1y (t) = 
+
+> i
+
+∑ 
+
+> k′=0
+
+a11 
+
+(
+
+(i − k′)∆ t
+
+)
+
+E1y
+
+(
+
+ρm, (k′ + 1)∆ t
+
+)
+
+∆t, (19) with a11 
+
+(
+
+(i − k′)∆ t
+
+)
+
+the sampled impulse response associ-ated with the corresponding surface susceptibility element, and 
+
+E1y
+
+(
+
+ρm, (k′ + 1)∆ t
+
+)
+
+the tangential electric field evaluated at the m-th matching point and at time (k′ + 1)∆ t. This discrete convolution accounts for the accumulated effect of all past field values on the present response, thus ensuring causal behavior of the metasurface system. A similar temporal discretization procedure is applied to all other convolution terms involving 
+
+aij (t), bij (t), cij (t), and dij (t) in (6), yielding a fully discrete TD system suitable for numerical implementation within MAS. The final discretized GSTC is given in (A.1) for which, 
+
+[
+
+Z(j)
+
+{ EqHq }
+
+]
+
+> m,n
+
+= 1
+
+2πc q
+
+{−ηq
+
+∆t
+
+}
+
+W { EqHq } 
+
+> m,n
+
+(j) − W { EqHq } 
+
+> m,n
+
+(j − 1) , j > 
+
+⌊
+
+κ(q)
+
+> m,n
+
+⌋
+
+W { EqHq } 
+
+> m,n
+
+(j), j =
+
+⌊
+
+κ(q)
+
+> m,n
+
+⌋
+
+0, otherwise (20) 
+
+I(j) 
+
+> q
+
+=
+
+
+
+I(0) 
+
+> qj
+
+I(1) 
+
+> qj
+
+...
+
+I(N )
+
+> qj
+
+ , K(j) 
+
+> q
+
+=
+
+
+
+K(0) 
+
+> qj
+
+K(1) 
+
+> qj
+
+...
+
+K(N )
+
+> qj
+
+ ,
+
+V(j) 
+
+> E
+
+= ∆ t
+
+
+
+Einc  
+
+> z
+
+(ρ1, (j + 1)∆ t)
+
+Einc  
+
+> z
+
+(ρ2, (j + 1)∆ t)
+
+...
+
+Einc  
+
+> z
+
+(ρM , (j + 1)∆ t)
+
+ ,
+
+V(j) 
+
+> H
+
+= ∆ t
+
+
+
+Hinc  
+
+> y
+
+(ρ1, (j + 1)∆ t)
+
+Hinc  
+
+> y
+
+(ρ2, (j + 1)∆ t)
+
+...
+
+Hinc  
+
+> y
+
+(ρM , (j + 1)∆ t)
+
+ , j = 0 , 1, . . . (21) The solution of (A.1) leads to the computation of the amplitudes 
+
+I(k′ ) 
+
+> qn
+
+, and subsequently to the calculation of the fields in each region using (15) and (17) for observation points in R1 and R2
+
+(instead of boundary points as the equations imply). Before proceeding to the numerical results, it is useful to comment on the computational characteristics of the proposed TD–MAS formulation. The computational cost is mainly asso-ciated with the evaluation of the convolution terms appearing on the right-hand side of Eq. (A.1). The system matrix corresponds to the zero-time-step GSTC matrix and remains unchanged throughout the marching-on-in-time procedure; therefore, its pseudo-inverse is computed only once at the beginning of the simulation. At each subsequent time step, only the right-hand side of the system is updated. In particular, the convolution terms include contributions from all previously computed cur-rent vectors, and, thus, additional history terms are incorporated as the simulation progresses. The increase in computational effort with simulation time, therefore, originates from evalua-tion of these accumulated convolution contributions rather than from repeated matrix inversion. Regarding memory requirements, the impedance matrix de-pends only on the spatial discretization (number of auxiliary sources and matching points) and is independent of the total simulation duration. However, past current vectors must be stored to evaluate the convolution sums, and, thus, memory usage increases with the number of simulated time steps. III. N UMERICAL RESULTS AND DISCUSSION 
+
+This section presents a comprehensive set of numerical experiments that demonstrate the accuracy, stability, and ver-satility of the TD–MAS formulation combined with GSTC. We begin with a detailed workflow example involving an anisotropic (magnetostatically biased) graphene layer, which also serves to validate the method through error analysis and stability testing. This case highlights the full simulation pro-cedure—from parameter selection to field evaluation in each region—and establishes practical implementation guidelines. Subsequent sections examine a black phosphorus metasurface, which also exhibits anisotropic EM behavior, and an artificial metasurface characterized by Lorentzian surface susceptibili-ties. In all simulations, the parameters N1, N2, M , and ∆t6 IEEE TRANSACTIONS ON ANTENNAS AND PROPAGATION 
+
+collectively define the spatiotemporal resolution of the TD– MAS–GSTC method, as they determine the spatial sampling of the auxiliary sources and matching points, as well as the temporal marching accuracy. 
+
+A. Magnetostatically Biased Anisotropic Graphene Sheet Ex-cited by a Current Filament 
+
+Although the anisotropic graphene layer is not a metasurface in the conventional sense, it is nevertheless well suited as a test scenario for the proposed MAS–GSTC formulation. The con-sidered graphene layer is fully characterized by an anisotropic surface conductivity tensor of the form 
+
+σ =
+
+[σyy σyz 
+
+σzy σzz 
+
+]
+
+(22) where the off-diagonal terms σyz and σzy arise due to the Hall effect when a static magnetic bias B0 is applied normal to the graphene sheet. The components of the tensor in the FD are 
+
+σyy (ω, B 0) = σzz (ω, B 0) = σ0(1 + i ωτ )
+
+(ωcτ )2 + (1 + i ωτ )2 , (23) 
+
+σzy (ω, B 0) = −σyz (ω, B 0) = σ0 ωcτ
+
+(ωcτ )2 + (1 + i ωτ )2 , (24) with σ0 and ωc the DC conductivity and cyclotron frequency 
+
+σ0 = 2e2τ
+
+πℏ2 kB T ln 
+
+(
+
+2 cosh EF
+
+2kB T
+
+)
+
+, ωc = eB 0v2
+
+> F
+
+EF
+
+. (25) The surface electric susceptibility tensor entering the GSTC is related to the conductivity tensor through 
+
+χee (ω, B 0) = i
+
+ωε 0
+
+σ(ω, B 0), (26) leading to 
+
+χee =
+
+[χyy ee χyz ee 
+
+χzy ee χzz ee 
+
+]
+
+.
+
+Since graphene does not exhibit magnetic behavior, the corre-sponding magnetic susceptibility components are absent. This means that only the FD elements Aij and their TD correspon-dents aij (t) are not zero, even though the general MAS–GSTC formulation presented in Section II accounts for both electric and magnetic surface responses. For the simulations we have: 
+
+e = 1 .62 × 10 −19 C the elementary charge, τ = 0 .6 ps [46] the electron scattering time, ℏ = 1 .054 × 10 −34 J · s the reduced Planck constant, kB = 1 .380 × 10 −23 J/K the Boltzmann constant, T = 300 K the temperature, EF = 0 .5 eV the Fermi energy, vF = 10 6 m/s the Fermi velocity, and B0 = 1 T the 
+
+x-directed external magnetic bias applied to the graphene sheet. The convolution kernels aij (t) required by the TD–MAS formulation are obtained by applying IFT to (23) and (24). The resulting TD conductivities are given by 
+
+σyy (t) = σzz (t) = σ0
+
+τ e−t/τ cos( ωct), (27a) 
+
+σyz (t) = −σzy (t) = − σ0
+
+τ e−t/τ sin( ωct), (27b) These kernels are causal and exponentially decaying, and therefore no singular or impulsive contributions arise. In the numerical implementation, they are sampled directly at the marching time instants t = k∆t and used in the discrete convolution sums without truncation or windowing. Due to their exponential decay, contributions from sufficiently old time samples naturally become negligible in the simulation durations considered. The incident field is a transient TM z cylindrical wave gen-erated by a current filament. Due to the anisotropic nature of magnetically biased graphene, reflected and transmitted fields generally include also TE z components, resulting in polariza-tion conversion in addition to scattering. The source current is a differentiated Gaussian pulse with amplitude in Amperes, 
+
+I0(t) = −
+
+( t
+
+τp
+
+)
+
+exp 
+
+[
+
+0.5 − 0.5
+
+( t
+
+τp
+
+)2]
+
+, (28) where τp = 3 × 10 −14 s denotes the pulse width parameter, introduced here to distinguish it from the electron scattering time τ of graphene. The position of the source is set to 
+
+(xs, y s) = (−c0τp, 0) = (−9 μm, 0) with c0 the speed of light in vacuum. The Nyquist sampling interval for this differentiated Gaussian pulse is ∆t0 = 1 /(2 f0), with f0 the effective upper frequency bound of the pulse spectrum. This frequency is chosen such that the spectral amplitude satisfies 
+
+I0(f = f0) = 10 −4 I0(f = 0) . (29) Based on this criterion, the cutoff frequency and sampling inter-val are approximated as f0 ≈ 1.932 /τ p and ∆t0 ≈ τp/3.864 ,respectively. For the present setup, this gives τp = 3 × 10 −14 s,
+
+f0 = 64 .355 THz , and ∆t0 ≈ 7.769 × 10 −15 s. This frequency content ensures that only the intraband term of graphene’s susceptibility is relevant, consistent with the expressions given in (23)-(24), which consider solely the intraband contribution. 
+
+a) Boundary Error and Stability: To verify the accuracy and temporal robustness of the proposed formulation, we first examine the boundary condition error defined in (30) in which all field quantities are evaluated at (y, t ), and ∗ denotes convo-lution with respect to t with the modified kernels 
+
+˜b12 (t) = b12 (t) − δ(t), ˜b′
+
+> 12
+
+(t) = b12 (t) + δ(t),
+
+˜b21 (t) = b21 (t) + δ(t), ˜b′
+
+> 21
+
+(t) = b21 (t) − δ(t),
+
+˜d12 (t) = d12 (t) + δ(t), ˜d′
+
+> 12
+
+(t) = d11 (t) − δ(t),
+
+˜d21 (t) = d21 (t) + δ(t), ˜d′
+
+> 21
+
+(t) = d21 (t) − δ(t),
+
+where δ(t) is the delta function. Figure 2(a) illustrates the temporal evolution of this error for two combinations of 
+
+(N1, N 2, M, ∆t). Finer spatial and temporal resolutions yield noticeably improved convergence behavior, confirming the method’s numerical consistency. Although the TD MAS–GSTC scheme exhibits adequate accuracy, it is not strictly unconditionally stable. At long sim-ulation times, numerical instabilities may emerge once the accumulated boundary error exceeds a tolerable level, defining a maximum stable duration Tmax . In the present work, Tmax is defined as the largest time instant for which the boundary error (30) remains below −25 dB, i.e., 
+
+Tmax = max {t : Error( t) ≤ − 25 dB } .
+
+Beyond this time instant, the accumulated marching-on-in-time and convolutional contributions lead to rapid growth of IEEE TRANSACTIONS ON ANTENNAS AND PROPAGATION 7
+
+the boundary error, indicating numerical instability. As shown in Fig. 2(b), this stability limit can be substantially extended by positioning the auxiliary surfaces closer to the physical interface. This adjustment improves numerical conditioning and delays the onset of divergence without any increase in computational cost.               
+
+> t(s) ×10 -13
+> 0246
+> Error  (dB)
+> -120 -100 -80 -60 -40 -20
+> N1=N 2=15, M=63, ∆t=0.5 ∆t0
+> N1=N 2=21, M=85, ∆t=0.39 ∆t0
+> N1=N 2=29, M=117, ∆t=0.34 ∆t0
+
+(a)        
+
+> t(s) ×10 -13
+> 02468
+> Error  (dB)
+> -50 050 x(1) aux =0.76|x s|, x (2) aux =-0.76|x s|,
+> x(1) aux =0.8|x s|, x (2) aux =-0.8|x s|
+
+(b)          
+
+> t(s) ×10 -13
+> 0246
+> Error  (dB)
+> -100 -50 0
+> dmp =4.8 πc0τp/M
+> dmp =4.4 πc0τp/M
+> dmp =3.2 πc0τp/M
+> dmp =2.8 πc0τp/M
+
+(c) Fig. 2. (a) Temporal evolution of the boundary error for three different spatio-temporal resolutions (N1, N 2, M, ∆t). (b) Effect of auxiliary surface placement on numerical stability for N1 = N2 = 21 , M = 85 , and 
+
+∆t = 0 .39 ∆ t0.(c) Effect of dmp on the boundary error for N1 = N2 = 21 ,
+
+M = 85 .
+
+To further quantify the dependence of the stability limit on auxiliary-surface placement and source position, we performed a systematic parametric study under the fixed spatiotemporal resolution N1 = N2 = 21 , M = 85 , and ∆t = 0 .39 ∆ t0.The resulting values of Tmax are summarized in Table I. It is observed that for moderate source distances ( xs = −c0τp
+
+and xs = −2c0τp), positioning the auxiliary surfaces within the range 0.7c0τp ≤ | xaux | < 0.8c0τp significantly extends the stability duration. Larger auxiliary distances (e.g., |xaux | =0.84 c0τp) lead to a reduction in Tmax . For very small source distances ( xs = −c0τp/5), improved stability is achieved for auxiliary surfaces placed approximately at the same distance as the source (i.e., |xaux | ≈ | xs|), together with a slight reduc-tion in dmp . These observations provide practical guidance for auxiliary-surface positions maximizing stability. 
+
+TABLE I 
+
+Tmax VALUES WITH RESPECT TO THE POSITION OF THE AUXILIARY SURFACES FOR THREE DIFFERENT POSITIONS OF THE EXCITATION SOURCE 
+
+xs (x(1) aux , x (2) aux ) dmp Tmax 
+
+−c0τp
+
+(−0.84 c0τp, +0 .84 c0τp) 3.2πc 0τp/M 92∆ t
+
+(−0.80 c0τp, +0 .80 c0τp) 3.2πc 0τp/M 120∆ t
+
+(−0.70 c0τp, +0 .70 c0τp) 3.2πc 0τp/M > 300∆ t
+
+−2c0τp
+
+(−0.84 c0τp, +0 .84 c0τp) 3.2πc 0τp/M 94∆ t
+
+(−0.80 c0τp, +0 .80 c0τp) 3.2πc 0τp/M 126∆ t
+
+(−0.70 c0τp, +0 .70 c0τp) 3.2πc 0τp/M > 300∆ t
+
+− c0τp
+
+5
+
+(
+
+− c0τp
+
+5 , + c0τp
+
+5
+
+)
+
+2.6πc 0τp/M > 300∆ t
+
+It should be noted that unlike grid-based TD methods, the proposed TD–MAS formulation does not follow a Courant– Friedrichs–Lewy (CFL) stability condition that limits the time step according to the spatial discretization. Instead, instability in TD–MAS may appear after long simulation times due to the gradual accumulation of numerical errors during the marching-on-in-time procedure and the contribution of past field values through the convolution terms. As a result, although TD–MAS– GSTC is not unconditionally stable in the strict CFL sense, the stable simulation time can be extended by properly position-ing the auxiliary surfaces and selecting suitable discretization parameters, as demonstrated by Table I. 
+
+b) Implementation Guidelines: Based on the preceding analysis, the following workflow is proposed for setting up simulations (it applies also to the black phosphorus case) 1) Specify τp such that the frequency content of the incident pulse (in the THz region) is appropriate to justify the use of only the intraband term of graphene’s conductivity. 2) Place the excitation source at any point along the x-axis. 3) Start with N1 = N2 = 15 and M = 4 N1 + 3 .4) The auxiliary surfaces are initially placed at x(1) aux =0.8c0τp, x(2) aux = −0.8c0τp, and must always satisfy 
+
+|xaux | < |xs| to ensure causal consistency (otherwise the incident field reaches the matching points before the scattered contribution). If the source is placed such that 
+
+|xs| ≤ | x(1) aux |, then both auxiliary-surface positions are reduced so that |x(1) aux |, |x(2) aux | < |xs|.5) Set the spacing between successive matching points to 
+
+dmp = 3 .2πc 0τp/M , and that between successive source points to daux = ( M/N )dmp . When |xs| ≤ c0τp/4, a slight reduction of dmp improves the boundary error. 6) If the boundary error exceeds the desired tolerance (e.g., above −25 dB ), increase the number of sources and matching points following the empirical rule N1 =
+
+N2, M = 4 N1 + 3 , and reduce the time step ∆t.7) When time reaches Tmax , move the auxiliary surfaces closer to the physical boundary to enhance stability. At this point, it is useful to clarify the choice of the matching-point spacing dmp , as its specific value may appear arbitrary at first glance. The selection dmp = 3 .2πc 0τp/M is not ad hoc. An initial value dmp = 2 πc 0τp/M was considered based on analogous TD–MAS formulations for cylindrical scatterers [31], [32], where 2πc 0τp corresponds to the circumference of a circle of radius c0τp and provides stable sampling when matching points are uniformly distributed along that contour. However, for the planar metasurface configuration examined here, this spacing was found to reduce stability due to the different geometric distribution of retarded-time contributions. Systematic numerical experiments showed that increasing the spacing to dmp = 3 .2πc 0τp/M (or slightly reducing it when the source is placed very close to the metasurface) improves the boundary condition error and significantly extends Tmax .This value therefore represents a practical compromise between stability and accuracy for the planar TD–MAS–GSTC formula-tion. To further assess the robustness of the recommended 
+
+dmp (and essentially daux due to their relation daux =8 IEEE TRANSACTIONS ON ANTENNAS AND PROPAGATION 
+
+(M/N )dmp ), we performed a concise sensitivity study by varying dmp around the proposed value, while keeping all other discretization parameters fixed. In addition to the baseline choice dmp = 3.2πc 0τp/M the values dmp =4.8πc 0τp/M, 4.4πc 0τp/M, 2.8πc 0τp/M were examined. The resulting boundary-error evolution is shown in Fig. 2(c). It is observed that increasing dmp above the recommended value preserves stability over the considered time window but leads to noticeably increased boundary residual. Conversely, reduc-ing dmp below the recommended value significantly decreases 
+
+Tmax , indicating reduced stability margin. These results con-firm that the selected value dmp = 3 .2πc 0τp/M lies within a stable operating window that balances boundary-condition error and stability. Although the numerical experiments for extracting the above stability and discretization rules were performed for the anisotropic graphene case, the same geometric considerations apply to the black phosphorus configuration and, more gen-erally, to any metasurface excited by a localized point source. In all such cases, the auxiliary-surface placement must satisfy the same ordering condition relative to the source position, and the matching-point spacing rule remains unchanged. For the Lorentzian metasurface, where the excitation is a Gaussian-pulsed plane beam rather than a localized filament, the same principles for auxiliary-surface positioning and matching-point spacing apply. Since the excitation is not associated to a single localized source position, the auxiliary placement is selected relative to the characteristic spatial scale c0τp of the pulse, and no additional source-distance constraint is required. 
+
+c) Final Parameters and Field Results: Based on the above process, the final discretization parameters are 1) Position of the source: xs = −c0τp = −9 μm
+
+2) Auxiliary surfaces: x(1) aux = 0 .76 |xs|, x(2) aux = −0.76 |xs|.
+
+3) Number of sources: N1 = 21 , N2 = 21 
+
+4) Matching points: M = 85 
+
+5) Distance between successive source and matching point: 
+
+daux = ( M/N )dmp , with dmp ≈ 1.064 μm.6) Time step: ∆t = 0 .4∆ t0
+
+With these choices, the method provides accurate and stable results. Validation of the MAS results was carried out using 2145 FD samples computed with COMSOL Multiphysics over the range 33 .333 GHz ≤ f ≤ 71 .506 THz , followed by application of the IFFT on the samples. It is noted that since the COMSOL version employed did not implement GSTCs, the graphene layer was modeled as a surface current boundary con-dition, taking into account its anisotropic surface conductivity tensor. For the intraband graphene model considered here, the surface current satisfies J = σ Et (where Et the total tangential electric field on the boundary), and since the conductivity tensor is related to the electric surface susceptibility through 
+
+σ = i ωε 0χee , this surface-current representation is equivalent to the electric-type GSTC formulation used in the TD–MAS model. Figs. 3(a), (b) and Figs. 3(c), (d) show the scattered z-directed electric and magnetic fields in the two regions, E(1) 
+
+> z
+
+(H(1)  
+
+> z
+
+) and E(2)  
+
+> z
+
+(H(2)  
+
+> z
+
+), demonstrating that the MAS–GSTC method achieves good agreement with the COMSOL results. 
+
+d) Resolution Sensitivity Study: To examine the influence of spatio-temporal resolution on numerical accuracy, we per-formed a systematic refinement study for the graphene meta-surface example. Three resolution levels were considered:  
+
+> •
+
+Low resolution: N1 = N2 = 15 , M = 63 , ∆t = 0 .5∆ t0, 
+
+> •
+
+Mid resolution: N1 = N2 = 21 , M = 85 , ∆t = 0 .39∆ t0, 
+
+> •
+
+High resolution: N1 = N2 = 29 , M = 117 , ∆t =0.34∆ t0,while keeping the auxiliary-surface placement consistent with the implementation guidelines. Fig. 2(a) shows the boundary error evolution for the three resolutions. Reduction in boundary error is observed as the spatial and temporal discretization is refined. In particu-lar, the high-resolution configuration exhibits both improved boundary-condition enforcement and delayed onset of insta-bility. To further quantify accuracy, the instantaneous relative field error (in dB) between the TD–MAS solution and the reference solution is computed for both the reflected Ez and 
+
+Hz components. The relative electric field error is defined as 
+
+erel (t) (dB) = 20 log 10 
+
+|ETD -MAS (t) − Eref (t)|
+
+max |Eref (t)| , (31) where ETD -MAS is the TD-MAS computed electric field and 
+
+Eref is the reference field which in the anisotropic graphene case is the field by FD-COMSOL combined with IFFT. An analogous relative error can be defined for the magnetic field. The plots in Figs. 3 (e) and (f) demonstrate a generally im-proved performance of the error with increasing resolution. 
+
+B. Anisotropic Black Phosphorus Sheet Excited by a Current Filament 
+
+Black phosphorus (BP) is another 2-D material that exhibits in-plane anisotropy. Its EM response is characterized by a 
+
+Error (dB) = 20 log 10 
+
+
+
+max 
+
+> y∈C
+
+∣∣∣∣∣∣∣∣∣∣
+
+a11 ∗ E1y + ˜b′ 
+
+> 12
+
+∗ H1z a11 ∗ E2y + ˜b12 ∗ H2z a12 ∗ Esc  
+
+> 1z
+
++ b11 ∗ Hsc  
+
+> 1y
+
+a12 ∗ E2z + b11 ∗ H2y
+
+a21 ∗ E1y + b22 ∗ H1z a21 ∗ E2y + b22 ∗ H2z a22 ∗ Esc  
+
+> 1z
+
++ ˜b21 ∗ Hsc  
+
+> 1y
+
+a22 ∗ E2z + ˜b′ 
+
+> 21
+
+∗ H2y
+
+d11 ∗ E1y + c12 ∗ H1z d11 ∗ E2y + c12 ∗ H2z ˜d12 ∗ Esc  
+
+> 1z
+
++ c11 ∗ H1y ˜d′ 
+
+> 12
+
+∗ E2z + c11 ∗ H2y
+
+˜d′ 
+
+> 21
+
+∗ E1y + c22 ∗ H1z ˜d21 ∗ E2y + c22 ∗ H2z d22 ∗ Esc  
+
+> 1z
+
++ c21 ∗ Hsc  
+
+> 1y
+
+d22 ∗ E2z + c21 ∗ H2y
+
+∣∣∣∣∣∣∣∣∣∣
+
+max 
+
+> t
+
+max 
+
+> y∈C
+
+∣∣∣∣∣∣∣∣∣∣
+
+−a12 ∗ Einc z − b11 ∗ Hinc y
+
+−a22 ∗ Einc z − ˜b21 ∗ Hinc y
+
+− ˜d12 ∗ Einc z − c11 ∗ Hinc y
+
+−d22 ∗ Einc z − c21 ∗ Hinc y
+
+∣∣∣∣∣∣∣∣∣∣
+
+(30) IEEE TRANSACTIONS ON ANTENNAS AND PROPAGATION 9                                                               
+
+> t(s) ×10 -13
+> 01234
+> E(1)
+> z (V/m)
+> ×10 6
+> -2 -1 01FD FEM
+> TD MAS
+> (a)
+> t(s) ×10 -13
+> 01234
+> E(2)
+> z (V/m)
+> ×10 6
+> -5 0510 FD FEM
+> TD MAS
+> (b)
+> t(s) ×10 -13
+> 0246
+> H(1)
+> z (A/m)
+> -200 0200
+> FD FEM
+> TD MAS
+> (c)
+> t(s) ×10 -13
+> 0246
+> H(2)
+> z (A/m)
+> -200 0200
+> FD FEM
+> TD MAS
+> (d)
+> t(s) ×10 -13
+> 01234
+> erel  (dB)
+> -120 -100 -80 -60 -40
+> Low Res.
+> Mid Res.
+> High Res.
+> (e)
+> t(s) ×10 -13
+> 01234
+> erel  (dB)
+> -120 -100 -80 -60 -40
+> Low Res.
+> Mid Res.
+> High Res.
+> (f) Fig. 3. Transient z-directed field components for the anisotropic graphene metasurface: (a) reflected E(1)
+> z, (b) transmitted E(2)
+> z, (c) reflected H(1)
+> z, and (d) transmitted H(2)
+> z. Fields are sampled at (x1, y 1)=(−0.1|xs|,0) in region R1and (x2, y 2) = (0 .1|xs|,0) in region R2. Instantaneous relative field error erel for the reflected (e) electric E(1)
+> zand (f) magnetic H(1)
+> zfields.
+
+diagonal electric surface conductivity tensor, where the two principal components correspond to the so-called “armchair” (y-direction) and “zigzag” ( z-direction) crystal orientations. These components generally take different values, rendering BP intrinsically anisotropic. The anisotropic surface conductivity of BP is described by a semiclassical Drude model as 
+
+σs,jj (ω) = Dj
+
+π (iω + ηe
+
+> ℏ
+
+) , j ∈ { y, z }, (32) where ηe is the electron relaxation rate, and Dj = πe 2nsj /m j
+
+denotes the Drude weight. Here, nsj is the electron surface carrier concentration and mj represents the electron effective mass along the j-th in-plane direction. The effective masses along the y (armchair) and z (zigzag) directions are 
+
+my = ℏ2 
+
+> 2γ2
+> ∆BP
+
++ ηc
+
+, mz = ℏ2
+
+2vc
+
+, (33) where γ = 4 d/π , ηc = ℏ2/(0 .4m0), and vc = ℏ2/(1 .4m0).In these expressions, ∆BP is the thickness-dependent band-gap of black phosphorus, d is the thickness of the layer, and 
+
+m0 = 9 .109 × 10 −31 kg denotes the electron rest mass. Here, the parameters are set to [45] ∆BP = 2 eV , ηe = 10 meV ,
+
+nsj = 10 13 cm −2, and d = 0 .223 nm . The corresponding electric surface susceptibilities are then obtained via 
+
+χjj ee (ω) = σs,jj (ω)
+
+iωε 0
+
+, j ∈ { y, z }. (34) This means that only the diagonal FD elements Ajj and their TD correspondents ajj (t) are not zero. The convolution kernels ajj (t) are obtained by applying IFT to the FD expressions of the surface conductivity tensor asso-ciated with the semiclassical Drude model of black phosphorus (32). This yields the exact TD conductivities 
+
+σyy (t) = Dy
+
+π exp 
+
+(
+
+− ηe
+
+ℏ t
+
+)
+
+, (35a) 
+
+σzz (t) = Dz
+
+π exp 
+
+(
+
+− ηe
+
+ℏ t
+
+)
+
+. (35b) As in the graphene case, the kernels are sampled at the march-ing time instants and employed directly in the discrete convolu-tion sums without truncation or windowing. The anisotropic BP layer is illuminated by a TD electric current filament at (xs, y s) = (−57 μm, 0) . The incident field generated by this source corresponds to a transient TM z
+
+cylindrical wave. The source current is expressed by the same differentiated Gaussian pulse as in the graphene case, given by (28), with τp = xs/c 0. For the present configuration, this yields τp ≈ 1.901 × 10 −13 s, resulting in a sampling interval 
+
+∆t0 = 4.920 × 10 −14 s and an effective cutoff frequency 
+
+f0 ≈ 10 .161 THz . These parameters ensure that the excitation spectrum remains in the frequency range where the semiclassi-cal Drude model accurately describes the EM behavior of BP. According to the MAS–GSTC formulation described in Sec-tion II, two auxiliary surfaces, C(1) aux and C(2) aux , are introduced on either side of the BP layer. Following the same workflow procedure as in the anisotropic graphene case, the optimal positions of these surfaces were found to be 
+
+x(1) aux = 0 .76 |c0τp|, x(2) aux = −0.76 |c0τp|. (36) Each auxiliary surface hosts N1 = N2 = 21 sources, while 
+
+M = 85 temporal matching points are employed with a time step ∆t = 0 .39∆ t0. The spacing between successive auxiliary sources on both surfaces is set to daux = ( M/N )dmp = 27 nm ,and the separation between consecutive matching points is 
+
+dmp = 6 .67 nm . These parameters were determined to provide satisfactory numerical stability and an acceptably low boundary error over the simulation time window. The results obtained from the MAS–GSTC implementation are presented in the Fig. 4, where the transmitted z-directed electric field E(2)  
+
+> z
+
+and the y-directed magnetic field H(2)  
+
+> y
+
+are plotted for: (1) the “armchair” conductivity oriented along the 
+
+y-direction and the “zigzag” conductivity along the z-direction, and (2) the “armchair” conductivity oriented along the z-direction and the “zigzag” conductivity along the y-direction. The observed differences between these two cases illustrate the in-plane anisotropy of BP. In addition, we plot in Figs. 4(c) and (d) the relative error erel (for both cases) defined in (31) with reference solutions obtained by FD–COMSOL and IFFT. 10 IEEE TRANSACTIONS ON ANTENNAS AND PROPAGATION                                            
+
+> t(s) ×10 -12
+> 00.5 11.5 2
+> E(2)
+> z (V/m)
+> ×10 6
+> -1 01
+> FD FEM
+> TD MAS
+> TD MAS
+> FD FEM
+> ×10 -12
+> 11.1 1.2
+> ×10 6
+> 11.2 1.4 1.6
+> (a)
+> t(s) ×10 -12
+> 00.5 11.5 2
+> H(2)
+> y (A/m)
+> -4000 -2000 02000
+> FD FEM
+> TD MAS
+> FD FEM
+> TD MAS
+> ×10 -12
+> 1.1 1.2 1.3
+> -4000 -3000 -2000
+> (b)
+> t(s) ×10 -12
+> 01234
+> erel  (dB)
+> -100 -80 -60 -40
+> (c)
+> t(s) ×10 -12
+> 1234
+> erel  (dB)
+> -100 -80 -60 -40
+> (d) Fig. 4. Transient field components for the anisotropic black phosphorus metasurface: (a) Ezand (b) Hyin region R2(transmitted fields), for both crystallographic orientations—armchair along y, zigzag along z(blue dots and lines) and the reverse (red dots and lines). Inset plots show the small difference due to anisotropy. Observation point: (x2, y 2) = (0 .1|xs|,0) in
+> R2. Instantaneous relative field error erel for the: (c) transmitted electric field
+> E(2)
+> zand (d) transmitted magnetic field H(2)
+> y.
+
+C. Artificial Lorentzian Metasurface Excited by a Gaussian-Pulsed Plane Wave 
+
+In this example, we consider an artificial metasurface char-acterized by Lorentzian-type electric and magnetic surface sus-ceptibilities [40]. For simplicity, only two nonzero susceptibil-ity components are assumed, namely χ(yy ) 
+
+> ee
+
+and χ(zz ) 
+
+> mm
+
+, given by 
+
+χ(yy ) 
+
+> ee
+
+(ω) = ω2
+
+> ep
+
+ω2 
+
+> e0
+
+− ω2 + i aeω , (37) 
+
+χ(zz ) 
+
+> mm
+
+(ω) = ω2
+
+> mp
+
+ω2 
+
+> m0
+
+− ω2 + i amω . (38) This means that only the FD elements A11 , C22 of (3), (2) and their TD counterparts a11 (t), c22 (t) are not zero. In (37) ωp,
+
+ω0, and a are the plasma frequency, resonant frequency, and the loss factor respectively. The subscripts e and m denote electric and magnetic quantities. These expressions correspond to the standard Lorentzian dispersion model, which can, in general, include multiple resonant terms but is here reduced to a single resonance for each susceptibility since higher-order resonances are negligible within the considered frequency range. The convolution kernels are extracted from the FD expres-sions of the surface susceptibilities via an IFT and given by 
+
+χyy ee (t) = ε0ω2 
+
+> ep
+
+exp 
+
+(
+
+− αe
+
+2 t
+
+)(
+
+cos( ωe0t) − αe 
+
+> 2ωe0
+
+sin( ωe0t)
+
+)
+
+2 , (39a) 
+
+χzz mm (t) = μ0ω2 
+
+> mp
+
+exp 
+
+(
+
+− αm
+
+2 t
+
+)(
+
+cos( ωm0t) − αm 
+
+> 2ωm0
+
+sin( ωm0t)
+
+)
+
+2 (39b) Also here, the kernels are sampled at the marching time instants and do not require truncation or windowing. In the present numerical investigation, we assume that the plasma and loss parameters are identical for both electric and magnetic responses, i.e., ωmp = ωep and am = ae. Two distinct scenarios are examined depending on the values of the resonant frequencies ωm0 and ωe0: (1) the matched case ,where ωm0 = ωe0, leading to negligible reflection and nearly complete transmission through the metasurface, and (2) the 
+
+mismatched case , where ωm0 6 = ωe0, resulting in both reflected and transmitted fields. Since such a Lorentzian metasurface realistically, exhibits a narrow-band response around its resonant frequency, it cannot be meaningfully excited by a broadband transient source, such as the differentiated Gaussian filament used above. Instead, a TD Gaussian-pulsed plane wave is employed to provide a controlled, band-limited excitation centered around a desired frequency. Specifically, we consider a normally incident TE z-polarized Gaussian-pulsed plane wave, centered at frequency 
+
+f0, with a temporal pulse width τp and a transverse beam width equal to the free-space wavelength λ0 = c0/f 0. The incident transient magnetic field is defined as 
+
+Hinc  
+
+> z
+
+(x, y, t ) = exp 
+
+(
+
+− y2
+
+λ20
+
+)
+
+exp 
+
+[
+
+− (t − x/c 0)2
+
+τ 2
+
+> p
+
+]
+
+cos( ω0t),
+
+(40) where ω0 = 2πf 0. This field represents a Gaussian-pulsed beam that propagates along the positive x-direction while at-tenuating transversely away from the y-axis. The parameters used in this simulation are as follows: the central frequency is set to f0 = 230 THz , the pulse width to 
+
+τp = 8 × 10 −15 s, and the electric and magnetic loss factors are ae = am = 7 .54 × 10 12 . The plasma frequency is taken as ωep = ωmp = 3 .01 × 10 11 rad /s. For the matched case ,
+
+ωe0 = ωm0 = 2 π × 230 THz , resulting in negligible reflection and nearly perfect transmission through the metasurface. In contrast, for the mismatched case , ωe0 − ωm0 = 2 π × 25 THz ,which produces both reflected and transmitted fields. In accordance with the MAS–GSTC framework, and by following a similar workflow with the previous cases, we have 
+
+x(1) aux = 0.27 c0τp = 0.647 μm and x(2) aux = 0.27 c0τp =
+
+−0.647 μm. The number of temporal matching points was set to M = 81 , with a spacing of dmp = 1 .2πc 0τp/M ≈
+
+0.111 μm. Each auxiliary surface hosts N = 21 sources, spaced at intervals of daux = ( M/N )dmp . Lastly the time step is set at 
+
+∆t ≈ 0.26 fs . These parameters ensured satisfactory numerical stability and a sufficiently low boundary error, consistent with the procedure outlined in Section II. The TD results are presented in Fig. 5, illustrating the trans-mitted and reflected transient fields for the matched and mis-matched cases. As expected, the matched configuration yields a negligible reflected field, while the mismatched configuration exhibits clear reflection alongside transmission. The MAS– GSTC results were validated against those of a FD MAS solver IEEE TRANSACTIONS ON ANTENNAS AND PROPAGATION 11 
+
+[37], followed by IFFT of 4089 frequency samples covering the spectral bandwidth 0.234 THz − 1923 THz which is much larger than that of the incident Gaussian pulse. Figs. 5(e) and (f) show the relative error erel , defined in (31), for the mismatched case with reference solutions by FD–MAS and IFFT.                                                               
+
+> t(s) ×10 -14
+> 02468
+> H(1)
+> z (A/m)
+> -1 -0.5 00.5 1
+> FD MAS
+> TD MAS
+> (a)
+> t(s) ×10 -14
+> 02468
+> H(2)
+> z (A/m)
+> -0.5 00.5 FD MAS
+> TD MAS
+> (b)
+> t(s) ×10 -14
+> 02468
+> H(1)
+> z (A/m)
+> -0.5 00.5 TD MAS
+> FD MAS
+> (c)
+> t(s) ×10 -14
+> 02468
+> H(2)
+> z (A/m)
+> -0.5 00.5 FD MAS
+> TD MAS
+> (d)
+> t(s) ×10 -14
+> 0246
+> erel  (dB)
+> -100 -80 -60 -40
+> (e)
+> t(s) ×10 -14
+> 0246
+> erel  (dB)
+> -80 -60 -40
+> (f) Fig. 5. Time-domain Hzfield responses in regions R1and R2for the artificial Lorentzian metasurface. (a)–(b) Matched configuration and (c)–(d) mismatched configuration. Observation points: (x1, y 1)=(−0.1|c0τp|,0) in R1and
+> (x2, y 2)=(0 .1|c0τp|,0) in R2. Instantaneous relative error erel for the mismatched case for the: (e) reflected field H(1)
+> zand (f) transmitted field H(2)
+> z.
+
+D. Computational Performance 
+
+To evaluate the computational performance of the proposed TD–MAS method, we compare CPU time and peak memory usage with the reference solvers used for validation in this work. A direct comparison with grid-based TD methods is not considered, since stable FDTD or TD-FEM simulations of dispersive metasurfaces require specialized implementation and tuning, which was not available in the present study. In-stead, performance is assessed here via comparisons with FD-COMSOL and FD-MAS simulations combined with IFFT of the results. All simulations were performed on a workstation equipped with an Intel Xeon W-2133 processor (3.6 GHz) and 48 GB of RAM. For the graphene and black-phosphorus examples, the proposed TD–MAS implementation required approximately 5 GB of RAM and about 50 minutes of CPU time to complete the full broadband transient simulation. For the same physical configurations, the corresponding FD–COMSOL simulations required approximately 2.4 GB of RAM and about 110 minutes of CPU time. For the Lorentzian metasurface, comparison was carried out against the FD–MAS approach. The TD–MAS simulation required again 5 GB of RAM and 50 minutes of CPU time, whereas the FD–MAS solution required about 0.5 GB of RAM and approximately 105 minutes due to the need for multiple frequency-domain solutions followed by IFFT. It should be emphasized that the present TD–MAS code is far from being computationally optimized. We are confident that the application of standard optimization strategies rou-tinely employed in commercial electromagnetic solvers (such as COMSOL or Lumerical), including improved memory man-agement and optimized linear-algebra routines, can signifi-cantly reduce both CPU time and RAM usage. Still, even in its current non-optimized form, TD–MAS provides substantially reduced simulation time compared to both FD–COMSOL and FD–MAS, while delivering the complete broadband transient response within a single simulation. IV. C ONCLUSIONS 
+
+This work presented a comprehensive time-domain (TD) im-plementation of the Method of Auxiliary Sources (MAS) com-bined with the Generalized Sheet Transition Condition (GSTC) for the analysis of two-dimensional planar metasurfaces. The formulation, derived from the impedance-type GSTC, was ex-pressed in convolutional form to ensure causality and temporal accuracy. Through detailed theoretical derivations and a series of numerical experiments, we demonstrated that the proposed TD-MAS–GSTC approach models accurately field interactions across metasurfaces with complex surface responses. Validation was performed using representative scenarios, including mag-netostatically biased anisotropic graphene, black phos pho rus, and an artificial Lorentzian metasurface. The results confirmed the accuracy, stability, and versatility of the method when benchmarked against frequency-domain MAS and COMSOL simulations. In addition, practical implementation guidelines were provided to facilitate reliable parameter selection and ensure convergence. The proposed TD–MAS method is suitable for problems in-volving electrically thin metasurfaces placed within open or ho-mogeneous environments, where the electromagnetic response is mainly determined by surface interactions. A critical fact is that only the metasurface boundary is discretized, while the fields in the surrounding space are obtained analytically from the radiation of the auxiliary sources. As a result, broadband transient responses can be computed without discretizing the exterior region, which makes the method attractive for problems involving large free-space domains or broadband excitations. On the other hand, for problems involving strongly inhomo-geneous media or complex three-dimensional structures, grid-based numerical methods may be more appropriate. The TD– MAS should, therefore, be viewed as an efficient complemen-tary tool for TD analysis of dispersive metasurfaces rather than a replacement of existing numerical techniques. Future work will focus on extending the TD-MAS–GSTC formulation to spatially dispersive and eventually spacetime-modulated metasurfaces. 12 IEEE TRANSACTIONS ON ANTENNAS AND PROPAGATION                                                                                                                                                                          
+
+> 
+> A0,011 ,1y+B0,012 ,1z−ZH (0) 1z /∆tA0,011 ,2y+B0,012 ,2z+ZH (0) 2z /∆tA0,012 ,1z+B0,011 ,1yA0,012 ,2z+B0,011 ,2y
+> A0,021 ,1y+B0,022 ,1zA0,021 ,2y+B0,022 ,2zA0,022 ,1z+B0,021 ,1y+ZH (0) 1y /∆tA0,022 ,2z+B0,021 ,2y−ZH (0) 2y /∆t
+> D0,011 ,1y+C0,012 ,1zD0,011 ,2y+C0,012 ,2zD0,012 ,1z+ZE (0) 1z /∆t+C0,011 ,1yD0,012 ,2z−ZE (0) 2z /∆t+C0,011 ,2y
+> D0,021 ,1y−ZE (0) 1y /∆t+C0,022 ,1zD0,021 ,2y+ZE (0) 2y /∆t+C0,022 ,2zD0,022 ,1z+C0,021 ,1yD0,022 ,2z+C0,021 ,2y
+> 
+> K(i)1
+> K(i)2
+> I(i)1
+> I(i)2
+> 
+> =−
+> i−1∑
+> k′=0
+> 
+> Ai,k ′
+> 11 ,1y+Bi,k ′
+> 12 ,1z−ZH (i−k′)1z/∆tAi,k ′
+> 11 ,2y+Bi,k ′
+> 12 ,2z+ZH (i−k′)2z/∆tAi,k ′
+> 12 ,1z+Bi,k ′
+> 11 ,1yAi,k ′
+> 12 ,2z+Bi,k ′
+> 11 ,2y
+> Ai,k ′
+> 21 ,1y+Bi,k ′
+> 22 ,1zAi,k ′
+> 21 ,2y+Bi,k ′
+> 22 ,2zAi,k ′
+> 22 ,1z+Bi,k ′
+> 21 ,1y+ZH (i−k′)1y/∆tAi,k ′
+> 22 ,2z+Bi,k ′
+> 21 ,2y−ZH (i−k′)2y/∆t
+> Di,k ′
+> 11 ,1y+Ci,k ′
+> 12 ,1zDi,k ′
+> 11 ,2y+Ci,k ′
+> 12 ,2zDi,k ′
+> 12 ,1z+ZE (i−k′)1z/∆t+Ci,k ′
+> 11 ,1yDi,k ′
+> 12 ,2z−ZE (i−k′)2z/∆t+Ci,k ′
+> 11 ,2y
+> Di,k ′
+> 21 ,1y−ZE (i−k′)1y/∆t+Ci,k ′
+> 22 ,1zDi,k ′
+> 21 ,2y+ZE (i−k′)2y/∆t+Ci,k ′
+> 22 ,2zDi,k ′
+> 22 ,1z+Ci,k ′
+> 21 ,1yDi,k ′
+> 22 ,2z+Ci,k ′
+> 21 ,2y
+> 
+> K(k′)1
+> K(k′)2
+> I(k′)1
+> I(k′)2
+> 
+> +
+> 
+> −V ia12 ,E − V ib11 ,H
+> −V ia22 ,E − V ib21 ,H −V(i)
+> H/∆t
+> −V id12 ,E −V(i)
+> E/∆t− V ic11 ,H
+> −V id22 ,E − V ic21 ,H
+> 
+> .(A.1)
+
+APPENDIX ADISCRETIZED TD–MAS–GSTC M ATRIX EQUATION 
+
+The discretized TD-MAS-GSTC is written in a compact form via the following abbreviations for the convolution terms 
+
+A i,k ′
+
+mn,α ,
+
+k′
+
+∑
+
+j=0 
+
+amn 
+
+((i − j − k′)∆ t) ZE (j)
+
+α ,
+
+B i,k ′
+
+mn,α ,
+
+k′
+
+∑
+
+j=0 
+
+bmn 
+
+((i − j − k′)∆ t) ZH (j)
+
+α ,
+
+C i,k ′
+
+mn,α ,
+
+k′
+
+∑
+
+j=0 
+
+cmn 
+
+((i − j − k′)∆ t) ZH (j)
+
+α ,
+
+D i,k ′
+
+mn,α ,
+
+k′
+
+∑
+
+j=0 
+
+dmn 
+
+((i − j − k′)∆ t) ZE (j)
+
+α .
+
+The instantaneous contributions correspond to the special case 
+
+A0,0
+
+mn,α = amn (0) ZE (0) 
+
+α , B0,0
+
+mn,α = bmn (0) ZH (0) 
+
+α ,
+
+C0,0
+
+mn,α = cmn (0) ZH (0) 
+
+α , D0,0
+
+mn,α = dmn (0) ZE (0) 
+
+α .
+
+Lastly, for the incident file convolution sums, we have 
+
+V iamn ,E ,
+
+i∑
+
+k′ =0 
+
+amn 
+
+((i − k′)∆ t) V (k′ )
+
+E ,
+
+V ibmn ,H ,
+
+i∑
+
+k′ =0 
+
+bmn 
+
+((i − k′)∆ t) V (k′ )
+
+H ,
+
+V idmn ,E ,
+
+i∑
+
+k′ =0 
+
+dmn 
+
+((i − k′)∆ t) V (k′ )
+
+E ,
+
+V icmn ,H ,
+
+i∑
+
+k′ =0 
+
+cmn 
+
+((i − k′)∆ t) V (k′ )
+
+H .
+
+The abbreviated discretized TD-MAS-GSTC is given by (A.1). REFERENCES [1] Y. Luo, L. Guo, Y. Zuo, and W. Liu, “Time-domain scattering characteris-tics and jamming effectiveness in corner reflectors,” IEEE Access , vol. 9, pp. 15 696–15 707, 2021. [2] A. V. Muppala, A. Y. Nashashibi, E. Afshari, and K. Sarabandi, “Fast-Fourier Time-Domain SAR reconstruction for millimeter-wave FMCW 3-D imaging,” IEEE Trans. Microw. Theory Techn. , vol. 72, no. 12, pp. 7028–7038, Dec. 2024. [3] J. Carrasco-Garc´ ıa, D. Porras-Sanchiz, P. Carrasco-Garc´ ıa, J. L. Herrero-Pacheco, I. Mart´ ın-Nieto, J. M. Benito-Herrero, and P. Huerta-Hurtado, “Time-domain electromagnetics as a geophysical tool in hydrogeological exploitation projects in mesozoic formations,” Appl. Sci. , vol. 12, no. 17, p. 8655, 2022. [4] A. Parshin, A. Bashkeev, Y. Davidenko, M. Persova, S. Iakovlev, S. Bukhalov, N. Grebenkin, and M. Tokareva, “Lightweight unmanned aerial system for time-domain electromagnetic prospecting—the next stage in applied UAV-geophysics,” Appl. Sci. , vol. 11, no. 5, p. 2060, 2021. [5] C. Guo, W. Xu, M. Cai, S. Duan, J. Fu, and X. Zhang, “A review: Application of terahertz nondestructive testing technology in electrical insulation materials,” IEEE Access , vol. 10, pp. 121 547–121 560, 2022. [6] Q. Wang, L. Xie, and Y. Ying, “Overview of imaging methods based on terahertz time-domain spectroscopy,” Appl. Spectrosc. Rev. , vol. 57, no. 3, pp. 249–264, 2021. [7] C. L. Holloway, E. F. Kuester, J. A. Gordon, J. O’Hara, J. Booth, and D. R. Smith, “An overview of the theory and applications of metasurfaces: The two-dimensional equivalents of metamaterials,” IEEE Antennas Propag. Mag. , vol. 54, no. 2, pp. 10–35, 2012. [8] K. Achouri and C. Caloz, Electromagnetic Metasurfaces: Theory and Applications . John Wiley & Sons, 2021. [9] M. Nadi, A. Cheldavi, and S. H. Sedighy, “Beam steering toward multibeam radiation by time-coding metasurface antennas,” IEEE Trans. Antennas Propag. , vol. 72, no. 6, pp. 4829–4838, 2024. [10] R. Geromel, P. Georgi, M. Protte, S. Lei, T. Bartley, L. Huang, and T. Zentgraf, “Compact metasurface-based optical pulse-shaping device,” 
+
+Nano Lett. , vol. 23, no. 8, pp. 3196–3201, 2023. [11] X. Wang and C. Caloz, “Pseudorandom sequence (space–time-modulated) metasurfaces: Principles, operations, and applications,” IEEE Antennas Propag. Mag. , vol. 64, no. 4, pp. 135–144, 2022. [12] E. Mikheeva, C. Kyrou, F. Bentata, S. Khadir, S. Cueff, and P. Genevet, “Space and time modulations of light with metasurfaces: Recent progress and future prospects,” ACS Photonics , vol. 9, no. 5, pp. 1458–1482, 2022. [13] Q. Ren, S. Yan, and A. Z. Elsherbeni, Advances in Time-Domain Compu-tational Electromagnetic Methods . John Wiley & Sons, 2022. [14] S. Gedney, Introduction to the Finite-Difference Time-Domain (FDTD) Method for Electromagnetics . Springer Nature, 2022. [15] F. L. Teixeira, C. Sarris, Y. Zhang, D.-Y. Na, J.-P. Berenger, Y. Su, M. Okoniewski, W. C. Chew, V. Backman, and J. J. Simpson, “Finite-difference time-domain methods,” Nat. Rev. Methods Primers , vol. 3, no. 1, p. 75, 2023. [16] Comsol Multiphysics, Comsol, Inc., 2022. [17] J. Alvarez, L. Angulo, A. Rubio Bretones, and S. G. Garcia, “A spurious-free discontinuous Galerkin time-domain method for the accurate mod-eling of microwave filters,” IEEE Trans. Microw. Theory Techn. , vol. 60, no. 8, pp. 2359–2369, Aug 2012. [18] L. D. Angulo, J. Alvarez, M. F. Pantoja, S. G. Garcia, and A. R. Bretones, “Discontinuous Galerkin time domain methods in computational elec-IEEE TRANSACTIONS ON ANTENNAS AND PROPAGATION 13 
+
+trodynamics: State of the art,” Forum Electromagn. Res. Methods Appl. Technol. , vol. 10, no. 4, pp. 1–24, 2015. [19] T. Takahashi, “A fast time-domain boundary element method for three-dimensional electromagnetic scattering problems,” J. Comput. Phys. , vol. 482, p. 112053, 2023. [20] R. Chen and H. Bagci, “Explicit solution of time domain scalar po-tential surface integral equations for penetrable scatterers,” in IEEE International Symposium on Antennas and Propagation and USNC-URSI National Radio Science Meeting , 2020, pp. 1001–1002. [21] P. J. Papakanellos, N. L. Tsitsas, and H. T. Anastassiu, “The method of auxiliary sources (MAS) in computational electromagnetics: A compre-hensive review of advancements over the past two decades,” Electronics ,vol. 13, no. 17, 2024. [22] D. I. Kaklamani and H. T. Anastassiu, “Aspects of the method of auxil-iary sources (MAS) in computational electromagnetics,” IEEE Antennas Propag. Mag. , vol. 44, no. 3, pp. 48–64, 2002. [23] G. Fairweather, A. Karageorghis, and P. A. Martin, “The method of fundamental solutions for scattering and radiation problems,” Engineer. Anal. Boundary Elem. , vol. 27, pp. 759–769, 2003. [24] A. H. D. Cheng, C. S. Chen, and A. Karageorghis, An Introduction to the Method of Fundamental Solutions . Singapore: World Scientific, 2025. [25] Y. Leviatan, A. Boag, and A. Boag, “Generalized formulations for electro-magnetic scattering from perfectly conducting and homogeneous material bodies-theory and numerical solution,” IEEE Trans. Antennas Propag. ,vol. 36, no. 12, pp. 1722–1734, 1988. [26] N. L. Tsitsas, G. P. Zouros, G. Fikioris, and Y. Leviatan, “On methods employing auxiliary sources for 2-D electromagnetic scattering by non-circular shapes,” IEEE Trans. Antennas Propagat. , vol. 66, no. 10, pp. 5443–5452, 2018. [27] A. Ludwig and Y. Leviatan, “Towards a stable two-dimensional time-domain source-model solution by use of a combined source formulation,” 
+
+IEEE Trans. Antennas Propag. , vol. 54, no. 10, pp. 3010–3021, 2006. [28] ——, “A source-model technique for the analysis of transient electromag-netic scattering by a periodic array of cylinders,” IEEE Trans. Antennas Propag. , vol. 55, no. 9, pp. 2578–2590, 2007. [29] ——, “Time-domain analysis of bandgap characteristics of two-dimensional periodic structures by use of a source-model technique,” J. Opt. Soc. Am. A , vol. 25, no. 2, pp. 437–451, 2008. [30] ——, “Source-model technique analysis of transient electromagnetic scattering by dielectric cylinders,” IET microwaves, antennas & propa-gation , vol. 5, no. 12, pp. 1516–1523, 2011. [31] M. Kouroublakis, N. L. Tsitsas, and Y. Leviatan, “A time-domain method of auxiliary sources for efficient analysis of transient electromagnetic scattering by moderately conductive cylinders,” Eng. Anal. Bound. Elem. ,accepted for publication. [32] ——, “Analysis of two-dimensional transient electromagnetic shielding using the method of auxiliary sources,” 2025, under review in IEEE Trans. Antennas Propag. 
+
+[33] K. Achouri, M. A. Salem, and C. Caloz, “General metasurface synthesis based on susceptibility tensors,” IEEE Trans. Antennas Propag. , vol. 63, no. 7, pp. 2977–2991, 2015. [34] S. Sandeep, J.-M. Jin, and C. Caloz, “Finite-element modeling of metasur-faces with generalized sheet transition conditions,” IEEE Trans. Antennas Propag. , vol. 65, no. 5, pp. 2413–2420, 2017. [35] J. Dugan, T. J. Smy, and S. Gupta, “Accelerated IE-GSTC solver for large-scale metasurface field scattering problems using fast multipole method (fmm),” IEEE Transactions on Antennas and Propagation , vol. 70, no. 10, pp. 9524–9533, 2022. [36] T. Smy, V. Tiukuvaara, S. Gupta et al. , “IE-GSTC metasurface field solver using surface susceptibility tensors with normal polarizabilities,” arXiv preprint arXiv:2105.05875 , 2021. [37] K. Wang, J.-J. Laurin, Q. Zhang, M. A. M. Hassan, Q. Zhang, and K. Wu, “Simulation of cylindrical metasurfaces using GSTC-MFCM,” 
+
+IEEE Trans. Antennas Propag. , vol. 69, no. 1, pp. 263–272, 2020. [38] Y. Vahabzadeh, N. Chamanara, and C. Caloz, “Generalized sheet transi-tion condition FDTD simulation of metasurface,” IEEE Trans. Antennas Propag. , vol. 66, no. 1, pp. 271–280, 2017. [39] K. V. K. Ha, J. Dugan, T. J. Smy, and S. Gupta, “FDTD stability analysis of metasurface gstcs with normal surface polarizations,” in 2025 19th European Conference on Antennas and Propagation (EuCAP) . IEEE, 2025, pp. 1–4. [40] T. J. Smy, S. A. Stewart, J. G. N. Rahmeier, and S. Gupta, “FDTD simu-lation of dispersive metasurfaces with lorentzian surface susceptibilities,” 
+
+IEEE Access , vol. 8, pp. 83 027–83 040, 2020. [41] S. Tian, K. Wu, and Q. Ren, “Modeling of metasurfaces using discontinu-ous galerkin time-domain method based on generalized sheet transition conditions,” IEEE Trans. Antennas Propag. , vol. 70, no. 8, pp. 6905– 6917, 2022. [42] M. Kouroublakis, N. L. Tsitsas, and G. Fikioris, “Shielding effectiveness of magnetostatically-biased anisotropic graphene by the method of aux-iliary sources with a surface current boundary condition,” IEEE Trans. Antennas Propag. , vol. 71, no. 8, pp. 6830–6838, 2023. [43] S. Jang, J.-W. Baek, J. Cho, and K.-Y. Jung, “Unified GSTC-FDTD algorithm for the efficient electromagnetic analysis of 2D dispersive materials,” J. Electromagn. Eng. Sci. , vol. 23, no. 5, pp. 423–428, 2023. [44] T. Low, R. Rold´ an, H. Wang, F. Xia, P. Avouris, L. M. Moreno, and F. Guinea, “Plasmons and screening in monolayer and multilayer black phosphorus,” Phys. Rev. Lett. , vol. 113, no. 10, p. 106802, 2014. [45] S. Jang, J. Cho, and K.-Y. Jung, “Efficient dispersive GSTC-FDTD algorithm using the drude dispersion model,” IEEE Access , vol. 10, pp. 59 486–59 494, 2022. [46] W. Zouaghi, D. Voß, M. Gorath, N. Nicoloso, and H. G. Roskos, “How good would the conductivity of graphene have to be to make single-layer-graphene metamaterials for terahertz frequencies feasible?” Car-bon , vol. 94, pp. 301–308, 2015.

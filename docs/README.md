@@ -6,52 +6,35 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-05-12
-- 运行时间：2026-05-12 21:41:39 UTC
+- 最新运行日期：2026-05-13
+- 运行时间：2026-05-13 21:42:14 UTC
 - 运行状态：成功
-- 本次总论文数：10
-- 精读区：3
-- 速读区：7
+- 本次总论文数：4
+- 精读区：0
+- 速读区：4
 
 ### 今日简报（AI）
-今日深度研读 EDA 与高速互连领域，重点攻克了级联通道偏斜建模与物理感知学习框架。
-推荐关注 ISPG 模型对信号偏斜传播的精确解析，以及 PhysEDA 结合曼哈顿距离衰减实现的 EDA 效率突破。
-建议读者重点探索物理先验知识如何赋能 AI 算法，以应对日益复杂的电路设计挑战。
-- 详情：[/202605/12/README](/202605/12/README)
+今日聚焦电磁超表面时域分析、神经射线追踪信道建模及大模型驱动的 FPGA 硬件设计优化。
+重点关注 PointNeRT 如何通过物理感知提升信道建模精度，以及 LLM 在自动化硬件设计空间搜索中的潜力。
+建议关注 AI 与传统物理仿真结合的前沿趋势，探索大模型在复杂硬件工程中的落地应用。
+- 详情：[/202605/13/README](/202605/13/README)
 
 ### 精读区论文标签
-1. [Intra-Pair Skew Propagation Graph (ISPG): An Analytical Model for Cascaded Channels](/202605/12/2605.08570v1-intra-pair-skew-propagation-graph-ispg-an-analytical-model-for-cascaded-channels)  
-   标签：评分：9.5/10、query:si-pi
-   evidence：高速差分信号和级联通道的对内偏斜分析模型
-2. [PhysEDA: Physics-Aware Learning Framework for Efficient EDA With Manhattan Distance Decay](/202605/12/2605.10547v1-physeda-physics-aware-learning-framework-for-efficient-eda-with-manhattan-distance-decay)  
-   标签：评分：9.0/10、query:si-pi
-   evidence：用于EDA中电源完整性验证的物理感知学习框架
-3. [Inverse Design of Multi-Layer Sub-Pixel-Resolution RF Passives Through Grayscale Diffusion with Flexible S-Parameter Conditioning](/202605/12/2605.08233v1-inverse-design-of-multi-layer-sub-pixel-resolution-rf-passives-through-grayscale-diffusion-with-flexible-s-parameter-conditioning)  
-   标签：评分：8.0/10、query:si-pi
-   evidence：射频无源器件的逆向设计与S参数调节
+- 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Graph Computation Meets Circuit Algebra: A Task-Aligned Analysis of Graph Neural Networks for Electronic Design Automation](/202605/12/2605.08291v1-graph-computation-meets-circuit-algebra-a-task-aligned-analysis-of-graph-neural-networks-for-electronic-design-automation)  
-   标签：评分：7.0/10、query:si-pi
-   evidence：针对EDA任务（包括时序和开关活动）的GNN分析
-2. [Single 32-bit Sub-Channel DDR5 DIMMs: Architecture, Performance Bounds, and Standardisation](/202605/12/2605.08725v1-single-32-bit-sub-channel-ddr5-dimms-architecture-performance-bounds-and-standardisation)  
-   标签：评分：7.0/10、query:si-pi
-   evidence：DDR5 SDRAM 存储通道架构与子通道设计
-3. [Bayesian Optimization with Structured Measurements: A Vector-Valued RKHS Framework](/202605/12/2605.09775v1-bayesian-optimization-with-structured-measurements-a-vector-valued-rkhs-framework)  
+1. [A Time-Domain Method of Auxiliary Sources for Analyzing Transient Electromagnetic Interactions with GSTC-Modeled Metasurfacess](/202605/13/2605.08047v1-a-time-domain-method-of-auxiliary-sources-for-analyzing-transient-electromagnetic-interactions-with-gstc-modeled-metasurfacess)  
    标签：评分：6.5/10、query:si-pi
-   evidence：针对结构化测量和函数输出的贝叶斯优化
-4. [Time-Controlled Resonances in 2-D Metasurfaces via Equivalent Circuits](/202605/12/2605.08768v1-time-controlled-resonances-in-2-d-metasurfaces-via-equivalent-circuits)  
-   标签：评分：6.0/10、query:bga-xtalk
-   evidence：超表面的等效电路描述
-5. [Machine Learning-Based Graph Simplification for Symbolic Accelerators](/202605/12/2605.08996v1-machine-learning-based-graph-simplification-for-symbolic-accelerators)  
+   evidence：瞬态电磁响应的时域建模与阻抗变换
+2. [PointNeRT: A Physics Aware Neural Ray Tracing Surrogate for Propagation Channel Modeling](/202605/13/2605.11828v1-pointnert-a-physics-aware-neural-ray-tracing-surrogate-for-propagation-channel-modeling)  
+   标签：评分：6.5/10、query:si-pi
+   evidence：用于传播信道建模的神经代理模型
+3. [LLM-Driven Design Space Exploration of FPGA-based Accelerators](/202605/13/2605.05920v1-llm-driven-design-space-exploration-of-fpga-based-accelerators)  
    标签：评分：6.0/10、query:si-pi
-   evidence：用于硬件加速器优化和能效提升的机器学习
-6. [RFAmpDesigner: A Self-Evolving Multi-Agent LLM Framework for Automated Radio Frequency Amplifier Design](/202605/12/2605.10093v1-rfampdesigner-a-self-evolving-multi-agent-llm-framework-for-automated-radio-frequency-amplifier-design)  
+   evidence：大语言模型驱动的硬件加速器设计空间探索
+4. [Bridging the Last Mile of Circuit Design: PostEDA-Bench, a Hierarchical Benchmark for PPA Convergence and DRC Fixing](/202605/13/2605.06936v1-bridging-the-last-mile-of-circuit-design-posteda-bench-a-hierarchical-benchmark-for-ppa-convergence-and-drc-fixing)  
    标签：评分：6.0/10、query:si-pi
-   evidence：用于自动化射频电路尺寸调整和优化的LLM框架
-7. [Formally Verifying Analog Neural Networks Under Process Variations Using Polynomial Zonotopes](/202605/12/2605.10474v1-formally-verifying-analog-neural-networks-under-process-variations-using-polynomial-zonotopes)  
-   标签：评分：6.0/10、query:bga-xtalk
-   evidence：工艺偏差下的电路级建模与验证
+   evidence：基于大语言模型的代理用于电路设计中的PPA收敛和DRC修复
 
 
 <div class="dpr-home-promo-card">
