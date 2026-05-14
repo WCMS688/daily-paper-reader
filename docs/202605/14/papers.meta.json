@@ -1,0 +1,24 @@
+{
+  "label": "2026-05-14",
+  "date": "2026-05-14",
+  "generated_at": "2026-05-14T20:42:16",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202605/14/2605.11140v1-enabling-small-signal-stability-analysis-of-black-box-voltage-source-converters-in-large-scale-modern-power-systems",
+      "section": "quick",
+      "title_en": "Enabling Small-Signal Stability Analysis of Black-Box Voltage Source Converters in Large-Scale Modern Power Systems",
+      "authors": "Luis A. Garcia-Reyes, Josep Arévalo-Soler, Oriol Gomis-Bellmunt, Eduardo Prieto-Araujo, Vinícius A. Lacerda, Macarena Martin-Almenta, Edgar Nuño-Martínez, Javier Renedo",
+      "date": "2026-05-11",
+      "pdf": "https://arxiv.org/pdf/2605.11140v1",
+      "score": "6.0",
+      "evidence": "小信号稳定性分析与降阶建模",
+      "tldr": "针对现代电力系统中黑盒电压源换流器（VSC）导致传统小信号分析受限的问题，本文提出了一种名为SSA-FITSS的统一多变量拟合状态空间建模方法。该方法通过频域识别和自适应极点扩展构建降阶模型，并引入自动状态解释策略为黑盒模型赋予物理含义。在多VSC并网系统中的验证表明，该方法能准确评估系统稳定性并揭示稳定性极限，为大规模含黑盒设备的电网分析提供了有效工具。",
+      "tags": "query:si-pi",
+      "abstract_en": "Modern power systems increasingly rely on power electronic converters, yet many of these devices are provided as black-box models, limiting the applicability of conventional small-signal analysis (SSA) tools. This work presents a unified multi-variable fitted state-space (SSA-FITSS) methodology that enables accurate small-signal modeling of black-box Voltage Source Converters (VSCs) using frequency-domain (FD) identification, adaptive pole-expansion, and reduced-order realization. The method includes an automated state-interpretation strategy that assigns fitted states to representative control-loop categories based on their dominant frequency ranges, providing an approximate but meaningful physical interpretation of the identified dynamics. This capability allows extensive modal analysis, including eigenvalue sensitivities and participation factors, in systems where internal converter details are unavailable. The methodology is validated on a grid-following (GFL) VSC and applied to the New England system, which contains multiple black-box converters operating in both GFL and grid-forming (GFM) modes. Results show that the SSA-FITSS models accurately reproduce converter and system dynamics, support full eigenvalue-based analysis, and reveal stability limits under varying synchronous generation and GFL penetration levels. The approach overcomes key limitations of existing identification-based techniques by enabling scalable, interpretable, and system-wide stability assessment.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

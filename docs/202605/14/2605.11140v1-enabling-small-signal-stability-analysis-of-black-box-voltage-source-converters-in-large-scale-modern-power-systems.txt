@@ -1,0 +1,634 @@
+Title: Enabling Small-Signal Stability Analysis of Black-Box Voltage Source Converters in Large-Scale Modern Power Systems
+
+URL Source: https://arxiv.org/pdf/2605.11140v1
+
+Published Time: Wed, 13 May 2026 00:09:24 GMT
+
+Number of Pages: 10
+
+Markdown Content:
+> 1
+
+# Enabling Small-Signal Stability Analysis of Black-Box Voltage Source Converters in Large-Scale Modern Power Systems 
+
+Luis A. Garcia-Reyes, Graduate Student Member, IEEE , Josep Arévalo-Soler, Member, IEEE ,Oriol Gomis-Bellmunt, Fellow, IEEE , Eduardo Prieto-Araujo, Senior Member, IEEE , Vinícius A. Lacerda, Macarena Martin-Almenta, Edgar Nuño-Martínez, and Javier Renedo, Senior Member, IEEE 
+
+Abstract —Modern power systems increasingly rely on power electronic converters, yet many of these devices are provided as black-box models, limiting the applicability of conventional small-signal analysis (SSA) tools. This work presents a unified multi-variable fitted state-space (SSA-FITSS) methodology that enables accurate small-signal modeling of black-box Voltage Source Converters (VSCs) using frequency-domain (FD) identification, adaptive pole-expansion, and reduced-order realization. The method includes an automated state-interpretation strategy that assigns fitted states to representative control-loop categories based on their dominant frequency ranges, providing an approximate but meaningful physical interpretation of the identified dynamics. This capability allows extensive modal analysis, including eigenvalue sensitivities and participation factors, in systems where internal converter details are unavailable. The methodology is validated on agrid-following (GFL) VSC and applied to the New England system, which contains multiple black-box converters operating in both GFL and grid-forming (GFM) modes. Results show that the SSA-FITSS models accurately reproduce converter and system dynamics, support full eigenvalue-based analysis, and reveal stability limits under varying synchronous generation and GFL penetration levels. The approach overcomes key limitations of existing identification-based techniques by enabling scalable, interpretable, and system-wide stability assessment. 
+
+Index Terms —black-box models, stability analysis, state-space identification, vector fitting, voltage source converter 
+
+I. I NTRODUCTION 
+
+# THE increasing penetration of renewable energy sources in modern power systems has intensified system complexity, particularly in stability assessment and operational analysis. Technologies such as wind turbines, solar photovoltaic (PV) generators, energy storage systems (ESS), hydrogen-electrolyzer loads or data-center loads, among others, are coupled to the power system through power-electronics converters. Typically, their dynamic models are delivered to Transmission System Operators (TSOs) as proprietary black-box models. These models restrict access to internal control structures and dynamic behavior, limiting their use mainly to non-linear time-domain simulation. As a result, conventional small-signal stability techniques cannot be applied directly and, in many cases, require assumptions that compromise analytical accuracy and system reliability [1]–[4]. 
+
+L. A. Garcia-Reyes, J. Arévalo-Soler, O. Gomis-Bellmunt, E. Prieto-Araujo and V. A Lacerda are with Centre d’Innovació Tecnològica en Convertidors Estàtics i Accionaments, Departament d’Enginyeria Elèctrica, Universitat Politècnica de Catalunya (CITCEA-UPC), Barcelona, 08028 ESP. M. Martin-Almenta, E. Nuño-Martínez and J. Renedo are with Red Eléctrica - Redeia, Madrid, 28109 ESP. Corresponding author: luis.reyes@upc.edu. 
+
+Two small-signal analysis (SSA) methods are widely standardized for modern power system applications: eigenvalue-based state-space analysis [5], [6] and impedance-based techniques [1], [7], [8]. The former requires full access to the mathematical model, including control structures and parameter values, enabling complete mode identification through linearization procedures [9]–[11] and supporting stability assessment through modal sensitivities and participation factors [12], [13]. The latter relies on frequency-domain (FD) scanning to characterize the open-loop impedance between interconnected subsystems, from which closed-loop stability can be evaluated using the Generalized Nyquist Criterion, passivity analysis, and related metrics [14]–[16]. Although impedance-based methods do not require access to internal converter models, they provide only local information and do not reveal system-wide modal behavior. Conversely, SSA eigenvalue-based methods cannot be applied when only black-box models are available. As a result, both approaches face fundamental limitations in black-box dominated environments. Several alternative methods have been proposed to address these challenges. In [17], the Numerical Algorithm for Subspace State-Space System Identification (N4SID) is used to synthesize state-space models directly from input–output time signals of black-box converters, enabling eigenvalue-based analysis. However, the multi-variable excitation required to ensure observability may induce nonlinear behavior in power electronic converters, reducing identification accuracy when high excitation levels are applied. In refs. [18] and [19], an impedance-based identification framework using vector fitting is employed to obtain state-space representations. Although pole-sensitivity results are validated against time-domain simulations, these methods do not include validation against theoretical models and do not fully characterize pole locations or provide a physical interpretation of the identified modes. The method in [20], based on pole clustering and vector fitting [21], improves pole localization and enables order reduction by eliminating redundant states [22], but the additional clustered poles have not been evaluated from a sensitivity perspective, and its performance under input–output data constraints or in large-scale studies remains insufficiently assessed. Ref. [23] introduces a refined combination of these impedance-based approaches and demonstrates improvements in pole-location accuracy and model-order reduction, facilitating integration into SSA frameworks. However, it does not provide a clear order-selection criterion, 
+
+> arXiv:2605.11140v1 [eess.SY] 11 May 2026 2
+
+lacks a systematic state-interpretation strategy, operates under constrained input–output data, and does not address scalability or robustness in large-scale applications. The ELSA method [24] synthesizes minimal-order state-space models from FD impedance responses, avoiding overfitting and improving pole–zero placement, although its scalability and suitability for sensitivity-driven stability assessment have not yet been demonstrated. Finally, refs. [25] and [26] introduce dominant-mode identification methods based on hyperplane geometry and iterative matrix fitting, respectively. While these approaches achieve high accuracy, no evidence is provided regarding their applicability to converter-dominated systems or their robustness under converter-driven interactions. Overall, existing methods do not offer a general-purpose, scalable, and interpretable framework capable of reliably identifying dynamic modes from black-box models while ensuring appropriate order selection without spurious dynamics. To address these challenges and limitations, this work introduces a unified and robust multi-variable fitted state-space methodology (SSA-FITSS) that enables accurate SSA in large-scale systems with high penetration of black-box converters. The method characterizes the converter transfer matrix through FD identification using voltage, current, and frequency perturbations at the converter Point of Connection (POC). It relies on a vector-fitting Single-Input Single-Output (SISO) rational approximation strategy combined with an adaptive pole-expansion mechanism that inserts additional poles in regions of high local error when the convergence criterion is not satisfied, ensuring appropriate model order while avoiding overfitting and improving pole localization. A subsequent model-order reduction stage retains minimal yet representative dynamics, and a state interpretability strategy automatically assigns physical meaning to the identified states based on the characteristic frequency ranges of standardized control loops in grid-following (GFL) and grid-forming (GFM) Voltage Source Converters (VSCs). The methodology integrates seamlessly into SSA frameworks [9], enabling conventional eigenvalue-based stability assessment without requiring proprietary internal models, and is validated through pole-location studies and modal decomposition analyses on a representative VSC. Its scalability and accuracy are demonstrated using the IEEE New England test system under different converter types and operating modes. To the authors’ knowledge, no existing vector-fitting-based methodology incorporates this multi-variable SISO approach with adaptive order refinement, automated state interpretability, and large-scale validation. The article is organized as follows. Section II describes the multi-variable SSA-FITSS algorithm and its state interpretability strategy. Section III validates the methodology using a GFL VSC. Section IV presents a case study based on the IEEE New England system, where black-box models are used to perform sensitivity and participation factor analyses. II. M ULTI -V ARIABLE FITTED STATE -S PACE 
+
+This work presents the SSA-FITSS methodology, previously introduced in [23], and incorporates a multivariable FD scanning technique to identify the transfer matrix 
+
+Fig. 1: Scheme of the identification procedure based on [14]. of a black-box VSC through electromagnetic transient (EMT) simulations. The procedure applies small-signal perturbations in voltage and frequency at the converter POC while preserving system linearity conditions. Perturbation magnitudes are typically restricted to 1–3% of nominal values. This selection arises because, within the state-space Component Connection Method (CCM), the VSC dq output currents and frequency ω are commonly used as inputs to other blocks in the small-signal model [5], [9]. As a result, the following FD representation of the VSC is obtained: 
+
+∆Iq (s)∆Id(s)∆ωc(s)
+
+ =
+
+ Yqq (s) Yqd (s) Rqg (s)
+
+Ydq (s) Ydd (s) Rdg(s)
+
+Rgq (s) Rgd(s) Rgg (s)
+
+∆Vq (s)∆Vd(s)∆ωg(s)
+
+ . (1) The 3 × 3 matrix in (1), denoted here and after as 
+
+TVSC (s), represents the converter transfer matrix composed of admittance components and frequency-coupling terms in the 
+
+dq -reference frame. The input frequency ∆ωg(s) corresponds to the global system frequency, while ∆ωc(s) denotes the perturbed internal frequency reference of the converter or black-box model. ∆Iq (s), ∆Id(s), ∆Vq (s), and ∆Vd(s)
+
+represent the perturbed output currents and input voltages. The operator ∆ indicates increments from steady-state values, consistent with small-signal modeling principles [1], [9], [27]. In (1), s = jω is the Laplace variable, where ω is the angular frequency. When ∆ωc(s) is not accessible, the 2 ×2 fitting approach is used [23]. The open-source scanning tool used to obtain these FD responses is described in [14] and available in [28]. The perturbation scheme is shown in Fig. 1; a detailed description of the tool lies outside the scope of this work. The transfer matrix is identified across a set of discrete frequency points, resulting in a three-dimensional dataset of dimensions J × L × f , where J and L denote the number of system inputs and outputs, and f is the number of frequency samples. Although this study focuses on the dq 0 frame, the SSA-FITSS methodology assumes linear system behavior and is generalizable to other reference frames such as abc or pn 0.To derive the state-space model, a rational approximation of 
+
+TVSC (s) is first performed. Following the procedure in [23], each SISO entry of the transfer matrix is fitted independently using vector fitting [29]. An initial pole set is defined by distributing poorly-damped complex-conjugate pairs across the frequency range of interest, adding a real pole only when an odd number of total poles is required. Since the true system order is unknown, the initial number of poles is intentionally chosen to be conservatively low. This avoids overparameterization at early stages while relying on the RMS convergence criterion and the adaptive pole-expansion mechanism to increase the order only when required. In this way, the algorithm identifies the minimal number of poles needed to achieve the prescribed accuracy. After convergence, the individual SISO models are assembled into a unified 3
+
+MIMO representation, and a subsequent order-reduction stage is applied to obtain a minimal state-space system [20]–[23]. 
+
+A. SISO Fitting Approach 
+
+Each input–output subsystem of the transfer matrix in (1) is approximated independently using a rational pole–residue formulation. The fitting is performed with the vecfit3 
+
+implementation of the vector fitting algorithm [30]. Aconservative initial model order N , here recommended between 4-8, is selected based on a preliminary inspection of the FD response, following the guidelines in [20], [21], [29]. Since the adaptive pole-expansion mechanism automatically increases the order when necessary, the initial value of N
+
+does not need to be large. Instead, the algorithm converges toward the minimal order required to reproduce the dynamics with the prescribed accuracy. When N is even, all initial poles are assigned as complex-conjugate pairs. Their imaginary parts βk are uniformly distributed over the frequency interval 
+
+[min( f ), max( f )] , and their real parts are set to small negative values proportional to βk. The resulting initial pole set is 
+
+p0 = −10 −2βk ± j β k, k = 1 , 2, . . . , N/ 2. (2) When N is odd, the same construction is applied to the complex-conjugate pairs, and one additional real pole is placed at the midpoint of the frequency range. To ensure robust convergence, the fitting process incorporates an adaptive pole-expansion mechanism. After each iteration of vecfit3 , the RMS fitting error between the measured response TVSC (s) and its approximation ˆTVSC (s) is evaluated. Convergence is achieved when εRMS falls below a prescribed tolerance, typically 10 −6, which has been shown to provide very high accuracy for dynamic representation [22]. As shown in Algorithm 1, if the threshold is not met within a limited number of iterations, the algorithm enhances the pole set by inserting an additional pole in the frequency region exhibiting the largest local fitting error. The midpoint of this high-error interval is used as the nominal pole frequency: a real pole is added when the midpoint lies near DC, and a poorly-damped complex pole otherwise. The fitting procedure is then restarted with the expanded pole set. After convergence, the resulting rational approximation of the transfer function is 
+
+TVSC (s) ≈
+
+> N
+
+∑
+
+> n=1
+
+Cn
+
+s − pn
+
++ D + sE, (3) where Cn are the complex residues, pn are the fitted poles, D
+
+is a constant offset, and E accounts for the high-frequency asymptotic behavior. The upper frequency limit for fitting, 
+
+fvecfit , is selected according to the Nyquist criterion. In practice, the following rule is applied [23]: 
+
+fvecfit ,max ≤ fs
+
+10 , (4) where fs is the sampling frequency used during the transfer matrix identification. Once the rational model in (3) is obtained, a structured state-space realization is constructed by assembling sub-blocks associated with each identified pole. In this formulation, the 
+
+Algorithm 1 Adaptive Pole-Expansion Strategy  
+
+> 1:
+
+Input: SISO response TVSC (s), frequency samples sk,initial poles p0, tolerance εtol  
+
+> 2:
+
+Output: Converged pole set p⋆ 
+
+> 3:
+
+Initialize p ← p0, converged ← false  
+
+> 4:
+
+while not converged do  
+
+> 5:
+
+Apply vecfit3 using poles p and obtain fitted response ˆTVSC (sk) and updated poles ˜p 
+
+> 6:
+
+Compute RMS error: 
+
+εRMS =
+
+√√√√ 1
+
+f
+
+> f
+
+∑
+
+> k=1
+
+∣∣∣TVSC (sk) − ˆTVSC (sk)
+
+∣∣∣2 
+
+> 7:
+
+if εRMS < ε tol then  
+
+> 8:
+
+p⋆ ← ˜p, converged ← true  
+
+> 9:
+
+break  
+
+> 10:
+
+end if  
+
+> 11:
+
+Identify frequency of maximum local error: 
+
+k⋆ = arg max 
+
+> k
+
+∣∣∣TVSC (sk) − ˆTVSC (sk)
+
+∣∣∣ 
+
+> 12:
+
+Determine midpoint of the high-error interval: 
+
+smid = sk⋆ −1 + sk⋆ +1 
+
+2 
+
+> 13:
+
+if |smid | < 10 −3 then  
+
+> 14:
+
+Insert real pole: pnew = ℜ(smid ) 
+
+> 15:
+
+else  
+
+> 16:
+
+Insert poorly-damped complex pole: 
+
+pnew = −10 −4|smid | + j ℑ(smid ) 
+
+> 17:
+
+end if  
+
+> 18:
+
+Expand pole set: p ← [p; pnew ] 
+
+> 19:
+
+end while  
+
+> 20:
+
+return p⋆
+
+high-frequency term E is set to zero within vecfit3 to enforce a strictly proper approximation, which simplifies the assembly of the realization. The global state-space matrices take the form: 
+
+A =
+
+
+
+Ap1 0 · · · 00 Ap2 · · · 0
+
+... ... . . . ...
+
+0 0 · · · ApN
+
+ , B =
+
+
+
+Bp1
+
+Bp2
+
+...
+
+BpN
+
+ , (5a) 
+
+C = [Cp1 Cp2 · · · CpN
+
+] , D = D. (5b) Each k-th pole contributes either a first-order or asecond-order subsystem depending on whether it is real or part of a complex-conjugate pair:  
+
+> •
+
+Real poles pk ∈ R:
+
+Apk = [ pk ], Bpk = [ 1 ] , Cpk = [ Ck ]. (6)  
+
+> •
+
+Complex-conjugate poles pk = α ± jβ :
+
+Apk =
+
+[ α β
+
+−β α
+
+]
+
+, Bpk =
+
+[20
+
+]
+
+, (7a) 
+
+Cpk = [Re( Ck ) Im( Ck )] . (7b) 4
+
+B. Reduced-Order State-Space Modeling 
+
+In large-scale SSA, reducing the dimensionality of state-space models is beneficial to improve computational efficiency and focus on the dominant dynamics relevant to system stability. In this work, the balanced realization (BR) method is selected for model reduction, since it provides comparable accuracy with lower complexity than singular value decomposition (SVD) which is evaluated in [23]. Starting from the state-space representation in (5a) and (5b), 
+
+∆ ˙ x = A∆x + B∆u,
+
+∆y = C∆x, (8) the function balreal , detailed in [31], is used to transform the system (A, B, C) into a balanced form (Ab, Bb, Cb).In this representation, the controllability and observability Gramians are equal and diagonal, with entries corresponding to the square roots of the Hankel singular values. To determine which states to retain, a compaction criterion based on the singular value ratio is applied [21]: 
+
+Σr /Σ1 < σ tol , (9) where σtol > 5 × 10 −4 is the threshold used to identify negligible contributions. States associated with singular values below this threshold are removed using the xelim function, resulting in a reduced-order model [22], [23]. 
+
+C. General Fitted State-Space Model 
+
+Once all SISO components of the transfer matrix in (1) have been individually fitted and reduced, the complete multi-variable state-space model is constructed by aggregating the local models. For MIMO systems, the overall structure is 
+
+A = diag (A1, A2, . . . , AM ), B =
+
+
+
+B1,1 · · · B1,J 
+
+... . . . ...
+
+BL, 1 · · · BL,J 
+
+ ,
+
+(10a) 
+
+C =
+
+
+
+C1,1 · · · C1,L 
+
+... . . . ...
+
+CJ, 1 · · · CJ,L 
+
+ , D =
+
+
+
+D1,1 · · · D1,J 
+
+... . . . ...
+
+DL, 1 · · · DL,J 
+
+ .
+
+(10b) In this formulation, M represents the total number of fitted subsystems, each contributing a local state-space block. Depending on the specific input–output configuration, certain entries matrices B and C may be zero, reflecting decoupled or inactive dynamic paths. The resulting MIMO state-space model can then be integrated into the CCM framework for small-signal analysis [9]. This modular approach is designed to be broadly applicable to a wide range of black-box systems, regardless of their internal control architecture or complexity. 
+
+D. SSA-FITSS State Interpretability Strategy 
+
+Identification methods such as SSA-FITSS and those reviewed in [17], [18], [20]–[22], [24]–[26] produce abstract states x1, x 2, . . . that lack direct physical correspondence to internal control loops or measurable variables. This differs from first-principles small-signal models, where each state maps to a specific physical or control quantity [13]. TABLE I: Control-loop bandwidths of GFL and GFM VSCs relevant to oscillatory dynamics, with σ 6 = 0 and ω 6 = 0 .                        
+
+> Control Loop Bandwidth SSA-FITSS Variable Literature
+> Current 0.1–2 kHz xcc [32], [33] Active-power / DC voltage 1–100 Hz xvc [32], [34] Reactive-power / AC voltage 1–100 Hz xvc [32], [34] PLL synchronization (sync) 5–20 Hz xpll [35], [36] P–f / Q–v droop control 0.1–5 Hz xdp [34], [37] Virtual inertia (GFM) 0.1–5 Hz xvi [38], [39] System electrical states 40–80 Hz xsys [32], [33]
+
+TABLE II: Bandwidths of GFL and GFM VSCs relevant to non-oscillatory dynamics, with σ 6 = 0 and ω = 0 .                     
+
+> Type of dynamics Bandwidth SSA-FITSS Variable Literature
+> Very fast (inner electrical) <−500 s −1xn,il
+> [32], [40] Fast (PQ, AC/DC control) −20 to −500 s −1xn,vc
+> Intermediate (sync) −2to −20 s −1xn,syn
+> Slow (primary control) −2to −1 s −1xn,pc
+> Very slow (other controls) >−1 s −1xn,oc
+
+To address the lack of explicit physical meaning in the identified states, SSA-FITSS adds an automated interpretation layer that maps fitted states to representative control-loop categories using modal frequency, damping and participation. Modal data are obtained from the Jordan decomposition: 
+
+A = R Λ R −1, (11) where Λ is block-diagonal with eigenvalues λi = σi ±jω i and 
+
+R contains right eigenvectors. Using the modal frequencies and participation from (11), Table I summarizes representative states bandwidths for the most widely adopted control loops in VSCs, together with the symbolic labels used by SSA-FITSS to classify them. In addition to the oscillatory modes, Table II provides a complementary classification for non-oscillatory states, organized according to the characteristic scales of VSC dynamics. Finally, system electrical states typically appear near the fundamental frequency and arise from resonances or couplings among the converter, its filters, and the grid. This procedure yields an interpretable assignment of abstract fitted states to control dynamics while preserving the identification results. The assignment is heuristic and therefore applied only after the black-box model has been identified as a GFL or GFM VSC. The resulting labels facilitate system-level interpretation and enable consistent aggregation of states that share the same dynamic band. 
+
+E. Full SSA-FITSS Model: Black- and White-Box Integration 
+
+Once SSA-FITSS models have been generated and their states assigned, they are integrated into a full SSA-FITSS-based representation of the complete modern power system. The formulation combines analytically derived, explicitly interpretable “white-box” ( wb ) models, black-box (bb ) models, and intermediate “gray-box” models [2]. Subsystems interconnect via their input–output relations, yielding the global SSA-FITSS-based representation: 
+
+∆ ˙ xf = Af ∆xf + Bf ∆uf ,
+
+∆yf = Cf ∆xf + Df ∆uf , (12) 5
+
+> AC scan
+
+Fig. 2: GFL control scheme. with the partitioned state matrix and state vector 
+
+Af =
+
+[Awb,wb Awb,bb 
+
+Abb,wb Abb,bb 
+
+]
+
+, xf =
+
+[xwb 
+
+xbb 
+
+]
+
+, (13) where Awb,wb and Abb,bb denote the pure white-box and black-box dynamics, respectively, and Awb,bb , Abb,wb are the cross-coupling blocks. For each eigenvalue λj of Af , the participation factor of state k in mode j is given by [13]: 
+
+pkj = ℓjk rkj , (14) where ℓj and rj are the left and right eigenvectors of mode 
+
+j and ℓjk , rkj denote their k-th components. The total contribution of black- and white-box states to mode j is then: 
+
+P (bb ) 
+
+> j
+
+= ∑
+
+> k∈K bb
+
+|pkj | , (15a) 
+
+P (wb ) 
+
+> j
+
+= ∑
+
+> k∈K wb
+
+|pkj | , (15b) where Kbb and Kwb are the index sets of black-box and white-box states. Finally, the modes are classified as:  
+
+> •
+
+Black-box dominated if P (bb ) 
+
+> j
+
+≫ P (wb ) 
+
+> j
+
+. 
+
+> •
+
+White-box dominated if P (wb ) 
+
+> j
+
+≫ P (bb ) 
+
+> j
+
+. 
+
+> •
+
+Hybrid (coupled) if P (bb ) 
+
+> j
+
+and P (wb ) 
+
+> j
+
+are comparable. III. M ULTI -V ARIABLE SSA-FITSS M ETHOD VALIDATION 
+
+To evaluate the performance of the extended SSA-FITSS methodology in a multi-variable setting, a GFL VSC is selected as the test case. The system configuration is shown in Fig. 2, and its control architecture is described in [41]. The active and reactive power control loops use proportional–integral (PI) controllers, while the frequency–power ( P –f ) and voltage–reactive power ( Q–V )droop mechanisms are implemented with proportional control. The converter and control parameters used in the validation are listed in Table III. The transfer matrix is identified using the open-source SIaD-Tool in [28], with the converter operating at P = 0 .5 pu and Q = 0 .1 pu. A balanced operating condition is assumed, and a single-tone identification scheme is applied using 110 linearly spaced frequency points from 0.1 Hz to 1 kHz. The perturbation consists of a 1% series voltage injection relative to Vbase and a 0.05% frequency deviation around 50 Hz. A detailed description of the scanning tool is provided in [14]. For the SSA-FITSS model synthesis, an initial set of eight complex-conjugate poles is generated using (2) across the TABLE III: GFL converter parameters                                                    
+
+> Parameter Value Unit Parameter Value Unit
+> Sbase 2.750 MVA kiP LL 568.1 pu
+> Vbase 690.0 VkpP LL 1.420 pu
+> SCR 3.000 -kiCCL 0.866 pu
+> X/R 10.00 -kpCCL 1.378 pu
+> VDC 2070 VkiP Q 1.000 pu
+> RC0.034 ΩkpP Q 0.100 pu
+> LC43.00 mH τP Q 50.00 ms
+> Rtrans 0.003 ΩkP0.175 pu/pu
+> Ltrans 4.300 mH kQ0.073 pu/pu
+> Mag (dB) (deg) Mag (dB) (deg) Mag (dB)
+> Frequency (Hz)
+> (deg)
+> Frequency (Hz) Frequency (Hz)
+
+Fig. 3: Frequency response of the SSA-FITSS model. frequency range from 1 mHz to 1 kHz. The fitting is performed using a εRMS tolerance of 5 × 10 −4. After applying the full multi-variable SSA-FITSS methodology, the resulting model is stable and of order 16, with 4 states classified as xn, syn ,6 as xn, vc , 4 as xn, il , and 2 as xvc /x sys , according to the automated state-interpretation strategy. Note that variables sharing the same band are accommodated together to improve dynamic assignment. The complete fitting process requires only three pole-expansion iterations and executes in 0.719 s using MATLAB R2024b on a 1.6 GHz Intel i5 16 GB RAM. Validation is performed by comparing the FD response of the SSA-FITSS-based model with that of a linearized state-space representation of the GFL VSC developed following [9], [41]. The input signals used for comparison are ∆V P OC dq and ∆ωP OC g , and the outputs are ∆IP OC dq and 
+
+∆ωgf l c . As shown in Fig. 3, the SSA-FITSS model exhibits excellent agreement with both the theoretical response and the FD measurements, accurately capturing all coupling terms in the transfer matrix. Minor deviations at very low frequencies in the Rqω (s) and Rdω (s) elements arise from the perturbation strategy and PLL interaction, which complicate matching the theoretical response but still yield an accurate representation. To further assess the fidelity of the SSA-FITSS model, time-domain simulations are performed under small-signal perturbations. Fig. 4 shows the system response to a 1% step disturbance in the nominal voltage Vbase , comparing EMT simulations, the linearized model, and the SSA-FITSS-based representation. The results confirm that the SSA-FITSS methodology captures the converter dynamic behavior with high accuracy. The nadir of the response is reproduced with precision, demonstrating the capability of SSA-FITSS to extract high-fidelity dynamics. 6
+
+> Time (s)
+> Current at POC (A)
+
+(a) Instantaneous current magnitude at POC. 
+
+> Time (s)
+> Converter frequency  gfl c (Hz)
+
+(b) Converter frequency from ωgf l c .
+
+Fig. 4: Validation of SSA-FITSS for the GFL VSC. 
+
+> Real axis
+> Imaginary axis
+
+(a) Fast-damping region.        
+
+> -10000 -8000 -6000 -4000 -2000 0
+> Real axis
+> -500 0500
+> Imaginary axis
+> -800 -400 0
+> -400 -200 0200 400
+
+(b) Slow-damping region. 
+
+Fig. 5: Pole-location comparison for the GFL VSC. 
+
+A. Pole Location and Mode Analysis 
+
+The theoretical model exhibits a system order of 10, whereas the SSA-FITSS-based model results in 16 poles, 10 real and 3 complex-conjugate pairs. This increase does not indicate additional dominant dynamics; it arises from the pole-expansion strategy, which introduces poles in regions of high RMS fitting error. As shown in Fig. 5, the theoretical mode at 64.8 Hz is represented in the SSA-FITSS model by 3 closely spaced poles, two near 65.3 Hz and one near 65.4 Hz. Table IV shows the numerical summary of the identified poles, the obtained errors, and the variables assigned by the algorithm. The average pole-identification error equals 1.53% for the applied order-reduction strategy. As illustrated in Fig. 5, the SSA-FITSS model captures modes in both fast- and slow-damping regions with minor deviations. Two observations arise: the theoretical mode at −251 rad/s is not captured, and an additional mode appears near −744 rad/s. These discrepancies are examined in the next subsection. Following the classification in Table I, the modes at 65.3 Hz and 65.4 Hz correspond to the supersynchronous grid-interaction category xvc , xsys , reflecting coupling between the converter and the grid. The remaining TABLE IV: Pole-location results using SSA-FITSS                                                             
+
+> Theoretical Fitted with Error SSA-FITSS poles SSA-FITSS (%) variable
+> -8.555 + j0.000 -8.411 + j0.000 1.68 xn,syn
+> --8.542 + j0.000 -xn,syn
+> -8.655 + j0.000 -8.649 + j0.000 0.07 xn,syn
+> --8.651 + j0.000 -xn,syn
+> -199.9 + j0.000 197.1 + j0.000 1.40 xn,vc
+> -200.0 + j0.000 197.1+ j0.000 1.45 xn,vc
+> -251.3 + j0.000 ----251.3 + j0.000 ----406.5 - j407.1 -406.6 - j410.8 0.64 xvc /xsys
+> -406.5 + j407.1 -406.6 + j410.8 0.64 xvc /xsys
+> --406.6 - j410.8 -xvc /xsys
+> --406.6 + j410.8 -xvc /xsys
+> --406.5 - j411.1 -xvc /xsys
+> --406.5 + j411.1 -xvc /xsys
+> --744.6 + j0.000 -xn,il
+> --996.2 + j0.000 -xn,il
+> -9774 + j0.000 -10189 + j0.000 4.25 xn,il
+> -10000 + j0.000 -10214 + j0.000 2.14 xn,il
+
+non-oscillatory modes are associated with synchronization dynamics xn,syn , voltage and power controllers xn,vc , and very fast inner-electrical-loop dynamics xn,il . This assignment is automatically generated by the SSA-FITSS algorithm. Overall, as shown in Table IV, SSA-FITSS extracts the critical modes with minor deviations: additional poles appear but are close enough to be considered practically identical. 
+
+B. Modal Decomposition-Based Time Response Analysis 
+
+Although the SSA-FITSS methodology proposed in this work yields high-fidelity dynamic models, it is necessary to evaluate the contribution of individual modes to specific input–output channels. This analysis determines whether modes not captured during fitting have a meaningful impact on the system dynamics. Since not all modes are equally observable or controllable from a given perturbation location, a modal decomposition-based time-domain analysis is used to quantify the influence of each mode in the theoretical system. Considering the LTI system: 
+
+˙x(t) = Ax (t) + Bu (t),
+
+y(t) = Cx (t) + Du (t), (16) where the state matrix A is diagonalized by eigenvalue decomposition using the procedure given in (11). Transforming the system into modal coordinates using R:
+
+Bmodal = R−1B, Cmodal = CR . (17) The response of mode i to an unit step input is: 
+
+yi(t) = Re 
+
+[ ri
+
+λi
+
+(eλit − 1)]
+
+, (18) where the modal residue is defined as: 
+
+ri = C(i) 
+
+> k
+
+B(j) 
+
+> i
+
+, (19) with C(i) 
+
+> k
+
+and B(j) 
+
+> i
+
+denoting the modal projections of the output and input matrices for output channel k and input channel j. The magnitude of ri indicates the degree of modal participation: large residues correspond to dominant dynamics, whereas small residues imply negligible influence. This decomposition is used to assess the impact of the theoretical modes at −251 rad/s, which are not identified by 7          
+
+> Magnitude
+> O: Iq, I: Vq O: Iq, I: Vd O: Iq, I: g
+> Magnitude
+> O: Id I: Vq O: Id, I: Vd O: Id, I: g
+> Time (s)
+> Magnitude
+> O: c, I: Vq
+> Time (s)
+> O: c, I: Vd
+> Time (s)
+> O: c, I: g
+
+Fig. 6: Transient responses for all input–output combinations from linear model under modal decomposition analysis. the SSA-FITSS model. Fig. 6 compares the transient responses obtained from the full theoretical model with those obtained after removing this mode. As shown, excluding the −251 
+
+mode produces negligible deviations across all input–output channels, indicating that this mode has minimal dynamic relevance. A similar test was performed for the additional pole at −744 rad/s introduced by the fitting process. The results show only minor deviations in the frequency–grid and d-axis output coupling, without affecting the remaining responses. These findings indicate that the modes not captured by the SSA-FITSS model do not significantly contribute to the system dynamics, and that the additional aggregated modes introduced during fitting have limited practical impact. To further assess modal relevance, a participation factor analysis is recommended to identify which modes meaningfully influence the full system dynamics [13]. IV. C ASE STUDY : N EW ENGLAND POWER SYSTEM 
+
+To demonstrate the robustness, scalability, and practical applicability of the extended SSA-FITSS methodology, the New England power system is used as a benchmark. Detailed system parameters and configuration data are available in [9]. The 63-bus, 50 Hz network includes 11 VSCs, six operating in GFL mode and five in GFM mode, together with five synchronous generators (SGs) modeled with full dynamic detail. Among the VSCs, units 3, 4, 5, 7, 8, and 10 are treated as black-box models for the SSA-FITSS application, although full detail is available. In realistic settings, only limited information is accessible; thus, nominal power and voltage, input/output frequency, control mode, and selected control-loop constants are assumed known. All VSCs operate under PQ control. Transmission lines are modeled using π-section equivalents, and loads are represented as concentrated RL parameters. Fig. 7 illustrates the system layout, highlighting the location of the VSC and SG units. The FD hybrid admittance data for the black-box VSCs is obtained using the SIaD-Tool [28], while the full linear white-box system is constructed using the STAMP tool [9]. For each black-box VSC and operating point, the SSA-FITSS algorithm is applied to synthesize a reduced-order state-space 
+
+Fig. 7: Layout of the New England power system. model, which is then integrated into STAMP to enable complete eigenvalue-based analysis of the entire network in an automated manner. The case study is structured into three stages. First, a validation study is performed using the SSA-FITSS methodology to extract small-signal models from the black-box VSCs and evaluate their accuracy against the SSA-EMT theoretical model in a multi-variable, large-scale context. Second, a scenario is examined in which the rated capacity of the SGs is progressively reduced to emulate increasing converter penetration. Stability limits are evaluated through eigenvalue sensitivity analysis. Finally, a complementary scenario is considered in which the rated capacity of the GFM converters is reduced, resulting in a system dominated by GFL operation. 
+
+A. Black-Box Dominated System 
+
+The EMT frequency scan is performed using a time step of 10 μs, a frequency resolution of 1 Hz, and 150 linearly spaced frequency points. A voltage and frequency perturbation of 1% and 0.05% of the nominal 138 kV and 50 Hz are applied, with a system base power of 100 MVA. An initial order of 4 poles is selected within the frequency range of 1 mHz to 1 kHz for all black-box VSCs, using a εRMS tolerance of 5 × 10 −3. The resulting final orders for each VSC are summarized in Table V. The full system contains 824 states, of which 259 are from the black-box VSCs. All identified SSA-FITSS models are confirmed to be stable using MATLAB’s isstable function. Compared with the white-box VSC models (average order 24 for GFL and 27 for GFM), the SSA-FITSS models exhibit higher order due to the adaptive pole-expansion strategy; however, as validated in Section III, the resulting “over-fitting” mainly introduces additional poles associated with existing dynamics rather than spurious modes. Validation of the extracted SSA-FITSS models was performed by integrating them into the automated STAMP framework [9] and comparing the results with the SSA-EMT theoretical model and the nonlinear EMT simulation. A1% step perturbation in current was applied at bus 1 and time-domain responses were compared across multiple nodes. As shown in Fig. 8, the full SSA-FITSS-based model closely 8
+
+TABLE V: Results from the identified black-box models. 
+
+Converter ID Order ID Time (s) Final ǫRMS Status 
+
+GFM3 55 1.98 1.92 ×10 −3 Stable GFM4 51 1.63 1.89 ×10 −3 Stable GFL5 37 0.85 1.54 ×10 −3 Stable GFL7 41 0.90 1.72 ×10 −3 Stable GFL8 36 0.71 1.12 ×10 −3 Stable GFL10 39 1.03 1.43 ×10 −3 Stable 
+
+(a) Power consumed by load 53. 
+
+(b) Voltages and currents at bus 42. 
+
+(c) Frequency at bus 14. 
+
+(d) Frequency at bus 1. 
+
+Fig. 8: SSA-FITSS validation for the New England network. matches the the SSA-EMT theoretical and nonlinear EMT responses and successfully captures the dominant dynamics, despite more than half of the VSCs being modeled as black-box units. Minor discrepancies appear in the initial oscillatory behaviour of voltage, current and frequency signals. As validated in Subsection III-B, these deviations are attributable to modes not identified during fitting; such modes are neither dominant nor observable from the perturbation location and therefore exert negligible dynamic influence. Fig. 9 shows the critical modes of the full SSA-FITSS-based model and the SSA-EMT theoretical model, confirming overall system stability and good agreement with the linearized model. Table VI lists the critical modes from the full SSA-FITSS-based model, ordered by the smallest damping ratio ζ, and reports their frequencies and white- or black-box classification using the procedure in (12)–(15). The first ten critical modes are purely white-box dominated, with damping below 0.001% and frequencies equal to the nominal system 
+
+Fig. 9: Critical modes from the New England network. TABLE VI: Summary of the critical modes. 
+
+Mode ID Value (rad/s) ζ (%) f (Hz) Dominant 
+
+642, 643 1, 2 - 0.0008 ± j314.16 0.000 50.0 wb 
+
+640, 641 3, 4 - 0.0025 ± j314.16 0.001 50.0 wb 
+
+589, 590 5, 6 - 0.0034 ± j314.16 0.001 50.0 wb 
+
+644, 645 7, 8 - 0.0041 ± j314.16 0.001 50.0 wb 
+
+591, 592 9, 10 - 0.0263 ± j314.16 0.008 50.0 wb           
+
+> 12345678910
+> Eigenvalues
+> NET.iq-39-45 NET.id-39-45 Load4.ilq Load4.ild Load14.ilq Load14.ild Load15.ilq Load15.ild Load18.ilq Load18.ild Load19.ilq Load19.ild Load21.ilq Load21.ild Load22.ilq Load22.ild Load26.ilq Load26.ild Load28.ilq Load28.ild Load34.ilq Load34.ild Load35.ilq Load35.ild
+> States
+> 0.00 0.00 0.00 0.00 0.00 0.00 0.02 0.02 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.02 0.02 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.01 0.01 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.01 0.01 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.02 0.02 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.02 0.02 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.01 0.01 0.00 0.00 0.00 0.00 0.03 0.03 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.01 0.01 0.00 0.00 0.00 0.00 0.03 0.03 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.03 0.03 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.04 0.04 0.00 0.00 0.01 0.01 0.00 0.00 0.03 0.03 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.04 0.04 0.00 0.00 0.01 0.01
+> 0.57 0.57 1.00 1.00 0.57 0.57 1.00 1.00 0.72 0.72 0.63 0.63 1.00 1.00 0.72 0.72 0.63 0.63 1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.00 00.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1
+
+Fig. 10: Summary of the participation factor results. frequency. Purely black-box dominated modes (from the individual SSA-FITSS models) are not identified as critical, but they align well with the SSA-EMT theoretical modes and do not introduce redundant or additional critical dynamics. Finally, a participation factor (PF) analysis is performed on the critical modes of the full SSA-FITSS model. For clarity, Fig. 10 shows a reduced set of relevant states using a filtering threshold of P F s > 0.005 . The PF results indicate that critical modes 1–2 are dominated by electrical/system variables, with the largest participation from the currents at load 18 and, to a lesser extent, load 14. Modes 3–4 are dominated by load currents at buses 19, 18, and 14. Modes 5–6, 7–8, and 9–10 show similar behavior, dominated by current at loads 28, 22, and 35, respectively. Note that, assigned states from the SSA-FITSS models do not participate in the critical modes for this case study. These results demonstrate that the combined SSA-FITSS and STAMP framework [9] provides full access to system-wide modal information, enabling detailed stability assessment in black-box dominated systems. 
+
+B. Where Is the VSC Penetration Limit? 1) SG Reduction: In this scenario, the rated capacity of the synchronous generators is progressively reduced to emulate increasing converter penetration. For each operating point, individual SSA-FITSS VSC models are updated and integrated into the full SSA-FITSS-based system. Fig. 11 shows the critical eigenvalue trajectories as the total SG capacity is reduced from 20 900 MVA to 19 150 MVA (an 9 
+
+> 19.5 20 20.5
+> SG generation reduction (GVA)
+> dominant
+> BDCA
+
+Fig. 11: SSA-FITSS eigenvalue sensitivity for SG reduction. 8.4% reduction), while the total VSC-based capacity remains 24 450 MVA. This corresponds to 53.9% of the total system capacity, with 81.6% of the VSCs operating in GFL mode and the remaining 18.4% in GFM mode, representing aVSC-dominated system. The sensitivity analysis shows that dominant eigenvalues cross into the right-half plane when SG capacity falls below 19 700 MVA, revealing system instability after about a 6% reduction in synchronous generation (confirmed by EMT simulations). The initial unstable modes (modes A in Fig. 11) oscillate at 0.64 Hz with a damping ratio of −0.007 and exhibit the highest participation in the field and stator currents of SG1 and SG2, as confirmed by the participation factor analysis. Modes B at 0.61 Hz with ζ = −0.073 show participation from the same variables. Modes C at 0.49 Hz with ζ = −0.352 are dominated by the same SG-related variables but primarily from SG1. Modes D, located furthest to the right in the complex plane, again show dominant participation from these variables at 0.48 Hz with ζ = −0.394 . This behavior indicates that the instability in the SG-reduction scenario is mainly driven by SG1 and SG2. Notably, neither the black-box VSC modes nor their associated variables contribute to the instability. 
+
+2) GFM Reduction: In the second scenario, the number of VSCs operating in GFM mode is reduced, increasing the share of GFL VSCs while maintaining the same SG capacity. The total GFM capacity is initially 4 500 MVA and is reduced to 1 360 MVA, corresponding to a 70% reduction. Fig. 12 shows that instability emerges when the GFM capacity falls below 1 850 MVA, corresponding to 58% of the initial GFM capacity. The participation factor analysis shows that the unstable modes E at 0.56 Hz with ζ = −0.004 are white-box dominated by the variables SG2.if-d, SG2.is-d, SG1.if-d, and SG1.is-d, confirming an electromechanical instability driven by interactions involving the field and stator currents of SG1 and SG2. A minor participation of 0.08 is observed from GFM3.cc-7 and GFM3.cc-8, indicating a very small contribution from the current-control variables of the black-box GFM3 in modes E. Modes F at 0.51 Hz with 
+
+ζ = −0.007 show the largest participation from the frequency and angle of SG4, while still exhibiting contributions from the same SG1 and SG2 variables. For modes G at 0.43 Hz with 
+
+ζ = −0.022 , the dominant variables remain those of SG1 and SG2, but the participation of the previously mentioned GFM3 variables increases to 0.6, highlighting a growing interaction between the SG units and the black-box GFM3. Notice that in both scenarios, the SSA-FITSS methodology enables a physically meaningful interpretation of the modes   
+
+> 1.5 22.5 33.5 44.5
+> GFM generation reduction (GVA)
+> dominant
+> EFG
+
+Fig. 12: SSA-FITSS eigenvalue sensitivity for GFM reduction. contributing to instability. Although simplified, these study cases demonstrate the scalability and analytical capability of SSA-FITSS in enabling sensitivity-based small-signal stability assessments in black-box dominated systems. V. C ONCLUSION 
+
+This work presented an extended multi-variable fitted state-space (SSA-FITSS) methodology for small-signal stability analysis in converter-dominated power systems with limited model data. The method overcomes key limitations of existing identification-based approaches by providing accurate state-space models from black-box VSCs, enabling full eigenvalue-based analysis without requiring access to internal control. The proposed framework integrates frequency-domain identification, adaptive pole-expansion, and model-order reduction into a unified method that scales to large systems. A notable contribution is the automated state-interpretation strategy, which assigns fitted states to representative control-loop categories based on their dominant frequency ranges. This provides an approximate but meaningful physical interpretation of the identified dynamics and enables extensive modal analysis. The New England case study demonstrates that the proposed methodology accurately reproduces converter and system dynamics, identifies stability limits under varying SG and GFM penetration levels, and reveals the dominant mechanisms driving instability. The results confirm that SSA-FITSS enables system-wide stability assessment in scenarios where traditional white-box modeling is not feasible. ACKNOWLEDGMENT 
+
+This work has received funding from the ADOreD project under the European Union’s Horizon Europe Research and Innovation Programme under the Marie Skłodowska-Curie Grant Agreement No. 101073554. The work of O. Gomis-Bellmunt and E. Prieto-Araujo was supported by the Agència de Gestió d’Ajuts Universitaris i de Recerca (AGAUR) through the ICREA Acadèmia programme, and by the Departament de Recerca i Universitats of the Generalitat de Catalunya. The work of E. Prieto-Araujo was also supported by the Serra Húnter Programme. REFERENCES [1] M. Cheah-Mane, A. Egea-Alvarez, E. Prieto-Araujo, H. Mehrjerdi, O. Gomis-Bellmunt, and L. Xu, “Modeling and analysis approaches for small-signal stability assessment of power-electronic-dominated systems,” WIREs Energy and Environment , vol. 12, no. 1, p. e453, 2023. 10 
+
+[2] M. Cheah-Mane, J. Arevalo-Soler, D. Moutevelis, E. Mateu-Barriendos, E. Prieto-Araujo, O. Gomis-Bellmunt, J. Renedo, M. Martin-Almenta, E. Nuño-Martinez, S. Martinez-Villanueva, J. Jung, N. Kim, and Y. Kwon, “A new paradigm for small-signal stability analysis in modern power systems: Challenges, models, and methods in power systems rich in power electronics,” IEEE Power and Energy Magazine , vol. 24, no. 1, pp. 67–81, 2026. [3] A. Juditsky, H. Hjalmarsson, A. Benveniste, B. Delyon, L. Ljung, J. SjÖberg, and Q. Zhang, “Nonlinear black-box models in system identification: Mathematical foundations,” Automatica , vol. 31, no. 12, pp. 1725–1750, 1995, trends in System Identification. [4] L. Ljung, “Perspectives on system identification,” Annual Reviews in Control , vol. 34, no. 1, pp. 1–12, 2010. [5] Y. Wang, X. Wang, Z. Chen, and F. Blaabjerg, “Small-signal stability analysis of inverter-fed power systems using component connection method,” IEEE Transactions on Smart Grid , vol. 9, no. 5, pp. 5301–5310, 2018. [6] Y. Wang, X. Wang, F. Blaabjerg, and Z. Chen, “Harmonic stability analysis of inverter-fed power systems using component connection method,” in 2016 IEEE 8th International Power Electronics and Motion Control Conference (IPEMC-ECCE Asia) , 2016, pp. 2667–2674. [7] L. Kocewiak and et al, “Multi-frequency stability of converter-based modern power systems,” CIGRE, Technical Brochure TB 928, 2024, working Group C4.49. [Online]. Available: https://www.e-cigre.org/publications/detail/928-multi-frequency-stability-of-converter-based-modern-power-systems.html [8] D. Yang and Y. Sun, “Siso impedance-based stability analysis for system-level small-signal stability assessment of large-scale power electronics-dominated power systems,” IEEE Transactions on Sustainable Energy , vol. 13, no. 1, pp. 537–550, 2022. [9] J. Arevalo-Soler, D. Moutevelis, E. Mateu-Barriendos, O. Alican, C. Collados-Rodriguez, M. Cheah-Mañe, E. Prieto-Araujo, and O. Gomis-Bellmunt, “A matlab-based toolbox for automatic emt modeling and small-signal stability analysis of modern power systems,” 2025. [Online]. Available: https://arxiv.org/abs/2506.22201 [10] Y. Liao and X. Wang, “Small-signal modeling of ac power electronic systems: Critical review and unified modeling,” IEEE Open Journal of Power Electronics , vol. 2, pp. 424–439, 2021. [11] B. Vilmann, O. Saborío-Romano, and D. Müller, “Composing small-signal models via the component connection method with python and excel,” in 2024 59th International Universities Power Engineering Conference (UPEC) , 2024, pp. 1–6. [12] I. J. Perez-arriaga, G. C. Verghese, and F. C. Schweppe, “Selective modal analysis with applications to electric power systems, part i: Heuristic introduction,” IEEE Transactions on Power Apparatus and Systems , vol. PAS-101, no. 9, pp. 3117–3125, 1982. [13] F. L. Pagola, I. J. Pérez-Arriaga, and G. C. Verghese, “On sensitivities, residues and participations: Applications to oscillatory stability analysis and control,” IEEE Transactions on Power Systems , vol. 4, no. 1, pp. 278–285, 1989. [14] L. A. Garcia-Reyes, O. Gomis-Bellmunt, E. Prieto-Araujo, V. A. Lacerda, and M. Cheah-Mañe, “Siad-tool: A comprehensive frequency-domain tool for small-signal stability and interaction assessment in modern power systems,” 2026. [Online]. Available: https://arxiv.org/abs/2601.05519 [15] M. Amin, C. Zhang, A. Rygg, M. Molinas, E. Unamuno, and M. Belkhayat, Nyquist Stability Criterion and its Application to Power Electronics Systems . John Wiley & Sons, Ltd, 2019, pp. 1–22. [16] Y. Liao and X. Wang, “General rules of using bode plots for impedance-based stability analysis,” in 2018 IEEE 19th Workshop on Control and Modeling for Power Electronics (COMPEL) , 2018, pp. 1–6. [17] F. Huerta, S. Cóbreces, F. J. Rodríguez, M. Moranchel, and I. Sanz, “State-space black-box model identification of a voltage-source converter with lcl filter,” in 2012 3rd IEEE International Symposium on Power Electronics for Distributed Generation Systems (PEDG) , 2012, pp. 550–557. [18] N. Cifuentes, M. Sun, R. Gupta, and B. C. Pal, “Black-box impedance-based stability assessment of dynamic interactions between converters and grid,” IEEE Transactions on Power Systems , vol. 37, no. 4, pp. 2976–2987, 2022. [19] Y. Zhu, I. Kocar, S. Bu, T. Xue, and U. Karaagac, “Application of frequency-domain fitting and descriptor state-space modeling for the analysis of sub-synchronous oscillations in multi-ibr systems,” 
+
+International Journal of Electrical Power & Energy Systems , vol. 177, p. 111778, 2026. [20] A. M. Smith, S. D’Arco, J. A. Suul, and B. Gustavsen, “Improved pole placement and compaction of mimo vector fitting applied to system identification,” IEEE Transactions on Power Delivery , vol. 39, no. 2, pp. 1259–1270, 2024. [21] B. Gustavsen and A. Semlyen, “A robust approach for system identification in the frequency domain,” IEEE Transactions on Power Delivery , vol. 19, no. 3, pp. 1167–1173, 2004. [22] A. Ramirez, “Vector fitting-based calculation of frequency-dependent network equivalents by frequency partitioning and model-order reduction,” IEEE Transactions on Power Delivery , vol. 24, no. 1, pp. 410–415, 2009. [23] L. A. Garcia-Reyes, E. Prieto-Araujo, V. A. Lacerda, J. Arévalo-Soler, O. Gomis-Bellmunt, M. Martin-Almenta, E. Nuño-Martínez, and J. Renedo, “Data-driven state-space modeling for small-signal stability analysis of black-box power converters,” in 2025 IEEE PES Innovative Smart Grid Technologies Europe (ISGT EUROPE) , 2025, pp. 1–6. [24] M. A. Danzer, C. Plank, and T. Rüther, “Electrochemical system analysis from impedance data to system identification,” Cell Reports Physical Science , vol. 5, no. 7, p. 102091, 2024. [25] A. Semlyen, A. Ramirez, B. Gustavsen, and R. Iravani, “Dominant modes identification of linear systems via geometrical search,” IEEE Transactions on Power Delivery , vol. 36, no. 6, pp. 3289–3298, 2021. [26] E. Bañuelos-Cabral, J. Gutiérrez-Robles, J. Nuño-Ayón, M. Vega-Grijalva, J. Naredo, and J. Sotelo-Castañón, “Iterative matrix fitting approach of frequency dependent matrices based on vector fitting,” Electric Power Systems Research , vol. 252, p. 112346, 2026. [27] M. Amin and M. Molinas, “Small-signal stability assessment of power electronics based power systems: A discussion of impedance-and eigenvalue-based methods,” IEEE Transactions on Industry Applications , vol. 53, no. 5, pp. 5014–5030, 2017. [28] L. A. Garcia-Reyes, “Siad-tool: A comprehensive frequency-domain tool for small-signal stability and interaction assessment in modern power systems,” https://github.com/luisangelgare/SIaD-Tool, 2025. [29] B. Gustavsen and A. Semlyen, “Rational approximation of frequency domain responses by vector fitting,” IEEE Transactions on Power Delivery , vol. 14, no. 3, pp. 1052–1061, 1999. [30] SINTEF Energy Research, “Vector fitting,” https://www.sintef.no/en/software/vector-fitting/, 2026, accessed: 2026-02-13. [31] MathWorks, Balanced state-space realization ,https://es.mathworks.com/help/control/ref/dynamicsystem.balreal.html, The MathWorks, Inc., Natick, Massachusetts, United States, 2023. [32] R. Teodorescu, M. Liserre, and P. Rodriguez, Grid Converters for Photovoltaic and Wind Power Systems . John Wiley & Sons, Ltd, 2011. [33] O. Alican, D. Moutevelis, J. Arévalo-Soler, C. Collados-Rodriguez, J. Amorós, O. Gomis-Bellmunt, M. Cheah-Mañe, and E. Prieto-Araujo, “A dynamic similarity index for assessing voltage source behaviour in power systems,” IEEE Transactions on Power Systems , pp. 1–14, 2025. [34] J. M. Guerrero, J. C. Vasquez, J. Matas, L. G. de Vicuna, and M. Castilla, “Hierarchical control of droop-controlled ac and dc microgrids—a general approach toward standardization,” IEEE Transactions on Industrial Electronics , vol. 58, no. 1, pp. 158–172, 2011. [35] P. Rodríguez, R. Teodorescu, I. Candela, A. V. Timbus, M. Liserre, and F. Blaabjerg, “New positive-sequence voltage detector for grid synchronization of power converters under faulty grid conditions,” in 
+
+2006 37th IEEE Power Electronics Specialists Conference , 2006. [36] F. D. Freijedo, J. Doval-Gandoy, O. Lopez, C. Martinez-Peñalver, A. G. Yepes, P. Fernandez-Comesaña, J. Malvar, A. Nogueiras, J. Marcos, and A. Lago, “Grid-synchronization methods for power converters,” in 
+
+2009 35th Annual Conference of IEEE Industrial Electronics , 2009, pp. 522–529. [37] N. Pogaku, M. Prodanovic, and T. C. Green, “Modeling, analysis and testing of autonomous operation of an inverter-based microgrid,” IEEE Transactions on Power Electronics , vol. 22, no. 2, pp. 613–625, 2007. [38] Q.-C. Zhong and T. Hornik, Control of Power Inverters in Renewable Energy and Smart Grid Integration . John Wiley & Sons, Ltd, 2012, ch. 18, pp. 277–296. [39] S. Jiang, Y. Zhu, T. Xu, X. Wang, and G. Konstantinou, “Frequency domain inertia design of grid-forming converters,” IEEE Transactions on Power Electronics , vol. 40, no. 7, pp. 8886–8898, 2025. [40] N. Hatziargyriou, J. Milanovic, C. Rahmann, and et al., “Definition and classification of power system stability – revisited & extended,” IEEE Transactions on Power Systems , vol. 36, no. 4, pp. 3271–3281, 2021. [41] C. Collados-Rodriguez, M. Cheah-Mane, E. Prieto-Araujo, and O. Gomis-Bellmunt, “Stability and operation limits of power systems with high penetration of power electronics,” International Journal of Electrical Power & Energy Systems , vol. 138, p. 107728, 2022.

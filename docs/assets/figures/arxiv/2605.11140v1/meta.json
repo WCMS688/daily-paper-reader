@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.11140v1/fig-001.webp",
+      "caption": "Fig. 4: Validation of SSA-FITSS for the GFL VSC.",
+      "page": 6,
+      "index": 1,
+      "width": 380,
+      "height": 407
+    },
+    {
+      "url": "assets/figures/arxiv/2605.11140v1/fig-002.webp",
+      "caption": "Fig. 5: Pole-location comparison for the GFL VSC.",
+      "page": 6,
+      "index": 2,
+      "width": 384,
+      "height": 371
+    },
+    {
+      "url": "assets/figures/arxiv/2605.11140v1/fig-003.webp",
+      "caption": "TABLE IV: Pole-location results using SSA-FITSS",
+      "page": 6,
+      "index": 3,
+      "width": 448,
+      "height": 402
+    },
+    {
+      "url": "assets/figures/arxiv/2605.11140v1/fig-004.webp",
+      "caption": "Fig. 10: Summary of the participation factor results.",
+      "page": 8,
+      "index": 4,
+      "width": 392,
+      "height": 307
+    },
+    {
+      "url": "assets/figures/arxiv/2605.11140v1/fig-005.webp",
+      "caption": "TABLE V: Results from the identified black-box models.",
+      "page": 8,
+      "index": 5,
+      "width": 486,
+      "height": 629
+    }
+  ]
+}
