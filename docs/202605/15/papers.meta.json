@@ -1,0 +1,69 @@
+{
+  "label": "2026-05-15",
+  "date": "2026-05-15",
+  "generated_at": "2026-05-15T20:11:38",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202605/15/2605.09375v1-311-a-1408-to-13569tokens-reram-on-logic-stacked-outlier-free-large-language-model-accelerator-with-block-clustered-weight-compression-and-adaptive-parallel-speculative-decoding",
+      "section": "quick",
+      "title_en": "31.1 A 14.08-to-135.69Token/s ReRAM-on-Logic Stacked Outlier-Free Large-Language-Model Accelerator with Block-Clustered Weight-Compression and Adaptive Parallel-Speculative-Decoding",
+      "authors": "Pingcheng Dong, Yonghao Tan, Xuejiao Liu, Peng Luo, Yu Liu, Di Pang, Songchen Ma, Xijie Huang, Shih-Yang Liu, Dong Zhang, Zhichao Lu, Luhong Liang, Chi-Ying Tsui, Fengbin Tu, Liang Zhao, Kwang-Ting Cheng",
+      "date": "2026-05-10",
+      "pdf": "https://arxiv.org/pdf/2605.09375v1",
+      "score": "7.0",
+      "evidence": "面对面 ReRAM-on-logic 堆叠技术与凸点连接",
+      "tldr": "本研究提出了一种基于55nm工艺的ReRAM-on-logic堆叠LLM加速器，旨在解决大语言模型推理中的带宽和计算瓶颈。通过采用局部旋转单元消除离群值以实现低比特量化，结合块聚类权重压缩与堆叠感知近内存计算架构，并引入自适应并行投机解码及乱序调度器，显著提升了资源利用率。该芯片实现了14.08至135.69 token/s的推理速度，相比传统投机解码提升了4.46至7.17倍。",
+      "tags": "query:si-pi",
+      "abstract_en": "This work presents a 55nm speculative decoding-based LLM accelerator with bumping-based face-to-face ReRAM-on-logic stacking technology. It features a local rotation unit for outlier-free low-bit quantization, a stacking-aware PNM architecture co-designed with blockwise vector quantization to reduce weight EMA overheads, and an adaptive parallel speculative decoding scheme with an out-of-order scheduler for high resource and bandwidth utilization. Our chip achieves 14.08-to-135.69token/s and 4.46-to-7.17x speedup over vanilla speculative decoding.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/15/2605.10352v1-quantifying-system-level-kpi-deviations-of-sionna-rt-material-and-near-field-error-analysis-using-a-5g-oai-testbed",
+      "section": "quick",
+      "title_en": "Quantifying System Level KPI Deviations of Sionna RT: Material and Near-Field Error Analysis Using a 5G OAI Testbed",
+      "authors": "Faizan Rauf, Srijita Sanyal, Markus Heinrichs, Aydin Sezgin",
+      "date": "2026-05-11",
+      "pdf": "https://arxiv.org/pdf/2605.10352v1",
+      "score": "6.0",
+      "evidence": "使用VNA测量和射线追踪进行信道建模与近场误差分析",
+      "tldr": "本研究旨在量化射线追踪（RT）模拟与实际5G系统关键性能指标（KPI）之间的偏差。通过在室内实验室环境下，利用Sionna RT模拟与矢量网络分析仪（VNA）实测信道，并结合OpenAirInterface (OAI) 5G测试平台进行硬件在环仿真，对比了RSRP、SNR和SINR等指标。研究揭示了天线近场效应和材料属性失配是导致系统级误差的主要因素，为基于数字孪生的网络规划提供了定量基准。",
+      "tags": "query:si-pi",
+      "abstract_en": "Ray tracing (RT) has recently gained renewed interest in wireless communications, driven by its integration into digital twin (DT) frameworks for site specific channel modeling. Several previous studies have validated RT at the channel level, yet how these errors propagate into real 5G system level key performance indicators (KPIs) on actual hardware remains unquantified. This paper addresses this gap by comparing Sionna RT simulated channels against vector network analyzer (VNA) measured channels using an OpenAirInterface (OAI) 5G NR testbed. Channel measurements are conducted at 20 receiver positions in an indoor laboratory, with both channel types injected into a hardware in the loop channel emulator interfacing an OAIBOX MAX base station and a Quectel UE. RSRP, PUCCH SNR, and SINR are evaluated under both conditions. The results identify antenna near-field transition effects as a critical position-dependent error source, alongside material property mismatch, providing a quantitative benchmark for digital twin-based 5G and beyond network planning.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/15/2605.10807v1-llms-for-secure-hardware-design-and-related-problems-opportunities-and-challenges",
+      "section": "quick",
+      "title_en": "LLMs for Secure Hardware Design and Related Problems: Opportunities and Challenges",
+      "authors": "Johann Knechtel, Ozgur Sinanoglu, Ramesh Karri",
+      "date": "2026-05-11",
+      "pdf": "https://arxiv.org/pdf/2605.10807v1",
+      "score": "6.0",
+      "evidence": "用于电子设计自动化 (EDA) 和硬件设计的 LLM",
+      "tldr": "本文全面综述了大语言模型（LLM）在电子设计自动化（EDA）和硬件安全领域的应用现状。研究探讨了LLM在生成RTL代码、自动化测试平台及缩小规范与硅片间语义差距方面的潜力，同时深入分析了其引入的安全漏洞。文章系统总结了从推理驱动合成到多智能体漏洞提取等前沿方法，并提出了动态基准测试和红队演练等防御对策，旨在引导构建安全、可信且自主的硬件设计生态系统。",
+      "tags": "query:si-pi",
+      "abstract_en": "The integration of Large Language Models (LLMs) into Electronic Design Automation (EDA) and hardware security is rapidly reshaping the semiconductor industry. While LLMs offer unprecedented capabilities in generating Register Transfer Level (RTL) code, automating testbenches, and bridging the semantic gap between high-level specifications and silicon, they simultaneously introduce severe vulnerabilities. This comprehensive review provides an in-depth analysis of the state-of-the-art in LLM-driven hardware design, organized around key advancements in EDA synthesis, hardware trust, design for security, and education. We systematically expand on the methodologies of recent breakthroughs -- from reasoning-driven synthesis and multi-agent vulnerability extraction to data contamination and adversarial machine learning (ML) evasion. We integrate general discussions on critical countermeasures, such as dynamic benchmarking to combat data memorization and aggressive red-teaming for robust security assessment. Finally, we synthesize cross-cutting lessons learned to guide future research toward secure, trustworthy, and autonomous design ecosystems.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/15/2605.14481v1-ml-assisted-subband-learned-digital-backpropagation-for-nonlinearity-compensation-in-wideband-optical-systems",
+      "section": "quick",
+      "title_en": "ML-assisted Subband Learned Digital Backpropagation for Nonlinearity Compensation in Wideband Optical Systems",
+      "authors": "Evgeny Shevelev, Oleg Sidelnikov, Vitaly Danilko, Mikhail Fedoruk, Alexey Redyuk",
+      "date": "2026-05-14",
+      "pdf": "https://arxiv.org/pdf/2605.14481v1",
+      "score": "6.0",
+      "evidence": "机器学习辅助的信道非线性补偿",
+      "tldr": "针对宽带光纤通信系统中数字反向传播（DBP）算法因高计算复杂度难以实际应用的问题，本文提出了一种基于子带的学习型数字反向传播（SbL-DBP）框架。该方法将接收信号分解为多个子带以降低色散补偿复杂度，并利用可训练的MIMO滤波结构处理非线性交互，通过端到端学习和稀疏化技术优化性能。仿真结果表明，在宽带WDM系统中，该方法在低中复杂度下比传统DBP具有更好的信噪比增益和更少的传播步数。",
+      "tags": "query:si-pi",
+      "abstract_en": "Digital backpropagation (DBP) is one of the most effective techniques for compensating nonlinear distortions in coherent optical fiber communication systems. However, its practical application to wideband transmission remains limited by high computational complexity caused by large channel memory and the requirement for fine spatial discretization. In this work, we propose a subband-based learned digital backpropagation (SbL-DBP) framework for wideband optical transmission systems. The received signal is decomposed into multiple subbands, enabling independent frequency-domain compensation of the chromatic dispersion with reduced effective channel memory and lower computational complexity. Nonlinear intra- and inter-subband interactions are addressed in the time domain using a trainable multi-input multi-output filtering structure. The parameters of the proposed framework are jointly optimized using end-to-end gradient-based learning. In addition, sparsification techniques are employed to remove insignificant coefficients and further reduce computational complexity. Numerical simulations of an 11$\\times$40~Gbaud WDM RRC-16QAM 20$\\times$100 km transmission system demonstrate that the proposed method provides a superior performance--complexity trade-off compared to conventional DBP and enhanced DBP. In the low- and medium-complexity regimes, SbL-DBP provides higher signal-to-noise ratio gains while requiring fewer propagation steps.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

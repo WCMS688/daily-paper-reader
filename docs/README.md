@@ -6,26 +6,35 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-05-14
-- 运行时间：2026-05-14 20:41:59 UTC
+- 最新运行日期：2026-05-15
+- 运行时间：2026-05-15 20:11:28 UTC
 - 运行状态：成功
-- 本次总论文数：1
+- 本次总论文数：4
 - 精读区：0
-- 速读区：1
+- 速读区：4
 
 ### 今日简报（AI）
-今日攻克大规模电网中“黑盒”换流器的小信号稳定性分析难题，提升复杂系统建模能力。
-该研究提出了一种无需内部参数即可评估电压源换流器稳定性的新方案，有效应对现代电力系统的黑盒化挑战。
-建议电力工程师关注该方法在简化新能源并网安全校验、提升大规模系统仿真效率方面的实际应用。
-- 详情：[/202605/14/README](/202605/14/README)
+今日聚焦 ReRAM 堆叠的 LLM 高速加速器与硬件安全设计，探索大模型在底层架构中的深度应用。
+重点关注 Block-Clustered 权重压缩技术带来的百倍推理提速，以及 LLM 在自动化安全硬件设计中的新机遇。
+建议关注软硬协同优化趋势，从底层硬件效率与系统级安全两方面提升大模型落地能力。
+- 详情：[/202605/15/README](/202605/15/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Enabling Small-Signal Stability Analysis of Black-Box Voltage Source Converters in Large-Scale Modern Power Systems](/202605/14/2605.11140v1-enabling-small-signal-stability-analysis-of-black-box-voltage-source-converters-in-large-scale-modern-power-systems)  
+1. [31.1 A 14.08-to-135.69Token/s ReRAM-on-Logic Stacked Outlier-Free Large-Language-Model Accelerator with Block-Clustered Weight-Compression and Adaptive Parallel-Speculative-Decoding](/202605/15/2605.09375v1-311-a-1408-to-13569tokens-reram-on-logic-stacked-outlier-free-large-language-model-accelerator-with-block-clustered-weight-compression-and-adaptive-parallel-speculative-decoding)  
+   标签：评分：7.0/10、query:si-pi
+   evidence：面对面 ReRAM-on-logic 堆叠技术与凸点连接
+2. [Quantifying System Level KPI Deviations of Sionna RT: Material and Near-Field Error Analysis Using a 5G OAI Testbed](/202605/15/2605.10352v1-quantifying-system-level-kpi-deviations-of-sionna-rt-material-and-near-field-error-analysis-using-a-5g-oai-testbed)  
    标签：评分：6.0/10、query:si-pi
-   evidence：小信号稳定性分析与降阶建模
+   evidence：使用VNA测量和射线追踪进行信道建模与近场误差分析
+3. [LLMs for Secure Hardware Design and Related Problems: Opportunities and Challenges](/202605/15/2605.10807v1-llms-for-secure-hardware-design-and-related-problems-opportunities-and-challenges)  
+   标签：评分：6.0/10、query:si-pi
+   evidence：用于电子设计自动化 (EDA) 和硬件设计的 LLM
+4. [ML-assisted Subband Learned Digital Backpropagation for Nonlinearity Compensation in Wideband Optical Systems](/202605/15/2605.14481v1-ml-assisted-subband-learned-digital-backpropagation-for-nonlinearity-compensation-in-wideband-optical-systems)  
+   标签：评分：6.0/10、query:si-pi
+   evidence：机器学习辅助的信道非线性补偿
 
 
 <div class="dpr-home-promo-card">

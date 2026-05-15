@@ -1,0 +1,191 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-05-15T20:10:45.682571+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 2,
+    "deep_divecandidates": 0,
+    "deep_cap": 7,
+    "deep_selected": 0,
+    "quick_candidates": 4,
+    "quick_skim_target": 12,
+    "quick_selected": 4
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2605.09375v1",
+      "source": "arxiv",
+      "title": "31.1 A 14.08-to-135.69Token/s ReRAM-on-Logic Stacked Outlier-Free Large-Language-Model Accelerator with Block-Clustered Weight-Compression and Adaptive Parallel-Speculative-Decoding",
+      "abstract": "This work presents a 55nm speculative decoding-based LLM accelerator with bumping-based face-to-face ReRAM-on-logic stacking technology. It features a local rotation unit for outlier-free low-bit quantization, a stacking-aware PNM architecture co-designed with blockwise vector quantization to reduce weight EMA overheads, and an adaptive parallel speculative decoding scheme with an out-of-order scheduler for high resource and bandwidth utilization. Our chip achieves 14.08-to-135.69token/s and 4.46-to-7.17x speedup over vanilla speculative decoding.",
+      "authors": [
+        "Pingcheng Dong",
+        "Yonghao Tan",
+        "Xuejiao Liu",
+        "Peng Luo",
+        "Yu Liu",
+        "Di Pang",
+        "Songchen Ma",
+        "Xijie Huang",
+        "Shih-Yang Liu",
+        "Dong Zhang",
+        "Zhichao Lu",
+        "Luhong Liang",
+        "Chi-Ying Tsui",
+        "Fengbin Tu",
+        "Liang Zhao",
+        "Kwang-Ting Cheng"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR"
+      ],
+      "published": "2026-05-10T06:58:06+00:00",
+      "link": "https://arxiv.org/pdf/2605.09375v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:BGA-XTALK",
+        "query:si-pi"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "face-to-face ReRAM-on-logic stacking technology and bumping",
+      "llm_evidence_cn": "面对面 ReRAM-on-logic 堆叠技术与凸点连接",
+      "llm_evidence": "面对面 ReRAM-on-logic 堆叠技术与凸点连接",
+      "canonical_evidence": "面对面 ReRAM-on-logic 堆叠技术与凸点连接",
+      "llm_tldr_en": "Demonstrates an LLM accelerator using 3D stacking and bumping technology for high bandwidth.",
+      "llm_tldr_cn": "展示了一种采用 3D 堆叠和凸点技术实现高带宽的大语言模型加速器。",
+      "llm_tldr": "展示了一种采用 3D 堆叠和凸点技术实现高带宽的大语言模型加速器。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "SI/PI challenges and solutions for Chiplet and 3D heterogeneous integration",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2605.10352v1",
+      "source": "arxiv",
+      "title": "Quantifying System Level KPI Deviations of Sionna RT: Material and Near-Field Error Analysis Using a 5G OAI Testbed",
+      "abstract": "Ray tracing (RT) has recently gained renewed interest in wireless communications, driven by its integration into digital twin (DT) frameworks for site specific channel modeling. Several previous studies have validated RT at the channel level, yet how these errors propagate into real 5G system level key performance indicators (KPIs) on actual hardware remains unquantified. This paper addresses this gap by comparing Sionna RT simulated channels against vector network analyzer (VNA) measured channels using an OpenAirInterface (OAI) 5G NR testbed. Channel measurements are conducted at 20 receiver positions in an indoor laboratory, with both channel types injected into a hardware in the loop channel emulator interfacing an OAIBOX MAX base station and a Quectel UE. RSRP, PUCCH SNR, and SINR are evaluated under both conditions. The results identify antenna near-field transition effects as a critical position-dependent error source, alongside material property mismatch, providing a quantitative benchmark for digital twin-based 5G and beyond network planning.",
+      "authors": [
+        "Faizan Rauf",
+        "Srijita Sanyal",
+        "Markus Heinrichs",
+        "Aydin Sezgin"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP"
+      ],
+      "published": "2026-05-11T10:55:55+00:00",
+      "link": "https://arxiv.org/pdf/2605.10352v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:BGA-XTALK",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Channel modeling and near-field error analysis using VNA measurements and ray tracing",
+      "llm_evidence_cn": "使用VNA测量和射线追踪进行信道建模与近场误差分析",
+      "llm_evidence": "使用VNA测量和射线追踪进行信道建模与近场误差分析",
+      "canonical_evidence": "使用VNA测量和射线追踪进行信道建模与近场误差分析",
+      "llm_tldr_en": "Quantifies channel modeling deviations by comparing ray tracing simulations with VNA hardware measurements.",
+      "llm_tldr_cn": "通过将射线追踪模拟与VNA硬件测量进行对比，量化了信道建模的偏差。",
+      "llm_tldr": "通过将射线追踪模拟与VNA硬件测量进行对比，量化了信道建模的偏差。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "High speed channel characterization for SerDes and HBM interfaces",
+      "matched_requirement_id": "req-10",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.10807v1",
+      "source": "arxiv",
+      "title": "LLMs for Secure Hardware Design and Related Problems: Opportunities and Challenges",
+      "abstract": "The integration of Large Language Models (LLMs) into Electronic Design Automation (EDA) and hardware security is rapidly reshaping the semiconductor industry. While LLMs offer unprecedented capabilities in generating Register Transfer Level (RTL) code, automating testbenches, and bridging the semantic gap between high-level specifications and silicon, they simultaneously introduce severe vulnerabilities. This comprehensive review provides an in-depth analysis of the state-of-the-art in LLM-driven hardware design, organized around key advancements in EDA synthesis, hardware trust, design for security, and education. We systematically expand on the methodologies of recent breakthroughs -- from reasoning-driven synthesis and multi-agent vulnerability extraction to data contamination and adversarial machine learning (ML) evasion. We integrate general discussions on critical countermeasures, such as dynamic benchmarking to combat data memorization and aggressive red-teaming for robust security assessment. Finally, we synthesize cross-cutting lessons learned to guide future research toward secure, trustworthy, and autonomous design ecosystems.",
+      "authors": [
+        "Johann Knechtel",
+        "Ozgur Sinanoglu",
+        "Ramesh Karri"
+      ],
+      "primary_category": "cs.CR",
+      "categories": [
+        "cs.CR",
+        "cs.AR",
+        "cs.LG"
+      ],
+      "published": "2026-05-11T16:31:14+00:00",
+      "link": "https://arxiv.org/pdf/2605.10807v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:BGA-XTALK",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "LLMs for Electronic Design Automation (EDA) and hardware design",
+      "llm_evidence_cn": "用于电子设计自动化 (EDA) 和硬件设计的 LLM",
+      "llm_evidence": "用于电子设计自动化 (EDA) 和硬件设计的 LLM",
+      "canonical_evidence": "用于电子设计自动化 (EDA) 和硬件设计的 LLM",
+      "llm_tldr_en": "Reviews the role of LLMs in EDA and hardware design, highlighting opportunities and security risks.",
+      "llm_tldr_cn": "综述了 LLM 在 EDA 和硬件设计中的作用，强调了机遇与安全风险。",
+      "llm_tldr": "综述了 LLM 在 EDA 和硬件设计中的作用，强调了机遇与安全风险。",
+      "llm_tags": [
+        "query:si-pi:composite"
+      ],
+      "matched_query_tag": "query:si-pi:composite",
+      "matched_query_text": "Papers central to 板级、封装级、芯片级信号完整性与电源完整性（SI/PI）相关论文检索，涵盖高速互连、建模、PDN优化及机器学习应用。, especially work that connects or combines: Power integrity and PDN modeling optimization; Signal integrity analysis for high-speed interconnects; SerDes DDR and HBM channel modeling and simulation; PDN impedance modeling and decoupling capacitor design; SI/PI analysis for 2.5D 3D and Chiplet packaging; Machine learning methods for SI/PI analysis and optimization; Advanced modeling and optimization techniques for SI/PI in high speed systems; Machine learning applications for signal and power integrity analysis; SI/PI challenges and solutions for Chiplet and 3D heterogeneous integration; High speed channel characterization for SerDes and HBM interfaces.",
+      "matched_requirement_id": "req-composite-si-pi",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.14481v1",
+      "source": "arxiv",
+      "title": "ML-assisted Subband Learned Digital Backpropagation for Nonlinearity Compensation in Wideband Optical Systems",
+      "abstract": "Digital backpropagation (DBP) is one of the most effective techniques for compensating nonlinear distortions in coherent optical fiber communication systems. However, its practical application to wideband transmission remains limited by high computational complexity caused by large channel memory and the requirement for fine spatial discretization. In this work, we propose a subband-based learned digital backpropagation (SbL-DBP) framework for wideband optical transmission systems. The received signal is decomposed into multiple subbands, enabling independent frequency-domain compensation of the chromatic dispersion with reduced effective channel memory and lower computational complexity. Nonlinear intra- and inter-subband interactions are addressed in the time domain using a trainable multi-input multi-output filtering structure. The parameters of the proposed framework are jointly optimized using end-to-end gradient-based learning. In addition, sparsification techniques are employed to remove insignificant coefficients and further reduce computational complexity. Numerical simulations of an 11$\\times$40~Gbaud WDM RRC-16QAM 20$\\times$100 km transmission system demonstrate that the proposed method provides a superior performance--complexity trade-off compared to conventional DBP and enhanced DBP. In the low- and medium-complexity regimes, SbL-DBP provides higher signal-to-noise ratio gains while requiring fewer propagation steps.",
+      "authors": [
+        "Evgeny Shevelev",
+        "Oleg Sidelnikov",
+        "Vitaly Danilko",
+        "Mikhail Fedoruk",
+        "Alexey Redyuk"
+      ],
+      "primary_category": "physics.optics",
+      "categories": [
+        "physics.optics"
+      ],
+      "published": "2026-05-14T07:22:13+00:00",
+      "link": "https://arxiv.org/pdf/2605.14481v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:BGA-XTALK",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "ML-assisted compensation for channel nonlinearity",
+      "llm_evidence_cn": "机器学习辅助的信道非线性补偿",
+      "llm_evidence": "机器学习辅助的信道非线性补偿",
+      "canonical_evidence": "机器学习辅助的信道非线性补偿",
+      "llm_tldr_en": "Proposes a machine learning framework to compensate for nonlinear distortions in wideband optical systems.",
+      "llm_tldr_cn": "提出一种机器学习框架，用于补偿宽带光系统中的非线性失真。",
+      "llm_tldr": "提出一种机器学习框架，用于补偿宽带光系统中的非线性失真。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning applications for signal and power integrity analysis",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

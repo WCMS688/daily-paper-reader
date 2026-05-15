@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.10352v1/fig-001.webp",
+      "caption": "Fig. 4: Physical hardware testbed used for end to end 5G NR KPI evaluation.",
+      "page": 4,
+      "index": 1,
+      "width": 529,
+      "height": 300
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10352v1/fig-002.webp",
+      "caption": "Fig. 5: E-field magnitude of the Schwarzbeck BBHA 9120L at 3.349 GHz. White dashed semicircle marks the Fraunhofer boundary R0 = 0.343 m.",
+      "page": 4,
+      "index": 2,
+      "width": 457,
+      "height": 334
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10352v1/fig-003.webp",
+      "caption": "Fig. 3: Proposed hardware-in-the-loop testbed integrating VNA measured and Sionna RT simulated channels for endto-end 5G NR KPI evaluation.",
+      "page": 4,
+      "index": 3,
+      "width": 529,
+      "height": 477
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10352v1/fig-004.webp",
+      "caption": "Fig. 2: Indoor lab measurement setup showing the Tx and Rx horn antennas, R&S ZNA vector network analyzer, and UE measurement grid positions on the floor.",
+      "page": 3,
+      "index": 4,
+      "width": 529,
+      "height": 594
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10352v1/fig-005.webp",
+      "caption": "Fig. 6: Spatial distribution of absolute prediction errors |RT − Measured| for (a) SNR PUCCH, (b) SINR, and (c) RSRP across 20 receiver positions in the indoor laboratory environment. The red star marks the transmit antenna, the white dashed arc indicates the Fraunhofer near-field boundary (R0 = 0.343 m), white × symbols denote positions within the near-field transition zone (Pos. 11 and 16) and red circle shows different Rx position.",
+      "page": 5,
+      "index": 5,
+      "width": 1051,
+      "height": 568
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10352v1/fig-006.webp",
+      "caption": "Fig. 1: Top-view of the Digital Twin scene created in Blender v4.2, showing the indoor lab layout including the wooden desk, shelving units, window, and door used in the Sionna RT simulation.",
+      "page": 2,
+      "index": 6,
+      "width": 529,
+      "height": 712
+    }
+  ]
+}

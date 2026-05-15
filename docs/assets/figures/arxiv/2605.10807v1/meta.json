@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.10807v1/fig-001.webp",
+      "caption": "Fig. 1. Lessons learned across the wide range of LLM-driven frameworks for (secure) hardware design reviewed in this paper.",
+      "page": 5,
+      "index": 1,
+      "width": 1076,
+      "height": 579
+    }
+  ]
+}

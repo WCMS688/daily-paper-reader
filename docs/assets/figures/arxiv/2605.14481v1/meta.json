@@ -1,0 +1,70 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.14481v1/fig-001.webp",
+      "caption": "Fig. 11. SNR as a function of launch power per channel for SbL-DBP, EnDBP, and DBP under equal computational complexity constraints. Three representative complexity regimes are considered: low (≈ 3 · 102 RMpS, dotted), medium (≈ 103 RMpS, solid), and high (≈ 104 RMpS, dashed).",
+      "page": 11,
+      "index": 1,
+      "width": 514,
+      "height": 306
+    },
+    {
+      "url": "assets/figures/arxiv/2605.14481v1/fig-002.webp",
+      "caption": "Fig. 6. SNR gain as a function of the number of steps Nst for SbL-DBP with different numbers of subbands Nsb ∈ {1, 2, 4, 8, 11}, the nonlinear memory is fixed to Nc = 8 (solid curves). Dashed curves correspond to filters optimized with symmetry and translational invariance constraints (sec. III-C).",
+      "page": 7,
+      "index": 2,
+      "width": 515,
+      "height": 312
+    },
+    {
+      "url": "assets/figures/arxiv/2605.14481v1/fig-003.webp",
+      "caption": "Fig. 9. Improvement of the signal-to-noise ratio ∆SNR as a function of the computational complexity for DBP-based methods: DBP (green triangles), EnDBP (orange squares indicating all realizations for different Nc and Nst values), and SbL-DBP (blue circles indicating all realizations for different Nsb, Nc, and Nst values). The curves represent the Pareto-optimal sets. Red star markers represents SbL-DBP with sparsified MIMO coefficients.",
+      "page": 10,
+      "index": 3,
+      "width": 514,
+      "height": 311
+    },
+    {
+      "url": "assets/figures/arxiv/2605.14481v1/fig-004.webp",
+      "caption": "Fig. 10. SNR gain as a function of the number of subbands Nsb for SbL-DBP under different computational complexity constraints.",
+      "page": 10,
+      "index": 4,
+      "width": 515,
+      "height": 311
+    },
+    {
+      "url": "assets/figures/arxiv/2605.14481v1/fig-005.webp",
+      "caption": "Fig. 7. Normalized coefficients Cjlk for the case Nsb = 4, Nc = 16, Nst = 20 calculated without constraints (colored solid curves) and calculated with constraints on the conditions (15)-(17) (black dashed curves).",
+      "page": 8,
+      "index": 5,
+      "width": 1068,
+      "height": 220
+    },
+    {
+      "url": "assets/figures/arxiv/2605.14481v1/fig-006.webp",
+      "caption": "Fig. 1. Scheme of a proposed NLC consisting of analysis filter bank, a subband learned DBP module and synthesis filter bank with Nsb subbands.",
+      "page": 4,
+      "index": 6,
+      "width": 1052,
+      "height": 213
+    },
+    {
+      "url": "assets/figures/arxiv/2605.14481v1/fig-007.webp",
+      "caption": "Fig. 8. SNR gain ∆SNR as a function of the weight decay θ for the SbLDBP with Nst = 10, Nsb = 4, and Nc = 8. Inset: (a) distribution of the learned MIMO coefficient magnitudes for θ = 5 · 10−4, (b) coefficient distribution after sparsification.",
+      "page": 9,
+      "index": 7,
+      "width": 515,
+      "height": 308
+    },
+    {
+      "url": "assets/figures/arxiv/2605.14481v1/fig-008.webp",
+      "caption": "Fig. 4. (a) End-to-end learning framework of the SbL-DBP, represented as a deep layered model with alternating linear and nonlinear blocks. The MIMO coefficients Cjlk are optimized jointly using gradient-based training. (b) Dynamics of training loss, validation loss, and learning rate, as functions of the training epoch.",
+      "page": 5,
+      "index": 8,
+      "width": 515,
+      "height": 336
+    }
+  ]
+}
