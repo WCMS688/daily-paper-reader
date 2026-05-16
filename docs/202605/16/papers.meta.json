@@ -1,0 +1,39 @@
+{
+  "label": "2026-05-16",
+  "date": "2026-05-16",
+  "generated_at": "2026-05-16T19:55:32",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202605/16/2605.10807v1-llms-for-secure-hardware-design-and-related-problems-opportunities-and-challenges",
+      "section": "quick",
+      "title_en": "LLMs for Secure Hardware Design and Related Problems: Opportunities and Challenges",
+      "authors": "Johann Knechtel, Ozgur Sinanoglu, Ramesh Karri",
+      "date": "2026-05-11",
+      "pdf": "https://arxiv.org/pdf/2605.10807v1",
+      "score": "7.5",
+      "evidence": "用于EDA和硬件设计自动化的大语言模型",
+      "tldr": "本文综述了大语言模型（LLM）在电子设计自动化（EDA）和硬件安全领域的应用现状。研究探讨了LLM在RTL生成、测试平台自动化及弥合高层规范与芯片设计差距方面的潜力，同时也揭示了其引入的安全漏洞。通过分析推理驱动合成、多智能体漏洞提取及对抗性攻击等前沿方法，文章提出了动态基准测试和红队评估等对策，旨在为构建安全、可信且自主的硬件设计生态系统提供指导。",
+      "tags": "query:si-pi",
+      "abstract_en": "The integration of Large Language Models (LLMs) into Electronic Design Automation (EDA) and hardware security is rapidly reshaping the semiconductor industry. While LLMs offer unprecedented capabilities in generating Register Transfer Level (RTL) code, automating testbenches, and bridging the semantic gap between high-level specifications and silicon, they simultaneously introduce severe vulnerabilities. This comprehensive review provides an in-depth analysis of the state-of-the-art in LLM-driven hardware design, organized around key advancements in EDA synthesis, hardware trust, design for security, and education. We systematically expand on the methodologies of recent breakthroughs -- from reasoning-driven synthesis and multi-agent vulnerability extraction to data contamination and adversarial machine learning (ML) evasion. We integrate general discussions on critical countermeasures, such as dynamic benchmarking to combat data memorization and aggressive red-teaming for robust security assessment. Finally, we synthesize cross-cutting lessons learned to guide future research toward secure, trustworthy, and autonomous design ecosystems.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/16/2605.14035v1-ellfem-an-efficient-loop-free-matlab-implementation-of-isoparametric-bulk-and-surface-finite-elements",
+      "section": "quick",
+      "title_en": "$\\ell$FEM: An efficient loop-free Matlab implementation of isoparametric bulk and surface finite elements",
+      "authors": "Balázs Kovács, Michael Lantelme",
+      "date": "2026-05-13",
+      "pdf": "https://arxiv.org/pdf/2605.14035v1",
+      "score": "6.5",
+      "evidence": "用于电磁建模的高效有限元矩阵组装",
+      "tldr": "本研究推出了 $\\ell$FEM MATLAB 软件包，旨在提供一种简单、高效且灵活的等参有限元实现方法，涵盖体域和表面。该工具利用 MATLAB 的分页运算符实现了完全无循环的矩阵组装，显著提升了计算效率。论文详细描述了高阶等参表面有限元的组装过程，并通过数值实验验证了其在运行时间和处理非线性问题方面的优越性。",
+      "tags": "query:bga-xtalk",
+      "abstract_en": "The $\\ell$FEM MATLAB package provides a simple, efficient, and flexible implementation of isoparametric finite elements in bulk domains and on surfaces. The finite element matrix assemblies are based on MATLAB's paged operators and therefore completely loop-free. We give a short and conscious description of high-order isoparametric surface finite elements, which is then used to describe the assembly process and the implementation.   We report on relevant numerical experiments (runtime comparisons, modifications for non-linear problems, etc.), and on additional functions, examples, and a testing unit which are all part of the $\\ell$FEM package.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
