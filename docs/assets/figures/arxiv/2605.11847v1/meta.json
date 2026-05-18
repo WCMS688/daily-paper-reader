@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.11847v1/fig-001.webp",
+      "caption": "Figure 3: Impact of sequential to parallel architectural partitioning on the performance of a single aCAM row with a word size of 32. Shown are (a) latency, (b) estimated chip area per row/word, (c) search energy, and (d) a combined cost function integrating normalized latency, area, and energy metrics.",
+      "page": 6,
+      "index": 1,
+      "width": 491,
+      "height": 351
+    },
+    {
+      "url": "assets/figures/arxiv/2605.11847v1/fig-002.webp",
+      "caption": "Figure 1: (a) Conceptual aCAM operation. Each cell stores a lower and upper bound and compares an input query against this interval. A match is returned if the query lies within the boundaries indicated as the green area, otherwise a mismatch is produced. (b) Conventional 6T2M aCAM cell implementing the window comparison with separate low-bound and high-bound branches that share a common match-line discharge path. (c) Experiment showing an input sweep applied to two aCAM cells with fixed stored boundaries. The resulting aCAM output highlights the impact of match-line (ML) crosstalk near the decision boundary.",
+      "page": 2,
+      "index": 2,
+      "width": 491,
+      "height": 631
+    },
+    {
+      "url": "assets/figures/arxiv/2605.11847v1/fig-003.webp",
+      "caption": "Figure 4: (a) Flow diagram of the behavioral model, including the use of lookup tables (LUTs) and the iterative loop used to solve the differential equation governing the discharge of the match-line (ML) capacitor. (b,c) LUTs describing the inequality-check output voltages VX for the lower-bound (LB) and upper-bound (HB) comparisons as a function of the memristor conductance GMEM and the search voltage VDL. (d) LUT mapping the match-line current IML as a function of the match-line voltage VML and the comparator output voltage VX . (e) NOR-type match-line configuration with multiple parallel pull-down transistors driven by the voltages VX , illustrating the aggregation of cell contributions on the ML.",
+      "page": 7,
+      "index": 3,
+      "width": 976,
+      "height": 403
+    },
+    {
+      "url": "assets/figures/arxiv/2605.11847v1/fig-004.webp",
+      "caption": "Figure 2: (a) Proposed SALM analog CAM architecture featuring N sequential and M parallel memory compartments. (b) Transient control signals for an SALM aCAM cell with one sequential element. (c) Output ML current for eight intervals, illustrating the gain difference (match–mismatch separation) between the proposed SALM design and the 6T2M baseline. (d) Experiment showing an input sweep applied to two SALM aCAM cells with fixed stored boundaries. The resulting output demonstrates the near-ideal match-line (ML) behavior, where the response depends only on the mismatching input and remains well separated near the decision boundary.",
+      "page": 4,
+      "index": 4,
+      "width": 971,
+      "height": 501
+    },
+    {
+      "url": "assets/figures/arxiv/2605.11847v1/fig-005.webp",
+      "caption": "Figure 6: (a) Comparison of inference accuracy between an ideal scikit-learn predictor and the aCAM hardware implementation for different models. (b) Inference accuracy versus ML segment length for the gas concentration dataset",
+      "page": 9,
+      "index": 5,
+      "width": 466,
+      "height": 456
+    },
+    {
+      "url": "assets/figures/arxiv/2605.11847v1/fig-006.webp",
+      "caption": "Table 2: Dataset Characteristics and Sequential Scaling Thresholds Required to Achieve 50% and 80% Energy Reduction",
+      "page": 9,
+      "index": 6,
+      "width": 777,
+      "height": 241
+    }
+  ]
+}

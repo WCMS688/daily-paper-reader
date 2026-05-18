@@ -1,0 +1,364 @@
+Title: KIND: A Kalman-Inspired Adaptive Estimator for SRF Cavity Detuning
+
+URL Source: https://arxiv.org/pdf/2605.11957v1
+
+Published Time: Wed, 13 May 2026 01:23:13 GMT
+
+Number of Pages: 6
+
+Markdown Content:
+# KIND: A Kalman-Inspired Adaptive Estimator for SRF Cavity Detuning ⋆
+
+Andrei Maalberg ∗ Axel Neumann ∗ Pablo Echevarria ∗
+
+Andriy Ushakov ∗ Jens Knobloch ∗,∗∗ ∗ Helmholtz-Zentrum Berlin, 14109 Berlin, Germany (e-mail: 
+
+{andrei.maalberg, axel.neumann, pablo.echevarria, andrey.ushakov, jens.knobloch } @helmholtz-berlin.de).  
+
+> ∗∗
+
+Universit¨ at Siegen, 57068 Siegen, Germany (e-mail: jens.knobloch @uni-siegen.de) 
+
+Abstract: Superconducting radio frequency cavities with a high quality factor enable energy-efficient accelerator operation but are very sensitive to mechanical disturbances that detune their resonance. Accurate detuning estimation is therefore essential for efficient resonance control and stable beam conditions. This paper introduces Kalman-Inspired Neural Decomposition (KIND), a data-driven estimator that fuses a Dynamic Mode Decomposition model for stationary modal behavior with a Transformer-based predictor for transient dynamics. KIND further outputs learned uncertainty signals that indicate regime changes, enabling anomaly detection. Using operational cavity data, we compare KIND with a classical Kalman filtering baseline and discuss its potential as a foundation for future uncertainty-aware, forecast-based control. 
+
+Keywords: Data-driven modeling, state estimation, Koopman operator theory, uncertainty quantification, adaptive dynamical systems, Kalman filtering, SRF cavity detuning. 1. INTRODUCTION The increasing push for energy-efficient operation of su-perconducting particle accelerators has led to the deploy-ment of superconducting radio frequency (SRF) cavities with extremely high quality factors. While these high-Q systems reduce power consumption, they are also acutely sensitive to mechanical disturbances—such as microphon-ics or Lorentz-force detuning—that shift the resonance frequency of the cavity. Active detuning compensation therefore becomes essential to maintain stable beam con-ditions (Neumann et al., 2010). Designing such compensation schemes begins with ac-curate detuning estimation. SRF cavities exhibit com-plex electromechanical behavior characterized by multiple narrow-band mechanical modes that couple to the electro-magnetic field. Under stationary conditions, the detuning may be dominated by a few low-frequency modes (e.g., 100 Hz or below). However, transient events—such as liq-uid helium fluctuations—can abruptly excite additional modes, fundamentally altering the system’s modal com-position. These time-varying conditions violate the linear and stationary assumptions underpinning classical state estimators such as the Kalman filter. The need for estimators that can adapt to evolving cavity dynamics has long been recognized within the accelerator community. Bellandi (2021) emphasized that ”the reso-          
+
+> ⋆This work was supported by European Commission’s Horizon Europe Research and Innovation programme under Grant Agreement n°101131435. ©2026 the authors. This work has been accepted to IFAC for publication under a Creative Commons Licence CC-BY-NC-ND.
+
+nance controller should be designed to operate without complete a priori knowledge of the cavity mechanical dynamics and track eventual changes of the mechanical disturbances properties.” Adaptive methods such as re-cursive least squares or extended Kalman filtering can partially tune model parameters online, but they remain structurally rigid—the number and coupling of mechanical modes must be fixed in advance. When these assumptions are violated, estimation quality deteriorates and diver-gence can occur, especially when the sign or magnitude of modal coupling is incorrect. To address these limitations, we propose Kalman-Inspired Neural Decomposition (KIND)—a data-driven estimator that generalizes Kalman filtering principles to nonlinear and nonstationary SRF dynamics. KIND combines two complementary modules: a Dynamic Mode Decomposition (DMD) (Schmid, 2010) model that captures the stationary modal structure, and a Transformer-based (Vaswani et al., 2017) predictor that models transient and nonstation-ary effects. Their outputs are adaptively fused through a learned uncertainty-dependent weighting analogous to the Kalman gain. Beyond producing the detuning estimate, each module also emits a latent consistency score, quan-tifying its confidence in the current input regime. These time-resolved uncertainty signals enable anomaly detec-tion, highlighting moments when the observed dynamics deviate from previously learned behavior. The present work focuses on the estimation and uncer-tainty modeling stage—a necessary precursor to future control schemes that exploit predictive uncertainty. Us-ing operational SRF data exhibiting both stationary and transient regimes, we compare KIND against a classi-
+
+> arXiv:2605.11957v1 [eess.SY] 12 May 2026
+
+cal Kalman filter as a representative stationary Gaussian baseline and analyze its self-assessed uncertainty behavior. The results show that KIND maintains estimation quality under modal transitions and that its uncertainty signals provide a reliable indicator of regime changes. Our main contributions are as follows: 
+
+• We introduce Kalman-Inspired Neural Decomposi-tion (KIND), a hybrid DMD-Transformer estimator for nonlinear, nonstationary detuning dynamics. 
+
+• We compare KIND with a classical Kalman filter baseline and show that KIND preserves estimation quality under transient and distribution-shift condi-tions. 
+
+• We demonstrate that KIND’s learned uncertainty acts as intrinsic anomaly indicator, offering a bridge toward future uncertainty-aware control approaches. 2. RELATED WORK Data-driven modeling has recently gained attention in the accelerator community as a means to improve the robust-ness of cavity diagnostics and detuning compensation. Syed et al. (2021) introduced a Koopman-based Kalman filter for SRF systems, replacing a nonlinear cavity model with a learned linear embedding to enable real-time state estimation and fault detection. Their work demonstrated that latent-space filtering can capture nonlinearities while retaining Kalman interpretability. However, the linear latent model remains fixed and cannot represent transient shifts in modal composition. Wang (2023) applied DMD to model cavity detuning and combined it with model predictive control. DMD effec-tively captures stationary modal dynamics but struggles under abrupt regime changes, where new modes become active or coupling coefficients vary. In system identification and operator-theoretic modeling, combining linear spectral structures with neural compo-nents has proven effective for capturing dynamics beyond the reach of purely model-based approaches. Koopman-inspired neural models (Wang et al., 2023; Liu et al., 2023) address distribution shifts by learning adaptive, data-driven operators on lifted state spaces. KIND builds on these directions by fusing a DMD model of stationary behavior with a Transformer predic-tor for transients, blended through a learned uncertainty-dependent weighting analogous to the Kalman gain. Un-like prior methods, KIND also emits uncertainty sig-nals that indicate when the input dynamics deviate from the learned ones, enabling anomaly detection. As such, KIND generalizes Kalman-style estimation toward adap-tive, uncertainty-aware modeling of nonlinear dynamics. 3. BACKGROUND 
+
+3.1 Electromechanical model of an SRF cavity 
+
+In this work, we consider the dynamics of an SRF cavity that arise from the coupling between its electromagnetic field and mechanical resonance modes. In this context, the electromagnetic response of the cavity can be represented as (Schilcher, 1998) 
+
+ddt 
+
+ VT,I 
+
+VT,Q 
+
+
+
+=
+
+−ω1/2 −∆ω(t)∆ω(t) −ω1/2
+
+  VT,I 
+
+VT,Q 
+
+
+
++ ω1/2
+
+ VF,I 
+
+VF,Q 
+
+
+
+,
+
+(1) where VT and VF denote transmitted and forward cavity fields, ω1/2 is the half-bandwidth, and ∆ ω(t) represents the instantaneous detuning of the cavity resonance. Indices I
+
+and Q are the in-phase and quadrature components of the cavity field signals, respectively. The detuning ∆ ω(t) is driven by the cavity’s mechanical modes, each modeled as a damped oscillator excited by the RF field gradient and, more generally, by external disturbances: 
+
+d2
+
+dt 2 ∆ωn + ωn
+
+Qn
+
+ddt ∆ωn + ω2
+
+> n
+
+∆ωn = −knω2
+
+> n
+
+(V 2 
+
+> T,I
+
++ V 2
+
+> T,Q
+
+),
+
+(2) where ωn, Qn and kn are the frequency, quality factor, and coupling of the n-th mechanical mode. External exci-tations (e.g., microphonics) can be incorporated as addi-tional forcing terms acting on the mechanical modes. The total detuning is the superposition ∆ω(t) = 
+
+> N
+
+X
+
+> n=1
+
+∆ωn(t).
+
+This interaction forms a nonlinear feedback loop: the RF drive, together with external disturbances, excites mechanical vibrations, which in turn shift the cavity’s resonant frequency. 
+
+3.2 Kalman filtering as baseline estimation 
+
+For small-signal or linearized approximations, detuning estimation is often formulated as a discrete-time linear state-space model 
+
+xt = A x t−1 + wt, zt = Hx t + vt,
+
+where xt is the latent cavity state, zt is the measured detuning, and wt ∼ N (0 , Q ), vt ∼ N (0 , R ) denote process and measurement noise, respectively. Following this, the Kalman Filter recursively updates state estimate ˆ x− 
+
+> t
+
+as ˆxt = ˆ x− 
+
+> t
+
++ Kt (zt − H ˆx− 
+
+> t
+
+). (3) The Kalman gain Kt determines the confidence trade-off between the model prediction and measurement. The covariances Q and R are design parameters that encode epistemic and aleatoric uncertainty: large Q values make the filter distrust its model (introducing epistemic uncer-tainty), while small R emphasizes noisy measurements. In classical filtering, these uncertainties are homoscedastic, i.e., assumed constant over time. In contrast, complex sys-tems such as SRF cavities exhibit operating regimes where uncertainty changes dynamically, e.g., when new mechani-cal modes are excited or coupling signs vary. KIND gener-alizes this notion of estimation by learning heteroscedastic uncertainty: it adapts its confidence weighting from data through learned, time-varying consistency scores. In this sense, it extends Kalman-style estimation toward adaptive, uncertainty-aware modeling of nonlinear system dynamics. 4. KALMAN-INSPIRED NEURAL DECOMPOSITION We now describe KIND architecture. KIND learns a data-driven dynamical model that maps a finite lookback win-dow of past cavity detuning values to a forecast window of future evolution. Formally, for a discrete-time sequence 
+
+{xt}Tt=1 , the model operates on 
+
+Xback = [ xt−T +1 , . . . , x t],
+
+to predict 
+
+Xfore = [ xt+1 , . . . , x t+H ],
+
+where T and H denote the lookback and forecast lengths, respectively. Following Liu et al. (2023), we adopt T = 2 H
+
+to ensure that the lookback captures sufficient temporal context for stable forecasting. 
+
+4.1 Lifting the dynamics 
+
+Within each lookback window, we further segment the data into τ -sized slices {Xj }mj=1 , with m = T /τ . These slices define the temporal resolution of the model: longer slices emphasize smoother, globally coherent structure, while shorter ones provide finer responsiveness to rapid transient dynamics. Each slice Xj ∈ Rτ is lifted into a latent representation using a set of basis functions G = {gi}ni=1 designed to ap-proximate a Koopman-invariant subspace. The parameters of these basis functions are modulated by a kernel encoder 
+
+φ, producing a latent variable matrix V ∈ Rn×m via 
+
+vi,j = φ(Xj )⊤Xj ,
+
+after which each basis function gi is evaluated to obtain la-tent embeddings ξi,j = gi(vi,j ). Stacking these embeddings forms the lifted representation Ξ ∈ Rn×m, which evolves approximately linearly under a Koopman operator: 
+
+KG (Vj ) ≈ G (Vj+1 ),
+
+where K ∈ Rn×n advances the lifted state from slice j to 
+
+j + 1. Figure 1 illustrates this lifting process. X1 Xj Xm
+
+τ
+
+ξ1,j = sin( φ(Xj )T Xj )
+
+...
+
+ξn,j = cos( φ(Xj )T Xj )
+
+Ξj
+
+t
+
+Fig. 1. Lifting of time series data into latent embeddings. The lookback window is divided into m τ -sized slices, and each slice is evaluated through n basis functions to form a lifted latent embedding Ξ. 
+
+4.2 Stationary and transient Koopman operators 
+
+A single Koopman operator K effectively models station-ary, modal behavior but fails under transient or distri-butional shifts. To address this, KIND introduces two complementary branches: 
+
+• a stationary branch, parameterized by a global Koop-man operator Kstat , representing stable modal struc-ture; and 
+
+• a transient branch, with operator Ktrans , which adapts dynamically to local disturbances. Each branch maintains its own latent embedding Ξ b (b ∈{stat , trans }), ensuring independent representation and training. This decoupling allows the stationary dynamics to preserve long-term coherence, while the transient dy-namics specialize in fast, short-lived perturbations. Prac-tically, this modularity also supports architectural varia-tions, e.g., allocating fewer basis functions to stationary dynamics and higher attention capacity to transients. After evolution under their respective Koopman operators, the latent embeddings are decoded into the observable space using decoders ψb, producing: ˆXbj+1 = ψb KbΞbj
+
+ ,
+
+and corresponding uncertainty estimates: 
+
+ζbj+1 = ζb Ξbj+1 − K bΞbj
+
+ .
+
+Intuitively, ζb decodes the prediction error in latent space—if the branch correctly models the observed in-put, its error and thus its uncertainty remain small. High uncertainty indicates that the branch does not ”under-stand” the current input, signaling out-of-distribution or anomalous behavior. This mechanism makes ζ a powerful time-resolved diagnostic for model confidence that can eventually trigger an interrupt in case both branches fail. 
+
+4.3 Uncertainty-driven blending 
+
+KIND fuses the stationary and transient predictions using an uncertainty-weighted blending factor αj+1 ∈ [0 , 1], computed as 
+
+αj+1 = ζtrans 
+
+> j+1
+
+ζtrans  
+
+> j+1
+
++ ζstat 
+
+> j+1
+
+.
+
+The fused prediction is then given by ˆXj+1 = αj+1 ˆXstat  
+
+> j+1
+
++ (1 − αj+1 ) ˆXtrans  
+
+> j+1
+
+.
+
+This fusion is conceptually analogous to a Kalman update, where the blending factor α plays a role similar to the adaptive gain Kt. When the transient branch expresses high uncertainty (e.g., during stable operation), α in-creases, and the system relies on the stationary dynamics. Conversely, during a transient disturbance, the stationary branch becomes unreliable, α decreases, and the transient model dominates. The overall signal flow of the KIND architecture is sum-marized in Figure 2. Each lookback slice Xj is pro-cessed in two parallel branches: a stationary path with fixed Koopman operator Kstat , and a transient path with a Transformer-inferred operator Ktrans . In the transient branch, the embeddings Ξ trans are processed by a net-work γ that applies attention across the sequence of slices, enabling the construction of locally adaptive, time-varying operators that respond to short-term changes in dynamics. Both embeddings are decoded into predictions ˆXbj+1 and uncertainties ζbj+1 , which are then fused via the uncertainty-driven gain αj+1 . For brevity, the figure omits internal details of kernel encoders and basis functions, focusing instead on the primary computational blocks and signal flow. Xj 
+
+> φstat
+
+Ξstat  
+
+> j×
+> Kstat
+
+Ξstat  
+
+> j+1
+> ψstat
+> ζstat
+> αj+1
+> φtrans
+
+Ξtrans  
+
+> j×
+> Ktrans
+
+Ξtrans 
+
+> j+1
+> ψtrans
+> ζtrans
+> γ
+> ×
+> −
+> 1
+> +
+> ×
+> +
+> +
+> ˆXj+1
+
+Fig. 2. KIND architecture. For clarity, we depict operation on a single slice j. In practice, the model operates on all available slices simultaneously. 
+
+4.4 Relation to Kalman filtering 
+
+To emphasize this connection, the fused prediction can be written in Kalman-like form. Letting α = 1 − Kt, and defining ˆxstat = ψstat (Kstat Ξstat ), ˆxtrans = ψtrans (Ktrans Ξtrans ),
+
+we obtain ˆx = ˆ xstat + Kt (ˆ xtrans − ˆxstat ),
+
+which mirrors the classical Kalman update in (3) with ˆ xstat 
+
+acting as the prior, ˆ xtrans as a learned ”measurement,” and 
+
+ζ determining the adaptive gain. Unlike a conventional Kalman filter with fixed noise covariances ( Q, R )—a ho-moscedastic assumption—KIND produces heteroscedastic, data-driven uncertainty that evolves with time and con-text. This enables both improved adaptation to regime changes and time-resolved anomaly detection capabilities. 5. EXPERIMENTS 
+
+5.1 Experimental setup 
+
+The experiments use measured detuning data from an SRF cavity (Kamps et al., 2025). The data was sampled at 1 kHz repetition rate. Relevant cavity parameters are summarized in Table 1. Table 1. SRF cavity parameters.       
+
+> Frequency Loaded quality factor Field gradient 1.3 GHz 4·10 69.5 MV m −1
+
+Figure 3 shows a representative detuning sequence to-gether with its integrated rms spectrum. The time-domain trace includes both stationary intervals and tran-sient activity. The spectral curve highlights pronounced steps associated with mechanical modes: a 100 Hz com-ponent dominates in stationary operation, while transient events excite additional modes (notably around 64 Hz and 285 Hz). This transient behavior prevents the use of the cavity with higher cavity fields, which negatively impacts electron beam quality. 37 .5 38 38 .5  
+
+> −2
+> 0
+> 2stat
+> trans
+> Time [ s]
+> Detuning [ V]
+> 10 110 2
+> 0
+> 0.1
+> 0.2
+> Frequency [ Hz ]
+> stat
+> trans
+
+Fig. 3. Measured SRF cavity detuning signal (left) and its integrated rms spectrum (right). Transient events excite additional mechanical modes that remain latent during the stationary regime. 
+
+5.2 Kalman filter baseline 
+
+To establish a physics-based reference, we designed a clas-sical Kalman filter using the nominal detuning dynamics of the cavity. The mechanical subsystem was represented by three dominant modes at 10 Hz, 40 Hz, and 100 Hz, identified from the stationary portion of the measured data (see Figure 3). The modes were modeled as discrete second-order state-space systems derived from (2). The corresponding mode frequencies ωn, quality factors Qn and coupling coefficients kn are summarized in Table 2. This model represents the expected detuning behavior during normal operation and forms the baseline against which both the transient data and KIND are evaluated. Table 2. Kalman filter design parameters.                    
+
+> Mechanical mode nωnQnkn
+> 12π·100 1000 1.022π·40 400 −1.032π·10 100 0.1
+
+The additional spectral components at 64 Hz and 285 Hz were intentionally excluded from this nominal model. They represent excitation modes that are not captured by the nominal low-order model and therefore cannot be accommodated without extending the underlying system identification procedure. This setup allows us to analyze how the Kalman filter behaves when confronted with unmodeled or misspecified dynamics—an essential point of comparison for data-driven approaches like KIND. Figure 4 illustrates the filter’s performance in both station-ary (top) and transient (bottom) regimes under several covariance parameterizations ( Q, R ) and one structural model error (incorrect coupling sign for the 100 Hz mode). With larger process noise ( Q = 1 .0, R = 0 .1), the filter re-lies more heavily on measurement updates, achieving sta-ble tracking even under mild model mismatch. Reducing Q
+
+while increasing R (Q = 0 .1, R = 1 .0) emphasizes model trust, leading to slower adaptation and, under coupling-sign inversion, to an evident estimation drift. This drift saturates at a steady offset, confirming that although the filter remains bounded, its internal model structure cannot self-correct. Overall, these experiments show that tuning Q and R can temporarily mask modeling errors but not remove their cause. In contrast, KIND expresses uncertainty through a learned heteroscedastic blending mechanism, allowing the estimator to adapt its predictions under previously unseen dynamics without manual covariance retuning. 0           
+
+> 2
+> Detuning [ V]
+> x
+> ˆx, Q = 1 .0, R = 0 .1
+> ˆx, Q = 0 .1, R = 1 .0
+> ˆx, Q = 0 .1, R = 1 .0, k 1=−1.0
+> 048 96 144
+> 0
+> 2
+> Samples
+
+Fig. 4. Kalman filter performance under different parame-terizations in stationary (top) and transient (bottom) regimes. Model trust improves estimation only when structural assumptions hold; incorrect coupling signs produce estimation drift. 
+
+5.3 KIND performance 
+
+We next evaluate KIND on a detuning segment drawn from a transient regime dominated by the 64 Hz mechan-ical mode. In this example, the signal exhibits irregular, chopped oscillations throughout the lookback window, fol-lowed by a kick-like amplitude surge entirely contained within the forecast horizon. Such behavior requires not only capturing the modal frequency but also anticipating rapid amplitude changes. As before, KIND operates in a lookback →forecast manner: a 96-sample lookback window provides temporal context for a 48-sample open-loop forecast. This temporal context is important for identifying transient dynamical regimes and anticipating rapid amplitude changes that are not observable from instantaneous measurements alone. This contrasts with the recursive sample-by-sample updates performed by the Kalman filter under a fixed low-order state-space model. Figure 5 shows the resulting forecast. The stationary oper-ator continues the nominal low-amplitude dynamics con-sistent with the stationary modes (100 Hz, 40 Hz, 10 Hz) and therefore diverges quickly from the ground truth. In contrast, the transient operator—whose dynamics are inferred by the Transformer network from the lookback window—closely reproduces both the oscillatory shape and the full amplitude growth of the kick. 0 48 96 144        
+
+> −0.5
+> 0
+> 0.5
+> xˆxˆxstat ˆxtrans
+> 96 144
+> −0.5
+> 0
+> 0.5
+> Detuning [ V]
+> 96 144
+> 0
+> 2
+> 4
+> 6
+> Prediction step
+> Uncertainty [a.u.]
+> αζstat ζtrans
+
+Fig. 5. KIND forecast in a transient regime. The stationary operator diverges, while the transient operator cap-tures the chopped 64 Hz oscillation and the kick-like amplitude rise. Uncertainty signals drive the blending toward the transient branch. Next, we evaluate KIND on a stationary-like segment of the measured detuning signal. Unlike the previous case, this region is dominated by a 100 Hz oscillation, with some contributions from other modes. This is precisely the scenario the stationary Koopman operator was trained for, although the plant model remains deliberately simplified (three-mode physics model). Figure 6 shows the ground-truth trajectory (144 samples) together with the KIND forecast on the 48-sample horizon. Two observations arise: (1) The stationary operator correctly captures the dom-inant 100 Hz frequency but slightly overestimates its amplitude at several points. This reflects the mis-match between the simplified three-mode model and the true cavity dynamics. Importantly, the stationary uncertainty signal ζstat reacts appropriately: it rises at the time instants where the stationary forecast deviates from the measured amplitude. (2) The transient (Transformer-based) operator produces a smoother, more accurate amplitude forecast, de-spite the absence of any strong transient in the input window. In this regime, its uncertainty ζtrans remains low but non-zero, indicating that although the tran-sient operator sees the regime as mostly familiar, it does not fully suppress its contribution. The resulting blending factor α therefore lies near 0.4, meaning that both branches contribute substantially. This is qualitatively different from the previous transient exam-ple, where α ≈ 0 and the transient operator dominated almost entirely. Overall, this example demonstrates that KIND not only adapts under distributional shift, but also improves per-formance even in regimes where the stationary model is nominally applicable. The Transformer branch automati-cally compensates for deficiencies of the simplified physics model, while the uncertainty signals of both branches re-main interpretable and well-correlated with forecast error. 0 48 96 144        
+
+> −2
+> −1
+> 0
+> 1
+> xˆxˆxstat ˆxtrans
+> 96 144
+> −2
+> −1
+> 0
+> 1
+> Detuning [ V]
+> 96 144
+> 0.2
+> 0.4
+> 0.6
+> Prediction step
+> Uncertainty [a.u.]
+> αζstat ζtrans
+
+Fig. 6. KIND forecast in a stationary-like 100 Hz regime. The stationary operator captures the frequency but overestimates the amplitude. The transient operator corrects this bias, and the uncertainties yield a bal-anced blend. 6. DISCUSSION To ensure a controlled comparison with the Kalman filter, KIND’s stationary branch was restricted to the same sim-plified three-mode model (100 Hz, 40 Hz, 10 Hz). This high-lights a common limitation of fixed low-order representa-tions: they cannot capture the additional spectral content (64 Hz, 285 Hz, . . . ) present in measured SRF data. As a result, both the Kalman filter and the stationary operator exhibit similar degradation when the signal departs from nominal conditions. KIND compensates for these deficien-cies through its transient branch, whose learned dynam-ics adapt to previously unseen amplitude and frequency patterns. Combined with uncertainty-based blending, this enables accurate forecasting on real data despite the un-derspecified stationary component. While incorporating a richer stationary basis could further improve performance and uncertainty calibration, this extension was intention-ally left out of scope in order to preserve comparability with the Kalman baseline. 7. CONCLUSION We presented KIND, a Kalman-inspired estimator that fuses physics-motivated Koopman operators with a data-driven transient correction mechanism. On measured SRF detuning data, KIND demonstrates improved robustness under transient and distribution-shift conditions and pro-vides interpretable uncertainty signals that distinguish nominal and anomalous regimes. Future work includes automated discovery of dynamical regimes in SRF de-tuning signals and the integration of KIND forecasts into predictive control for resonance detuning compensation. DECLARATION OF AI ASSISTANCE During the preparation of this work the authors used OpenAI’s ChatGPT to assist with phrasing, structural editing, and refinement of exposition. After using this tool, the authors reviewed and edited the content as needed and take full responsibility for the content of the publication. REFERENCES Bellandi, A. (2021). LLRF control techniques for the European XFEL continuous wave upgrade . Ph.D. thesis, University of Hamburg. Kamps, T. et al. (2025). First beam commissioning of the HZB SRF photoelectron gun. In Proc. 16th Int. Particle Accel. Conf. , 1718–1721. Liu, Y., Li, C., Wang, J., and Long, M. (2023). Koopa: Learning non-stationary time series dynamics with Koopman predictors. In Proc. 37th Int. Conf. Neural Inf. Process. Syst. 
+
+Neumann, A., Anders, W., Kugeler, O., and Knobloch, J. (2010). Analysis and active compensation of microphon-ics in continuous wave narrow-bandwidth superconduct-ing cavities. Phys. Rev. ST Accel. Beams , 13, 082001. Schilcher, T. (1998). Vector sum control of pulsed accel-erating fields in Lorentz force detuned superconducting cavities . Ph.D. thesis, University of Hamburg. Schmid, P.J. (2010). Dynamic mode decomposition of numerical and experimental data. J. Fluid Mech. , 656, 5–28. Syed, W.H., Eichler, A., Nawaz, A., Sharan, B., and Werner, H. (2021). Koopman-based Kalman filter for fault detection for the superconducting radio frequency cavities of the European XFEL. In Proc. 2021 IEEE Conf. Decision Control , 6855–6860. Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A.N., Kaiser, L., and Polosukhin, I. (2017). Attention is all you need. In Proc. 31st Int. Conf. Neural Inf. Proc. Syst. , 6000–6010. Wang, F. (2023). Enhancing SRF cavity stability and minimizing detuning with data-driven resonance control based on dynamic mode decomposition. AIP Adv. ,13(7), 075104. Wang, R., Dong, Y., Arik, S. ¨O., and Yu, R. (2023). Koopman neural operator forecaster for time series with temporal distributional shifts. In Proc. 2023 Int. Conf. Learn. Repr.

@@ -1,0 +1,86 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.13209v1/fig-001.webp",
+      "caption": "Figure 2: Heterogeneous and homogeneous runtime comparison for the CG algorithm on all hardware of System 1 and System 2. On both systems, the heterogeneous approach results in a better performance for large matrices.",
+      "page": 6,
+      "index": 1,
+      "width": 470,
+      "height": 303
+    },
+    {
+      "url": "assets/figures/arxiv/2605.13209v1/fig-002.webp",
+      "caption": "Figure 4: Comparison of the homogeneous and heterogeneous CG algorithm on System 2 with an AMDMI210 GPU using AdaptiveCpp and the Intel oneAPI DPC++/C++ compiler (icpx). In all cases, icpx results in faster runtimes.",
+      "page": 7,
+      "index": 2,
+      "width": 471,
+      "height": 302
+    },
+    {
+      "url": "assets/figures/arxiv/2605.13209v1/fig-003.webp",
+      "caption": "Figure 3: Comparison of the homogeneous and heterogeneous CG algorithm on System 1 with an NVIDIA A30 GPU using AdaptiveCpp and the Intel oneAPI DPC++/C++ compiler (icpx). In most cases, icpx results in faster runtimes.",
+      "page": 7,
+      "index": 3,
+      "width": 463,
+      "height": 301
+    },
+    {
+      "url": "assets/figures/arxiv/2605.13209v1/fig-004.webp",
+      "caption": "Figure 9: Comparison of the homogeneous and heterogeneous CG algorithm and Cholesky algorithm on all hardware found in the four test systems described in Table 1. In general, the GPU-only and heterogeneous versions of the CG algorithm perform best. However, the CG algorithm generally yields a result with lower precision.",
+      "page": 10,
+      "index": 4,
+      "width": 997,
+      "height": 822
+    },
+    {
+      "url": "assets/figures/arxiv/2605.13209v1/fig-005.webp",
+      "caption": "Figure 5: Different workload distributions for the heterogeneous Cholesky decomposition on System 1 and System 2. On System 1, the distribution is optimal when 67.08% of the blocks are assigned to the GPU during the matrix multiplication step, whereas this optimum is 79.87% on System 2.",
+      "page": 8,
+      "index": 5,
+      "width": 467,
+      "height": 339
+    },
+    {
+      "url": "assets/figures/arxiv/2605.13209v1/fig-006.webp",
+      "caption": "Figure 6: Heterogeneous and homogeneous runtime comparison for the Cholesky decomposition on all hardware of System 1 and System 2. On both systems, the heterogeneous approach results in better performance for large matrices.",
+      "page": 8,
+      "index": 6,
+      "width": 470,
+      "height": 303
+    },
+    {
+      "url": "assets/figures/arxiv/2605.13209v1/fig-007.webp",
+      "caption": "Table 1: Overview of the four test systems used in our evaluation. The hardware specifications of the systems were retrieved from the following sources: AMD EPYC: [5], [7]; NVIDIA A30: [27]; AMD MI210: [4]; Intel i9: [17]; Intel B580: [18]; NVIDIA 3080: [26].",
+      "page": 4,
+      "index": 7,
+      "width": 486,
+      "height": 313
+    },
+    {
+      "url": "assets/figures/arxiv/2605.13209v1/fig-008.webp",
+      "caption": "Figure 8: Comparison of the homogeneous and heterogeneous Cholesky decomposition on System 2 with an AMDMI210 GPU using AdaptiveCpp and the Intel oneAPI DPC++/C++ compiler (icpx). In most cases, icpx results in faster runtimes.",
+      "page": 9,
+      "index": 8,
+      "width": 470,
+      "height": 302
+    },
+    {
+      "url": "assets/figures/arxiv/2605.13209v1/fig-009.webp",
+      "caption": "Figure 7: Comparison of the homogeneous and heterogeneous Cholesky decomposition on System 1 with an NVIDIA A30 GPU using AdaptiveCpp and the Intel oneAPI DPC++/C++ compiler (icpx). Since we were not able to leverage vectorization on theCPUwith icpx, theCPU runtimes are slower, which also affects the heterogeneous performance of icpx. Nevertheless, AdaptiveCpp also results in faster GPUonly runtimes.",
+      "page": 9,
+      "index": 9,
+      "width": 471,
+      "height": 302
+    },
+    {
+      "url": "assets/figures/arxiv/2605.13209v1/fig-010.webp",
+      "caption": "Figure 1: Different workload distributions for the heterogeneous CG algorithm on System 1 and System 2. On System 1, the workload distribution is optimal when 85% of the matrix blocks are assigned to the GPU, whereas this optimum corresponds to 70% on System 2.",
+      "page": 5,
+      "index": 10,
+      "width": 466,
+      "height": 339
+    }
+  ]
+}

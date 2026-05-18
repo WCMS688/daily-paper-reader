@@ -1,0 +1,459 @@
+Title: Comparing the Performance of Heterogeneous Conjugate Gradient and Cholesky Solvers on Various Hardware Using SYCL
+
+URL Source: https://arxiv.org/pdf/2605.13209v1
+
+Published Time: Thu, 14 May 2026 01:04:07 GMT
+
+Number of Pages: 12
+
+Markdown Content:
+# Comparing the Performance of Heterogeneous Conjugate Gradient and Cholesky Solvers on Various Hardware Using SYCL 
+
+# Tim Thüring 
+
+University of Stuttgart Stuttgart, Germany Tim.Thuering@ipvs.uni-stuttgart.de 
+
+# Alexander Strack 
+
+University of Stuttgart Stuttgart, Germany Alexander.Strack@ipvs.uni-stuttgart.de 
+
+# Dirk Pflüger 
+
+University of Stuttgart Stuttgart, Germany Dirk.Pflueger@ipvs.uni-stuttgart.de 
+
+## Abstract 
+
+Many important real-world applications, such as System Identifica-tion with Gaussian Processes, involve solving linear systems with symmetric positive-definite matrices. The iterative CG method and direct solvers based on the Cholesky decomposition are two popular methods that can be applied in this case. Since often very large sys-tems have to be solved when dealing with such real-world scenarios, GPUs are commonly used to accelerate the computations. However, homogeneous approaches that only leverage the GPU in the system do not take full advantage of the often powerful CPUs located in modern HPC systems. In this work, we present multi-vendor, het-erogeneous implementations of the CG method and the Cholesky decomposition that leverage the CPU and GPU of a heterogeneous system simultaneously using SYCL. Furthermore, we compare their runtime behavior to traditional, homogeneous approaches. The results show that for large matrices, our heterogeneous implemen-tation is up to 32 percent faster for the CG method and up to 29 percent faster for the Cholesky decomposition compared to the corresponding GPU-only implementations. In addition, for large matrices, our heterogeneous implementation of the Cholesky de-composition can achieve at least 12 percent faster runtimes across several systems with GPUs from NVIDIA, AMD, and Intel. 
+
+## CCS Concepts 
+
+• Computing methodologies → Parallel programming lan-guages ; • Mathematics of computing → Computations on matri-ces .
+
+## Keywords 
+
+Heterogeneous Computing, SYCL, Conjugate Gradient, Cholesky, Blocked Algorithms, Performance Comparison 
+
+ACM Reference Format: 
+
+Tim Thüring, Alexander Strack, and Dirk Pflüger. 2026. Comparing the Performance of Heterogeneous Conjugate Gradient and Cholesky Solvers on Various Hardware Using SYCL. In International Workshop on OpenCL and SYCL (IWOCL ’26), May 06–08, 2026, Heilbronn, Germany. ACM, New York, NY, USA, 12 pages. https://doi.org/10.1145/3811257.3811260  
+
+> IWOCL ’26, Heilbronn, Germany
+> 2026. This is the author’s version of the work. It is posted here for your personal use. Not for redistribution. The definitive Version of Record was published in International Workshop on OpenCL and SYCL (IWOCL ’26), May 06–08, 2026, Heilbronn, Germany ,https://doi.org/10.1145/3811257.3811260.
+
+## 1 Introduction 
+
+Linear systems of the form 𝑨 ·𝒙 = 𝒃 involving a symmetric positive-definite (SPD) matrix 𝑨 are fundamental building blocks of numer-ous important real-world applications. From the finite element method used in structural analysis [ 9] to electromagnetic transient simulations [ 23 ] and System Identification with Gaussian Processes (GPs) [ 20 ], the solution of linear systems of equations is a core prob-lem in science and engineering. In this work, we consider the latter application to GPs, where direct solvers such as the Cholesky de-composition are commonly used, but also iterative solvers that yield an approximation to the solution, such as the Conjugate Gradient (CG) method [16] can be applied. The linear systems can easily become very large, involving ma-trices with billions of entries. As a result, the computational effort to solve such systems dramatically increases, and GPUs are often used to accelerate the solving process. With classic homogeneous approaches, the CPU launches a kernel on the GPU and thereby offloads the complete calculation to the GPU. The drawback of this approach is that during the time the GPU is performing the compu-tation, the CPU waits for the GPU to finish and does not contribute to the solution. However, many modern systems that are used for GPU computing feature powerful CPUs with high core counts and vectorization capabilities. These computational resources are not used efficiently in classic homogeneous GPU-only approaches. Het-erogeneous computing targets this problem by aiming to leverage all available computational resources simultaneously to achieve a lower overall runtime. Nevertheless, this comes with the inherent challenge of program-matically addressing the heterogeneous hardware. Conventionally, it requires different programming languages for this task, such as CUDA for NVIDIA GPUs or language extensions like OpenMP for multi-core CPUs. As a result, libraries can end up with multiple instances of the same kernel written in different programming lan-guages, which all require maintenance, optimization, and testing. In this work, we make use of SYCL to address this challenge of heterogeneous computing. By providing an abstraction layer, SYCL allows programming parallel kernels for various different architec-tures, including CPUs and GPUs of all major vendors, while relying on standard ISO C++ as a programming language. There already exists related work that implements the CG al-gorithm or the Cholesky decomposition heterogeneously. The pipelined, preconditioned variation of the CG method was im-plemented heterogeneously by Tiwari and Vadhiyar [36] using a combination of CUDA and OpenMP. A further heterogeneous implementation of the pipelined CG method was implemented by Lang and Rünger [21] using the same programming language  
+
+> arXiv:2605.13209v1 [cs.DC] 13 May 2026 IWOCL ’26, May 06–08, 2026, Heilbronn, Germany Thüring, Strack, Pflüger
+
+combination as the previous authors. Nedozhogin et al . [25] present a heterogeneous and distributed implementation of the precondi-tioned CG method and the pipelined CG method using MPI in addition to CUDA and OpenMP. A heterogeneous implementation of the Cholesky decomposition was performed by Ltaief et al . [22] leveraging BLAS kernels of the MAGMA library [ 37 ] as building blocks in combination with task scheduling using the PLASMA library [ 11 ], where they extended the static scheduler to support heterogeneous computing. The MAGMA library also has ongoing efforts to implement a SYCL backend [ 1 ]. Further heterogeneous Cholesky decomposition implementations include the works by Song and Dongarra [32] , Song et al . [33] and Alonso et al. [2]. Furthermore, homogeneous implementations of the CG algo-rithm and the Cholesky decomposition exist that make use of SYCL. Cali et al . [8] compared their SYCL implementation of the CG algorithm using DPC++ on CPUs, GPUs and FPGAs. The work by Baratta et al . [6] compares a SYCL implementation of the matrix-free CG variant against reference libraries using CPUs and GPUs. Another CG implementation that makes use of SYCL is included in the PLSSVM library by Van Craen et al . [39] . PLSSVM mainly focuses on homogeneous computing; however, in theory, heteroge-neous computing could be achieved using a combination of SYCL and MPI. With the potrf routine, the Cholesky decomposition is ex-posed via the SYCL API of the oneAPI Math Library (oneMath) [ 38 ]developed by the Unified Acceleration (UXL) Foundation. Even though this enables the usage of the Cholesky decomposition via a SYCL API, the backend is not necessarily SYCL code, as vendor-specific libraries can be used in the background. Generally, most existing heterogeneous implementations of the CG method and the Cholesky decomposition rely on a combina-tion of several programming languages or language extensions to achieve simultaneous execution on CPU and GPU. Therefore, we have developed heterogeneous implementations of the CG method and the Cholesky decomposition using SYCL from scratch [ 35 ]. This allows for a fair comparison of the heterogeneous and homo-geneous implementations on various systems featuring GPUs from NVIDIA, AMD, and Intel. To our knowledge, such a comparison of CG and Cholesky solvers for solving Gaussian Process covari-ance matrices in a heterogeneous setting using solely SYCL has not been performed before. In summary, this work makes the following contributions: 
+
+• Novel, native SYCL implementations of memory-efficient, block-based CG and Cholesky solvers targeting both homo-geneous and heterogeneous computing, 
+
+• Performance evaluation of the heterogeneous and homoge-neous solvers on various hardware, including GPUs from NVIDIA, AMD, and Intel, 
+
+• Comparison of AdaptiveCpp and the Intel oneAPI DPC++/C++ compiler icpx regarding the CPU, GPU, and heterogeneous performance of both solvers. This paper is structured as follows: first, the CG method and the Cholesky decomposition are introduced in Section 2. Subsequently, we explain how we implemented both methods heterogeneously on the CPU and GPU in Section 3 before we discuss the results of the performance analysis of the heterogeneous approach in Section 4. Last, in Section 5, we conclude our findings and provide an outlook for future work. 
+
+## 2 Fundamentals 
+
+This chapter provides all relevant mathematical fundamentals re-garding the two solvers for linear systems considered in this work: the CG method and the Cholesky decomposition. 
+
+Algorithm 1 The CG algorithm (left) and the in-place right-looking blocked Cholesky decomposition (right). CG code modified from Shewchuk [31] page 50, Section B2. Cholesky code modified from Dorris et al . [12] Fig. 1 and Van De Geijn and Quintana-Ortí [40] Fig. 6.6.  
+
+> 1:
+
+𝒔 = 𝒓 = 𝒃 − 𝑨𝒙  
+
+> 2:
+
+𝑢 = 𝑢 0 = 𝒓 𝑇 𝒓  
+
+> 3:
+
+while 𝑢 > 𝜖 2𝑢 0 do  
+
+> 4:
+
+𝒕 = 𝑨𝒔  
+
+> 5:
+
+𝛼 = 𝑢   
+
+> 𝒔 𝑇 𝒕
+> 6:
+
+𝒙 = 𝒙 + 𝛼 𝒔  
+
+> 7:
+
+𝒓 = 𝒓 − 𝛼 𝒕  
+
+> 8:
+
+𝑣 = 𝑢  
+
+> 9:
+
+𝑢 = 𝒓 𝑇 𝒓  
+
+> 10:
+
+𝛽 = 𝑢 𝑣  
+
+> 11:
+
+𝒔 = 𝒓 + 𝛽 𝒔  
+
+> 12:
+
+end while  
+
+> 1:
+
+for j = 0...N-1 do  
+
+> 2:
+
+𝑨 𝑗 𝑗 = Cholesky (𝑨 𝑗 𝑗 ) 
+
+> 3:
+
+for i = j+1...N-1 do  
+
+> 4:
+
+𝑨 𝑖 𝑗 = 𝑨 𝑖 𝑗 · 𝑨 −⊤  
+
+> 𝑗 𝑗
+> 5:
+
+end for  
+
+> 6:
+
+for i = j+1...N-1 do  
+
+> 7:
+
+𝑨 𝑖𝑖 −= 𝑨 𝑖 𝑗 · 𝑨 ⊤ 
+
+> 𝑖 𝑗
+> 8:
+
+for k = j+1...i-1 do  
+
+> 9:
+
+𝑨 𝑖𝑘 −= 𝑨 𝑖 𝑗 · 𝑨 ⊤ 
+
+> 𝑘 𝑗
+> 10:
+
+end for  
+
+> 11:
+
+end for  
+
+> 12:
+
+end for 
+
+## 2.1 The Conjugate Gradient method 
+
+The CG method by Hestenes and Stiefel [16] is an iterative solver for linear systems of the form 𝑨𝒙 = 𝒃 that approximates the solution 𝒙 .Specifically, the method requires the matrix 𝑨 of the linear system to be SPD. The left column of Algorithm 1 shows pseudocode for the CG algorithm as in Shewchuk [31] . In every iteration, the CG algo-rithm performs the same operations from lines four to eleven and iteratively refines the solution until it is below the residual toler-ance that can be adjusted via the 𝜖 value. Only one matrix-vector product is required per iteration. The remaining operations solely involve vectors or are purely scalar. To compensate for rounding errors that stem from the update of the residual in line seven, the actual residual 𝒃 − 𝑨𝒙 has to be recomputed from scratch every few iterations. Thus, a second matrix vector product is required in these iterations. 
+
+## 2.2 The Cholesky decomposition 
+
+As the CG algorithm, the Cholesky decomposition can only be ap-plied to linear systems 𝑨𝒙 = 𝒃 where the matrix 𝑨 is SPD. However, in contrast to the CG method, it is a direct solver. When applying the Cholesky decomposition to 𝑨 , the matrix is factored into a lower triangular matrix 𝑳 with the property that 𝑳𝑳 ⊤ = 𝑨 . When such a lower triangular matrix is computed, the resulting system 
+
+𝑳𝑳 ⊤𝒙 = 𝒃 can be solved efficiently using a forward and back sub-stitution. In this work, we consider the blocked, right-looking variant of the Cholesky decomposition, as explained by e.g., Dorris et al .[12] and Van De Geijn and Quintana-Ortí [40] . The corresponding Comparing the Performance of Heterogeneous Conjugate Gradient and Cholesky Solvers on Various Hardware Using SYCL IWOCL ’26, May 06–08, 2026, Heilbronn, Germany 
+
+pseudocode is shown in the right column in Algorithm 1. In this version of the algorithm, the matrix is partitioned into square blocks of equal size. The algorithm works in-place and transforms the lower triangular part of the matrix 𝑨 into 𝑳 . For this purpose, the algorithm iterates through the blocked columns of the matrix from left to right. In each of these column iterations, the same sequence of operations is performed on the blocks of the matrix. First, in 
+
+Step 1 , the diagonal block of the current column is factored into a lower triangular matrix using a standard Cholesky decomposition in line two. Subsequently, in Step 2 , the remaining column below is updated by solving the matrix equation in line four, which results in solving a triangular system with multiple right-hand sides for each block in the column below the diagonal. Finally, in Step 3 , all blocks to the right of the current column are updated with matrix-matrix multiplications in lines seven and nine. 
+
+## 3 Implementation 
+
+This chapter contains details about our heterogeneous implementa-tion of the CG method and the Cholesky decomposition. To achieve heterogeneous execution on the CPU and GPU simultaneously, the implementation has to be capable of targeting both architec-tures. Our implementation makes use of SYCL [ 19 ], which allows targeting different architectures for parallel execution while rely-ing on standard ISO C++ for programming. The SYCL standard is developed by the Khronos Group 1. Multiple different implemen-tations of the SYCL standard exist. In this work we make use of the AdaptiveCpp 2 [ 3] SYCL implementation and the Intel oneAPI DPC++/C++ compiler 3 (icpx). As explained in Section 2, a common property of the CG method and the Cholesky decomposition is that both solvers require the matrix 𝐴 of the system to be SPD. The symmetry of the matrices can be exploited, such that it is not necessary to store the complete matrix in memory. Our implementation partitions the matrix into square blocks and only stores the lower-triangular and diagonal blocks. As a result, solely the diagonal blocks store some redundant data. All performance-critical kernels are implemented and paral-lelized from scratch without the use of vendor-specific libraries. This decision was made to ensure that the performance measure-ments are not biased through unequal degrees of optimization between different vendor libraries. In the following sections, we explain how we implemented the CG algorithm and the Cholesky decomposition heterogeneously on the CPU and GPU. 
+
+## 3.1 CG implementation 
+
+The concept of how the workload of the CG algorithm is distributed between the CPU and GPU is based on the approach of Tiwari and Vadhiyar [36] , who implemented the pipelined, preconditioned CG with their "Hybrid-PIPECG-3" algorithm. The runtime of the CG algorithm is dominated by the matrix-vector product, which is memory-bound. In the hybrid approach developed by the authors, 
+
+> 1https://www.khronos.org (visited on 01/06/2026)
+> 2https://github.com/AdaptiveCpp/AdaptiveCpp (visited on 01/06/2026)
+> 3https://www.intel.com/content/www/us/en/developer/tools/oneapi/dpc-compiler.html (visited on 01/06/2026)
+
+the matrix-vector product and all other vector operations are dis-tributed between the CPU and GPU and calculated cooperatively. In this work, we adapted the approach to work with the data layout for symmetric matrices and the classic version of the CG algorithm that is considered in this work. All matrix-vector and vector-vector operations that comprise the CG algorithm are computed cooperatively by the CPU and the GPU. The matrix is split horizontally between two block rows of the blocked matrix data layout. All vectors are split at the same row as the matrix. The height at which the matrix is split can be chosen such that the workload between the CPU and GPU is balanced. The CPU computes the lower part of the result vector of the matrix-vector product and all lower parts of the result vectors emerging from the remaining operations. The GPU performs the analogous computations involving the upper parts of the vectors. With this approach, only a small amount of communication is needed between the CPU and the GPU. For the vector-vector op-erations that are scalar products, two partial sums are computed on the CPU and GPU separately. To obtain the final result value, the result of the partial sum computed by the GPU has to be ex-plicitly copied to the CPU. This situation occurs twice in the CG algorithm, i.e., in lines five and nine in Algorithm 1. Furthermore, communication of a sub-vector is required once in each iteration. When the vector 𝒔 is updated at the end of each iteration by the CPU and GPU in line eleven, the result is distributed in the two different memory spaces of the two kinds of hardware. However, the complete vector 𝒔 is required by the CPU and the GPU at the be-ginning of the next iteration in line four, and thus, communication of the sub-vectors is required. For the remaining vector operations in the CG algorithm, this is not a problem since these operations only require previously computed values located in the sub-vector that is assigned to the corresponding type of hardware. Thus, all required values are already located in the correct memory space. As described in Section 2.1, the real residual is sometimes recomputed from scratch instead of the update in line seven. In this case, a second matrix-vector product and, thus, also an additional vector communication is necessary in the affected iterations. The SYCL kernels for the vector-vector and matrix-vector op-erations are implemented from scratch and optimized for CPUs and GPUs individually. The GPU-scalar product kernel is based on the fourth version of the implementation by Harris [13] . Our matrix-vector product kernel was adapted from the implementation performed by Nath et al. [24]. 
+
+## 3.2 Cholesky implementation 
+
+Our implementation of the Cholesky decomposition follows the blocked right-looking approach. The blocks of the matrix are up-dated using different operations, such as a single block Cholesky decomposition, a triangular matrix solve, and both symmetric and classical matrix-matrix multiplications. The runtime is dominated by the compute-bound matrix-matrix operations. The algorithm modifies the lower blocked triangular matrix and transforms it into the desired result matrix 𝑳 . In the right-looking algorithm, one column of the matrix is processed after another from left to right, applying the three steps defined in Section 2.2. For each column iteration, a horizontal border is defined that splits the matrix blocks IWOCL ’26, May 06–08, 2026, Heilbronn, Germany Thüring, Strack, Pflüger 
+
+between CPU and GPU. All blocks located above the border are pro-cessed by the CPU, while all blocks below are updated by the GPU. As a result, the communication of blocks between the CPU and GPU is necessary. In each column iteration, the following blocks have to be sent to the GPU, as their values are required for the next processing steps: the current diagonal block, and the blocks in the sub-column below processed by the CPU in Step 1 and Step 2 .One property of the right-looking Cholesky decomposition is that the triangular sub-matrix, modified by the algorithm in each column iteration, gets smaller as the algorithm proceeds. This has implications for the heterogeneous implementation since, in con-trast to the CG method, the workload is not constant over time. The matrix is split horizontally between two block rows to distribute the workload between the CPU and GPU. However, if this split remains constant throughout the execution, the CPU runs out of work. Since the sub-matrix that is updated becomes smaller with every column iteration, as the leftmost blocks are processed com-pletely, the sub-matrix above the split gets smaller. To avoid this imbalance in blocks assigned to the CPU and GPU, the row where the matrix is divided between the CPU and GPU has to be shifted down every few iterations to keep the proportion of assigned blocks roughly constant over time. However, such a shift of the border between the CPU and GPU requires the communication of a whole block row. As for the CG Algorithm, the individual SYCL kernels required for the Cholesky decomposition are implemented from scratch and optimized separately for CPUs and GPUs. The GPU kernel implementation of the computationally most expensive part, the update of all matrix blocks below the diagonal in Step 3 , is based on a scaled-down version of the implementation by Tan et al . [34] . The GPU kernel that updates the blocks on the diagonal using symmetric matrix-matrix multiplications is adapted from the implementation in [30], page 447, Figure 7.13. 
+
+## 4 Results 
+
+This chapter presents the results of our comparison of the runtime behavior of the heterogeneous and homogeneous implementations for the CG algorithm and the Cholesky decomposition. After our ex-perimental setup is outlined, the two algorithms are first considered separately. For each algorithm, the optimal parameter configura-tion on the CPU and GPU is determined first. Subsequently, the heterogeneous and homogeneous implementations are compared. Next, a comparison between AdaptiveCpp and the Intel oneAPI DPC++/C++ compiler (icpx) is conducted for the respective algo-rithm. Finally, the CG algorithm and the Cholesky algorithm are compared against each other on various multi-vendor hardware. 
+
+## 4.1 Experimental Setup 
+
+The hardware we use to evaluate the heterogeneous implementa-tions is listed in Table 1. First, we focus on System 1 and System 2 ,which feature an identical dual-socket 48-core AMD EPYC CPU. In addition, System 1 has an NVIDIA A30 GPU installed, and System 2 features an AMD MI210 GPU. Later, we extend the comparison to System 3 and System 4 , which are equipped with an identical 18-core Intel CPU. Furthermore, an Intel Arc B580 GPU is installed in System 3 , and an NVIDIA RTX 3080 is installed in System 4 . The stated FP64 peak performance values for the CPUs are calculated manually using the CPU base frequency and the available AVX units.             
+
+> System 1 System 2 System 3 System 4 CPU 2x AMD EPYC 9274F Intel Core i9-10980XE
+> Cores/ Threads
+> 48/96 (combined) 18/36
+> CPU FP64 max FLOPS
+> 3.1104 TFLOPS (combined) 1.728 TFLOPS
+> RAM 384GB DDR5 64GB DDR4
+> GPU NVIDIA A30 AMD MI210 Intel B580 NVIDIA 3080
+> GPU FP64 max FLOPS
+> 5.2 TFLOPS 22.6 TFLOPS N/A 0.466 TFLOPS
+> GPU memory
+> 24GB HBM2 (933 GB/s) 64GB HBM2e (1.6 TB/s) 12GB GDDR6 (456 GB/s) 10GB GDDR6X (760 GB/s)
+
+Table 1: Overview of the four test systems used in our eval-uation. The hardware specifications of the systems were retrieved from the following sources: AMD EPYC: [ 5 ], [ 7 ]; NVIDIA A30: [ 27 ]; AMD MI210: [ 4 ]; Intel i9: [ 17 ]; Intel B580: [18]; NVIDIA 3080: [26]. 
+
+If not stated otherwise, AdaptiveCpp is used. We use Adap-tiveCpp v25.02.0, which is built against LLVM 19.1.0. For the Adap-tiveCpp measurements on the GPUs, we use CUDA 12.2.2 on Sys-tem 1 and CUDA 12.4.1 on System 4 , ROCM 6.4.0 on System 2 ,and oneAPI 2025.1 on System 3 for the respective backends. When comparing AdaptiveCpp against the Intel oneAPI DPC++/C++ com-piler (icpx), we use icpx version 2025.1.1 based on LLVM 20.0.0. For the icpx measurements on GPUs, we use CUDA 12.6.3 and ROCM 6.4.0 for the respective backends. We use the AdaptiveCpp 
+
+cuda /hip and omp.accelerated compilation flows for systems with NVIDIA and AMD GPUs and the AdaptiveCpp generic compilation flow for Intel GPUs. Using the generic compilation flow with an otherwise identical configuration on NVIDIA and AMD GPUs re-sulted only in marginally faster GPU runtimes, which lay within one percent of the cuda /hip compilation flow runtimes. The intel icpx compiler uses -fp-model=fast as a default setting, whereas AdaptiveCpp does not use similar optimizations. However, when using -fp-model=precise , it only slightly increases the runtimes in our setup, e.g., by well below one percent on the CPU, thus, we use the default settings for icpx. As input data, we generated kernel matrices based on simulated data of a mass-spring-damper system by Helmann et al . [14] avail-able at [ 15 ]. The kernel matrices can be used for behavior prediction of the system using GP as described by Kocijan [20] . In such a case, a linear system that involves the SPD kernel matrix has to be solved. All measurements are averaged over at least ten runs and are performed using FP64 double precision. The CG 𝜖 -value that affects the termination condition is set to 10 −6. Due to rounding errors, the exact iteration in which the CG algorithm terminates varies slightly between different kernels. To reduce the impact on runtime variation, we limited the maximum number of iterations to 60, 70, 75, 80, and 95 iterations, depending on the size of the dataset. In the Comparing the Performance of Heterogeneous Conjugate Gradient and Cholesky Solvers on Various Hardware Using SYCL IWOCL ’26, May 06–08, 2026, Heilbronn, Germany 
+
+last section, when we compare the Cholesky algorithm to the CG algorithm, the number of iterations is not limited such that both methods solve the same problem. For the Cholesky algorithm, the forward and backward substitutions are included. Otherwise, only the Cholesky decomposition is considered. 
+
+## 4.2 Heterogeneous CG Evaluation 
+
+In this section, our heterogeneous implementation of the CG method is evaluated on System 1 and System 2 using AdaptiveCpp. First, we determine the optimal values for the parameters that influence the runtime behavior of the algorithm. Subsequently, we analyze different workload distributions between the CPU and GPU be-fore comparing the heterogeneous approach to the homogeneous CPU-only and GPU-only implementations. 
+
+4.2.1 Optimal CPU and GPU Configuration for the CG Algorithm. 
+
+There are several parameters that can be used to configure the CG algorithm on CPUs and GPUs. Since AdaptiveCpp uses OpenMP as a backend for the parallelization on CPUs, the OpenMP configuration, such as the number of threads and the usage of thread binding, influences the runtime on CPUs. Furthermore, the block size of the blocked matrix data structure influences the work-group sizes of the underlying SYCL kernels and thus has an impact on the performance. To determine the optimal OpenMP configuration for the CG algorithm, we evaluated different configurations on the 48-core dual-socket CPU of System 1 using a matrix with side length 65536 .We compared the performance of the homogeneous CG algorithm on the CPU using 48 and 96 threads, which corresponds to dis-abling/enabling simultaneous multi-threading (SMT) on the CPU, and with thread binding enabled or disabled. Furthermore, since it is unclear if the CPU’s Advanced Vector Extension (AVX) units provide an advantage for the memory-bound CG algorithm, all configurations are compared with and without AVX. We observed that using AVX does not result in lower runtimes in most cases, and 48 threads provided a better performance than 96 threads most of the time. For example, when using 48 threads and enabling binding by setting the OMP_PROC_BIND environment variable to true , the CG algorithm needs about 47 .52s with and 33 .23s without AVX. When increasing the thread count to 96 in the previous scenario, the runtimes increase to 52 .82s and 50 .21s respectively. Furthermore, enabling thread binding lowered the variations in the runtime be-tween different runs while providing a similar average performance. Thus, we choose an OpenMP configuration that does not make use of SMT and enables binding for all further experiments on CPUs and AdaptiveCpp. The next parameter that can be varied for the CG algorithm is the block size of the underlying matrix data structure. Since it influences the work-group size of the CPU and GPU SYCL kernels, it has a crucial impact on the performance. For all devices that are used in this work, the optimal block size has been determined by comparing the performance for all powers of two from 16 to 1024 as a value for the side length of the square blocks. The results show that on the AMD CPU of System 1 and System 2 , a block size of 32 performs best with a runtime of 33 .17s . The runtime can vary significantly when selecting a different block size value. For example, when choosing a value of 1024, the runtime increases to 
+
+139 .32s , highlighting the importance of tuning this variable for the respective hardware. For the Intel CPU in System 3 and System 4 , a value of 16 performed best. On the NVIDIA A30 GPU, a value of 64 resulted in the lowest runtime. The AMD MI210 and NVIDIA RTX 3080 GPUs performed best for 32. Finally, the Intel GPU in System 3 achieved the best performance for blocks of size 256 × 256 .We can observe that the optimal block size varies widely between different devices. Also for GPUs, the runtime differences between optimal and non-optimal block sizes can be non-negligible. For example, on the Intel Arc B580 GPU, choosing a block size of 32 instead of the optimal 256 results in 1.87 times slower runtimes. 
+
+4.2.2 Optimal Heterogeneous Workload Distribution. The workload distribution between the CPU and GPU is a crucial variable when performing a computation heterogeneously. To leverage the full potential of the two devices during heterogeneous execution, it is desirable that the CPU and GPU finish their workload at the same time. Otherwise, if one device finishes earlier than the other, the faster device has to wait for the slower device, which results in a non-optimal utilization of the hardware. Since the CPU and GPU generally have vastly different performance, finding the optimal workload distribution for a given system is a non-trivial task. 0 20 40 60 80 100 Percentage of blocks assigned to GPU 
+
+> 10 1
+> Total Time [s]
+
+Workload distribution for N=65536 
+
+> 2x AMD EPYC 9274F + NVIDIA A30 2x AMD EPYC 9274F + AMD Instinct MI210
+
+Figure 1: Different workload distributions for the heteroge-neous CG algorithm on System 1 and System 2 . On System 1 ,the workload distribution is optimal when 85% of the matrix blocks are assigned to the GPU, whereas this optimum corre-sponds to 70% on System 2 .
+
+Figure 1 compares the performance of the heterogeneous CG implementation with different workload distributions on System 1 and System 2 to find the optimal assignment for the respective system. Both systems are equipped with an identical CPU and dif-ferent GPUs, which makes them suitable for a direct comparison of the workload distribution. The x-axis denotes the percentage of blocks that are assigned to the GPU, and the y-axis corresponds to the runtime of the heterogeneous CG algorithm with the given workload distribution. The runtime does not include the memory transfer times between the CPU and GPU at the beginning and the end. The matrix size chosen for this experiment corresponds to IWOCL ’26, May 06–08, 2026, Heilbronn, Germany Thüring, Strack, Pflüger 
+
+65536 × 65536 . For both systems, an optimal heterogeneous work-load distribution can be found. On System 1 , the lowest runtime can be achieved when assigning 85% of the workload to the NVIDIA A30 GPU. When considering the results obtained on System 2 , we can observe an optimal assignment when 70% of the work is performed by the AMD MI210 GPU. This observation contrasts with what we would expect when solely considering the theoretical performance of the two GPUs. As the CPU in both systems is identical and the AMD GPU offers a much higher theoretical memory bandwidth, one would expect that more work is assigned to the AMD GPU in 
+
+System 2 than to the NVIDIA GPU in System 1 . However, this is not the case. The NVIDIA GPU in System 1 has a higher proportion of the work assigned to it. Additionally, the overall runtime of System 1 for the heterogeneous CG algorithm is lower than on System 2 .Thus, the peak memory bandwidth alone is not sufficient to ex-plain the behavior, and the capabilities of the complete memory hierarchy have to be considered. Here, the NVIDIA A30 GPU has an advantage since with 24MB, its L2 cache is much larger than that of the AMD MI210 GPU, which is only 8MB (values retrieved via the CUDA/HIP API). However, we have to note that, as we will show in Section 4.3, AdaptiveCpp does perform worse than icpx on the AMD GPU. Nevertheless, icpx is also not able to achieve faster runtimes with the AMD MI210 than with the NVIDIA A30. Another observation is that System 2 performs much better when the heterogeneous CG algorithm is CPU-bound. Since both systems are equipped with identical CPUs, identical runtimes would be expected. However, the block size of the matrix was not chosen equally on the two systems. Since most of the work is performed on the GPU in both cases, the block size that is optimal for the GPU is chosen for the heterogeneous execution. Since these block sizes do not perform equally well on the CPU, the performance for the CPU-bound case differs on the two systems. 
+
+4.2.3 Comparison of the Heterogeneous and Homogeneous CG Per-formance. This section compares the heterogeneous and homoge-neous performance of the CG implementation for different matrix sizes on System 1 and System 2 . Similar to the last section, the opti-mal heterogeneous workload distributions have been determined for the remaining matrix sizes on both systems. For the largest three matrices, the optimal percentages of blocks assigned to the GPU are relatively close to each other as they fall into a range between 82 .5% 
+
+and 87 .5% on System 1 and between 65% and 70% on on System 2 .Figure 2 shows the results of the comparison. The x-axis lists the different matrix sizes, and the y-axis corresponds to the runtime, which includes the memory transfer times between the CPU and GPU at the beginning and the end. The axes are logarithmically scaled. For large matrices, the CPU-only implementation results in the slowest runtime. When solving a linear system with a matrix of size 65536 × 65536 , the dual-socket AMD EPYC 9274F CPU of 
+
+System 1 and System 2 takes 33 .17s . In contrast, the corresponding homogeneous GPU-only execution takes only 5.39s on the NVIDIA A30 GPU and 8.68s on the AMD MI210 GPU. When performing the CG algorithm heterogeneously on the CPU and GPU, performance improvements can be observed for the two largest matrix sizes on both systems. When considering the runtime for the largest matrix, 
+
+System 1 can finish the computation of the CG algorithm in 4.71s ,which corresponds to a relative improvement of 12 .53% regarding 4096 8192 16384 32768 65536 Matrix side length 10 −1
+
+> 10 0
+> 10 1
+> Total time [s] 2x AMD EPYC 9274F NVIDIA A30 2x AMD EPYC 9274F + NVIDIA A30 AMD MI210 2x AMD EPYC 9274F + AMD MI210
+
+Figure 2: Heterogeneous and homogeneous runtime com-parison for the CG algorithm on all hardware of System 1 
+
+and System 2 . On both systems, the heterogeneous approach results in a better performance for large matrices. 
+
+the homogeneous runtime obtained on the NVIDIA A30. System 2 needs about 5.83s for the heterogeneous computation, which translates into a relative performance improvement of 32 .85% over the homogeneous runtime of the AMD MI210 GPU in the system. Overall, the findings are consistent with the observations made in Section 4.2.2. The NVIDIA GPU seems to be much better suited for the memory-bound CG algorithm. This also affects the heteroge-neous performance improvements and explains why the relative performance improvement is so much higher on System 2 . Since the optimal CPU proportion of the heterogeneous execution is much higher on System 2 (30 % compared to just 15 %), the relative im-provement is also expected to be higher. For smaller matrix sizes, the heterogeneous CG implementation is not able to achieve perfor-mance improvements in most cases. However, for larger matrices, the improvements are quite considerable. 
+
+## 4.3 Comparison of AdaptiveCpp and Intel icpx using the CG algorithm 
+
+In our previous experiments, we have focused on the AdaptiveCpp SYCL implementation. However, other popular SYCL implementa-tions like the Intel oneAPI DPC++/C++ Compiler icpx exist. In this section, the heterogeneous and homogeneous performance of our CG implementations is compared using the two SYCL implementa-tions. The optimal block sizes and heterogeneous workload distri-butions have been determined using the Intel SYCL implementation in the same manner as for AdaptiveCpp. The CPU configuration for icpx corresponds to the default values since they already provide near-optimal performance. The results of the comparison on System 1 featuring an NVIDIA A30 GPU are shown in Figure 3. When considering the CPU-only runtimes, we can observe that the Intel compiler results in faster runtimes for larger matrix sizes. For example, the CG algorithm takes only 14 .21s to complete when the program is compiled with icpx, which is about 57 .15% faster than the runtime of 33 .17s when using AdaptiveCpp. However, for smaller matrix sizes, AdaptiveCpp Comparing the Performance of Heterogeneous Conjugate Gradient and Cholesky Solvers on Various Hardware Using SYCL IWOCL ’26, May 06–08, 2026, Heilbronn, Germany 4096 8192 16384 32768 65536 Matrix side length 10 −1
+
+> 10 0
+> 10 1
+> Total time [s] AdaptiveCpp CPU Intel icpx CPU AdaptiveCpp GPU Intel icpx GPU AdaptiveCpp HET Intel icpx HET
+
+Figure 3: Comparison of the homogeneous and heteroge-neous CG algorithm on System 1 with an NVIDIA A30 GPU using AdaptiveCpp and the Intel oneAPI DPC++/C++ com-piler (icpx). In most cases, icpx results in faster runtimes. 
+
+results in better performance. When considering the GPU-only runtimes on the NVIDIA A30 GPU for the largest matrix, the CG algorithm finishes after 5.39s when using AdaptiveCpp. The Intel icpx compiler is about 6.66% faster with a runtime of 5.03s . A similar observation can be made for the heterogeneous case in which the CG algorithm takes about 4.42s for the largest matrix with the icpx compiler, which is 6.15% faster than the corresponding AdaptiveCpp runtime. 4096 8192 16384 32768 65536 Matrix side length 10 −1
+
+> 10 0
+> 10 1
+> Total time [s] AdaptiveCpp GPU Intel icpx GPU AdaptiveCpp HET Intel icpx HET
+
+Figure 4: Comparison of the homogeneous and heteroge-neous CG algorithm on System 2 with an AMD MI210 GPU using AdaptiveCpp and the Intel oneAPI DPC++/C++ com-piler (icpx). In all cases, icpx results in faster runtimes. 
+
+We ran the same experiment for System 2 , which comprises an AMD MI210 GPU. The results are presented in Figure 4. Since this system features the same CPU as System 1 from the previous experiment, we only analyze the GPU-only and heterogeneous performance for this system. When we examine the GPU-only runtimes, the results show that the Intel icpx compiler results in faster runtimes for all matrix sizes. For the largest matrix with 
+
+65536 × 65536 entries, icpx takes about 5.08s whereas AdaptiveCpp needs 8.68s in the same scenario. Thus, icpx results in 41 .44% faster results on the AMD GPU, which is a much larger difference than on the NVIDIA GPU. In the heterogeneous case, the CG runtime with icpx is reduced to 4.14s , which is about 28 .95% faster than the runtime of 5.83s observed using AdaptiveCpp. 
+
+## 4.4 Heterogeneous Cholesky Evaluation 
+
+In this section, our heterogeneous implementation of the Cholesky decomposition is evaluated on System 1 and System 2 using Adap-tiveCpp. As for the CG algorithm, we first determine the optimal values for the parameters that influence the runtime behavior of the Cholesky decomposition. Next, different workload distributions between the CPU and GPU are compared on both systems. Finally, we compare the heterogeneous approach to the homogeneous CPU-only and GPU-only implementations. 
+
+4.4.1 Optimal CPU and GPU Configuration for the Cholesky De-composition. Analogous to the CG algorithm, the runtime of the Cholesky decomposition is also influenced by the OpenMP envi-ronment (if the CPU is involved in the computation) and the block size of the matrix data structure. However, in contrast to the CG algorithm, the block size of the matrix data structure not only influ-ences the work-groups of the SYCL kernels but also the Cholesky decomposition itself since we implemented the blocked algorithm. Thus, it is crucial to find the optimal value for this parameter. First, we consider the optimal OpenMP environment. Since AVX proved to yield clear performance improvements for the compute-bound Cholesky decomposition, only OpenMP configurations with AVX enabled are discussed here. As for the CG algorithm, we ana-lyzed the impact of enabling or disabling thread binding and using 48 or 96 threads on the CPU of System 1 and the largest matrix size with side length 65536 . We can observe that using 96 threads yields faster results as the runtime is reduced from 93 .55s to 84 .07s ,and enabling binding lowers the variations in this case. Thus, we choose a configuration that makes use of SMT and enables binding for all further runs on CPUs and AdaptiveCpp. Regarding the block size, different values that are a power of two have been tested in a similar manner as for the CG algorithm on all devices used in this work. The results show that a block size of 128 is optimal for all devices except the Intel Arc B580 GPU, where a value of 64 is optimal. 
+
+4.4.2 Optimal Heterogeneous Workload Distribution. As for the CG algorithm, the optimal workload distribution between the CPU and GPU has to be determined for the heterogeneous Cholesky implementation on all systems. In this section, we focus on Sys-tem 1 and System 2 . Remember that the two systems are equipped with identical CPUs. Thus, the GPU is the only difference when comparing the heterogeneous workload distributions. Figure 5 shows the runtime of the heterogeneous Cholesky de-composition of a matrix with 65536 × 65536 entries for different workload distributions. As described in Section 3.2, the lower trian-gular matrix is split horizontally between the CPU and the GPU. The runtime of the Cholesky decomposition is dominated by the IWOCL ’26, May 06–08, 2026, Heilbronn, Germany Thüring, Strack, Pflüger 0 20 40 60 80 100 Percentage of blocks assigned to GPU 
+
+> 40
+> 60
+> 80
+> 100 Total Time [s]
+
+Workload distribution for N=65536 
+
+> 2x AMD EPYC 9274F + NVIDIA A30 2x AMD EPYC 9274F + AMD Instinct MI210
+
+Figure 5: Different workload distributions for the heteroge-neous Cholesky decomposition on System 1 and System 2 .On System 1 , the distribution is optimal when 67.08% of the blocks are assigned to the GPU during the matrix multipli-cation step, whereas this optimum is 79.87% on System 2 .
+
+block updates using matrix-matrix multiplications. Due to the trian-gular structure, each block row holds a different number of blocks that are involved in this step. Thus, the x-axis of Figure 5 denotes the proportion of blocks that are updated by the GPU in this step and not the proportion of block-rows. The y-axis shows the runtime of the heterogeneous Cholesky decomposition without memory transfer times. When analyzing the two minima in the figure, which correspond to the optimal workload distribution between the CPU and the GPU, we can observe that System 1 reaches the lowest runtime when 67 .08% of the blocks are assigned to the NVIDIA A30 GPU during the update with matrix-matrix multiplications. For System 2 , the optimal distribution is achieved when offload-ing the computation of 79 .87% of the blocks to the AMD MI210 GPU. These proportions correspond to the lower 42.5 % and 55.0 %
+
+of the block-rows of the triangular matrix, respectively. Contrary to the CG algorithm in Section 4.2.2, the AMD GPU now has a higher proportion of the work assigned to it than the NVIDIA GPU, which is what we would expect based on the theoretical per-formance. The different behavior compared to the CG algorithm can be explained by the fact that the Cholesky decomposition is dominated by the compute-bound matrix-matrix multiplications. Thus, the AMD GPU performs closer to its theoretical peak per-formance here than for the memory-bound CG algorithm. When considering the runtime where the heterogeneous Cholesky imple-mentation is CPU-bound, we can observe that System 2 achieves slower runtimes than System 1 . However, in contrast to the CG algorithm, the optimal block size is the same on both systems. Thus, we would expect the same runtime for the CPU-bound case on both systems. A potential explanation for this behavior is that the memory allocation is performed using the GPU device context in SYCL. This could enable the underlying SYCL implementation to perform GPU-specific optimizations that resulted in significantly faster memory transfer times between the CPU and GPU in our case. However, these optimizations might have a negative impact on the CPU performance when optimizing for AMD GPUs. 
+
+4.4.3 Comparison of the Heterogeneous and Homogeneous Cholesky Decomposition Performance. After the optimal workload distribu-tion analysis in the last section, this section compares the per-formance of the heterogeneous Cholesky implementation to the corresponding homogeneous implementations that leverage only the CPU or GPU. The comparison is performed for different matrix sizes. The optimal heterogeneous workload distributions for the remaining matrix sizes have been determined as before. For the largest three matrices under consideration, the optimal percentages of blocks assigned to the GPU are similar as they range from 66 .77% 
+
+to 69 .76% on System 1 and 77 .39% to 79 .87% on System 2 . For smaller matrices, the optimal workload distributions tend towards 100% of the work assigned to the GPU. 4096 8192 16384 32768 65536 Matrix side length 10 −1
+
+> 10 0
+> 10 1
+> 10 2
+> Total time [s] 2x AMD EPYC 9274F NVIDIA A30 2x AMD EPYC 9274F + NVIDIA A30 AMD MI210 2x AMD EPYC 9274F + AMD MI210
+
+Figure 6: Heterogeneous and homogeneous runtime com-parison for the Cholesky decomposition on all hardware of 
+
+System 1 and System 2 . On both systems, the heterogeneous approach results in better performance for large matrices. 
+
+Figure 6 shows the results of the comparison on System 1 and 
+
+System 2 . The x-axis denotes the matrix side length, and the y-axis corresponds to the runtime, including the memory transfer time between the CPU and the GPU. When considering the results, we can observe that for both systems, the heterogeneous approach is the fastest method to compute the Cholesky decomposition for the largest three matrices. For the largest matrix, the CPU-only variant yields the worst performance with 84 .09s to finish the com-putation. Running the homogeneous GPU-only implementation in this scenario takes 54 .52s on the NVIDIA A30 GPU and 36 .30s 
+
+on the AMD MI210 GPU. These observations reflect our expecta-tions regarding the theoretical FP64 performance, with the CPU being the least powerful device and the AMD GPU being the most powerful. However, since the AMD GPU has about 4.35 times the theoretical performance of the NVIDIA GPU, a larger performance difference would be expected. The heterogeneous implementation of the Cholesky decomposition has a runtime of 38 .53s on System 1 
+
+and 29 .48s on System 2 . In comparison to the GPU-only runtimes, this is a relative improvement of 29 .33% on System 1 and 18 .79% on Comparing the Performance of Heterogeneous Conjugate Gradient and Cholesky Solvers on Various Hardware Using SYCL IWOCL ’26, May 06–08, 2026, Heilbronn, Germany 
+
+System 2 . Thus, the heterogeneous implementation is able to achieve considerable improvements over the homogeneous implementation on both systems. 
+
+## 4.5 Comparison of AdaptiveCpp and Intel icpx using the Cholesky decomposition 
+
+As for the CG algorithm, we now compare the performance of the Cholesky decomposition using the AdaptiveCpp SYCL implementa-tion and the Intel oneAPI DPC++/C++ compiler icpx. To allow for a fair comparison between the two compilers, the optimal block sizes and workload distributions for the Cholesky decomposition have been determined for icpx as well. In contrast to AdaptiveCpp, the CPU configuration for icpx did not have a significant performance impact. Thus, the default values were chosen. For AdaptiveCpp, a row-wise parallelization strategy resulted in the best performance for the matrix-matrix step. However, for icpx, we observed that parallelizing over all result values instead of just the rows resulted in better performance. 4096 8192 16384 32768 65536 Matrix side length 10 −1
+
+> 10 0
+> 10 1
+> 10 2
+> Total time [s] AdaptiveCpp CPU Intel icpx CPU AdaptiveCpp GPU Intel icpx GPU AdaptiveCpp HET Intel icpx HET
+
+Figure 7: Comparison of the homogeneous and hetero-geneous Cholesky decomposition on System 1 with an NVIDIA A30 GPU using AdaptiveCpp and the Intel oneAPI DPC++/C++ compiler (icpx). Since we were not able to lever-age vectorization on the CPU with icpx, the CPU runtimes are slower, which also affects the heterogeneous performance of icpx. Nevertheless, AdaptiveCpp also results in faster GPU-only runtimes. 
+
+Figure 7 shows the results of the comparison on System 1 . When considering the CPU-only results, we can observe that, in contrast to the results for the CG algorithm in Section 4.3, icpx takes much longer for the computation than AdaptiveCpp. For example, when considering the largest matrix, the Cholesky decomposition with icpx takes 4.03 times longer than when using AdaptiveCpp. This can be explained by the fact that icpx does not make use of vectoriza-tion during the matrix-matrix multiplication step of the Cholesky decomposition. With AdaptiveCpp, we were able to enable vec-torization using a simple pragma at the corresponding for-loop. However, we were not able to achieve vectorization of this loop with pragmas and icpx. Thus, using vectorization in our Cholesky implementation with icpx would likely require a complete redesign of our compute kernel for this step, for example, with the usage of SYCL sub-groups. When we analyze the GPU-only results ob-tained on the NVIDIA A30 GPU in this system, we observe that AdaptiveCpp is 16 .16% or 10 .51s faster than icpx, which takes about 
+
+65 .03s for the largest matrix. When using icpx in the heterogeneous case, it results in slower runtimes than the corresponding Adap-tiveCpp results on System 1 . This can be explained by the slower CPU and GPU runtimes of icpx. Overall, icpx can achieve 10 .53% 
+
+faster runtimes when computing the Cholesky decomposition of the largest matrix heterogeneously instead of homogeneously on the GPU. However, the heterogeneous runtime of 58 .18s is still 
+
+19 .65s slower than the heterogeneous AdaptiveCpp runtime and even 3.66s slower than the GPU-only AdaptiveCpp runtime. For smaller matrices, the heterogeneous Cholesky implementation in combination with the icpx compiler is not able to achieve consider-able performance improvements and is slower than the GPU-only version for the smallest three matrices. 4096 8192 16384 32768 65536 Matrix side length 10 −1
+
+> 10 0
+> 10 1
+> 10 2
+> Total time [s] AdaptiveCpp GPU Intel icpx GPU AdaptiveCpp HET Intel icpx HET
+
+Figure 8: Comparison of the homogeneous and hetero-geneous Cholesky decomposition on System 2 with an AMD MI210 GPU using AdaptiveCpp and the Intel oneAPI DPC++/C++ compiler (icpx). In most cases, icpx results in faster runtimes. 
+
+We ran the same experiment on System 2 featuring an AMD MI210 GPU. The results are presented in Figure 8. Since this system has an identical CPU as System 1 installed, only the heterogeneous and GPU-only implementations are considered. When considering the GPU-only case, we can see that, in contrast to the observations on the NVIDIA GPU, icpx results in slightly faster runtimes for the AMD MI210. For the largest matrix, icpx is about 4.18% faster than AdaptiveCpp and takes 34 .78s instead of 36 .30s . However, in comparison to the analogous experiment for the CG algorithm in Section 4.3, the difference between the two SYCL implementations on this AMD GPU is much smaller. In the heterogeneous case, icpx is only able to achieve very minor or no improvements over the GPU-only Cholesky decomposition. This can be explained by the slow icpx CPU runtimes for the Cholesky decomposition, limiting large heterogeneous speedups. As a result, the heterogeneous icpx runtime for the largest matrix is about 4.09s slower than when using AdaptiveCpp. IWOCL ’26, May 06–08, 2026, Heilbronn, Germany Thüring, Strack, Pflüger 4096 8192 16384 32768 65536 Matrix side length 10 −1
+
+10 0
+
+10 1
+
+10 2
+
+> Total time [s]
+
+Cholesky CPU Cholesky GPU Cholesky HET CG CPU CG GPU CG HET  
+
+> (a) System 1
+
+4096 8192 16384 32768 65536 Matrix side length 10 −1
+
+10 0
+
+10 1
+
+10 2
+
+> Total time [s]
+
+Cholesky CPU Cholesky GPU Cholesky HET CG CPU CG GPU CG HET (b) System 2 4096 8192 16384 32768 65536 Matrix side length 10 −1
+
+10 0
+
+10 1
+
+10 2
+
+> Total time [s]
+
+Cholesky CPU Cholesky GPU Cholesky HET CG CPU CG GPU CG HET  
+
+> (c) System 3
+
+4096 8192 16384 32768 65536 Matrix side length 10 −1
+
+10 0
+
+10 1
+
+10 2
+
+> Total time [s]
+
+Cholesky CPU Cholesky GPU Cholesky HET CG CPU CG GPU CG HET (d) System 4 
+
+Figure 9: Comparison of the homogeneous and heterogeneous CG algorithm and Cholesky algorithm on all hardware found in the four test systems described in Table 1. In general, the GPU-only and heterogeneous versions of the CG algorithm perform best. However, the CG algorithm generally yields a result with lower precision. 
+
+## 4.6 Comparison of the CG Algorithm and the Cholesky decomposition 
+
+In this section, we compare the heterogeneous and homogeneous implementations of the CG algorithm and the Cholesky decompo-sition. To allow for a fair comparison between the two algorithms, a few changes have to be made to the experimental setup in com-parison to the previous sections. First, the CG runtimes are now measured without the iteration limit to ensure that a result with the desired accuracy of 𝜖 = 10 −6 is obtained in every scenario. It has to be noted that, due to the specified 𝜖 -tolerance, the CG algorithm generally yields a less precise result than the Cholesky decomposi-tion. For the Cholesky decomposition, the solve step involving a forward and back substitution with the triangular Cholesky factor is included in the runtimes to ensure that the same problem is solved by the two algorithms. The solve step is not implemented heteroge-neously and is performed on the GPU (GPU-only implementation) or the CPU (CPU-only and heterogeneous implementation). Never-theless, this step has only a minor impact on the overall runtime. All measurements are performed using AdaptiveCpp. Since we were not able to make use of CPU vectorization with icpx, using Adap-tiveCpp allows for a fairer comparison between the two algorithms. Figure 9 shows the results of the comparison. In addition to the two data center-grade systems from the previous experiments, this comparison is extended to two consumer systems featuring an Intel Arc B580 GPU, an NVIDIA RTX 3080 GPU, and identical Intel i9-10980XE CPUs. First, we consider the results obtained on System 1 shown in Figure 9a. When solving the linear system involving the largest Comparing the Performance of Heterogeneous Conjugate Gradient and Cholesky Solvers on Various Hardware Using SYCL IWOCL ’26, May 06–08, 2026, Heilbronn, Germany 
+
+matrix on the NVIDIA A30 GPU, the CG algorithm can finish the computation 8.98 times faster than the Cholesky solver. In the heterogeneous case, the CG algorithm results in a 7.60 times faster runtime. When comparing these findings to the measurements from 
+
+System 2 , we can observe that the speedup of the CG algorithm is lower than on System 1 . The GPU-only CG implementation on the AMD MI210 is 3.73 times faster than the corresponding Cholesky implementation for the largest matrix. With the heterogeneous implementation, a 4.95 times faster runtime is observed in this case. Furthermore, for small matrices, we can observe that the GPU-only and heterogeneous implementations are not performing well. This behavior can be explained by higher memory initialization times that were observed on the AMD GPU. For larger matrices, this effect becomes negligible in relation to the overall runtime. When focusing on the CPU-only implementation on these two systems, we can observe that the difference between the CG algorithm and the Cholesky solver is smaller. Nevertheless, the CG method is still 
+
+2.51 times faster on System 1 when solving the system involving the largest matrix. Next, we consider the results on System 3 , which features an Intel Arc B580 consumer GPU. Since the largest matrix does not fit into the main memory of this GPU, no measurements can be obtained in this case. In general, the heterogeneous implementation of the CG algorithm is only able to achieve very minor or no improvements at all. In case of the Cholesky decomposition, the heterogeneous implementation achieves a relative performance improvement of up to 14 .25% over the GPU-only implementation. When comparing the runtime of the CG method with the Cholesky decomposition on the GPU of System 3 , we can observe that the CG method is 8.38 
+
+times faster. In the heterogeneous case, this factor reduces slightly to 7.42 . An interesting observation can be made when focusing on the CPU runtimes. Here, the CG method only achieves 1.37 
+
+times faster results than the Cholesky method. Furthermore, the CPU-only CG implementation is slower than the GPU-only and heterogeneous implementations of the direct Cholesky solver. This finding underlines the importance of choosing the right hardware for the right algorithm since the CG method is apparently poorly suited for the CPU in this System. One possible reason for this may be that System 3 is using DDR4 memory, which is slower than the DDR5 memory used in System 1 and System 2 .Finally, we examine the results on System 4 equipped with an NVIDIA RTX 3080. On this system, the heterogeneous Cholesky implementation achieves 12 .58% faster runtimes than the NVIDIA RTX 3080 alone. When considering the CG algorithm, we can ob-serve that the heterogeneous implementation performs equal or worse than the GPU-only implementation on this system. This ob-servation is similar to System 3 , which is equipped with an identical CPU. Since the CG algorithm did not perform well on this CPU, it is also hard to achieve good heterogeneous results. Nevertheless, the approach did achieve considerable improvements for the Cholesky decomposition. When comparing the two algorithms with each other for a matrix with side length 32768 , we can observe that the CG algorithm is 15 .53 times faster in the homogeneous GPU-only case. When computing heterogeneously on System 4 , the CG algo-rithm is 12 .87 times faster. This is a significantly larger speedup compared to the other systems. For example, on System 1 , a speedup of just 4.70 was achieved by the heterogeneous CG implementation in the same scenario. This observation could be explained by the fact that the CG algorithm is memory-bound. Thus, the lack of com-pute performance of the NVIDIA RTX 3080 GPU in comparison to the NVIDIA A30 GPU plays less of a role for the CG algorithm, but has a huge negative effect for the Cholesky decomposition. 
+
+## 5 Conclusion 
+
+In this paper, we presented heterogeneous implementations of the CG algorithm and the Cholesky decomposition that make use of SYCL to simultaneously leverage the CPU and the GPU of the sys-tem. The source code is available on GitHub 4. We analyzed the performance of the heterogeneous approaches on several systems, which feature GPUs from NVIDIA, AMD, and Intel. Furthermore, we compared the heterogeneous runtimes with performance mea-surements of the corresponding homogeneous GPU-only and CPU-only implementations.                  
+
+> CG Cholesky System 1 12 .53% (0.68s )29 .33% (15 .99s )
+> System 2 32 .85% (2.85s )18 .79% (6.82s )
+> System 3 5% (0.14s )14 .25% (3.27s )
+> System 4 0.67% (0.01s )12 .58% (3.07s )
+
+Table 2: Comparison of the heterogeneous CG and Cholesky performance improvements over the GPU-only implementa-tion for the largest matrix size evaluated on the respective system using AdaptiveCpp. 
+
+Table 2 summarizes the heterogeneous performance improve-ments of both algorithms over the corresponding homogeneous GPU-only implementation. The relative and absolute runtime im-provements correspond to the measurements with the largest ma-trix size considered on the respective system. In comparison to traditional GPU-only approaches, our heterogeneous CG imple-mentation achieves a performance improvement of up to 32 .85% .The highest observed value for the Cholesky decomposition cor-responds to 29 .33% . Furthermore, the same heterogeneous SYCL code for the Cholesky decomposition is at least 12% faster than the GPU-only implementation across all four systems for the respective largest matrices. A comparison of two popular SYCL implemen-tations, AdaptiveCpp and the Intel oneAPI DPC++/C++ compiler icpx, showed that AdaptiveCpp was able to achieve faster CPU and NVIDIA GPU runtimes for the Cholesky decomposition. Mean-while, the Intel compiler resulted in faster runtimes for the CG method. On the AMD GPU, icpx resulted in faster runtimes for both algorithms. Future work could explore how the heterogeneous performance differs when using the native language for the respective hardware instead of SYCL. This work compared the heterogeneous and ho-mogeneous implementations regarding their runtime. Future work could investigate how the energy consumption differs between the different algorithms and on different hardware. Furthermore, the heterogeneous solvers could be extended using mixed-precision. 
+
+> 4https://github.com/TimThuering/Heterogeneous-Solvers/releases/tag/v1.0.1
+
+IWOCL ’26, May 06–08, 2026, Heilbronn, Germany Thüring, Strack, Pflüger 
+
+## AI Use Disclosure 
+
+Generative AI tools, including Grammarly [ 29 ], DeepL [ 10 ], and ChatGPT [ 28 ], were employed to enhance the clarity, grammar, and overall coherence of the manuscript. All technical content, data analyses, and research findings were conceived and developed independently by the authors. AI-assisted outputs were carefully reviewed, verified, and edited by the authors to ensure factual accuracy, interpretive rigor, and scholarly integrity. The final man-uscript reflects the authors’ original intellectual contributions and analytical work. 
+
+## References 
+
+[1] Ahmad Abdelfattah, Natalie Beams, Robert Carson, Pieter Ghysels, Tzanio Kolev, Thomas Stitt, Arturo Vargas, Stanimire Tomov, and Jack Dongarra. 2024. MAGMA: Enabling exascale performance with accelerated BLAS and LAPACK for diverse GPU architectures. The International Journal of High Performance Computing Applications 38, 5 (2024), 468–490. doi:10.1177/10943420241261960 [2] Pedro Alonso, Manuel F. Dolz, Francisco D. Igual, Rafael Mayo, and Enrique S. Quintana-Ortí. 2012. Reducing Energy Consumption of Dense Linear Alge-bra Operations on Hybrid CPU-GPU Platforms. In 2012 IEEE 10th International Symposium on Parallel and Distributed Processing with Applications . IEEE, 56–62. doi:10.1109/ISPA.2012.16 [3] Aksel Alpay and Vincent Heuveline. 2020. SYCL beyond OpenCL: The archi-tecture, current state and future direction of hipSYCL. In Proceedings of the International Workshop on OpenCL (IWOCL ’20) . Association for Computing Machinery, New York, NY, USA, 1 pages. doi:10.1145/3388333.3388658 [4] AMD. 2022. AMD INSTINCT ™ MI210 ACCELERATOR. https: //www.amd.com/content/dam/amd/en/documents/instinct-business-docs/product-briefs/instinct-mi210-brochure.pdf [5] AMD. 2023. AMD EPYC ™ 9004 SERIES PROCESSORS. https://www.amd.com/ content/dam/amd/en/documents/epyc-business-docs/datasheets/amd-epyc-9004-series-processors-datasheet.pdf [6] Igor Baratta, Chris Richardson, and Garth Wells. 2022. Performance analysis of matrix-free conjugate gradient kernels using SYCL. In Proceedings of the 10th International Workshop on OpenCL (IWOCL ’22) . Association for Computing Machinery, New York, NY, USA, 10 pages. doi:10.1145/3529538.3529993 [7] Ravi Bhargava and Kai Troester. 2024. AMD Next-Generation “Zen 4” Core and 4th Gen AMD EPYC Server CPUs. IEEE Micro 44, 3 (2024), 8–17. doi:10.1109/MM. 2024.3375070 [8] Salvatore Cali, William Detmold, Grzegorz Korcyl, Piotr Korcyl, and Phiala Shana-han. 2021. Implementation of the conjugate gradient algorithm for heterogeneous systems. doi:10.48550/arXiv.2111.14958 [9] S. Chakraborty and B. Bhattacharyya. 2002. An efficient 3D stochastic finite element method. International Journal of Solids and Structures 39, 9 (2002), 2465– 2475. doi:10.1016/S0020-7683(02)00080-X [10] DeepL SE. 2026. DeepL Translator. https://www.deepl.com/translator. Accessed: 2026-01-14. [11] Jack Dongarra, Mark Gates, Azzam Haidar, Jakub Kurzak, Piotr Luszczek, Panruo Wu, Ichitaro Yamazaki, Asim Yarkhan, Maksims Abalenkovs, Negin Bagherpour, Sven Hammarling, Jakub Šístek, David Stevens, Mawussi Zounon, and Samuel D. Relton. 2019. PLASMA: Parallel Linear Algebra Software for Multicore Using OpenMP. ACM Trans. Math. Softw. 45, 2, Article 16 (2019), 35 pages. doi:10.1145/ 3264491 [12] Joseph Dorris, Jakub Kurzak, Piotr Luszczek, Asim YarKhan, and Jack Dongarra. 2016. Task-Based Cholesky Decomposition on Knights Corner Using OpenMP. In 
+
+High Performance Computing . Springer International Publishing, Cham, 544–562. doi:10.1007/978-3-319-46079-6_37 [13] Mark Harris. [n. d.]. Optimizing Parallel Reduction in CUDA . https://developer. download.nvidia.com/assets/cuda/files/reduction.pdf [14] Maksim Helmann, Alexander Strack, and Dirk Pflüger. 2026. GPRat: Gaussian Pro-cess Regression with Asynchronous Tasks. In Asynchronous Many-Task Systems and Applications . Springer Nature Switzerland, Cham, 83–94. doi:10.1007/978-3-031-97196-9_7 [15] Maksim Helmann, Alexander Strack, and Dirk Pflüger. 2025. Replication Data for: GPRat: Gaussian Process Regression with Asynchronous Tasks . doi:10.18419/ DARUS-4743 [16] Magnus R Hestenes and Eduard Stiefel. 1952. Methods of conjugate gradients for solving linear systems. Journal of research of the National Bureau of Standards 49, 6 (1952), 409–436. https://nvlpubs.nist.gov/nistpubs/jres/049/jresv49n6p409_a1b. pdf [17] Intel. 2019. Intel ® Core ™ i9-10980XE Extreme Edition Processor. https://www. intel.com/content/www/us/en/products/sku/198017/intel-core-i910980xe-extreme-edition-processor-24-75m-cache-3-00-ghz/specifications.html [18] Intel. 2024. Intel ® Arc ™ B580 Grafik. https://www.intel.de/content/www/de/ de/products/sku/241598/intel-arc-b580-graphics/specifications.html [19] Khronos-Group. [n. d.]. SYCL - C++ Programming for Heterogeneous Parallel Computing . https://www.khronos.org/sycl/ [20] Juš Kocijan. 2016. Modelling and Control of Dynamic Systems Using Gaussian Process Models . Springer International Publishing, Cham. doi:10.1007/978-3-319-21021-6 [21] Jens Lang and Gudula Rünger. 2013. Dynamic Distribution of Workload between CPU and GPU for a Parallel Conjugate Gradient Method in an Adaptive FEM. 
+
+Procedia Computer Science 18 (2013), 299–308. doi:10.1016/j.procs.2013.05.193 2013 International Conference on Computational Science. [22] Hatem Ltaief, Stanimire Tomov, Rajib Nath, and Jack Dongarra. 2010. Hybrid multicore cholesky factorization with multiple gpu accelerators. (2010). https://www.netlib.org/utk/people/JD/JackDongarra/PAPERS/hybrid-multicore-cholesky.pdf [23] Trevor Maguire. 2011. Multi-processor cholesky decomposition of conductance matrices. In Proceeding of the 2011 International Conference on Power System Transients (IPST-2011), Delft, The Netherlands . https://www.ipstconf.org/papers/ Proc_IPST2011/11IPST106.pdf [24] Rajib Nath, Stanimire Tomov, Tingxing "Tim" Dong, and Jack Dongarra. 2011-11. Optimizing symmetric dense matrix-vector multiplication on GPUs. In Proceed-ings of 2011 International Conference for High Performance Computing, Networking, Storage and Analysis . 10 pages. doi:10.1145/2063384.2063392 [25] Nikita S. Nedozhogin, Sergey P. Kopysov, and Alexandr K. Novikov. 2022. Scal-ability Pipelined Algorithm of the Conjugate Gradient Method on Heteroge-neous Platforms. In Mesh Methods for Boundary-Value Problems and Applications .Springer International Publishing, Cham, 347–362. doi:10.1007/978-3-030-87809-2_27 [26] NVIDIA. 2021. NVIDIA AMPERE GA102 GPU ARCHITECTURE. https://www.nvidia.com/content/PDF/nvidia-ampere-ga-102-gpu-architecture-whitepaper-v2.pdf [27] NVIDIA. 2022. NVIDIA A30 TENSOR CORE GPU. https://www.nvidia. com/content/dam/en-zz/Solutions/data-center/products/a30-gpu/pdf/a30-datasheet.pdf [28] OpenAI. 2025. ChatGPT 5. https://openai.com/chatgpt. Accessed: 2026-01-14. [29] Superhuman Platform. 2026. Grammarly. https://www.grammarly.com/. Ac-cessed: 2026-01-14. [30] Thomas Rauber and Gudula Rünger. 2023. Parallel Programming for Multicore and Cluster Systems (3 ed.). Springer International Publishing. doi:10.1007/978-3-031-28924-8 [31] Jonathan Richard Shewchuk. 1994. An Introduction to the Conjugate Gradient Method Without the Agonizing Pain. (1994). [32] Fengguang Song and Jack Dongarra. 2015. A scalable approach to solving dense linear algebra problems on hybrid CPU-GPU systems. Concurrency and Compu-tation: Practice and Experience 27, 14 (2015), 3702–3723. doi:10.1002/cpe.3403 [33] Fengguang Song, Stanimire Tomov, and Jack Dongarra. 2012. Enabling and scaling matrix computations on heterogeneous multi-core and multi-GPU systems. In 
+
+Proceedings of the 26th ACM international conference on Supercomputing (ICS ’12) .Association for Computing Machinery, New York, NY, USA, 365–376. doi:10. 1145/2304576.2304625 [34] Guangming Tan, Linchuan Li, Sean Triechle, Everett Phillips, Yungang Bao, and Ninghui Sun. 2011. Fast implementation of DGEMM on Fermi GPU. In Proceedings of 2011 International Conference for High Performance Computing, Networking, Storage and Analysis (SC ’11) . Association for Computing Machinery, New York, NY, USA, Article 35, 11 pages. doi:10.1145/2063384.2063431 [35] Tim Thüring. 2025. Heterogeneous Solvers for Linear Systems with Symmetric Positive-Definite Matrices Using SYCL . Master Thesis. University of Stuttgart. [36] Manasi Tiwari and Sathish Vadhiyar. 2021. Efficient executions of Pipelined Conjugate Gradient Method on Heterogeneous Architectures. doi:10.48550/arXiv. 2105.06176 [37] S Tomov, J Dongarra, V Volkov, and J Demmel. 2009. Magma library . https: //icl.utk.edu/projectsfiles/magma/docs/magma.pdf [38] Unified Acceleration (UXL) Foundation. [n. d.]. oneAPI Math Library (oneMath) .https://github.com/uxlfoundation/oneMath [39] Alexander Van Craen, Marcel Breyer, and Dirk Pflüger. 2022. PLSSVM: A (multi-)GPGPU-accelerated Least Squares Support Vector Machine. In 2022 IEEE In-ternational Parallel and Distributed Processing Symposium Workshops (IPDPSW) .818–827. doi:10.1109/IPDPSW55747.2022.00138 [40] Robert A Van De Geijn and Enrique S Quintana-Ortí. 2007. The science of pro-gramming matrix computations (1 ed.). https://www.cs.utexas.edu/~rvdg/tmp/ TSoPMC.pdf

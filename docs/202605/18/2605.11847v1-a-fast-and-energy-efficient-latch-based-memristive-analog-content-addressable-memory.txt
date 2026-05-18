@@ -1,0 +1,258 @@
+Title: A Fast and Energy-Efficient Latch-Based Memristive Analog Content-Addressable Memory
+
+URL Source: https://arxiv.org/pdf/2605.11847v1
+
+Published Time: Wed, 13 May 2026 01:01:25 GMT
+
+Number of Pages: 11
+
+Markdown Content:
+# A F AST AND ENERGY -E FFICIENT LATCH -B ASED MEMRISTIVE 
+
+# ANALOG CONTENT -A DDRESSABLE MEMORY 
+
+Paul-Philipp Manea 1,2,3
+
+p.manea@fz-juelich.de 
+
+Aishwarya Natarajan 3 Jim Ignowski 3 John Paul Strachan 1,2
+
+Luca Buonanno 3
+
+May 12, 2026 
+
+This work has been submitted to the IEEE for possible publication. Copyright may be transferred without notice, after which this version may no longer be accessible. 
+
+# ABSTRACT 
+
+Analog content-addressable memories (aCAMs) based on memristors provide a promising pathway toward energy-efficient large-scale associative computing for Edge AI and embedded intelligence applications. They have been successfully applied to decision-tree inference and extend the capabili-ties of compute-in-memory ( CIM ) architectures beyond conventional vector–matrix multiplication. However, conventional designs such as the 6T2M architecture suffer from static search power, limited voltage gain, and pronounced match-line crosstalk, constraining analog precision and scalability. We introduce a strong-arm latched memristor ( SALM ) aCAM cell that replaces static voltage di-vision with a dynamic current-race comparator, enabling high regenerative gain, intrinsic result latching, and near-zero static search power. Compared to 6T2M, SALM reduces read energy by 33 % at identical latency while eliminating the gain and crosstalk limitations that prevent 6T2M from scaling to large arrays. SALM further enables scalable sequential and parallel latch sharing, and a dataset-aware optimization framework exposes an explicit energy–latency tradeoff, achieving up to 50 % energy reduction at 3 × latency across representative workloads. To enable architectural exploration, we develop a circuit-accurate behavioral model derived from SPICE lookup tables in 22 nm FD-SOI technology, capturing match-line dynamics and crosstalk. Integrated into the X-TIME decision-tree compiler, this framework demonstrates that SALM maintains near-software accuracy for high-dimensional datasets, whereas baseline designs degrade due to limited gain and cumulative crosstalk. 
+
+Keywords Memristors ·Analog Content-Addressable Memory ·Compute-in-Memory (CIM) ·Analog In-Memory Computing ·Edge AI ·Decision Trees ·Neuromorphic Hardware 
+
+> 1
+
+PGI-14, Forschungszentrum Jülich, Jülich, Germany 
+
+> 2
+
+RWTH Aachen University, Aachen, Germany 
+
+> 3
+
+Hewlett Packard Enterprise, Fort Collins, CO, USA 
+
+# 1 Introduction 
+
+1.1 Compute in Memory With Memristors 
+
+Compute-in-memory (CIM) has introduced a new architectural paradigm to address memory bottlenecks, particularly suited for artificial intelligence ( AI ) workloads. In one embodiment, highly parallel and energy-efficient crossbar arrays execute operand-heavy vector–matrix multiplications (VMMs) directly within the memory fabric, constituting the dominant computational workload in neural network architectures. As a result, only the computed outputs must be 
+
+> arXiv:2605.11847v1 [cs.ET] 12 May 2026
+
+PREPRINT SUBMITTED TO IEEE JXCDC mismatch match              
+
+> R1ML SLhi SLlo DL R2M1M3M4M5High Bound Low Bound M2M6
+> VXLB VXHB
+> MLSA Output
+> 0.4 ~ 0.8 > 0.2 X< 0.5 0.2 ~ 0.5 0.2 ~ 0.8 Analog Inputs Queries
+> Match Line Stores Keys as Boundaries 0.3 0.4 0.7
+
+(a) (b) MLSA MLSA Read Out IML,LB IML,HB (c) 0.2 ~ 0.8 0.2 ~ 0.8 V DL,0 Mismatch Match VDL,1   
+
+> ML Crosstalk Effect 0.2 ~ 0.8 ML Low Gain 6T2M Sweep Sweep Match Line
+
+Figure 1: (a) Conceptual aCAM operation. Each cell stores a lower and upper bound and compares an input query against this interval. A match is returned if the query lies within the boundaries indicated as the green area, otherwise a mismatch is produced. (b) Conventional 6T2M aCAM cell implementing the window comparison with separate low-bound and high-bound branches that share a common match-line discharge path. (c) Experiment showing an input sweep applied to two aCAM cells with fixed stored boundaries. The resulting aCAM output highlights the impact of match-line (ML) crosstalk near the decision boundary. transferred out of the memory array rather than entire weight matrices, significantly reducing data movement, energy consumption, and latency [1–3]. Among emerging non-volatile memory devices, memristors—often realized as resistive random-access memory (RRAM)—have emerged as a leading candidate for implementing CIM architectures due to their compact footprint, analog programmability, and compatibility with dense crossbar integration [4]. These two-terminal devices store information by switching between distinct resistance states through the controlled formation and rupture of conductive filaments in a dielectric layer [5]. Their nanoscale cell size, high integration density, low-power operation, and multi-level conductance capability enable analog computation directly within memory arrays [1]. Content-addressable memories (CAMs) are a form of associative memory specifically designed for high-speed search and pattern-matching operations. Traditionally studied as a separate memory primitive, they can also be viewed as a complementary realization of CIM , since comparisons are executed directly within the memory array rather than in a separate processing unit. They perform parallel comparisons between input queries and stored keys directly in hardware, returning the address of any matching key [6]. Conventional CAMs operate on binary or ternary keys (TCAM) and were initially designed predominantly for high-speed lookup and forwarding of Internet Protocol (IP) packet headers in network routers [7]. Unlike TCAMs, aCAMs store and compare analog values by exploiting the multi-level conductance tunability of memristors, allowing each cell to determine whether an input voltage lies within a programmable analog range [8], which is graphically illustrated in Fig. 1(a). This capability enables continuous-valued and multi-interval matching, making aCAMs well suited for similarity-based tasks within AI and signal-processing [9]. These include Decision Trees and Random Forests [10], Finite State Machines [11], DNA pattern matching [12], similarity calculations within 
+
+2PREPRINT SUBMITTED TO IEEE JXCDC 
+
+transformer Attention Mechanisms [13], and even to replace power-hungry analog-to-digital converters (ADCs) in CIM systems [14]. The earliest and most widely studied aCAM architecture is the 6T2M design, shown in Fig. 1(b) [8]. It consists of two compartments for the low bound ( LB ) and high bound ( HB ) inequality checks, each implemented by a 1T1R voltage divider formed by one transistor and one memristor in series. For the LB comparison, the divider node directly drives the match line ( ML ) pull-down transistor ( M2), whereas for the HB comparison it is routed through an inverter stage that flips the decision polarity and controls a second pull-down transistor ( M6). Upon a mismatch, either pull-down device ( M2 or M6) discharges the ML , whose voltage is evaluated by an external match-line sense amplifier ( MLSA ) to determine the row-level match condition. Thus, the ML realizes a NOR-like aggregation across all cells in a row: if any inequality check in any cell mismatches, the ML discharges and produces a global mismatch for the stored word. The key advantage of 6T2M is its low component count, which simplifies integration and reduces cell area. The primary limitations of the 6T2M cell are static energy consumption , low output gain , and match-line crosstalk .Together, these mechanisms constrain energy efficiency and array scalability. In particular, the limited match–mismatch separation prevents nominally matched cells from remaining fully passive, so the row decision can be influenced by cells that should not discharge the ML. These mechanisms are discussed in more detail below. 
+
+Static Energy Consumption The 1T1R voltage divider draws continuous static current during search operations. In addition, when the HB branch inverter operates at intermediate voltages, both M4 and M5 conduct simultaneously, generating additional short-circuit current. 
+
+Low Output Gain The 6T2M cell exhibits low effective voltage gain at the pull-down nodes VXLB and VXHB . This shallow input–output characteristic, shown in Fig. 2(c), limits the number of reliably distinguishable analog levels [15] and weakens match–mismatch separation. As a result, the ML voltage can settle near the MLSA threshold, reducing the sensing margin. 
+
+Match Line Crosstalk Due to limited match-mismatch separation, nominally matched cells can still contribute residual pull-down currents instead of remaining electrically passive. In large rows, these parasitic contributions accumulate and perturb the shared ML voltage. As shown in Fig. 1(c), the resulting output surface deviates from the ideal dashed boundary and exhibits a joint dependence on multiple inputs rather than depending only on the mismatching cell. This effect causes localized distortions near the decision boundary and constitutes a fundamental scalability bottleneck for conventional 6T2M aCAM arrays. Motivated by these limitations, the main contributions of this work are: • A Strong Arm Latched Memristor (SALM) aCAM cell that eliminates static search current while providing high regenerative gain and intrinsic result latching. • A scalable latch-shared SALM aCAM architecture enabling configurable sequential and parallel scaling of analog inequalities, supported by an application-driven optimization framework for latency, area, and energy trade-offs. • A circuit-accurate behavioral aCAM model derived from SPICE lookup tables that captures match-line discharge dynamics and crosstalk for large-scale inference evaluation. The remainder of this paper is organized as follows. In Sec. 2, we introduce the SALM aCAM cell and describe its dynamic comparison principle, followed by a circuit-level evaluation of gain, energy, latency, and area relative to the 6T2M design. In Sec. 3, we analyze array-level scaling through sequential and parallel reuse of the latch and derive analytical models enabling architecture optimization for a given application and technology. To support system-level evaluation beyond transistor-level simulation, Sec. 4 presents a circuit-accurate behavioral model that reproduces match-line discharge dynamics and crosstalk effects. Finally, in Sec. 5, we integrate this model into the X-TIME compiler flow and quantify inference accuracy across different aCAM architectures on representative Random Forest datasets. We further analyze how the architectural optimization framework introduced in Sec. 3 impacts energy consumption across datasets and characterize the resulting latency–energy trade-offs. 
+
+# 2 Strong Arm Latched Memristor Analog CAM 
+
+Our proposed SALM aCAM design builds on the Strong Arm latch comparator, a well-established topology widely used in ADCs and memory readout circuits [16]. The circuit schematic, which consists of a latch and multiple 1T1R structures that store the inequalities, is shown in Fig. 2(a). In contrast to static divider-based aCAM cells such as the 6T2M, the SALM evaluates inequalities dynamically through a discharge race between two precharged nodes, VT RAN and VM EM , analogous to a dynamic voltage comparator. 
+
+3PREPRINT SUBMITTED TO IEEE JXCDC (a) EVAL SEL_LB1 SEL_HB1 HB_MODE LB_MODE ML EVAL EVAL M1       
+
+> VTRAN VDD VMEM
+> RLB1 RHB1
+> VXLB
+> M2MLB1 MHB1
+> VXHB
+> PCSA SALM aCAM M-1 OUT SEL_LBN SEL_HBN RLBN RHBN MLBN MHBN
+
+Sequential Scaling N seq 
+
+> SALM aCAM M
+
+(c) (b) 
+
+DL > LB DL < HB EN_LB ML EN_HB Match: Mismatch: 21 3 4EN 
+
+Parallel Scaling N par 
+
+> DL
+
+(d)     
+
+> 0.2 ~ 0.8 0.2 ~ 0.8 VDL,0 Mismatch Match VDL,1 0.2 ~ 0.8 ML High Gain SALM Sweep Sweep
+
+Figure 2: (a) Proposed SALM analog CAM architecture featuring N sequential and M parallel memory compartments. 
+
+(b) Transient control signals for an SALM aCAM cell with one sequential element. (c) Output ML current for eight intervals, illustrating the gain difference (match–mismatch separation) between the proposed SALM design and the 6T2M baseline. (d) Experiment showing an input sweep applied to two SALM aCAM cells with fixed stored boundaries. The resulting output demonstrates the near-ideal match-line (ML) behavior, where the response depends only on the mismatching input and remains well separated near the decision boundary. During evaluation, the regenerative latch amplifies the developing voltage difference and resolves it into one of two stable logic states, thereby providing high gain and intrinsic result latching. The transient discharge of VT RAN is governed by the analog input voltage applied to the data line ( DL ), whereas 
+
+VM EM discharges according to the programmed memristor conductance of the currently selected 1T1R pull-down branch. Consequently, the circuit performs a comparison between the applied DL voltage and the inequality constraint stored in the memristor, consistent with the principles of aCAM operation. A key architectural feature of the proposed latch-based memristive analog CAM architecture is that a single regenerative latch is reused across multiple memristive discharge paths. Detailed architectural considerations are provided in Sec. 3. The bottom selection switches determine which 1T1R branch connects VMEM to GN D during the evaluation phase. The selected branch corresponds to either a lower-bound or an upper-bound inequality. We denote the corresponding branch-selection signals as SEL_LBN and SEL_HBN , respectively. For a given index n, exactly one selection signal is asserted at any time, such that only one inequality participates in the comparison. In combination with the global evaluation clock EVAL , which enables M2, the asserted selection signal activates the corresponding 1T1R branch. As a result, the memristor conductance associated with the selected inequality is connected to VM EM and participates in the comparison operation. After each evaluation, the latch resolves to either VDD or VSS , producing complementary output levels. The comparison polarity, depending on whether a lower-bound or an upper-bound inequality is selected, is determined by a compact gating stage at the top of the latch. This stage maps the complementary latch outputs, denoted as VXLB and VXHB ,to the ML pull-down device. Consequently, the ML remains high only if all programmed inequalities are satisfied, whereas any bound violation triggers ML discharge. The corresponding control signal transients for a single window evaluation are illustrated in Fig. 2(b). The circuit was implemented in GlobalFoundries 22 nm FD-SOI technology and evaluated using SPICE simulations. The resulting performance metrics are summarized in Tab. 1. Although the cell area is larger due to the increased transistor count, the overall energy consumption is reduced by eliminating static power during the search operation. Furthermore, while the proposed cell requires two sequential search operations to evaluate LB and HB , the strong-arm latch enables rapid regeneration, resulting in a shorter evaluation time. In Sec. 3, we demonstrate how the overall 
+
+4PREPRINT SUBMITTED TO IEEE JXCDC 
+
+Table 1: Key performance comparison between the SALM aCAM and the 6T2M design 
+
+Metric New Design (SALM) 6T2M 
+
+Area (estimated) 0.498 μm2 0.170 μm2
+
+Latency 3 ns 3 ns Energy 8.8 fJ 13.13 fJ Memory Latch Yes No Gain Large Small Scalability Good Poor SALM cell area can be effectively reduced by sharing a single latch across multiple inequalities, resulting in a tradeoff between area efficiency and operational speed. 
+
+# 3 Sequential and Parallel Scaling in Latch Shared SALM aCAM Architectures 
+
+The multiplexed architecture comprising a single latch shared across multiple 1T1R elements, as introduced in Sec. 2, naturally extends beyond a single window comparison consisting of one LB and one HB inequality. Additional 1T1R pull-down paths can be integrated and evaluated sequentially, defining a configurable sequential scaling factor Nseq 
+
+within a single latch instance that enables storage of multiple inequalities per word. Alternatively, the complete cell including the latch can be replicated Npar times to support parallel evaluation, as illustrated in Fig. 2(a). The only structural constraint is that the total number of stored inequalities per word satisfies Nword ≤ Nseq · Npar .To make these architectural trade-offs explicit, we introduce an analytical model describing how latency, area, and energy scale with sequential and parallel partitioning of the search word. The model is parameterized by circuit-level characteristics extracted from the SALM implementation in Tab. 1. We then use it to explore the design space for the given layout and technology and compare the results with the 6T2M baseline. This analysis clarifies the benefits and limitations of sequential versus parallel scaling and provides a structured basis for selecting architectures under technology, application, and system-level constraints, with a view toward future electronic design automation (EDA) integration. 
+
+Latency The word-level latency scales linearly with the number of sequential evaluations Nseq , since each sequential step incurs a fixed evaluation time associated with precharging and resolving the latch, denoted as Tlatch .
+
+Tword = Nseq Tlatch . (1) The model results are presented in Fig. 3(a) 
+
+Area The area model is not derived from a detailed layout but serves as a first-order estimate to capture scaling trends. The total SALM area is dominated by the latch footprint and the number of associated 1T1R elements. Increasing Nseq 
+
+amortizes the latch area across a larger number of stored inequalities, since the 1T1R structure is significantly smaller than the latch itself. For a parallel replication factor Npar , the estimated word-level area is therefore 
+
+Aword = Npar (Alatch + Nseq A1T1R ) . (2) A comparison between the conventional 6T2M design and the proposed SALM architecture is shown in Fig. 3(b). Although the area of a single SALM cell exceeds that of a 6T2M cell, amortizing the latch across multiple sequential inequalities reduces the effective area per word as Nseq increases. Consequently, for sufficiently large Nseq , the SALM architecture can achieve a smaller word-level area than the 6T2M baseline. 
+
+Energy The energy model assumes an early termination search mode. During sequential evaluation, further compar-isons become unnecessary once a mismatch is detected and the ML is discharged, since the corresponding word can no longer match. The expected energy consumption is therefore determined by the probability of encountering a mismatch and by the expected number of sequential evaluation steps that are executed. Both quantities strongly depend on the input data distribution and the target application. As a simplified statistical model, we assume that each stored inequality check has an independent mismatch probability 
+
+Pmm . In Sec. 5, we evaluate this assumption using representative application-level datasets. In a single sequential step, Npar comparisons are evaluated in parallel. A step is classified as a mismatch if at least one of these parallel comparisons mismatches, yielding the per-step mismatch probability 
+
+Pmm ,par = 1 − (1 − Pmm )Npar . (3) 
+
+5PREPRINT SUBMITTED TO IEEE JXCDC 
+
+Given Pmm ,par , the sequential evaluation can be modeled as a truncated geometric process. Each step represents an independent Bernoulli trial with mismatch probability Pmm ,par , and the evaluation terminates either upon the first detected mismatch or after all Nseq stages have been executed. The resulting expected search depth is therefore 
+
+E[K] = 1 − (1 − Pmm ,par )Nseq 
+
+Pmm ,par 
+
+. (4) Each sequential step consumes the energy required to evaluate Npar cells in parallel, equal to Npar Ecell . The expected word-level energy per lookup thus becomes 
+
+Eword = Npar Ecell E[K]. (5) (a) (b) (c) (d) Optimum 
+
+Figure 3: Impact of sequential to parallel architectural partitioning on the performance of a single aCAM row with a word size of 32. Shown are (a) latency, (b) estimated chip area per row/word, (c) search energy, and (d) a combined cost function integrating normalized latency, area, and energy metrics. Fig. 3(c) shows the expected energy consumption predicted by this model as a function of the number of sequential elements. Latency, area, and energy form a coupled design space in which improvements in one metric typically come at the expense of another. The optimal operating point therefore depends on the relative importance assigned to these metrics. It is further influenced by technology and layout choices, which directly affect Alatch and Tstep , as well as by the target workload, since the mismatch statistics determine the expected energy consumption in (5). To enable a fair comparison between different design points, we normalize all metrics to obtain dimensionless quantities and combine them into a unified cost function, as defined in (6). A single scalar objective is obtained as the weighted sum 
+
+C = wE Enorm + wLTnorm + wAAnorm , (6) with wE + wL + wA = 1 .The weights reflect the application-driven priorities. Minimizing C selects an architecture that best matches these preferences, while the individual normalized metrics preserve full transparency of the latency, energy, and area trade-off. Fig. 3(d) shows an optimization example using the parameter set wE , w L, w A = [0 .45 , 0.05 , 0.5] . The resulting convex curve indicates that the optimal solution is obtained for nseq = 8 .
+
+# 4 Circuit-Accurate Behavioral Model 
+
+To enable large-scale inference simulations, we developed a circuit-accurate aCAM behavioral model that captures the essential dynamics responsible for ML crosstalk, as full SPICE simulations are prohibitively slow for system-level studies. The model is entirely constructed from lookup tables (LUTs) extracted through transistor-level SPICE simulations using the GlobalFoundries 22 FD-SOI technology, ensuring an accurate representation of the underlying 
+
+6PREPRINT SUBMITTED TO IEEE JXCDC VX,HB i,j 
+
+> VX,LB 0,j
+
+I ML LUT VX,LB i,j 
+
+I ML,HB I ML,LB VX,LB LUT VDL i
+
+VX,HB LUT GMEM,HB i,j t> t max 
+
+VML V ML  
+
+> i=0
+
+tΔt Yes No 
+
+> VML j(t+ Δt) IML j(t)
+
+VML(t+ Δt) I ML,HB j,i 
+
+I ML,LB j,i 
+
+VX,LB LUT VX,HB LUT 
+
+> I
+
+VX,LB LUT VX,HB LUT I ML LUT ML VX,HB 0,j 
+
+> VX,LB i,j
+> VX,LB i,j
+
+CML VML j
+
+> IML,LB 0,j
+> IML,HB i,j
+
+MLSA LUT IML,HB 0,j 
+
+> IML,LB i,j
+
+I ML j
+
+(a) (a) (b) (c) (d) (e) Diff. Eq. (7) GMEM,LB i,j 
+
+Figure 4: (a) Flow diagram of the behavioral model, including the use of lookup tables (LUTs) and the iterative loop used to solve the differential equation governing the discharge of the match-line ( ML ) capacitor. (b,c) LUTs describing the inequality-check output voltages VX for the lower-bound (LB) and upper-bound (HB) comparisons as a function of the memristor conductance GM EM and the search voltage VDL . (d) LUT mapping the match-line current IM L as a function of the match-line voltage VM L and the comparator output voltage VX . (e) NOR-type match-line configuration with multiple parallel pull-down transistors driven by the voltages VX , illustrating the aggregation of cell contributions on the ML. circuit behavior. The framework is general and can be applied to any aCAM architecture. The complete implementation and documentation are publicly available on GitHub. As illustrated in Fig. 4(a), the behavioral model consists of three distinct LUTs. The first two tables provide the comparator output node voltages VX,LB and VX,HB as functions of the programmed memristor conductance and the applied data-line voltage VDL . These voltage-transfer characteristics primarily capture the effective voltage gain of the underlying aCAM circuitry and therefore determine the separation between match and mismatch drive levels at the node VX . The third LUT stores the current–voltage characteristic of the match-line pull-down device, returning the cell discharge current IML as a function of the instantaneous match-line voltage VML and the corresponding drive voltage VX . This formulation is tailored to the widely used NOR-type match line, where multiple pull-down devices are connected in parallel. The total match-line current is obtained by summing the individual cell currents according to Kirchhoff’s current law. Since the pull-down device operates in the nonlinear regime, IML depends on VML and evolves during discharge. Consequently, the model updates VML iteratively in discrete time steps ∆t according to 
+
+VML (ti + ∆ t) = VML (ti) − IML (ti)
+
+CML 
+
+∆t, (7) until the maximum evaluation time tmax is reached. This iterative approach reproduces the dynamic discharge behavior of the match line with high fidelity while remaining several orders of magnitude faster than full SPICE simulation. Together, these tables enable the model to accurately reproduce the transient match-line behavior without requiring a full SPICE simulation. Fig. 5(a&b) shows a comparison between the SPICE-simulated output characteristics of an aCAM cell and the corresponding behavioral model across the complete input parameter sweep of GM EM and VDL ,using a conductance window of 1 μS.
+
+# 5 Random Forest Inference Using aCAM Arrays 
+
+We employ the sklearn framework to train a conventional Random Forest classifier, which serves as the algorithmic baseline. After training, the X–TIME compiler [17] extracts from the fitted model the set of analog comparison intervals associated with every decision node. These intervals correspond directly to the low– and high–bound inequalities that can be programmed into an aCAM array. The compiler therefore produces, for each tree branch, the complete set of aCAM parameters that encode the decision structure of the Random Forest. 
+
+7PREPRINT SUBMITTED TO IEEE JXCDC SPICE Behavioural Model (a) (b) 
+
+Figure 5: Comparison of match-line discharge between (a) transistor-level SPICE and (b) the circuit-accurate behavioral model across the full sweep of search voltage VDL and programmed lower-bound conductance GMEM ,LB . The colormap shows the match-line voltage VML at the end of the evaluation window for a conductance window of 1 μS, demonstrating close agreement of the behavioral model with SPICE over the complete operating range. The generated parameters are mapped onto our behavioral aCAM model, which internally uses technology-specific LUTs to represent the input–output characteristics of each considered aCAM cell architecture. These tables capture the dependence of the comparator outputs and pull-down currents on both the applied data-line voltage and the programmed memristor conductances, ensuring that array-level effects such as ML crosstalk are accurately reproduced during inference. The dimensionality of each dataset, listed in Tab. 2, determines the length of the search vector applied to aCAM rows. In practice, this feature dimension often exceeds the maximum feasible number of aCAM cells that can be connected to a single ML without compromising accuracy or read latency. To remain within realistic hardware constraints, we therefore tile the computation by limiting each ML segment to 64 cells. A search vector exceeding this length is partitioned into multiple tiles, each evaluated independently by its own ML and MLSA . Every tile produces a binary partial-match result that indicates whether the corresponding feature subset satisfies all programmed inequalities. Finally, a digital aggregation stage collects the partial-match results of all tiles belonging to the same decision path. Only if all tiles return a match does the full feature vector satisfy the original inequality encoded by the decision-tree node. This hierarchical evaluation replicates exactly the semantics of the software Random Forest while respecting the architectural constraints and analog behavior of the underlying aCAM hardware. Fig. 6(a) summarizes the inference results, comparing the achieved accuracy across multiple datasets for three distinct aCAM circuit architectures. For datasets with low feature dimensionality, all architectures achieve accuracy values close to the ideal baseline, as the corresponding ML lengths remain short and crosstalk effects are minimal. As the feature dimension grows, however, the accuracy gap between the architectures increases. In these larger models, the SALM design consistently provides the highest accuracy, reflecting its superior gain and reduced susceptibility to ML crosstalk. Fig. 6(b) illustrates the dependence of inference accuracy on the ML segment length, which represents the number of aCAM cells connected to a single ML in parallel. Using the Gas Concentration dataset as an example, we observe that increasing the array tile size leads to a monotonic accuracy degradation, with different rates for each architecture. The SALM design again demonstrates the highest robustness, degrading significantly more slowly than the 6T2M design. 
+
+Dataset Dependent Energy Savings in Sequential Architecture Scaling As described in Sec. 3, where we modeled the energy consumption through a probability distribution of mismatch probability per feature (see Eqs. 3–5), we now evaluate the real-world behavior during inference on representative application-level datasets. We compute mismatch statistics directly from the compiled tree models and measure the effective sequential search depth observed during inference, defined as the number of features evaluated before the first mismatch aborts a search for a given key. In this experiment, we investigate how many sequential elements are required to achieve a specified level of energy reduction. The results indicate that already three sequential elements per search are sufficient to reduce the energy consumption by approximately 50% for most datasets. This corresponds to a threefold increase in latency, while simultaneously reducing energy by half and significantly decreasing the required latch replication and area. To achieve an energy reduction of approximately 80%, approximately six sequential evaluations are required for most workloads. 
+
+8PREPRINT SUBMITTED TO IEEE JXCDC Dataset: Gas Concentration 
+
+> ML segment length: 64
+> (b) (a)
+
+Figure 6: (a) Comparison of inference accuracy between an ideal scikit-learn predictor and the aCAM hardware implementation for different models. (b) Inference accuracy versus ML segment length for the gas concentration dataset Table 2: Dataset Characteristics and Sequential Scaling Thresholds Required to Achieve 50% and 80% Energy Reduction 
+
+Dataset Features Classes Nseq ,50 % Nseq ,80 %
+
+Churn [18] 965 2 3 6Digits [19] 60 10 3 6Forest Cover [20] 47 7 3 6Gas [21] 129 6 3 6Iris [22] 4 3 4 –Wine [23] 13 3 3 –
+
+# 6 Conclusion 
+
+This work addresses the fundamental energy and scalability limitations of the 6T2M aCAM design. We identified static search power, limited voltage gain, and cumulative match-line crosstalk in 6T2M cells as key bottlenecks that restrict analog precision and large-scale deployment. To overcome these limitations, we introduced the Strong Arm Latched Memristor (SALM) aCAM cell, which replaces static voltage division with a dynamic current-race comparator. The latch-based comparison mechanism eliminates static search current, provides high regenerative gain, and intrinsically stores the comparison result. Circuit-level evaluation in 22 nm FD-SOI demonstrates a reduction of approximately 33% in read energy at identical latency, while significantly improving match–mismatch separation and robustness against match-line crosstalk. Beyond the cell level, we exposed architectural degrees of freedom by enabling sequential reuse and parallel replication of latch-shared compartments. We derived analytical latency, area, and energy models that enable workload-aware design-space exploration. Dataset-level evaluation shows that already three sequential evaluations are sufficient to reduce search energy by approximately 50% for most workloads, while maintaining inference accuracy close to the software baseline. This highlights the importance of workload-dependent architecture optimization rather than fixed parallel array sizing. To support large-scale system studies, we further developed a circuit-accurate behavioral model derived from SPICE lookup tables, enabling efficient inference simulations while preserving match-line discharge dynamics. Integration into the X-TIME compiler framework allowed quantitative comparison across multiple aCAM architectures and demonstrated that SALM maintains near-software accuracy even at large match-line lengths where baseline designs degrade rapidly. 
+
+9PREPRINT SUBMITTED TO IEEE JXCDC 
+
+Overall, latch-based analog CAMs provide a scalable and energy-efficient foundation for associative memory acceler-ators. Future work will focus on large-scale array integration, adaptive workload-aware mapping strategies, and the exploration of latch-based aCAM primitives in emerging in-memory AI accelerators. 
+
+# Acknowledgment 
+
+This work was supported by Hewlett Packard Enterprise and Forschungszentrum Jülich. 
+
+# References 
+
+[1] A. Sebastian, M. Le Gallo, R. Khaddam-Aljameh, and E. Eleftheriou, “Memory devices and applications for in-memory computing,” Nature nanotechnology , vol. 15, no. 7, pp. 529–544, 2020. [2] W. Wan, R. Kubendran, C. Schaefer, S. B. Eryilmaz, W. Zhang, D. Wu, S. Deiss, P. Raina, H. Qian, B. Gao et al. ,“A compute-in-memory chip based on resistive random-access memory,” Nature , vol. 608, no. 7923, pp. 504–512, 2022. [3] N. Leroux, P.-P. Manea, C. Sudarshan, J. Finkbeiner, S. Siegel, J. P. Strachan, and E. Neftci, “Analog in-memory computing attention mechanism for fast and energy-efficient large language models,” Nature Computational Science , vol. 5, pp. 544–556, 2025. [Online]. Available: https://www.nature.com/articles/s43588-025-00854-1 [4] D. B. Strukov, G. S. Snider, D. R. Stewart, and R. S. Williams, “The missing memristor found,” nature , vol. 453, no. 7191, pp. 80–83, 2008. [5] R. Waser, R. Dittmann, G. Staikov, and K. Szot, “Redox-based resistive switching memories-nanoionic mecha-nisms, prospects, and challenges.” Advanced Materials (Deerfield Beach, Fla.) , vol. 21, no. 25-26, pp. 2632–2663, 2009. [6] K. Pagiamtzis and A. Sheikholeslami, “Content-addressable memory (cam) circuits and architectures: a tutorial and survey,” IEEE Journal of Solid-State Circuits , vol. 41, no. 3, pp. 712–727, 2006. [7] T.-B. Pei and C. Zukowski, “Vlsi implementation of routing tables: tries and cams,” in IEEE INFCOM’91. The conference on Computer Communications. Tenth Annual Joint Comference of the IEEE Computer and Communications Societies Proceedings . IEEE, 1991, pp. 515–524. [8] C. Li, C. E. Graves, X. Sheng, D. Miller, M. Foltin, G. Pedretti, and J. P. Strachan, “Analog content-addressable memories with memristors,” Nature Communications , vol. 11, no. 1, apr 2020. [9] T. Molom-Ochir, B. Taylor, H. Li, and Y. Chen, “Advancements in content-addressable memory (cam) circuits: State-of-the-art, applications, and future directions in the ai domain,” IEEE Transactions on Circuits and Systems I: Regular Papers , vol. 72, no. 8, pp. 3971–3982, 2025. [10] G. Pedretti, C. E. Graves, S. Serebryakov, R. Mao, X. Sheng, M. Foltin, C. Li, and J. P. Strachan, “Tree-based machine learning performed in-memory with memristive analog cam,” Nature communications , vol. 12, no. 1, p. 5806, 2021. [11] C. E. Graves, C. Li, G. Pedretti, and J. P. Strachan, In-Memory Computing with Non-volatile Memristor CAM Circuits . Cham: Springer International Publishing, 2022, pp. 105–139. [Online]. Available: https://doi.org/10.1007/978-3-030-90582-8_6 [12] P. He, R. Mao, K. Shan, Y. Tong, Z. Xu, M. Peng, R. Luo, and C. Li, “Shiftcam: A time-domain content addressable memory utilizing shifted hamming distance for robust genome analysis,” in Proceedings of the 43rd IEEE/ACM International Conference on Computer-Aided Design , 2024, pp. 1–9. [13] P.-P. Manea, N. Leroux, E. Neftci, and J. P. Strachan, “Gain cell-based analog content addressable memory for dynamic associative tasks in ai,” in 2025 IEEE International Symposium on Circuits and Systems (ISCAS) , 2025, pp. 1–5. [14] L. Zhao, L. Buonanno, R. M. Roth, S. Serebryakov, A. Gajjar, J. Moon, J. Ignowski, and G. Pedretti, “Race-it: A reconfigurable analog cam-crossbar engine for in-memory transformer acceleration,” ArXiv , vol. abs/2312.06532, 2023. [Online]. Available: https://api.semanticscholar.org/CorpusID:266162489 [15] J. Bazzi, J. Sweidan, M. E. Fouda, R. Kanj, and A. M. Eltawil, “Efficient analog cam design,” 2022. [Online]. Available: https://arxiv.org/abs/2203.02500 [16] T. Kobayashi, K. Nogami, T. Shirotori, and Y. Fujimoto, “A current-controlled latch sense amplifier and a static power-saving input buffer for low-power architecture,” IEEE Journal of Solid-State Circuits , vol. 28, no. 4, pp. 523–527, 1993. 
+
+10 PREPRINT SUBMITTED TO IEEE JXCDC 
+
+[17] G. Pedretti, J. Moon, P. Bruel, S. Serebryakov, R. M. Roth, L. Buonanno, A. Gajjar, L. Zhao, T. Ziegler, C. Xu, M. Foltin, P. Faraboschi, J. Ignowski, and C. E. Graves, “X-time: Accelerating large tree ensembles inference for tabular data with analog cams,” IEEE Journal on Exploratory Solid-State Computational Devices and Circuits ,vol. 10, pp. 116–124, 2024. [18] R. Sharma, “Churn modelling,” n.d., kaggle dataset, uploaded by user sharmaroshan. [Online]. Available: https://www.kaggle.com/datasets/shrutimechlearn/churn-modelling [19] E. Alpaydin and C. Kaynak, “Optical recognition of handwritten digits,” UCI Machine Learning Repository , 1998. [20] J. A. Blackard, “Comparative accuracies of artificial neural networks and discriminant analysis in predicting forest cover types,” Ph.D. dissertation, Colorado State University, 1999. [21] A. Vergara, J. Fonollosa, R. Huerta et al. , “Chemical gas sensor drift compensation using classifier ensembles,” 
+
+Sensors and Actuators B: Chemical , vol. 166, pp. 320–329, 2012. [22] R. A. Fisher, “The use of multiple measurements in taxonomic problems,” Annals of Eugenics , vol. 7, no. 2, pp. 179–188, 1936. [23] M. Forina, C. Armanino, S. Lanteri, and E. Tiscornia, “Wine recognition dataset,” University of Genoa, Tech. Rep., 1991. 
+
+11

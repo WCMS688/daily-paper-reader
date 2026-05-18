@@ -1,0 +1,134 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.10285v1/fig-001.webp",
+      "caption": "Table 10: Competing methods on MNIST and CIFAR10. †: Blomqvist et al. (2018), ‡: Wilson et al. (2016), ¶: Van Der Wilk et al. (2017). Omitted standard deviations for the error rate for our method on MNIST and CIFAR10 respectively were 0.00084 and 0.0061.",
+      "page": 25,
+      "index": 1,
+      "width": 760,
+      "height": 412
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10285v1/fig-002.webp",
+      "caption": "Figure 6: Posterior distributions from an RBF, Exp and FM-GPs conditioned on 2-dimensional observations post hyperparameter training. A Nyström approximation to the Exp kernel is included with the same rank as the MLP output dimension (orange).",
+      "page": 25,
+      "index": 2,
+      "width": 822,
+      "height": 232
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10285v1/fig-003.webp",
+      "caption": "Figure 7: Posterior distributions from an RBF and FM-GPs conditioned on 2-dimensional observations post hyperparameter training.",
+      "page": 26,
+      "index": 3,
+      "width": 802,
+      "height": 215
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10285v1/fig-004.webp",
+      "caption": "Table 1: Training Times on UCI (Regression) Benchmarks",
+      "page": 21,
+      "index": 4,
+      "width": 627,
+      "height": 254
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10285v1/fig-005.webp",
+      "caption": "Table 2: Prediction Times (Per Point) on UCI (Regression) Benchmarks",
+      "page": 21,
+      "index": 5,
+      "width": 677,
+      "height": 255
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10285v1/fig-006.webp",
+      "caption": "Table 4: FM-GP p (MSE) Ablation on UCI Benchmarks",
+      "page": 22,
+      "index": 6,
+      "width": 802,
+      "height": 623
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10285v1/fig-007.webp",
+      "caption": "Table 3: Product kernel (MSE) Ablation on UCI Benchmarks",
+      "page": 22,
+      "index": 7,
+      "width": 744,
+      "height": 498
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10285v1/fig-008.webp",
+      "caption": "Figure 4: a shows eigenvalue decay of RBF, Exp kernels as well as a Nyström approximation of the Exp kernel, an MLP16 and a product MLP16 × Exp64. Vertical dashed lines indicate the subscript p, i.e. the rank of the Gram matrix. b shows how related behaviour depends on the input space dimension d. Column titles indicate d and the colours follow blue: RBF, orange: Exp, green: MLP128, red: MLP128 ×MLP16.",
+      "page": 18,
+      "index": 8,
+      "width": 813,
+      "height": 278
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10285v1/fig-009.webp",
+      "caption": "Figure 2: a shows how the eigenvalues decay for MLP Gram matrices with varying output dimension [given in the legend] and fixed hidden layer width of 64. Dashed vertical lines indicate output dimensions (with colours matched to solid lines). b in comparison shows the decay for fixed output dimension 128 (black dashed vertical line) and variable hidden widths.",
+      "page": 18,
+      "index": 9,
+      "width": 808,
+      "height": 330
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10285v1/fig-010.webp",
+      "caption": "Figure 3: a shows how the eigenvalue decay varies for MLPp ×MLPp vs MLPp2 for fixed hidden layer width of 512. b shows the same, but over a smaller region on the plot to highlight the comparative rates and crossing points.",
+      "page": 18,
+      "index": 10,
+      "width": 808,
+      "height": 330
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10285v1/fig-011.webp",
+      "caption": "Table 5: FM-GP w (MSE) Ablation on UCI Benchmarks",
+      "page": 23,
+      "index": 11,
+      "width": 802,
+      "height": 644
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10285v1/fig-012.webp",
+      "caption": "Figure 5: Architecture of the “off-the-shelf” convolutional neural network.",
+      "page": 19,
+      "index": 12,
+      "width": 566,
+      "height": 261
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10285v1/fig-013.webp",
+      "caption": "Figure 8: Latent variable points, before being projected and warped into higher dimensions and the recovered feature coordinates.",
+      "page": 27,
+      "index": 13,
+      "width": 750,
+      "height": 326
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10285v1/fig-014.webp",
+      "caption": "Table 7: Classification (Error Rate) Performance on UCI Benchmarks",
+      "page": 24,
+      "index": 14,
+      "width": 672,
+      "height": 234
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10285v1/fig-015.webp",
+      "caption": "Table 6: FM-GP H (MSE) Ablation on UCI Benchmarks",
+      "page": 24,
+      "index": 15,
+      "width": 786,
+      "height": 768
+    },
+    {
+      "url": "assets/figures/arxiv/2605.10285v1/fig-016.webp",
+      "caption": "Figure 1: First row: MSE results, training times and prediction times for FM-GP, GPnn, Var and SVDKL on standard UCI regression benchmarks. Second row: classification error rates, ECE results and training times for FM-GP, GPnn and Var on classification UCI benchmarks. Error bars represent 95% confidence intervals over 5 seeds computed by the seaborn package.",
+      "page": 9,
+      "index": 16,
+      "width": 791,
+      "height": 457
+    }
+  ]
+}
