@@ -1,15 +1,15 @@
 {
-  "generated_at": "2026-05-23T21:19:50.957244+00:00",
-  "updated_date": "20260523",
+  "generated_at": "2026-05-24T20:42:06.242944+00:00",
+  "updated_date": "20260524",
   "carryover_days": 9,
   "tag_states": {
     "si-pi": {
-      "updated_date": "20260523",
+      "updated_date": "20260524",
       "carryover_days": 9,
       "items": []
     },
     "BGA-XTALK": {
-      "updated_date": "20260523",
+      "updated_date": "20260524",
       "carryover_days": 9,
       "items": []
     }
