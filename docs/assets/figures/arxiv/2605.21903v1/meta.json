@@ -1,0 +1,86 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.21903v1/fig-001.webp",
+      "caption": "Figure 2: Graphical illustration of PIGNNs interdependencies (author’s illustration)",
+      "page": 6,
+      "index": 1,
+      "width": 906,
+      "height": 604
+    },
+    {
+      "url": "assets/figures/arxiv/2605.21903v1/fig-002.webp",
+      "caption": "Figure 4: PIML and operator learning for electromagnetic analysis of electrical machines",
+      "page": 15,
+      "index": 2,
+      "width": 995,
+      "height": 665
+    },
+    {
+      "url": "assets/figures/arxiv/2605.21903v1/fig-003.webp",
+      "caption": "Figure 7: The four key components of the digital twin modelling framework for electrical drive systems",
+      "page": 34,
+      "index": 3,
+      "width": 995,
+      "height": 602
+    },
+    {
+      "url": "assets/figures/arxiv/2605.21903v1/fig-004.webp",
+      "caption": "Table 2: Recent advances in PIML methods: techniques, benefits, and applications",
+      "page": 13,
+      "index": 4,
+      "width": 997,
+      "height": 333
+    },
+    {
+      "url": "assets/figures/arxiv/2605.21903v1/fig-005.webp",
+      "caption": "Figure 1: PINNs loss formation",
+      "page": 4,
+      "index": 5,
+      "width": 727,
+      "height": 441
+    },
+    {
+      "url": "assets/figures/arxiv/2605.21903v1/fig-006.webp",
+      "caption": "Table 4: Comparative analysis of traditional ML vs. PIML methods for electrical machines drives",
+      "page": 36,
+      "index": 6,
+      "width": 1025,
+      "height": 554
+    },
+    {
+      "url": "assets/figures/arxiv/2605.21903v1/fig-007.webp",
+      "caption": "Figure 5: Enhanced PINN architectures with elms and multi-objective loss optimization",
+      "page": 17,
+      "index": 7,
+      "width": 995,
+      "height": 612
+    },
+    {
+      "url": "assets/figures/arxiv/2605.21903v1/fig-008.webp",
+      "caption": "Table 1: Electrical machines, drives, applications and PIML models",
+      "page": 12,
+      "index": 8,
+      "width": 997,
+      "height": 717
+    },
+    {
+      "url": "assets/figures/arxiv/2605.21903v1/fig-009.webp",
+      "caption": "Figure 3: Categorization of electrical machines and drives by application and performance characteristics",
+      "page": 9,
+      "index": 9,
+      "width": 783,
+      "height": 523
+    },
+    {
+      "url": "assets/figures/arxiv/2605.21903v1/fig-010.webp",
+      "caption": "Figure 6: PIML for electrical machines and drives: performance, control, optimization and digital twins",
+      "page": 31,
+      "index": 10,
+      "width": 995,
+      "height": 665
+    }
+  ]
+}

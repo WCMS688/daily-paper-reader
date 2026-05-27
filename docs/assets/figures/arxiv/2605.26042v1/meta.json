@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.26042v1/fig-001.webp",
+      "caption": "Fig. 16. Comparison of mean PSNR convergence with standard deviation band (Left) and boxplots (Right) for Alt-CC-PINN, Alt-PINN and Simul-CC-PINN using the frequency-hopping strategy to invert the Fresnel low-frequency dataset FoamTwinDielTM 345 (a) and high-frequency dataset FoamTwinDielTM 678 (b).",
+      "page": 11,
+      "index": 1,
+      "width": 465,
+      "height": 422
+    },
+    {
+      "url": "assets/figures/arxiv/2605.26042v1/fig-002.webp",
+      "caption": "Fig. 13. Ground truth (a) and final reconstructed images for Alt-CC-PINN (b, e), Alt-PINN (c, f) and Simul-CC-PINN (d, g) using the frequency-hopping strategy to invert “Austria” lossy targets (small cylinders: εr = 12, σ = 0.05 S/m; large ring: εr = 9, σ = 0.10 S/m). SNR= 20 dB. Top: reconstructed permittivity; Bottom: reconstructed conductivity.",
+      "page": 10,
+      "index": 2,
+      "width": 470,
+      "height": 471
+    },
+    {
+      "url": "assets/figures/arxiv/2605.26042v1/fig-003.webp",
+      "caption": "Fig. 9. Comparison of mean PSNR convergence with standard deviation band (Left) and boxplots (Right) for Alt-CC-PINN, Alt-PINN and Simul-CC-PINN using the simultaneous multi-frequency processing strategy to invert “Austria” dielectric targets. εr = 6 (a); εr = 7 (b); εr = 8 (c). SNR= 20 dB.",
+      "page": 8,
+      "index": 3,
+      "width": 465,
+      "height": 422
+    },
+    {
+      "url": "assets/figures/arxiv/2605.26042v1/fig-004.webp",
+      "caption": "TABLE I COMPARISON OF TIME CONSUMPTION PER SINGLE EXPERIMENT UNDER DIFFERENT TRAINING STRATEGIES",
+      "page": 12,
+      "index": 4,
+      "width": 534,
+      "height": 244
+    },
+    {
+      "url": "assets/figures/arxiv/2605.26042v1/fig-005.webp",
+      "caption": "Fig. 19. Final reconstructed images for Alt-CC-PINN, Alt-PINN and SimulCC-PINN using the simultaneous multi-frequency processing strategy to invert the Fresnel low-frequency dataset FoamTwinDielTM 345 (a, b, c) and high-frequency dataset FoamTwinDielTM 678 (d, e, f). Left: Alt-CC-PINN; Middle: Alt-PINN; Right: Simul-CC-PINN.",
+      "page": 12,
+      "index": 5,
+      "width": 508,
+      "height": 347
+    },
+    {
+      "url": "assets/figures/arxiv/2605.26042v1/fig-006.webp",
+      "caption": "Fig. 18. Comparison of mean PSNR convergence with standard deviation band (Left) and boxplots (Right) for Alt-CC-PINN, Alt-PINN and Simul-CCPINN using the simultaneous multi-frequency processing strategy to invert the Fresnel low-frequency dataset FoamTwinDielTM 345 (a) and high-frequency dataset FoamTwinDielTM 678 (b).",
+      "page": 12,
+      "index": 6,
+      "width": 465,
+      "height": 422
+    }
+  ]
+}

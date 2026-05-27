@@ -1,0 +1,38 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.23851v1/fig-001.webp",
+      "caption": "Fig. 12. Geometric realization (a) of the k-th antenna element shown together with the dependence of the eigenvalue (b) λ(k)1 on the electrical length of the resonant edge for this mode l(k)1 /λ0. The dependence of the eigenvalue λ(k)2 on the edge length l(k)2 /λ0 is similar and is therefore not shown. The rotation angle ϕ(k) does not influence the eigenvalues.",
+      "page": 11,
+      "index": 1,
+      "width": 522,
+      "height": 279
+    },
+    {
+      "url": "assets/figures/arxiv/2605.23851v1/fig-002.webp",
+      "caption": "TABLE I OVERVIEW OF THE STRUCTURES USED THROUGHOUT THE PAPER.",
+      "page": 3,
+      "index": 2,
+      "width": 529,
+      "height": 560
+    },
+    {
+      "url": "assets/figures/arxiv/2605.23851v1/fig-003.webp",
+      "caption": "TABLE II MULTI-BEAM OPTIMIZATION PARAMETERS",
+      "page": 13,
+      "index": 3,
+      "width": 504,
+      "height": 529
+    },
+    {
+      "url": "assets/figures/arxiv/2605.23851v1/fig-004.webp",
+      "caption": "Fig. 16. Comparison of the achieved far-field between the far-field predicted by the surrogate model and the far-field obtained by a full-wave simulation for different strategies for the broadside beam θt = 0◦. The LHCP component ( ) and RHCP component ( ) of the directivity of the realized array simulated with full-wave. The thick grey curves ( ) represent the results predicted by the surrogate model. The horizontal solid grey line ( ) represents the desired XPR.",
+      "page": 12,
+      "index": 4,
+      "width": 517,
+      "height": 547
+    }
+  ]
+}

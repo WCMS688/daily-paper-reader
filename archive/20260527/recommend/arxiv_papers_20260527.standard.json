@@ -1,0 +1,290 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-05-27T21:18:33.341792+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 2,
+    "deep_divecandidates": 1,
+    "deep_cap": 7,
+    "deep_selected": 1,
+    "quick_candidates": 6,
+    "quick_skim_target": 12,
+    "quick_selected": 6
+  },
+  "deep_dive": [
+    {
+      "id": "2605.24877v1",
+      "source": "arxiv",
+      "title": "Power-Integrity Modeling of VR Faults in High-Performance Applications",
+      "abstract": "Distributed vertical power delivery has emerged as a promising approach to meet aggressive current-density, efficiency, and transient response requirements in high-performance computing systems. Tight integration of voltage regulators within stacked substrates, however, increases the vulnerability of the power delivery system to short-circuit and open-circuit faults arising from elevated thermal and mechanical stresses. Such faults can propagate through the shared power delivery network, leading to rapid degradation of system-wide efficiency at worst-case rates of up to 0.5% per microsecond. Advanced fault-tolerant power management strategies are therefore required to ensure efficient power delivery. A real-time fault-detection and isolation methodology are proposed in this paper for vertical power delivery systems. The methodology is developed based on an analytical inductor-current models that rely solely on signals available within the converter control circuitry, thereby eliminating additional sensing overhead. The proposed framework is designed and simulated in SPICE environment, demonstrating sub-microsecond fault detection and effective dual-fuse isolation, maintaining uninterrupted power delivery with a system-wide efficiency degradation of less than 2%.",
+      "authors": [
+        "Sriharini Krishnakumar",
+        "Inna Partin-Vaisband"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-05-24T05:39:31+00:00",
+      "link": "https://arxiv.org/pdf/2605.24877v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:BGA-XTALK",
+        "query:si-pi"
+      ],
+      "llm_score": 9.5,
+      "llm_evidence_en": "Power-integrity modeling of power delivery networks and voltage regulator faults in high-performance systems",
+      "llm_evidence_cn": "高性能系统中电源分配网络（PDN）与电压调节器故障的电源完整性建模",
+      "llm_evidence": "高性能系统中电源分配网络（PDN）与电压调节器故障的电源完整性建模",
+      "canonical_evidence": "高性能系统中电源分配网络（PDN）与电压调节器故障的电源完整性建模",
+      "llm_tldr_en": "This paper presents power-integrity modeling for detecting and isolating faults in vertical power delivery networks.",
+      "llm_tldr_cn": "本文提出了针对垂直供电网络故障检测与隔离的电源完整性建模方法。",
+      "llm_tldr": "本文提出了针对垂直供电网络故障检测与隔离的电源完整性建模方法。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Power integrity and PDN modeling optimization",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2605.23851v1",
+      "source": "arxiv",
+      "title": "A Manifold-Based Framework for Coupling-Aware Surrogate Optimization of Antenna Arrays Using Characteristic Modes",
+      "abstract": "A surrogate-based synthesis framework for antenna arrays is presented that incorporates mutual coupling while keeping optimization computationally efficient. The method combines a common characteristic-mode basis, a global modal coupling model, and element-wise generalized scattering matrices (GSMs). Array design variables are formulated and optimized on physically meaningful manifolds, in particular the manifold of unitary symmetric matrices for reciprocal and lossless element GSMs. A staged penalty strategy is used to progressively enforce sidelobe and cross-polarization constraints during multi-beam optimization. The framework is demonstrated for an 8x8 left-handed circularly polarized patch phased array with scan behavior in one principal plane. Different degree-of-freedom assignment strategies are compared, showing that constrained non-identical element classes can satisfy stringent pattern requirements where equal-element designs fail. For the demonstrated case, the optimization converges within seconds on a single CPU core, and full-wave verification of the realized arrays confirms the predicted trends, with good agreement for the SLL and useful accuracy for the XPR. The results indicate that the proposed formulation is a practical and scalable route for coupling-aware array synthesis and realization.",
+      "authors": [
+        "Leonardo Mörlein",
+        "Dirk Manteuffel"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP"
+      ],
+      "published": "2026-05-22T17:05:29+00:00",
+      "link": "https://arxiv.org/pdf/2605.23851v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:BGA-XTALK",
+        "query:si-pi"
+      ],
+      "llm_score": 6.5,
+      "llm_evidence_en": "surrogate optimization and mutual coupling modeling for arrays",
+      "llm_evidence_cn": "阵列的代理模型优化与互耦合建模",
+      "llm_evidence": "阵列的代理模型优化与互耦合建模",
+      "canonical_evidence": "阵列的代理模型优化与互耦合建模",
+      "llm_tldr_en": "A manifold-based surrogate framework for coupling-aware optimization of antenna arrays.",
+      "llm_tldr_cn": "一种基于流形的代理框架，用于天线阵列的耦合感知优化。",
+      "llm_tldr": "一种基于流形的代理框架，用于天线阵列的耦合感知优化。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Advanced modeling and optimization techniques for SI/PI in high speed systems",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.26042v1",
+      "source": "arxiv",
+      "title": "Alt-CC-PINN: An Alternating Optimization Framework with Implicit Neural Representation for Microwave Inverse Scattering Imaging",
+      "abstract": "Microwave inverse scattering imaging (MISI) is a crucial computational technique in microwave nondestructive evaluation and near-field microwave sensing systems. However, quantitative reconstruction of high-contrast targets remains a formidable challenge due to severe multiple scattering effects and the inherent ill-posedness of electromagnetic inverse problems. To overcome this fundamental bottleneck in computational microwave imaging, this paper proposes an alternating optimization framework based on cross-correlated physics-informed neural network (Alt-CC-PINN). This architecture deeply decouples the evolution of the microwave physical field from the neural-network-based dielectric parameter inference, replacing traditional joint optimization with a hybrid alternating engine. Specifically, the method employs an analytical Polak-Ribière conjugate gradient (PR-CG) algorithm driven by a cross-correlated loss to optimally update the contrast sources, and deploys batched zero-padded 2D-FFT to ensure high computational efficiency. Subsequently, a deep learning optimizer is utilized to update the continuous neural representation. Extensive validations based on simulated and measured data demonstrate that Alt-CC-PINN effectively overcomes the local minima problem in high-contrast and low-signal-to-noise-ratio (SNR) environments. It exhibits superior reconstruction fidelity and robustness under the frequency-hopping probing strategy, providing a powerful and reliable computational electromagnetic solver for practical microwave imaging systems.",
+      "authors": [
+        "Shilong Sun"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP"
+      ],
+      "published": "2026-05-25T17:08:09+00:00",
+      "link": "https://arxiv.org/pdf/2605.26042v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:BGA-XTALK",
+        "query:si-pi"
+      ],
+      "llm_score": 6.5,
+      "llm_evidence_en": "physics-informed neural network for electromagnetic inverse problems",
+      "llm_evidence_cn": "物理信息神经网络用于电磁反演问题",
+      "llm_evidence": "物理信息神经网络用于电磁反演问题",
+      "canonical_evidence": "物理信息神经网络用于电磁反演问题",
+      "llm_tldr_en": "Proposes a PINN framework for microwave imaging that could be adapted for electromagnetic modeling in SI/PI.",
+      "llm_tldr_cn": "提出一种用于微波成像的物理信息神经网络框架，可借鉴用于SI/PI电磁建模。",
+      "llm_tldr": "提出一种用于微波成像的物理信息神经网络框架，可借鉴用于SI/PI电磁建模。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.19611v1",
+      "source": "arxiv",
+      "title": "Inverse Design of Metasurface based Absorbers using Physics Guided Conditional Diffusion Models",
+      "abstract": "Inverse design of metasurfaces for specific electromagnetic responses requires generating geometries that satisfy stringent spectral constraints while maintaining manufacturability. Conventional design methodologies rely on iterative optimization routines using full wave simulations, which become extremely time consuming and computationally intensive for large design spaces. In addition, commonly employed generative approaches often exhibit limited conditional fidelity and the generated designs often contain fine or irregular features that are impractical to fabricate. In this regard, we propose a physics guided condition quality enhanced diffusion framework for the inverse design of metasurface based absorbers. Here, the conditioning information consisting of target reflection characteristics is integrated into the model using feature wise linear modulation (FiLM). Furthermore, to enforce adherence to target spectra, a pre trained surrogate EM simulator is embedded into the framework introducing physics aware regularization through spectrum level loss functions. The efficiency of the proposed model is demonstrated by generating practically realizable metasurfaces for different types of reflection characteristics in the frequency range of 2 to 18 GHz. The proposed framework achieves an average spectral mean squared error of 0.0006 and band alignment accuracy of 0.958 between the target spectra and the spectra produced by the generated designs, demonstrating high conditional accuracy. In addition, the model generates multiple geometries for the same condition, thereby providing diverse design alternatives to the engineer. The proposed model produces the suitable design in approximately 30 seconds, whereas the conventional approach can take several months under comparable computational resources. The efficiency of the model is also established via experimental measurements.",
+      "authors": [
+        "Vineetha Joy",
+        "Jamshed Palai",
+        "Satwik Sahoo",
+        "Anshuman Kumar",
+        "Amit Sethi",
+        "Hema Singh"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.ET"
+      ],
+      "published": "2026-05-19T09:51:38+00:00",
+      "link": "https://arxiv.org/pdf/2605.19611v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:BGA-XTALK"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "physics guided conditional diffusion models for electromagnetic response optimization",
+      "llm_evidence_cn": "物理引导的条件扩散模型用于电磁响应优化",
+      "llm_evidence": "物理引导的条件扩散模型用于电磁响应优化",
+      "canonical_evidence": "物理引导的条件扩散模型用于电磁响应优化",
+      "llm_tldr_en": "Uses diffusion models for inverse design of metasurfaces, offering a fast alternative to full-wave simulations.",
+      "llm_tldr_cn": "利用扩散模型进行超表面逆向设计，为全波仿真提供了一种快速的替代方案。",
+      "llm_tldr": "利用扩散模型进行超表面逆向设计，为全波仿真提供了一种快速的替代方案。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Advanced modeling and optimization techniques for SI/PI in high speed systems",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.21903v1",
+      "source": "arxiv",
+      "title": "Engineering Hybrid Physics-Informed Neural Networks for Next-Generation Electricity Systems: A State-of-the-Art Review",
+      "abstract": "The integration of machine learning with domain-specific physics is transforming the design, monitoring, and control of electricity systems, where data scarcity, limited interpretability, and the need to enforce physical laws constrain purely data-driven models. Physics-informed machine learning (PIML) addresses these limitations by embedding governing equations directly into the learning process, yielding accurate, efficient, and scalable solutions for Industry 4.0 applications. This article reviews hybrid PIML architectures for electricity systems, including physics-informed neural networks (PINNs), Deep Operator Networks (DeepONets), Fourier Neural Operators, Extreme Learning Machine-enhanced PINNs, graph-based PINNs (PIGNNs), and domain-decomposition PINNs. Each approach is examined through case studies spanning field analysis, fault detection, digital twins, surrogate modeling, and control optimization. The review shows that embedding Maxwell's equations and other first-principles constraints substantially improves predictive accuracy under sparse and noisy data, reduces simulation time by orders of magnitude relative to finite element methods, and enhances generalization across operating regimes. Hybrid frameworks consistently outperform purely data-driven baselines on parameter sensitivity, dynamic behavior, and robustness, while supporting real-time digital-twin calibration and uncertainty quantification. Persistent challenges include training instability for stiff multi-scale problems, computational cost of high-fidelity models, and the absence of standardized benchmarks. The findings demonstrate that PIML enables a paradigm shift from black-box data-driven methods to transparent, physics-informed strategies, positioning the field for sustained innovation in resilient and intelligent electricity systems.",
+      "authors": [
+        "Joseph Nyangon"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY",
+        "cs.AI",
+        "cs.LG",
+        "cs.NE"
+      ],
+      "published": "2026-05-21T02:25:05+00:00",
+      "link": "https://arxiv.org/pdf/2605.21903v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:BGA-XTALK",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Physics-informed neural networks for electricity systems modeling and optimization",
+      "llm_evidence_cn": "用于电力系统建模和优化的物理信息神经网络",
+      "llm_evidence": "用于电力系统建模和优化的物理信息神经网络",
+      "canonical_evidence": "用于电力系统建模和优化的物理信息神经网络",
+      "llm_tldr_en": "Reviews hybrid physics-informed machine learning for modeling and controlling complex electricity systems.",
+      "llm_tldr_cn": "综述了用于复杂电力系统建模和控制的混合物理信息机器学习技术。",
+      "llm_tldr": "综述了用于复杂电力系统建模和控制的混合物理信息机器学习技术。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.23779v1",
+      "source": "arxiv",
+      "title": "SIM-Aided Near-Field Channel and Localization Estimation With Dimensionality Reduction: A Multiport Network Theory Approach",
+      "abstract": "The deployment of Extremely Large-Scale Antenna Arrays for 6G enables radiative near-field sensing but poses significant challenges in terms of hardware complexity and interference. Stacked Intelligent Metasurfaces (SIMs) address these limitations by enabling wave-domain dimensionality reduction. This paper proposes a rigorous SIM-aided framework for near-field channel and localization estimation based on Multiport Network Theory, which provides an electromagnetically consistent characterization accounting for mutual coupling and non-unilateral inter-layer propagation effects. An indirect estimation approach is adopted, where the SIM is optimized to perform analog spatial filtering by projecting the received signal onto a relevant subspace identified through coarse prior location information. Within this realistic setting, we analytically characterize the impact of SIM approximation errors on channel estimation and quantify the resulting effects on localization performance. The results show that the proposed architecture preserves the essential wavefront curvature information required for accurate near-field localization, achieving performance comparable to fully digital solutions while drastically reducing the number of radio-frequency chains.",
+      "authors": [
+        "Andrea Abrardo",
+        "Bartoli Giulio"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP"
+      ],
+      "published": "2026-05-22T15:45:22+00:00",
+      "link": "https://arxiv.org/pdf/2605.23779v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:BGA-XTALK",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Multiport Network Theory for mutual coupling and inter-layer propagation",
+      "llm_evidence_cn": "多端口网络理论用于互耦合与层间传播建模",
+      "llm_evidence": "多端口网络理论用于互耦合与层间传播建模",
+      "canonical_evidence": "多端口网络理论用于互耦合与层间传播建模",
+      "llm_tldr_en": "Applies Multiport Network Theory to model mutual coupling in metasurfaces, relevant to circuit modeling.",
+      "llm_tldr_cn": "应用多端口网络理论对超表面中的互耦合进行建模，与等效电路建模相关。",
+      "llm_tldr": "应用多端口网络理论对超表面中的互耦合进行建模，与等效电路建模相关。",
+      "llm_tags": [
+        "query:bga-xtalk"
+      ],
+      "matched_query_tag": "query:bga-xtalk",
+      "matched_query_text": "equivalent circuit modeling",
+      "matched_requirement_id": "req-12",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.26509v1",
+      "source": "arxiv",
+      "title": "SIKA-GP: Accelerating Gaussian Process Inference with Sparse Inducing Kernel Approximations for Bayesian Deep Learning",
+      "abstract": "Gaussian processes (GPs) provide a principled Bayesian framework for uncertainty estimation, but their computational complexity severely limits scalability to large datasets. We propose SIKA-GP, which accelerates GP inference using sparse inducing kernel approximations based on a dyadic ordered template basis, incurring only ${O}(\\log M)$ complexity dependence on the number of inducing points. Our approach constructs compact and expressive kernel representations from sparsely activated bases, enabling efficient tensorized GPU computation and seamless integration with modern large-scale models. SIKA-GP can be naturally embedded into Bayesian neural networks (BNNs) with sparse activations, yielding significant speedups in both training and inference without sacrificing predictive performance. The method naturally extends to deep feature learning, addressing the scalability challenges introduced by deep architectures and high-dimensional feature representations. Empirical results on vision and transformer-based language benchmarks demonstrate that our approach consistently delivers fast and accurate GP models, providing a principled path toward scalable kernel learning.",
+      "authors": [
+        "Wenyuan Zhao",
+        "Rui Tuo",
+        "Chao Tian"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "math.PR",
+        "stat.CO"
+      ],
+      "published": "2026-05-26T03:49:13+00:00",
+      "link": "https://arxiv.org/pdf/2605.26509v1",
+      "tags": [
+        "keyword:BGA-XTALK",
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Accelerated Gaussian Process inference for large-scale Bayesian deep learning models",
+      "llm_evidence_cn": "加速的大规模贝叶斯深度学习高斯过程推理方法",
+      "llm_evidence": "加速的大规模贝叶斯深度学习高斯过程推理方法",
+      "canonical_evidence": "加速的大规模贝叶斯深度学习高斯过程推理方法",
+      "llm_tldr_en": "Proposes SIKA-GP to accelerate Gaussian Process inference, potentially improving ML-based SI/PI optimization efficiency.",
+      "llm_tldr_cn": "提出SIKA-GP加速高斯过程推理，可提升基于机器学习的SI/PI分析与优化效率。",
+      "llm_tldr": "提出SIKA-GP加速高斯过程推理，可提升基于机器学习的SI/PI分析与优化效率。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
