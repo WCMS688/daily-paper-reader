@@ -6,46 +6,35 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-05-09 ~ 2026-06-07
-- 运行时间：2026-06-07 13:32:55 UTC
+- 最新运行日期：2026-06-07
+- 运行时间：2026-06-07 21:15:47 UTC
 - 运行状态：成功
-- 本次总论文数：8
-- 精读区：5
-- 速读区：3
+- 本次总论文数：5
+- 精读区：1
+- 速读区：4
 
 ### 今日简报（AI）
-1) 今日精读聚焦功耗与信号完整性优化，速读覆盖光电传输及多Die FPGA架构。  
-2) 最值得关注：工作负载感知PDN早期优化（9.0分）与缓冲参数化ML替代模型（9.0分），两者均以数据驱动提升芯片设计效率。  
-3) 建议普通读者可重点追踪基于机器学习的电子设计自动化（EDA）方法，扩展至跨技术栈的信号与功耗协同分析。
-- 详情：[/20260509-20260607/README](/20260509-20260607/README)
+今日精读1篇高性能计算电源传递的耦合电感阵列研究，速读4篇涵盖光电子设计、多速率仿真与FinFET优化。建议重点关注精读文章提出的封装嵌入式电感阵列方案。下一步可深入分析其集成制造工艺与实测性能。
+- 详情：[/202606/07/README](/202606/07/README)
 
 ### 精读区论文标签
-1. [Workload-Aware Early-Stage Power Delivery Network Optimization via Architectural Power Traces](/20260509-20260607/2605.17182v1-workload-aware-early-stage-power-delivery-network-optimization-via-architectural-power-traces)  
+1. [Package-Embedded Coupled Inductor Arrays for High-Performance Computing Power Delivery](/202606/07/2606.02878v1-package-embedded-coupled-inductor-arrays-for-high-performance-computing-power-delivery)  
    标签：评分：9.0/10、query:si-pi
-   evidence：基于架构功耗迹的工作负载感知PDN优化
-2. [Buffer-Parameterized Machine Learning Surrogate Models for Cross-Technology Signal Integrity Analysis and Optimization](/20260509-20260607/2605.18170v1-buffer-parameterized-machine-learning-surrogate-models-for-cross-technology-signal-integrity-analysis-and-optimization)  
-   标签：评分：9.0/10、query:si-pi
-   evidence：用于跨工艺信号完整性分析与优化的缓冲参数化机器学习代理模型
-3. [CLIPGen: A Chiplet Link IP Modeling and Generation Framework for 2.5D Architecture Exploration](/20260509-20260607/2605.27757v1-clipgen-a-chiplet-link-ip-modeling-and-generation-framework-for-25d-architecture-exploration)  
-   标签：评分：9.0/10、query:si-pi
-   evidence：小芯片封装与2.5D互连建模框架
-4. [Design-Oriented Modeling of TSV Substrate Noise Coupling to Ring VCOs](/20260509-20260607/2605.29867v1-design-oriented-modeling-of-tsv-substrate-noise-coupling-to-ring-vcos)  
-   标签：评分：9.0/10、query:si-pi
-   evidence：面向3D-IC/chiplet的TSV噪声耦合紧凑RLGC宏模型
-5. [Dynamic Power Management Methodology for Distributed Vertical Power Delivery in High-Performance Computing Systems](/20260509-20260607/2605.24874v1-dynamic-power-management-methodology-for-distributed-vertical-power-delivery-in-high-performance-computing-systems)  
-   标签：评分：8.0/10、query:si-pi
-   evidence：分布式垂直功率输送的动态功率管理
+   evidence：功率传输框架，封装嵌入式电感，PDN建模优化
 
 ### 速读区论文标签
-1. [VCSEL-based PAM-4 transmission system emulator: A data-driven deep learning perspective](/20260509-20260607/2605.18917v1-vcsel-based-pam-4-transmission-system-emulator-a-data-driven-deep-learning-perspective)  
+1. [Will Accurate Fields Mislead Photonic Design? FromGlobal Accuracy to Port Readout](/202606/07/2606.03038v1-will-accurate-fields-mislead-photonic-design-fromglobal-accuracy-to-port-readout)  
    标签：评分：7.0/10、query:si-pi
-   evidence：基于深度学习的高速PAM-4信道仿真
-2. [Modeling, Optimizing and Exploring Multi-Die FPGA Routing Architectures](/20260509-20260607/2606.06421v1-modeling-optimizing-and-exploring-multi-die-fpga-routing-architectures)  
+   evidence：神经场代理用于光子设计优化，其方法论可迁移至SI/PI的机器学习优化
+2. [A Comparison of Multirate Co-Simulation Techniques for Field-Circuit Coupled Problems](/202606/07/2606.03594v1-a-comparison-of-multirate-co-simulation-techniques-for-field-circuit-coupled-problems)  
    标签：评分：7.0/10、query:si-pi
-   evidence：多芯片FPGA路由建模与2.5D/3D架构优化
-3. [IO Pad Integrity in Energy-Efficient Neuromorphic Chips](/20260509-20260607/2606.01181v1-io-pad-integrity-in-energy-efficient-neuromorphic-chips)  
+   evidence：多速率协同仿真方法用于场路耦合问题，可应用于PDN阻抗建模
+3. [PALTO: Physics-Informed Active Learning for Tri-Gate FinFET Design Optimization for Vertical Power Delivery](/202606/07/2606.01265v1-palto-physics-informed-active-learning-for-tri-gate-finfet-design-optimization-for-vertical-power-delivery)  
    标签：评分：6.0/10、query:si-pi
-   evidence：神经形态芯片中I/O焊盘完整性对信号保真度的影响分析
+   evidence：面向功率传输的物理信息主动学习优化
+4. [Low Distortion Fusion Bonding using Pneumatically Warped Wafers](/202606/07/2606.04625v1-low-distortion-fusion-bonding-using-pneumatically-warped-wafers)  
+   标签：评分：6.0/10、query:si-pi
+   evidence：背面供电网络相关，研究PDN键合失真
 
 
 <div class="dpr-home-promo-card">

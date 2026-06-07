@@ -1,0 +1,338 @@
+Title: A Comparison of Multirate Co-Simulation Techniques for Field-Circuit Coupled Problems
+
+URL Source: https://arxiv.org/pdf/2606.03594v1
+
+Published Time: Wed, 03 Jun 2026 01:08:48 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# A Comparison of Multirate Co-Simulation Techniques for Field-Circuit Coupled Problems 
+
+Michael Wiesheu [0000 −0001 −9161 −5497 ]
+
+Sebastian Sch¨ ops [0000 −0001 −9150 −0219 ]
+
+Idoia Cortes Garcia [0000 −0001 −6557 −103 𝑋 ]
+
+Abstract This paper compares three different multirate splitting approaches for the application on field-circuit coupled magnetoquasistatic simulations. For these methods, again three different variants for exchanging values between the field and circuit are tested, namely voltages, currents and flux correction terms. All scenarios are applied on two different benchmark problems, i.e. a coil inductor and transformer model coupled to different circuits. The convergence behavior of different time steppers (Implicit Euler and Trapezoidal Rule) is determined for all possible settings, and guidelines for practical applications are derived. 
+
+Keywords Co-simulation · Field-circuit coupling · Splitting methods 
+
+## 1 Introduction 
+
+Applying co-simulation techniques to low-frequency field-circuit coupled problems is a common way to speed up multirate simulations. Instead of a large monolithic system of equations, the individual subproblems, i.e., field and circuit, are solved independently. In the computational electromagnetics community this idea is known since the 90s, see e.g. [1]. It enables the use of different tools, time discretizations, and solvers for field and circuit. The field equations, usually discretized with Finite Elements (FE), are expensive to solve. At the same time, the field is commonly assumed to be less dynamic compared to the computationally cheap but fast switched circuits, which are described in SPICE-like simulators by Modified Nodal Analysis (MNA). Decoupling 
+
+Michael Wiesheu TU Darmstadt, Computational Electromagnetics, e-mail: michael.wiesheu@tu-darmstadt.de Name of Second Author TU Darmstadt, Computational Electromagnetics e-mail: sebastian.schoeps@tu-darmstadt.de Idoia Cortes Garcia Eindhoven University of Technology, Dept. of Mechanical Engineering, e-mail: i.cortes.garcia@tue.nl 1    
+
+> arXiv:2606.03594v1 [math.NA] 2 Jun 2026 2Michael Wiesheu Sebastian Sch¨ ops Idoia Cortes Garcia UC
+> R
+> (a) Coupled coil inductor. UR(b) Mutually coupled transformer.
+
+Fig. 1: Field-circuit coupled benchmark problems. through co-simulation promises a significant speed-up by treating the distinct problems separately. The eddy-current problem with stranded conductors is denoted by 
+
+Ff (a, i, u) =
+
+(M𝜎 ¤a + K𝜈 a = XmiX⊤ 
+
+> m
+
+¤a = u , (1) where M𝜎 denotes the (singular) conductivity matrix, K𝜈 the reluctivity matrix, and 
+
+a the unknowns for the magnetic vector potential [2]. Here, the system is a differential algebraic equation (DAE). Furthermore, Xm represents the coupling matrix that dis-tributes the lumped currents i in the field domain, and connects field changes with the voltage drop u [3]. The time integration of the second equation determines the fluxes. The DC resistance of the stranded conductor is considered in the circuit equations 
+
+Fc (𝝋 , i, u) =
+
+(Mc ¤𝝋 + Kc 𝝋 + Ami = fc (𝑡 )
+
+A⊤ 
+
+> m
+
+𝝋 = u , (2) where Mc denotes the (singular) mass matrix, Kc the circuit stiffness matrix, fc circuit source terms, and 𝝋 the circuit unknowns containing the electric node potentials and possible unknowns for currents across inductors and voltage sources [4]. The coupling to the field is performed through the incidence matrix Am, which connects the currents to the corresponding nodes and extracts the respective voltages from the nodal potentials. To test different co-simulation approaches, the two benchmark problems shown in Fig. 1 are investigated. The first problem, given in Fig. 1a, is a 2D inductor with a nonlinear massive iron core, connected to an 𝑅 –𝐶 circuit through only differential components. The second – more complex – example, given in Fig. 1b, is a mutually coupled 2D FE transformer with a nonlinear massive iron core connected to a circuit with no additional dynamics. As time steppers, the Implicit Euler (IE) and Trapezoidal Rule (TR) are compared since they represent widely used methods in circuit simulation. The goal is to derive rules from numerical experiments that predict which method works reliably under which circumstances. In the most general case, Waveform Relaxation [5] can be used to iterate until convergence is reached. This may not be ideal in terms A Comparison of Multirate Co-Simulation Techniques for Field-Circuit Coupled Problems 3u
+
+i
+
+> circuit
+> field
+> (a) Voltage-current coupling. Φeddy
+> circuit
+> field
+
+u (b) Voltage-flux coupling. Φeddy 
+
+> circuit
+> field
+
+i (c) Current-flux coupling. 
+
+Fig. 2: Investigated coupling schemes for co-simulation. of computational efficiency, as problems are solved repeatably, thereby reducing its potential advantage w.r.t. a monolithic approach. Furthermore, software frameworks need to allow restarts with reinitializations which is not the case for many SPICE-like solvers. We therefore concentrate on approaches that do not iterate. The investigated methods for information exchange are explained in Sect. 2. Sect. 3 deals with the co-simulation order ‘circuit-field’, i.e. the circuit is solved first and its solution is passed to the field. The opposite order is explored in Sect. 4. These methods can be interpreted as multirate Lie-Trotter splittings [6] or multirate co-simulation without iteration [7]. Sect. 5 addresses a Strang-like splitting [8]. Finally, a summary and outlook is given in Sect. 6. 
+
+## 2 Exchange of Variables 
+
+When separating field and circuit equations, the order in which the systems are solved, and variables to be exchanged must be chosen. The investigated variants are shown in Fig. 2. Classically, voltages and currents are exchanged, see Fig. 2a. The field system is excited by voltages to avoid DAE problems [9]. This leads to 
+
+Ff (a, if , uf ) = 0, uf = uc, (3) 
+
+Fc (𝝋 , ic, uc) = 0, ic = if , (4) where Ff and Fc have been defined before. This approach is easy to implement, but does not exploit physical properties of the system. Alternatively, we prescribe a (fixed) inductance L to approximate the field’s behavior, and provide a correction Φeddy , see Fig. 2b, viz. 
+
+Φ = Li − Φeddy , Φeddy = Li − X⊤a. (5) Errors due to nonlinearities and eddy currents are compensated by updating Φeddy 
+
+accordingly. The field is still excited through a voltage and Φeddy is passed to the circuit. With a slight abuse of notation the scheme is given by 
+
+Ff (a, Φeddy ,f , uf ) = 0, uf = uc, (6) 
+
+Fc (𝝋 , Φeddy ,c, uc) = 0, Φeddy ,c = Φ eddy ,f . (7) 4 Michael Wiesheu Sebastian Sch¨ ops Idoia Cortes Garcia Field  Circuit  ϕ, u 
+
+u
+
+a, i 
+
+ϕ, u 
+
+i u i
+
+a, i   
+
+> (a) Circuit-Field with 𝑢 –𝑖 exchange.
+
+a, Φeddy 
+
+ϕ, u 
+
+a, Φeddy 
+
+ϕ, u 
+
+> Field Circuit
+
+uΦeddy uΦeddy (b) Field-Circuit with 𝑢 –Φeddy exchange. 
+
+Fig. 3: Circuit-Field vs. Field-Circuit coupling with different exchange variables. The inductance matrix can be computed, e.g. from a linear simulation. As third option, we use the same approach with the exception of exciting the field with currents i instead of voltages, see Fig. 2c. The motivation is to have a less dynamic input quantity for the field system, e.g. when comparing with pulse-width-modulated (PWM) voltages. This results in the coupling approach 
+
+Ff (a, Φeddy ,f , if ) = 0, if = ic, (8) 
+
+Fc (𝝋 , Φeddy ,c, ic) = 0, Φeddy ,c = Φ eddy ,f . (9) Since we use fluxes as field outputs, DAE-related problems are assumed to be mitigated. However, a mathematical analysis is open. 
+
+## 3 Circuit-Field 
+
+The Circuit-Field variant follows the ‘fastest first’ paradigm. This is demonstrated in Fig. 3a for the exchange of voltages and currents. The circuit is assumed to exhibit a more dynamical behavior, and is stepped by 𝑛 intermediate micro-steps. Here, 𝑛 = 10 is chosen for all simulations. Unknown values are extrapolated constantly. Then the field is solved in one macro-step with linear interpolation. This drastically reduces the computational effort, since the field is more computationally demanding. The benchmark simulations from Fig. 1 are excited with a sinusoidal voltage of 100 V at 50 Hz. The first period is simulated and compared with a very accurately resolved monolithic reference solution. The 𝐿 2 error of im in time is chosen as reference. Convergence results for the Circuit-Field simulation are found in Fig. 4. For the inductor example, the coil saturates after about 5 ms, which causes a sudden rise in the current. The 𝑢 –𝑖 exchange works for both IE and TR. However, the second order for TR is reduced to first, because the splitting is only first order accurate [10]. The 
+
+𝑢 –Φeddy exchange has the same convergence rates as the 𝑢 –𝑖 variant. However in absolute terms, 𝑢 –Φeddy has a lower error, presumptively because physical model information is included in its information exchange. The 𝑖 –Φeddy exchange converges for IE, but very small time steps are necessary to reach an acceptable error. The correction of the A Comparison of Multirate Co-Simulation Techniques for Field-Circuit Coupled Problems 510 −7 10 −6 10 −5 10 −4
+
+10 −6
+
+10 −3
+
+10 0
+
+> 1
+> 1
+> L2 error current
+
+0 5 10 15 20 
+
+−2
+
+−1
+
+0
+
+1
+
+2         
+
+> Coil current (A)
+> u–i– IE u–i– TR
+> u–Φeddy – IE u–Φeddy – TR
+> i–Φeddy – IE i–Φeddy – TR
+> Reference
+
+10 −7 10 −6 10 −5 10 −4
+
+10 −4
+
+10 0
+
+10 4
+
+> 1
+> 1
+
+Time step (s) 
+
+> L2 error current
+
+0 5 10 15 20 
+
+−50 
+
+0
+
+50 
+
+Time (ms) 
+
+> Coil current (A)
+
+Fig. 4: Circuit-Field co-simulation convergence and coil currents calculated from the field. Top: inductor. Bottom: transformer. current seems to be delayed, such that it oscillates around the true value. The TR case does not converge. For the transformer example, the only methods that converge are 𝑢 –𝑖 and the 𝑢 –Φeddy 
+
+variant with IE. Also the 𝑖 –Φeddy exchange works eventually with IE, but again only for extremely small time steps. TR fails in all cases, because the circuit is purely algebraic. We conjecture that errors due to inconsistent initial conditions are accumulated. 
+
+## 4 Field-Circuit 
+
+The Field-Circuit variant follows the ‘slowest first’ paradigm. The simulation starts with a macro step, where the field is computed. After that, the circuit is simulated with 𝑛 
+
+micro-steps, with the interpolated input provided by the field. As before we use linear interpolation and constant extrapolation. Two exemplary time windows for the 𝑢 –Φeddy 
+
+exchange are shown in Fig. 3b. The convergence results for the two benchmark problems are shown in Fig. 5. For the inductor problem, 𝑢 –𝑖 converges for both IE and TR, again with order one. The 
+
+𝑢 –Φeddy exchange converges for IE as before. The 𝑖 –Φeddy exchange suffers from the same problems as above, i.e. a very slow convergence is observed. However, also TR converges. For the transformer problem, the convergence is comparable to Circuit-Field with one major difference: The 𝑢 –𝑖 and 𝑢 –Φeddy exchanges with TR converges with first order. This indicates that the initial conditions for the circuit are consistent if the field is stepped first, and the circuit may interpolate the field quantities. 6 Michael Wiesheu Sebastian Sch¨ ops Idoia Cortes Garcia 10 −7 10 −6 10 −5 10 −4
+
+10 −6
+
+10 −3
+
+10 0
+
+> 1
+> 1
+> L2 error current
+
+0 5 10 15 20 
+
+−2
+
+−1
+
+0
+
+1
+
+2         
+
+> Coil current (A)
+> u–i– IE u–i– TR
+> u–Φeddy – IE u–Φeddy – TR
+> i–Φeddy – IE i–Φeddy – TR
+> Reference
+
+10 −7 10 −6 10 −5 10 −4
+
+10 −4
+
+10 0
+
+10 4
+
+> 1
+> 1
+
+Time step (s) 
+
+> L2 error current
+
+0 5 10 15 20 
+
+−50 
+
+0
+
+50 
+
+Time (ms) 
+
+> Coil current (A)
+
+Fig. 5: Field-Circuit co-simulation convergence and coil currents calculated from the circuit. Top: inductor. Bottom: transformer. 
+
+## 5 Strang-Splitting 
+
+Strang splitting alternates between a half step for the first subproblem, a full step for the second one, and another half step for the first subproblem [8]. This yields a splitting order of two for ordinary differential equations. Our systems, however, are DAEs. In the context of field-circuit coupling and multirate problems, a Strang-like splitting could be implemented as shown in Fig. 6 for one time window with the 𝑖 –Φeddy exchange. The circuit is started with 𝑛 /2 micro-steps. The end values are passed to the field, which performs one macro-step. Finally, the time window is completed by another circuit simulation with 𝑛 /2 micro-steps with input values from the field. Here, we do not interpolate, but use the last value to stay close to the Strang setting. Applying this method on the benchmark problems yields the convergence results presented in Fig. 7. For the inductor problem, the 𝑢 –𝑖 exchange has optimal convergence for both IE and TR, i.e. order 1 and 2, respectively. Even though the problem is not Field  Circuit  ϕ, i 
+
+i
+
+a, Φeddy 
+
+ϕ, i 
+
+Φeddy 
+
+Fig. 6: Strang coupling with 𝑖 –Φeddy exchange. A Comparison of Multirate Co-Simulation Techniques for Field-Circuit Coupled Problems 710 −7 10 −6 10 −5 10 −4
+
+10 −9
+
+10 −5
+
+10 −1
+
+> 1
+> 1
+> 1
+> 2
+> L2 error current
+
+0 5 10 15 20 
+
+−2
+
+−1
+
+0
+
+1
+
+2         
+
+> Coil current (A)
+> u–i– IE u–i– TR
+> u–Φeddy – IE u–Φeddy – TR
+> i–Φeddy – IE i–Φeddy – TR
+> Reference
+
+10 −7 10 −6 10 −5 10 −4
+
+10 −3
+
+10 1
+
+10 5
+
+> 1
+> 1
+
+Time step (s) 
+
+> L2 error current
+
+0 5 10 15 20 
+
+−50 
+
+0
+
+50 
+
+Time (ms) 
+
+> Coil current (A)
+
+Fig. 7: Strang co-simulation convergence and coil currents calculated from the field. Top: inductor. Bottom: transformer. an ODE, the differential components connected to the exchange variables, i.e., the capacitor in parallel, seem to conserve the second order convergence property of the Strang-splitting. However, oscillations occur for larger time steps, where IE outperforms the TR. The same conclusions are reached for the 𝑢 –Φeddy exchange, which displays the same convergence behavior, but tends to perform better in absolute terms. The 𝑖 –Φeddy 
+
+exchange again only converges using IE with small time steps and not at all for TR. For the transformer problem, the 𝑢 –𝑖 exchange converges for IE. Applying TR does not converge and again inconsistent initial values are assumed to be the reason. The same conclusion is reached for the 𝑢 –Φeddy exchange. Again, the 𝑖 –Φeddy exchange does not converge with TR, and small time steps are necessary for IE to converge. 
+
+## 6 Summary and Outlook 
+
+Three different multirate co-simulation methods were applied to two field-circuit cou-pled problems. Eddy currents have been included in the field formulation, however, magnetostatic field models behave analogously. It has been shown that the 𝑢 –𝑖 exchange, where voltages are fed to the magnetic field and currents are given to the electric circuit, is the most robust method. IE works reliably in all scenarios, TR converges in some cases with (its optimal) second order. The 𝑢 –Φeddy exchange, where voltages are fed to the field, and a flux correction term is passed back to the circuit alongside a fixed inductance, also converges in all tested cases with IE, and in certain scenarios with TR. Compared to 𝑢 –𝑖 , the 𝑢 –Φeddy variant has lower absolute errors, which can be explained by the additional information encoded 8 Michael Wiesheu Sebastian Sch¨ ops Idoia Cortes Garcia 
+
+through the inductance. A third exchange method has been proposed, namely the 𝑖 –Φeddy 
+
+variant, where currents are passed to the field, and a flux correction term is passed to the circuit. The motivation for this method is to have a continuous field input, since voltages might be discontinuous, e.g. in the case of PWM signals. While the 𝑖 –Φeddy exchange converges using IE, very small time steps are necessary to reach satisfactory errors. Convergence with TR could not always be reached for this case. In general, applying TR is more challenging because of oscillations which we associate with inconsistent initial conditions. Future work will focus on deepening the mathematical understanding for the observed convergence behavior, and testing further methods that allow for the multirate co-simulation of PWM signals. 
+
+Acknowledgements The work is supported by the joint DFG/FWF Collaborative Research Centre CREATOR (CRC – TRR361/F90) at TU Darmstadt, TU Graz and JKU Linz as well as the Graduate School CE within the Centre for Computational Engineering at TU Darmstadt. 
+
+Competing Interests The authors have no conflicts of interest to declare that are relevant to the content of this chapter. 
+
+## References 
+
+1. Gary Bedrosian. A new method for coupling finite element field solutions with external circuits and kinematics. IEEE Trans. Magn. , 29(2):1664–1668, 1993. 2. Sheppard J. Salon. Finite Element Analysis of Electrical Machines . Kluwer, 1995. 3. Sebastian Sch¨ ops, Herbert De Gersem, and Thomas Weiland. Winding functions in transient magnetoquasistatic field-circuit coupled simulations. COMPEL , 32(6):2063–2083, 09 2013. 4. Michael G¨ unther, Uwe Feldmann, and Jan ter Maten. Modelling and discretization of circuit problems. In Numerical Methods in Electromagnetics , volume 13 of Handbook of Numerical Analysis , pages 523–659. Elsevier, Amsterdam, 2005. 5. Jacob K. White et. al., Waveform relaxation: Theory and practice. Transactions of the Society for Computer Simulation , 2(1):95–133, 1985. 6. Hale F. Trotter. On the product of semi-groups of operators. Proceedings of the American Mathematical Society , 10(4):545–551, 1959. 7. Andreas Bartel and Michael G¨ unther. Multirate co-simulation of first order thermal models in electric circuit design. In Scientific Computing in Electrical Engineering , volume 4, pages 104–111, Berlin, 2004. Springer. 8. Gilbert Strang. On the construction and comparison of difference schemes. SIAM J. Numer. Anal. ,5(3):506–517, 1968. 9. Sebastian Sch¨ ops et. al, DAE-index and convergence analysis of lumped electric circuits refined by 3-d MQS conductor models. In Scientific Computing in Electrical Engineering SCEE 2008 ,volume 14 of Mathematics in Industry , pages 341–350, Berlin, 06 2010. Springer. 10. Ernst Hairer, Christian Lubich, and Gerhard Wanner. Geometric Numerical Integration: Structure-Preserving Algorithms for Ordinary Differential Equations . Springer, Berlin, 2 edition, 2006.
