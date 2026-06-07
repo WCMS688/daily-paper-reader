@@ -1,0 +1,94 @@
+{
+  "version": 2,
+  "extractor": "pymupdf-images",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2605.18170v1/fig-001.webp",
+      "caption": "",
+      "page": 7,
+      "index": 1,
+      "width": 3114,
+      "height": 4187
+    },
+    {
+      "url": "assets/figures/arxiv/2605.18170v1/fig-002.webp",
+      "caption": "",
+      "page": 7,
+      "index": 2,
+      "width": 3514,
+      "height": 1734
+    },
+    {
+      "url": "assets/figures/arxiv/2605.18170v1/fig-003.webp",
+      "caption": "",
+      "page": 7,
+      "index": 3,
+      "width": 3118,
+      "height": 5505
+    },
+    {
+      "url": "assets/figures/arxiv/2605.18170v1/fig-004.webp",
+      "caption": "",
+      "page": 8,
+      "index": 4,
+      "width": 7124,
+      "height": 2341
+    },
+    {
+      "url": "assets/figures/arxiv/2605.18170v1/fig-005.webp",
+      "caption": "",
+      "page": 8,
+      "index": 5,
+      "width": 6271,
+      "height": 3235
+    },
+    {
+      "url": "assets/figures/arxiv/2605.18170v1/fig-006.webp",
+      "caption": "",
+      "page": 8,
+      "index": 6,
+      "width": 3546,
+      "height": 4742
+    },
+    {
+      "url": "assets/figures/arxiv/2605.18170v1/fig-007.webp",
+      "caption": "",
+      "page": 9,
+      "index": 7,
+      "width": 3517,
+      "height": 1734
+    },
+    {
+      "url": "assets/figures/arxiv/2605.18170v1/fig-008.webp",
+      "caption": "",
+      "page": 10,
+      "index": 8,
+      "width": 5338,
+      "height": 4142
+    },
+    {
+      "url": "assets/figures/arxiv/2605.18170v1/fig-009.webp",
+      "caption": "",
+      "page": 10,
+      "index": 9,
+      "width": 5400,
+      "height": 3000
+    },
+    {
+      "url": "assets/figures/arxiv/2605.18170v1/fig-010.webp",
+      "caption": "",
+      "page": 11,
+      "index": 10,
+      "width": 5400,
+      "height": 3000
+    },
+    {
+      "url": "assets/figures/arxiv/2605.18170v1/fig-011.webp",
+      "caption": "",
+      "page": 11,
+      "index": 11,
+      "width": 5385,
+      "height": 3482
+    }
+  ]
+}

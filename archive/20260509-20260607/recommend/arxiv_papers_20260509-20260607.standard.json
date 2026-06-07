@@ -1,0 +1,320 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-07T13:31:19.665638+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 5,
+    "deep_cap": 6,
+    "deep_selected": 5,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [
+    {
+      "id": "2605.17182v1",
+      "source": "arxiv",
+      "title": "Workload-Aware Early-Stage Power Delivery Network Optimization via Architectural Power Traces",
+      "abstract": "Power Delivery Networks (PDNs) are critical for maintaining voltage integrity in modern multiprocessor systems. Conventional early-stage PDN planning relies on static or worst-case power assumptions, often leading to over-provisioned designs and inefficient use of routing resources. This paper proposes a workload-aware methodology for early-stage PDN optimization based on architectural power traces. Using architectural simulations, temporal power activity is captured at fine granularity and mapped to spatial power density distributions across the chip. These distributions are then translated into current demand profiles to guide PDN topology planning at tile granularity. By incorporating realistic workload behavior, the proposed approach enables adaptive PDN resource allocation during early design stages. Experimental results demonstrate that the method achieves up to 32.94% reduction in PDN metal area compared to conventional worst-case designs, while maintaining compliance with IR drop and electromigration constraints.",
+      "authors": [
+        "Oran Hayes",
+        "Maria Pantazi-Kypraiou",
+        "Athanasios Tziouvaras",
+        "George Stamoulis",
+        "Anuj Pathania",
+        "Shreejith Shanker",
+        "George Floros"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR"
+      ],
+      "published": "2026-05-16T22:36:25+00:00",
+      "link": "https://arxiv.org/pdf/2605.17182v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "workload-aware PDN optimization using architectural power traces",
+      "llm_evidence_cn": "基于架构功耗迹的工作负载感知PDN优化",
+      "llm_evidence": "基于架构功耗迹的工作负载感知PDN优化",
+      "canonical_evidence": "基于架构功耗迹的工作负载感知PDN优化",
+      "llm_tldr_en": "Proposes a workload-aware methodology for early-stage PDN optimization using architectural power traces to guide topology planning at tile granularity.",
+      "llm_tldr_cn": "传统PDN规划依赖静态功耗假设常导致设计过度保守。本文提出基于架构功耗迹的工作负载感知方法，通过细粒度时空功耗映射为片级拓扑规划提供电流需求剖面。该方法能在早期设计阶段优化PDN，减少不必要的路由资源浪费。",
+      "llm_tldr": "传统PDN规划依赖静态功耗假设常导致设计过度保守。本文提出基于架构功耗迹的工作负载感知方法，通过细粒度时空功耗映射为片级拓扑规划提供电流需求剖面。该方法能在早期设计阶段优化PDN，减少不必要的路由资源浪费。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Power integrity and PDN modeling optimization",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.18170v1",
+      "source": "arxiv",
+      "title": "Buffer-Parameterized Machine Learning Surrogate Models for Cross-Technology Signal Integrity Analysis and Optimization",
+      "abstract": "Signal integrity (SI) analysis in printed circuit board (PCB) interconnects faces increasing complexity due to diverse integrated circuit (IC) buffer technologies, varying operating conditions, and manufacturing tolerances. Existing machine learning (ML) surrogate models for predicting SI metrics such as the inner eye contour, eye-height (EH), eye-width (EW), and transient waveform features typically rely on fixed buffer parameters, requiring costly new data generation and retraining cycles for every technology shift. This paper introduces a buffer-parameterized ML surrogate modeling methodology capable of handling cross-technology variations without retraining by treating IC buffer characteristics, e.g., clock frequency, supply voltage, rise/fall times, jitter, and internal resistors and capacitors, as dynamic model inputs alongside PCB parameters. To identify the optimal surrogate architecture for this high-dimensional space, a comprehensive benchmarking study compares tree-based methods (RFR/GBM), kernel methods (SVR/KRR), Gaussian process regression (GPR), and neural networks. The framework is subsequently validated on a complex interconnect with 44 design parameters. Results show that while anisotropic GPR excels in low-data regimes, neural networks heavily outperform other models on large datasets. Finally, the practical value of the ML surrogate models is demonstrated through a cross-technology design space exploration and optimization scenario, showcasing massive computational speedups for eye mask compliance checking compared to simulation.",
+      "authors": [
+        "Julian Withöft",
+        "Werner John",
+        "Emre Ecik",
+        "Ralf Brüning",
+        "Jürgen Götze"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP",
+        "cs.CE",
+        "cs.LG"
+      ],
+      "published": "2026-05-18T10:12:57+00:00",
+      "link": "https://arxiv.org/pdf/2605.18170v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "buffer-parameterized ML surrogate models for cross-technology SI analysis and optimization",
+      "llm_evidence_cn": "用于跨工艺信号完整性分析与优化的缓冲参数化机器学习代理模型",
+      "llm_evidence": "用于跨工艺信号完整性分析与优化的缓冲参数化机器学习代理模型",
+      "canonical_evidence": "用于跨工艺信号完整性分析与优化的缓冲参数化机器学习代理模型",
+      "llm_tldr_en": "Introduces a buffer-parameterized ML surrogate modeling approach for cross-technology SI analysis, eliminating retraining when switching IC buffer technologies.",
+      "llm_tldr_cn": "针对不同IC缓冲工艺导致传统SI代理模型需重新训练的局限，本文提出缓冲参数化方法，将缓冲特性作为输入参数纳入模型，使模型能泛化至未见工艺。实验表明该方法在不重训练的情况下有效预测眼图等高阶SI指标。",
+      "llm_tldr": "针对不同IC缓冲工艺导致传统SI代理模型需重新训练的局限，本文提出缓冲参数化方法，将缓冲特性作为输入参数纳入模型，使模型能泛化至未见工艺。实验表明该方法在不重训练的情况下有效预测眼图等高阶SI指标。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Signal integrity analysis for high-speed interconnects",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.27757v1",
+      "source": "arxiv",
+      "title": "CLIPGen: A Chiplet Link IP Modeling and Generation Framework for 2.5D Architecture Exploration",
+      "abstract": "Advanced 2.5D Systems-in-Package (SiPs) compose a growing portion of high-performance systems. While the packaging and interconnect choices play a large role in the overall system design, system architects still lack a suitable framework for early design space exploration which takes these choices into account. Current interconnect models fall mostly into the categories of 1) detailed models which are generally inflexible and require deep packaging expertise, or 2) high-level models which don't provide enough information to make accurate architectural design decisions.   In this work, we present an automated chiplet IP generation framework which provides power, performance, and area estimates for various 2.5D packaging and communication configurations. The IP generator produces standard collaterals required for high-level simulation/estimation, RTL simulation, and place-and-route-level implementation (Verilog, Liberty, LEF, and datasheet). Using our framework, architects can co-optimize the package and chiplet architecture through rapid power, performance, and area estimates of various packaging strategies. As a case study, we examine generated UCIe interfaces across several packaging options.",
+      "authors": [
+        "Zhengping Zhu",
+        "Austin Rovinski"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR"
+      ],
+      "published": "2026-05-26T23:13:32+00:00",
+      "link": "https://arxiv.org/pdf/2605.27757v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "chiplet packaging and 2.5D interconnect modeling framework",
+      "llm_evidence_cn": "小芯片封装与2.5D互连建模框架",
+      "llm_evidence": "小芯片封装与2.5D互连建模框架",
+      "canonical_evidence": "小芯片封装与2.5D互连建模框架",
+      "llm_tldr_en": "CLIPGen provides an automated framework for modeling and generating chiplet link IP, enabling early design space exploration for 2.5D systems-in-package with power, performance, and area estimates.",
+      "llm_tldr_cn": "当前2.5D系统级封装设计中缺乏合适的早期设计空间探索框架。本文提出CLIPGen，一种自动化小芯片链接IP建模与生成框架，可为各种2.5D封装和通信方案提供功耗、性能和面积估计。该方法通过权衡详细模型与高层模型的优缺点，使系统架构师能够做出更准确的设计决策。",
+      "llm_tldr": "当前2.5D系统级封装设计中缺乏合适的早期设计空间探索框架。本文提出CLIPGen，一种自动化小芯片链接IP建模与生成框架，可为各种2.5D封装和通信方案提供功耗、性能和面积估计。该方法通过权衡详细模型与高层模型的优缺点，使系统架构师能够做出更准确的设计决策。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "SI/PI analysis for 2.5D 3D and Chiplet packaging",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.29867v1",
+      "source": "arxiv",
+      "title": "Design-Oriented Modeling of TSV Substrate Noise Coupling to Ring VCOs",
+      "abstract": "Through-silicon vias (TSVs) enable dense vertical interconnects in 3D-IC and chiplet systems, but their metal-oxide-silicon structure introduces significant parasitic coupling paths that can degrade the spectral purity of sensitive RF blocks. This paper presents a compact, design-oriented methodology for assessing TSV-induced substrate noise in mixed-signal circuits. We derive a closed-form analytical three-port RLGC macromodel for a Signal-Ground TSV pair that explicitly exposes the substrate node. The methodology is validated using a three-stage Ring VCO designed in a 22 nm FD-SOI technology, where specific RF devices from the process design kit (PDK) provide direct access to the transistor substrate terminals for controlled noise injection. Multi-tone Harmonic Balance simulations in Spectre RF quantify the impact of TSV aggressors on the oscillator's output spectrum. The results indicate that an aggressor of 1 GHz, 0.5 V$_{pp}$ induces a primary sideband spur of -35.2 dBc. Sensitivity characterization reveals that the magnitude of these sideband spurs increases monotonically with the aggressor amplitude. Furthermore, frequency sweeps demonstrate a low-pass coupling response, where the induced spur magnitude decreases from -20.2 dBc at 500 MHz to -33.1 dBc at 2 GHz.",
+      "authors": [
+        "Ilias Exouzidis",
+        "Alberto Garcia-Ortiz",
+        "George Floros",
+        "Georgios Panagopoulos"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR"
+      ],
+      "published": "2026-05-28T12:52:11+00:00",
+      "link": "https://arxiv.org/pdf/2605.29867v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "compact RLGC macromodel for TSV noise coupling in 3D-IC/chiplet",
+      "llm_evidence_cn": "面向3D-IC/chiplet的TSV噪声耦合紧凑RLGC宏模型",
+      "llm_evidence": "面向3D-IC/chiplet的TSV噪声耦合紧凑RLGC宏模型",
+      "canonical_evidence": "面向3D-IC/chiplet的TSV噪声耦合紧凑RLGC宏模型",
+      "llm_tldr_en": "Proposes a closed-form RLGC macromodel for signal-ground TSV pairs to assess substrate noise coupling to ring VCOs, validated in 22nm FD-SOI.",
+      "llm_tldr_cn": "论文针对3D-IC和chiplet系统中TSV引入的衬底噪声耦合问题，提出了一种紧凑的闭式三端口RLGC宏模型，显式暴露衬底节点。基于22nm FD-SOI工艺的环形VCO验证了模型有效性，可准确预测TSV对振荡器相位噪声的影响。该工作为TSV寄生耦合的快速评估提供了设计导向方法，直接服务于3D封装中的信号完整性和电源完整性分析。",
+      "llm_tldr": "论文针对3D-IC和chiplet系统中TSV引入的衬底噪声耦合问题，提出了一种紧凑的闭式三端口RLGC宏模型，显式暴露衬底节点。基于22nm FD-SOI工艺的环形VCO验证了模型有效性，可准确预测TSV对振荡器相位噪声的影响。该工作为TSV寄生耦合的快速评估提供了设计导向方法，直接服务于3D封装中的信号完整性和电源完整性分析。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "SI/PI analysis for 2.5D 3D and Chiplet packaging",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.24874v1",
+      "source": "arxiv",
+      "title": "Dynamic Power Management Methodology for Distributed Vertical Power Delivery in High-Performance Computing Systems",
+      "abstract": "Distributed vertical power delivery (DVPD) architectures employ multiple parallel voltage regulators (VRs) to meet the high-power and high current density demands of modern high performance computing (HPC) systems. While full parallel activation maximizes efficiency near peak load, medium to light load operation leads to efficiency degradation when all VRs remain active due to persistent switching and gate drive losses. This work proposes a load aware power system activation framework targeted at the medium to light load regime, in which the number of active VRs scales proportionally with instantaneous load power. A spatially informed selection strategy determines which VRs are activated from the available pool, aligning regulator placement with localized power demand. This locality aware activation minimizes lateral redistribution currents within the power plane and reduces conduction losses and voltage drops. Simulation results on a representative DVPD system demonstrate 2x to 3x switching loss reduction relative to conventional full-parallel light load operation, while sustaining an approximately 87% efficiency plateau across the 5% to 30% load range. Output ripple constraints are preserved, with inductor current ripple maintained within 6% and output voltage ripple within 2%, ensuring regulation integrity while improving overall conversion efficiency.",
+      "authors": [
+        "Sriharini Krishnakumar",
+        "Inna Partin-Vaisband"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-05-24T05:29:12+00:00",
+      "link": "https://arxiv.org/pdf/2605.24874v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Dynamic power management for distributed vertical power delivery",
+      "llm_evidence_cn": "分布式垂直功率输送的动态功率管理",
+      "llm_evidence": "分布式垂直功率输送的动态功率管理",
+      "canonical_evidence": "分布式垂直功率输送的动态功率管理",
+      "llm_tldr_en": "This paper proposes a load-aware power system activation framework for distributed vertical power delivery in HPC, dynamically scaling active VRs and using spatial selection to improve efficiency under medium-light loads.",
+      "llm_tldr_cn": "针对高性能计算系统中分布式垂直功率输送架构在中轻负载下效率退化的问题，本文提出一种负载感知的功率系统激活框架。该框架根据瞬时负载动态调节活动电压调节器的数量，并采用空间选择策略决定激活哪些调节器。实验结果表明，该方法在中轻负载下显著提升了系统效率，减少了开关和栅极驱动损耗。这项工作为电源完整性中的动态功率管理提供了实用方案。",
+      "llm_tldr": "针对高性能计算系统中分布式垂直功率输送架构在中轻负载下效率退化的问题，本文提出一种负载感知的功率系统激活框架。该框架根据瞬时负载动态调节活动电压调节器的数量，并采用空间选择策略决定激活哪些调节器。实验结果表明，该方法在中轻负载下显著提升了系统效率，减少了开关和栅极驱动损耗。这项工作为电源完整性中的动态功率管理提供了实用方案。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Power integrity and PDN modeling optimization",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2605.18917v1",
+      "source": "arxiv",
+      "title": "VCSEL-based PAM-4 transmission system emulator: A data-driven deep learning perspective",
+      "abstract": "We demonstrate a data-driven framework for emulating high-speed VCSEL-based 4-level Pulse Amplitude Modulation (PAM-4) optical interconnects using bidirectional Long Short-Term Memory (Bi-LSTM) networks. Unlike conventional rate-equation models, which are computationally intensive and often require difficult parameter tuning, our approach utilizes experimental waveforms to learn the end-to-end system dynamics. By employing transfer learning and weight interpolation, we extend the model to new operating regimes with a 20-fold reduction in computation time compared to independent training, while maintaining normalized mean squared error below 0.04. This emulator provides a rapid, accurate tool for the design and optimization of short-reach optical links.",
+      "authors": [
+        "Stavros Deligiannidis",
+        "Nikos Argyris",
+        "Stefanos Dris",
+        "Dimitris Kalavrouziotis",
+        "Paraskevas Bakopoulos",
+        "Charis Mesaritakis",
+        "Adonis Bogris"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP",
+        "physics.optics"
+      ],
+      "published": "2026-05-18T06:06:45+00:00",
+      "link": "https://arxiv.org/pdf/2605.18917v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "high-speed PAM-4 channel emulation with deep learning",
+      "llm_evidence_cn": "基于深度学习的高速PAM-4信道仿真",
+      "llm_evidence": "基于深度学习的高速PAM-4信道仿真",
+      "canonical_evidence": "基于深度学习的高速PAM-4信道仿真",
+      "llm_tldr_en": "A data-driven Bi-LSTM emulator for VCSEL-based PAM-4 optical interconnects achieves rapid and accurate system-level simulation with transfer learning, reducing computation time by 20x.",
+      "llm_tldr_cn": "传统速率方程模型计算量大且参数调优困难。本文提出基于双向长短期记忆网络的数据驱动框架，用于高速VCSEL PAM-4光互连的端到端系统仿真。通过迁移学习和权重插值，新工作点仿真计算时间降低20倍，归一化均方误差低于0.04。该仿真器为短距离光链路设计优化提供了快速准确工具。",
+      "llm_tldr": "传统速率方程模型计算量大且参数调优困难。本文提出基于双向长短期记忆网络的数据驱动框架，用于高速VCSEL PAM-4光互连的端到端系统仿真。通过迁移学习和权重插值，新工作点仿真计算时间降低20倍，归一化均方误差低于0.04。该仿真器为短距离光链路设计优化提供了快速准确工具。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "SerDes DDR and HBM channel modeling and simulation",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.01181v1",
+      "source": "arxiv",
+      "title": "IO Pad Integrity in Energy-Efficient Neuromorphic Chips",
+      "abstract": "Neuromorphic computing relies on low-power, high-reliability hardware, yet the integrity of input/output pads (IOPADs) remains an underexplored factor affecting system performance. This chapter examines the role of IOPAD integrity in neuromorphic VLSI design and connects algorithmic development with practical hardware implementation. While much attention has been given to spiking neural networks (SNNs) and ultra-low-power core logic, the electrical and functional robustness of the I/O interface is equally critical for ensuring signal fidelity and minimizing energy consumption. We review the structure and function of IOPADs, outline their influence on power, performance, and reliability, and discuss design trade-offs involving pad libraries, pad ring architectures, and bonding strategies. The chapter also introduces the fundamentals of SNNs and summarizes the digital hardware design flow from behavioral description to physical layout. Physical implementation considerations are highlighted using the SkyWater 130 nm CMOS process as a practical platform for neuromorphic prototyping. Real-world examples illustrate how early-stage I/O planning can prevent redesign, reduce yield loss, and improve overall system efficiency. This work emphasizes that IOPAD integrity is a key enabler of scalable, energy-efficient neuromorphic systems.",
+      "authors": [
+        "Arfan Ghani"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP"
+      ],
+      "published": "2026-05-31T11:45:24+00:00",
+      "link": "https://arxiv.org/pdf/2606.01181v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "I/O pad integrity analysis for signal fidelity in neuromorphic chips",
+      "llm_evidence_cn": "神经形态芯片中I/O焊盘完整性对信号保真度的影响分析",
+      "llm_evidence": "神经形态芯片中I/O焊盘完整性对信号保真度的影响分析",
+      "canonical_evidence": "神经形态芯片中I/O焊盘完整性对信号保真度的影响分析",
+      "llm_tldr_en": "Reviews the impact of I/O pad integrity on signal fidelity and energy efficiency in neuromorphic VLSI design, discussing trade-offs in pad library and ring architecture.",
+      "llm_tldr_cn": "论文关注神经形态计算芯片中I/O焊盘完整性对系统性能的影响，综述了IOPAD结构、信号保真度与能耗之间的权衡。通过分析pad库、焊盘环架构等设计因素，强调了I/O接口电气鲁棒性在低功耗设计中的关键作用。该工作为高速互连中的信号完整性分析提供了参考，但并非针对具体互连技术。",
+      "llm_tldr": "论文关注神经形态计算芯片中I/O焊盘完整性对系统性能的影响，综述了IOPAD结构、信号保真度与能耗之间的权衡。通过分析pad库、焊盘环架构等设计因素，强调了I/O接口电气鲁棒性在低功耗设计中的关键作用。该工作为高速互连中的信号完整性分析提供了参考，但并非针对具体互连技术。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Signal integrity analysis for high-speed interconnects",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.06421v1",
+      "source": "arxiv",
+      "title": "Modeling, Optimizing and Exploring Multi-Die FPGA Routing Architectures",
+      "abstract": "Die stacking has enabled 2.5D FPGAs by integrating multiple active dice on a passive silicon interposer for improved yield and capacity, and paved the way for 3D architectures that stack active dice directly atop one another. In these multi-die devices, the unique electrical and physical characteristics of the underlying die-stacking technology impose limitations on inter-die connection density and latency, necessitating a bespoke inter-die routing architecture. However, the absence of accurate and versatile modeling tools has left most questions about how to best design the inter-die routing architecture unanswered.   To address this gap, we enhance the open-source FPGA CAD tool VTR to flexibly model a wide range of multi-die routing architectures, and augment VPR's placement and routing engines to improve optimization for both 2.5D and 3D FPGAs. We perform HSPICE-based circuit modeling of inter-die connections for active dice using a 7 nm process node and a 45 nm silicon interposer across several die-crossing technologies. Using this enhanced framework, we conduct a detailed design space exploration of inter-die routing architecture in 2.5D and 3D FPGAs, characterizing the impact of die-crossing technology, inter-die connection count, fan-in/fan-out, and interposer wire length on critical path delay (CPD), wirelength, area, and routability.   Our results show that with suitable inter-die routing architectures, 2.5D and 3D FPGAs can increase capacity without significant routability or delay penalties. Specifically, 3D FPGAs achieve up to 14% wirelength reduction and 6% CPD improvement over 2D devices, and remain routable even with existing $10\\,μ$m pitch technologies, while 2.5D FPGAs incur only a 2% wirelength and 4% CPD overhead at 32% inter-die connectivity. All extensions are open source and integrated with the VTR master branch.",
+      "authors": [
+        "Amirhossein Poolad",
+        "Soheil Gholami Shahrouz",
+        "Andrew Boutros",
+        "Vaughn Betz"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR"
+      ],
+      "published": "2026-06-04T17:26:46+00:00",
+      "link": "https://arxiv.org/pdf/2606.06421v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "multi-die FPGA routing modeling for 2.5D/3D architectures",
+      "llm_evidence_cn": "多芯片FPGA路由建模与2.5D/3D架构优化",
+      "llm_evidence": "多芯片FPGA路由建模与2.5D/3D架构优化",
+      "canonical_evidence": "多芯片FPGA路由建模与2.5D/3D架构优化",
+      "llm_tldr_en": "Extends FPGA CAD tool VTR to model multi-die routing architectures for 2.5D/3D stacked FPGAs, enabling exploration of inter-die connection design trade-offs.",
+      "llm_tldr_cn": "论文针对多芯片FPGA中缺失准确灵活的建模工具的问题，扩展了开源FPGA CAD工具VTR，支持多种多芯片路由架构的建模与优化。通过实验探索了中介层上多die互连的设计空间，揭示了连接密度与延迟之间的权衡。该工作为2.5D/3D FPGA路由架构设计提供了关键工具支持，可间接用于信号完整性和电源完整性分析中的互连建模。",
+      "llm_tldr": "论文针对多芯片FPGA中缺失准确灵活的建模工具的问题，扩展了开源FPGA CAD工具VTR，支持多种多芯片路由架构的建模与优化。通过实验探索了中介层上多die互连的设计空间，揭示了连接密度与延迟之间的权衡。该工作为2.5D/3D FPGA路由架构设计提供了关键工具支持，可间接用于信号完整性和电源完整性分析中的互连建模。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "SI/PI analysis for 2.5D 3D and Chiplet packaging",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
