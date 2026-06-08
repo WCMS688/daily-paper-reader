@@ -1,0 +1,1128 @@
+Title: Microwave Linear Analog Computers Aided Multiuser Communication: General Impedance Matching and Precoding Optimization
+
+URL Source: https://arxiv.org/pdf/2606.04532v1
+
+Published Time: Thu, 04 Jun 2026 00:40:57 GMT
+
+Number of Pages: 13
+
+Markdown Content:
+> 1
+
+# Microwave Linear Analog Computers Aided Multiuser Communication: General Impedance Matching and Precoding Optimization 
+
+Rujing Xiong, Member, IEEE, Jie Xu, Fellow, IEEE, and Rui Zhang, Fellow, IEEE 
+
+Abstract —Microwave linear analog computers (MiLACs) have recently emerged as a hardware-efficient solution for implement-ing multi-antenna communication systems. Unlike existing Mi-LAC designs based on the ideal assumption of perfect impedance matching (PIM) with reflection-free transmission, this paper in-vestigates MiLAC-aided precoding optimization under a general impedance matching (GIM) model, which enables more flexible precoder design at the cost of a potential reduction in radiated power. Specifically, we consider a downlink multiuser multiple-input single-output (MISO) communication system and aim to maximize the system sum rate by optimizing the MiLAC-enabled transmit precoding subject to physical circuit constraints. The formulated problem is challenging to solve due to the intricate coupling between the precoding and impedance parameters. To address this challenge, we first develop a singular value decom-position (SVD)-based parametric search framework for small or medium size systems. This framework exploits the feasible precoder structure and explicitly captures the tradeoff between power radiation efficiency and precoder design flexibility. We then propose a unified algorithm for solving the optimization problem based on the projected weighted minimum mean-square error (WMMSE) principle for arbitrary size systems with GIM-or PIM-based MiLAC precoding. Simulation results demonstrate that the GIM-based MiLAC design consistently outperforms its PIM counterpart as a special realization, especially in interference-limited scenarios, by allowing a moderate reduction in radiated power in exchange for additional precoder design flexibility and more effective interference mitigation. It is also shown that GIM-based MiLAC design achieves performance close to that of the baseline fully digital precoding system. 
+
+Index Terms —Microwave linear analog computer (MiLAC), precoding optimization, impedance matching, multiuser commu-nication, interference mitigation. 
+
+I. I NTRODUCTION 
+
+Future sixth-generation (6G) wireless networks are ex-pected to support unprecedented requirements in terms of data rate, connectivity density, latency, reliability, and energy efficiency. To meet these demands, multi-antenna technolo-gies, especially ultra-massive/gigantic multiple-input multiple-output (MIMO), extremely large-scale antenna arrays, and distributed multi-antenna architectures [1]–[3], have become 
+
+R. Xiong is with the School of Science and Engineering, The Chinese University of Hong Kong (Shenzhen), Shenzhen 518172, China (e-mail: rujingxiong@cuhk.edu.cn). J. Xu is with the School of Science and Engineering and Shenzhen Future Network of Intelligence Institute (FNii), The Chinese University of Hong Kong (Shenzhen), Shenzhen 518172, China (e-mail: xujie@cuhk.edu.cn). R. Zhang is with the Department of Electrical and Computer En-gineering, National University of Singapore, Singapore 117583 (e-mail: elezhang@nus.edu.sg). (Corresponding authors: Jie Xu; Rui Zhang )
+
+central components of 6G wireless systems, as they provide abundant spatial degrees of freedom for spatial multiplexing, diversity enhancement, precoder design, and interference mit-igation. In particular, gigantic MIMO systems may scale the number of antennas to hundreds or even thousands, far beyond conventional massive MIMO architectures deployed in fifth-generation (5G) systems [4], [5]. However, as the number of antennas continues to grow, conventional fully digital pre-coders face severe implementation bottlenecks. Although fully digital design offers the highest precoder design flexibility and spatial multiplexing capability, it typically requires dedicated radio-frequency (RF) chain and high-resolution analog-to-digital converter (ADC)/digital-to-analog converter (DAC) for each antenna element. Moreover, as the antenna dimension increases, the volume of baseband data to be processed in real time grows rapidly, requiring high-dimensional symbol-level matrix operations. These requirements lead to prohibitive hardware complexity, power consumption, and cost. Recently, microwave linear analog computers (MiLACs) have emerged as a promising hardware-efficient architecture for multi-antenna communication systems [6], [7]. A MiLAC is a reconfigurable multiport microwave network composed of tunable impedance components, capable of directly imple-menting linear transformations in the electromagnetic domain. It has been shown in the computing field that MiLACs can efficiently realize fundamental linear operations, such as linear minimum mean-square error (LMMSE) estimation and matrix inversion, with substantially reduced computational complex-ity compared with conventional digital implementations [6]. When applied to wireless communications, MiLACs enable analog-domain precoding and combining by processing RF signals through reconfigurable microwave networks. This re-duces the number of RF chains, alleviates high-dimensional baseband signal processing, eliminates per-symbol digital matrix-vector multiplications, and facilitates the use of low-resolution data converters [7]. In the literature, a handful of prior works have investigated MiLAC-aided communications and demonstrated their poten-tial. For point-to-point MIMO systems, lossless and reciprocal MiLAC precoder was shown in [8] to achieve the same data rate as fully digital precoding scheme with the same number of data streams. Reduced-complexity MiLAC architectures were further developed in [9] to preserve the capacity-achieving property while significantly reducing the number of tunable circuit components. For multiuser multiple-input single-output (MISO) systems with K users, it was shown in [10], [11] that 
+
+> arXiv:2606.04532v1 [eess.SP] 3 Jun 2026 2
+
+hybrid digital–MiLAC design with K RF chains can achieve the same flexibility as fully digital precoder design, thereby halving the RF-chain requirement compared with conventional hybrid precoding, which requires 2K RF chains to achieve full flexibility. More recently, the authors in [12] derived a scattering-matrix construction method that maps arbitrary fully digital precoders to a two-layer MiLAC architecture with intermediate power allocation, achieving the same rate perfor-mance as fully digital precoding system while using only K
+
+low-resolution RF chains. In addition, hybrid digital–MiLAC precoder has been extended to wideband multiuser MISO orthogonal frequency-division multiplexing (OFDM) systems, where a frequency-flat MiLAC is shared across subcarriers and a low-dimensional digital precoder is used to handle frequency selectivity [13]. Beyond precoding, MiLACs have also been employed for analog-domain channel estimation, where least-squares (LS) and minimum mean-square error (MMSE) esti-mation were implemented with the same performance as their digital counterparts, while reducing online digital computation, RF-chain usage, data-converter resolution requirements, and peak-to-average power ratio (PAPR) [14]. Despite these advances, incorporating MiLACs into transmit precoding introduces new challenges that are fundamentally tied to their microwave-network implementation. A physically consistent MiLAC must satisfy practical circuit constraints such as passivity, losslessness, and reciprocity [15]. Most existing studies focus on idealized perfect impedance matching (PIM) assumption or reflection-free configuration, where no RF-side reflection occurs and the RF-to-antenna transmission efficiency is maximized. With PIM, the induced forward transmission matrix becomes semi-unitary, resulting in unit transmission efficiency and a highly structured precoder [8], [16]. Although this PIM structure can achieve the same data rate as its fully digital precoding counterpart in point-to-point MIMO systems [8], it generally fails to provide full digital precoder design flexibility in multiuser MISO systems with MiLAC-only precoder, especially when the user channels be-come highly non-orthogonal [11], [16]. Moreover, maintaining PIM in practical microwave networks is challenging due to frequency selectivity, hardware nonidealities, load variations, port coupling, and antenna mutual coupling [17]–[20]. Motivated by these limitations, this paper departs from the ideal PIM assumption and investigates MiLAC-aided multiuser communications under a general impedance matching (GIM) model. From a scattering-matrix perspective, PIM enforces zero RF-side reflection and restricts the induced precoder to a semi-unitary structure, whereas GIM allows non-zero reflection at the RF interface. This relaxation enlarges the feasible precoding space and provides additional degrees of freedom for multiuser interference mitigation, at the cost of a reduced MiLAC transmission coefficient or effective radiated power. Therefore, GIM introduces a fundamental tradeoff between power radiation efficiency and precoder design flexibility, which can be exploited for performance enhancement. However, how to characterize this tradeoff and leverage it for sum-rate improvement in multiuser scenarios remains unexplored. To fill this gap, we investigate in this paper a MiLAC-aided downlink multiuser MISO communication system under the GIM model. The main contributions of this paper are summarized as follows:  
+
+> •
+
+First, we establish a physics-compliant framework for MiLAC-aided multiuser MISO precoding optimization, which provides closed-form expressions explicitly link-ing the susceptance matrix, scattering matrix, induced precoding matrix, and MiLAC transmission coefficient. Based on this framework, we characterize the structural difference between GIM and PIM in the precoder do-main. Specifically, we show that the MiLAC-induced precoder is inherently constrained by the RF-to-antenna transmission structure of the scattering matrix. Under the GIM model, the induced precoder satisfies a contraction constraint, allowing singular-value attenuation and non-zero RF-side reflection. In contrast, PIM enforces a semi-unitary precoder structure through the zero-reflection condition. This characterization explicitly reveals the tradeoff between the MiLAC transmission coefficient and precoder design flexibility, showing that a radiated-power loss can provide additional degrees of freedom for precoder design and interference mitigation.  
+
+> •
+
+Next, we aim to maximize the system sum rate by optimizing the MiLAC-enabled transmit precoder subject to physical circuit constraints. We first develop a singu-lar value decomposition (SVD)-based parametric search framework to characterize the feasible precoding struc-tures under the GIM or PIM model, and to provide bench-mark solutions for small or medium size systems. We then propose a unified algorithm based on the projected weighted minimum mean-square error (WMMSE) for arbitrary size systems with MiLAC precoding. For both GIM- and PIM-based designs, the proposed algorithm employs appropriate projections onto their respective feasible sets.  
+
+> •
+
+Finally, simulation results demonstrate that, by allowing a moderate reduction in radiated power in exchange for additional precoder design flexibility, the GIM-based MiLAC design consistently outperforms its PIM coun-terpart, especially in interference-limited scenarios. It is also shown that GIM-based MiLAC design achieves performance close to that of the fully digital precoding benchmark. The rest of this paper is organized as follows. Section II introduces the MiLAC-aided downlink multiuser MISO com-munication model and formulates the sum-rate maximization problem under the GIM and PIM models. Section III develops the SVD-based feasible-set characterization and search frame-work for small or medium size systems. Section IV proposes a unified projected WMMSE-based algorithm for arbitrary size systems with MiLAC precoding optimization. Section V presents numerical results to evaluate the power-radiation-efficiency and precoder-design-flexibility tradeoff and to com-pare MiLAC with fully digital benchmarks. Finally, Section VI concludes this paper. 
+
+Notations: Scalars, vectors, and matrices are denoted by lowercase letters, bold lowercase letters, and bold uppercase 3 
+
+> Fig. 1. MiLAC-aided downlink multiuser communications.
+
+letters, respectively. For a scalar, vector, or matrix, (·)∗ denotes the complex conjugate. For a matrix A, AT , AH , A−1,
+
+tr( A), and ∥A∥F denote its transpose, Hermitian transpose, inverse, trace, and Frobenius norm, respectively. The notation 
+
+∥a∥2 denotes the Euclidean norm of vector a. The notation 
+
+A ⪯ B means that B−A is positive semidefinite. The identity matrix is denoted by I, and the all-zero matrix is denoted by 0 with proper dimensions. The operator diag( ·) forms a diagonal matrix from its arguments, and Re {·} extracts the real part of a complex-valued argument. The expectation operator is denoted by E[·], and CN (0 , σ 2) denotes the circularly symmetric complex Gaussian (CSCG) distribution with zero mean and variance σ2. The imaginary unit is denoted by j.The sets of real and complex matrices of size M × N are denoted by RM ×N and CM ×N , respectively. Unless otherwise specified, log( ·) denotes the natural logarithm. II. S YSTEM MODEL AND PROBLEM FORMULATION 
+
+In this section, we first introduce the downlink multiuser MISO communication model and then describe a physically realizable MiLAC as the precoder. Based on this model, we formulate the MiLAC sum-rate maximization problem. 
+
+A. Downlink Multiuser MISO Communication 
+
+We consider a narrowband downlink multiuser MISO sys-tem, in which a base station (BS) serves K single-antenna users simultaneously. The BS is equipped with Nt transmit antennas and a reciprocal and lossless MiLAC with NRF 
+
+RF input ports and Nt antenna output ports, as shown in Fig. 1, with Nt ≥ NRF in general. Since each user is as-signed one independent data stream, the number of transmitted streams is Ns = K, and we set NRF = K to support these streams through the MiLAC architecture. Let s =[s1, . . . , s K ]T ∈ CK×1 denote the transmitted symbol vector for the K users, with normalized covariance E ss H  = IK .Let F = [ f1, . . . , fK ] ∈ CNt×K denote a generic precoding matrix, where fk is the transmit precoding vector for user k.The physical realization of F through the MiLAC network will be specified in the next subsection. The transmitted signal is modeled as 
+
+x =
+
+r Pt
+
+K Fs , (1) where Pt denotes the total transmit-power budget. Let H =[h1, h2, . . . , hK ] ∈ CNt×K denote the aggregate downlink channel matrix, where hk ∈ CNt×1 is the channel vector from the BS transmitter to user k. The received signal at user k is given by 
+
+yk =
+
+r Pt
+
+K hHk fksk +
+
+r Pt
+
+K
+
+X
+
+> i̸=k
+
+hHk fisi + nk, (2) where nk ∼ CN (0 , σ 2
+
+> k
+
+) denotes the additive white Gaus-sian noise at user k. Accordingly, the received signal-to-interference-plus-noise ratio (SINR) at user k is given by 
+
+γk(F) =  
+
+> Pt
+> K
+
+hHk fk
+
+> 2
+> Pt
+> K
+
+P 
+
+> i̸=k
+
+hHk fi 
+
+> 2
+
++ σ2
+
+> k
+
+. (3) The achievable rate of user k in bit-per-second-per-Hertz (bit/s/Hz) is Rk(F) = log 2 (1 + γk(F)) , and the system sum-rate is 
+
+Rsum (F) = 
+
+> K
+
+X
+
+> k=1
+
+Rk(F) = 
+
+> K
+
+X
+
+> k=1
+
+log 2 (1 + γk(F)) . (4) 
+
+B. Physics-Compliant MiLAC Precoding 
+
+We introduce the realization of the precoding matrix F via the MiLAC in this subsection. Specifically, when the MiLAC is employed for transmit precoding, the RF-to-antenna trans-mission block of its scattering matrix serves as the equivalent baseband precoding matrix, as will be detailed next. To support the K data streams, we set the number of RF input ports as 
+
+NRF = K. Let N = NRF + Nt denote the total number of ports of the MiLAC and Z0 denote the reference impedance. The scattering matrix is determined by the susceptance matrix 
+
+B through the Cayley transform [8], given by 
+
+Θ(B) = ( I − jZ 0B) ( I + jZ 0B)−1 , (5) where B = BT ∈ RN ×N . By separating the RF input ports and antenna output ports, Θ(B) is partitioned as 
+
+Θ(B) = 
+
+Θ11 (B) Θ12 (B)
+
+Θ21 (B) Θ22 (B)
+
+
+
+. (6) Here, Θ11 (B) ∈ CNRF ×NRF denotes the RF-side reflection block, Θ21 (B) ∈ CNt×NRF denotes the RF-to-antenna trans-mission block, Θ12 (B) ∈ CNRF ×Nt denotes the antenna-to-RF block, and Θ22 (B) ∈ CNt×Nt denotes the antenna-side reflection block. The scattering matrix satisfies [11] 
+
+ΘH (B)Θ(B) = I, ΘT (B) = Θ(B). (7) The RF-to-antenna transmission block directly defines the equivalent baseband precoding matrix 1 [8], i.e., 
+
+F(B) ≜ Θ21 (B), F(B) ∈ CNt×K . (8) The precoding matrix in (1) is specified as F = F(B). Unlike fully digital precoding matrices, which are directly optimized over arbitrary complex-valued entries, the MiLAC-induced precoding matrix is generated through the structured physical mapping B 7 → Θ(B) 7 → F(B). Therefore, the feasible set         
+
+> 1For notational simplicity, the constant scaling factor associated with the standard power-wave normalization is absorbed into the transmit-power definition [11]. 4
+
+of MiLAC precoding optimization is inherently governed by practical constraints on the physical microwave networks. As a fundamental property of the microwave network, impedance matching characterizes how efficiently incident RF signals are transferred from the RF input ports to the antenna output ports. In the MiLAC-aided transmitter, GIM allows a non-zero RF-side reflection, whereas PIM enforces a zero-reflection constraint at the RF ports. With GIM, the MiLAC is required only to satisfy the lossless reciprocal condition B = BT ∈ RN ×N , without imposing any additional constraint on the RF-side reflection block Θ11 (B). From the unitarity of Θ(B) in (7), we have 
+
+ΘH
+
+> 21
+
+(B)Θ21 (B) = INRF − ΘH
+
+> 11
+
+(B)Θ11 (B) ⪯ INRF . (9) Equivalently, the induced precoding matrix satisfies 
+
+FH (B)F(B) ⪯ INRF . (10) This relation shows that non-zero RF-side reflection reduces the power transferred from the RF ports to the antenna ports. To quantify this effect, and motivated by the power conser-vation relation of lossless scattering networks, we define the MiLAC transmission coefficient as 
+
+ηtx (B) = ∥Θ21 (B)∥2
+
+> F
+
+NRF 
+
+= 1 − ∥Θ11 (B)∥2
+
+> F
+
+NRF 
+
+. (11) This parameter measures the RF-to-antenna transmission ef-ficiency of the MiLAC. Under the GIM model, we generally have ηtx (B) ≤ 1.Substituting F = F(B) into (1), the actual radiated power becomes 
+
+Prad (B) = E ∥x∥22
+
+ = Pt
+
+K tr  FH (B)F(B) = Ptηtx (B).
+
+(12) Hence, GIM allows a broader class of realizable precoders but may reduce the radiated power due to non-zero RF-side reflection. 
+
+Remark 1. PIM is a special case of GIM obtained by imposing the additional zero-reflection constraint 
+
+Θ11 (B) = 0. (13) 
+
+Under this condition, (9) reduces to 
+
+FH (B)F(B) = ΘH
+
+> 21
+
+(B)Θ21 (B) = INRF , (14) 
+
+and thus ηtx (B) = 1. Therefore, PIM eliminates RF-side reflection and guarantees a unit transmission coefficient. How-ever, PIM also restricts the precoding matrix to a semi-unitary structure. In contrast, GIM may incur transmission loss due to non-zero reflection, but it provides a larger feasible precoding space. This reveals a fundamental tradeoff between MiLAC radiated power and precoder design flexibility. C. Problem Formulation 
+
+Based on the above model, the MiLAC sum-rate maximiza-tion problem under the GIM model is formulated as 
+
+(P1) : max  
+
+> B
+
+Rsum (F(B)) s.t. B = BT , B ∈ RN ×N ,
+
+Θ(B) = ( I − jZ 0B) ( I + jZ 0B)−1 ,
+
+F(B) = Θ21 (B).
+
+(15) Problem (P1) captures the most general lossless reciprocal MiLAC design space considered in this work. Since no zero-reflection constraint is imposed, the problem allows the opti-mizer to balance the MiLAC radiated power and the precoder design flexibility. In particular, a non-zero Θ11 (B) may reduce the radiated power through ηtx (B), but it can also enlarge the feasible precoding space to improve interference shaping. 
+
+Remark 2. Let the feasible set of the susceptance matrix under the GIM and PIM models be defined as BGIM ≜ B ∈ RN ×N B = BT , and BPIM ≜
+
+{B ∈ B GIM | Θ11 (B) = 0}. Since PIM imposes an additional zero-reflection constraint on top of the GIM model, it follows that 
+
+BPIM ⊆ B GIM . (16) 
+
+Define the globally optimal sum-rates under GIM and PIM as 
+
+R⋆, GIM sum ≜ max 
+
+> B∈B GIM
+
+Rsum (F(B)) ,
+
+and 
+
+R⋆, PIM sum ≜ max 
+
+> B∈B PIM
+
+Rsum (F(B)) .
+
+Because the PIM feasible set is a subset of the GIM feasible set, the globally optimal sum-rate under GIM cannot be lower than that under PIM, i.e., 
+
+R⋆, GIM sum ≥ R⋆, PIM sum . (17) 
+
+Remark 3 (Comparison with fully digital precoding) . For fully digital precoding schemes, the precoding matrix W ∈
+
+CNt×K is optimized directly in the baseband. The correspond-ing transmit signal is 
+
+xFD =
+
+r Pt
+
+K Ws , (18) 
+
+where W satisfies the normalized transmit-power constraint 
+
+tr  WH W ≤ K. The fully digital benchmark is therefore obtained from maximizing the sum-rate 
+
+(P -FD) max  
+
+> W
+
+Rsum (W) s.t. tr  WH W ≤ K. 
+
+(19) 
+
+Unlike fully digital precoding, which is only constrained by the Frobenius-norm power budget, the MiLAC-induced precoder is physically generated through B 7 → Θ(B) 7 → F(B) and satisfies FH (B)F(B) ⪯ I. Consequently, the performance gap between MiLAC and fully digital precoding mainly orig-inates from two coupled factors: the possible reduction in MiLAC transmission coefficient and the structural limitation on precoder design flexibility. 
+
+III. SVD-B ASED FEASIBLE -S ET CHARACTERIZATION AND SEARCH ALGORITHM 
+
+In this section, we develop an SVD-based exhaustive search algorithm to solve the MiLAC precoding optimization problem (P1). Since the mapping B 7 → Θ(B) 7 → F(B) is highly nonlinear and non-convex, it is difficult to solve (P1) directly over the susceptance matrix B. In particular, the PIM con-straint Θ11 (B) = 0 defines a nonlinear lower-dimensional subset in the B-space. To overcome this difficulty, we perform 5
+
+the search in the induced precoding matrix F(B) rather than directly over B.The key observation is that the difference between GIM and PIM is fully captured by the structure of F(B) = Θ21 (B):under the GIM model, FH (B)F(B) ⪯ I, whereas under the PIM model, FH (B)F(B) = I. More generally, any precoding matrix F satisfying FH F ⪯ I is MiLAC-admissible and can be embedded as the RF-to-antenna block of a larger unitary symmetric scattering matrix Θ, corresponding to a lossless reciprocal network [8], [11]. The connection back to the susceptance-domain realization follows from the inverse Cayley transform [15], [21]. If the completed scattering matrix satisfies that Θ + I is nonsingular, the corresponding suscep-tance matrix is given by 
+
+B = jZ0
+
+(Θ − I) ( Θ + I)−1 . (20) The resulting B is finite and real-symmetric. 
+
+A. Parameterization via Complex Givens Rotations 
+
+We first parameterize the MiLAC-induced precoding matrix by its SVD as 
+
+F(B) = UΣV H , (21) where U ∈ CNt×K is semi-unitary with UH U = IK ,
+
+V ∈ CK×K is unitary with VH V = IK , and Σ =diag( s1, . . . , s K ) with diagonal elements s1, . . . , s K denoting the singular values. Thus, the feasible sets of GIM and PIM problems are distinguished by the singular values. For the GIM problem (P1) in (15), the constraint F(B)H F(B) ⪯ I is equivalent to 
+
+0 ≤ sk ≤ 1, k = 1 , . . . , K. (22) For the PIM special case, the condition F(B)H F(B) = I
+
+in (14) implies 
+
+s1 = s2 = · · · = sK = 1 , (23) reducing the PIM precoding matrix to F(B) = UV H . In other words, PIM achieves a unit transmission coefficient, but it also removes the additional degrees of freedom associated with singular-value shaping. Given a candidate precoding matrix F generated by (21), the corresponding sum-rate is obtained as 
+
+Rsum (F) = 
+
+> K
+
+X
+
+> k=1
+
+log 2 1 +  
+
+> Pt
+> K
+
+|hHk fk|2
+
+> Pt
+> K
+
+P 
+
+> i̸=k
+
+|hHk fi|2 + σ2
+
+> k
+
+!
+
+, (24) where fk denotes the k-th column of F. Therefore, the GIM and PIM search problems can be rewritten as 
+
+max  
+
+> U,Σ,V
+
+Rsum 
+
+ UΣV H 
+
+s.t. UH U = IK , VH V = IK ,
+
+0 ≤ sk ≤ 1, k = 1 , . . . , K, 
+
+(25) and max  
+
+> U,V
+
+Rsum 
+
+ UV H 
+
+s.t. UH U = IK , VH V = IK .
+
+(26) 
+
+Algorithm 1 SVD-based Search Algorithm for Solving (P1)  
+
+> 1:
+
+procedure  
+
+> 2:
+
+Represent precoding matrix F(B) = UΣV H . 
+
+> 3:
+
+Discretize the diagonal entries sk of Σ over [0 , 1] , as implied by the impedance matching condition.  
+
+> 4:
+
+if Nt and K are small then  
+
+> 5:
+
+Parameterize full unitary matrices U and V. 
+
+> 6:
+
+Exhaustive search all combinations of (U, Σ, V)
+
+for the optimal solution.  
+
+> 7:
+
+else  
+
+> 8:
+
+Restrict the matrix to F(B) = Ubase eUΣ eVH . 
+
+> 9:
+
+Perform SVD of channel matrix H and set: 
+
+Ubase ← K non-zero left singular vectors.  
+
+> 10:
+
+Parameterize unitary matrices eU and eV via re-duced Givens rotations.  
+
+> 11:
+
+Initialize the reduced search parameters.  
+
+> 12:
+
+repeat  
+
+> 13:
+
+Update eU, Σ, and eV alternately.  
+
+> 14:
+
+until convergence is reached  
+
+> 15:
+
+end if  
+
+> 16:
+
+return optimized F(B) and corresponding B. 
+
+> 17:
+
+end procedure 
+
+The above formulations provide a unified basis for searching over GIM or PIM precoder. The remaining challenge is how to parameterize and explore the unitary factors U and V.To address this challenge, the semi-unitary factor U is parameterized as a cascade of complex Givens rotations [22]: 
+
+U =
+
+> PU
+
+Y
+
+> ℓ=1
+
+Giℓjℓ (θℓ, ϕ ℓ)
+
+!
+
+U0, (27) where U0 ∈ CNt×K is a reference semi-unitary matrix, and 
+
+Giℓjℓ (θℓ, ϕ ℓ) ∈ CNt×Nt denotes a complex Givens rotation acting on the coordinate pair (iℓ, j ℓ). The parameters θℓ
+
+and ϕℓ denote the rotation angle and phase, respectively. Similarly, the unitary matrix V can be parameterized as 
+
+V = QPV 
+
+> ℓ=1
+
+eGiℓjℓ (ϑℓ, φ ℓ), where eGiℓjℓ (ϑℓ, φ ℓ) ∈ CK×K is a Givens rotation in the K-dimensional right-unitary space. This parameterization automatically preserves the semi-unitary or unitary structure of the factors and avoids additional feasibility projection during optimization. 
+
+B. Exhaustive Search for Small/Medium Size Systems 
+
+For small or medium size systems, the complete SVD parameter space can be discretized and exhaustively searched. For example, when Nt = K = 2 , any feasible matrix can be expressed as 
+
+F = U
+
+s1 00 s2
+
+
+
+VH , (28) where U and V are 2 × 2 unitary matrices. A complex Givens rotation is given by G(θ, ˜β) =
+
+"
+
+cos θ ej ˜β sin θ
+
+−e−j ˜β sin θ cos θ
+
+#
+
+,where θ ∈ [0 , π/ 2] and ˜β ∈ [0 , 2π). By introducing G(θ, ˜β),any 2 × 2 unitary matrix can be written as 
+
+U(ϕ, α, β, θ ) = ejϕ 
+
+ ejα cos θ ejβ sin θ
+
+−e−jβ sin θ e−jα cos θ
+
+
+
+, (29) 6
+
+where β = ˜β − α, ϕ, α, β ∈ [0 , 2π) and θ ∈ [0 , π/ 2] . See Appendix A for more information. The same parameterization can be applied to V. The phase grids can be constructed as 
+
+ϕ, α, β ∈
+
+n
+
+0, 2πM , . . . , (M −1)2 πM
+
+o
+
+, and the rotation-angle grid is given by θ ∈
+
+n
+
+0, π/ 2  
+
+> T−1
+
+, . . . , π
+
+> 2
+
+o
+
+, where M and T denote the grid resolutions. For GIM, the singular values s1 and s2 are discretized over [0 , 1] , whereas for PIM they are fixed to s1 = s2 = 1 .Each candidate precoder is then constructed and evaluated. The number of evaluations for full-dimensional exhaustive search grows exponentially with the number of real-valued search parameters, which can be approximated as 
+
+O  (Lθ Lϕ)DU +DV LKs
+
+ ,
+
+where Lθ and Lϕ denote the numbers of grid points for rotation angles and phases, respectively, and Ls denotes the number of grid points for each singular value. The quantities 
+
+DU = 2 NtK − K2, D V = K2 represent the real degrees of freedom of the matrix U and V, respectively. For PIM, the factor LKs is removed because all the singular values are one. Note that the proposed design with full-dimensional SVD-based exhaustive search is applicable to general system di-mensions. However, it becomes computationally prohibitive for large-size systems as the numbers of transmit antennas and users become large. 
+
+C. Channel-Guided Acceleration of SVD-Based Search 
+
+The exhaustive search process can be accelerated by restrict-ing the left singular space to a channel-guided subspace and updating the remaining SVD variables in a block-coordinate manner. Denoting the SVD of the aggregate channel matrix as H = UH ΣH VHH , we construct a basis Ubase =[uH, 1, . . . , uH,K ] ∈ CNt×K , where uH, 1, . . . , uH,K are the 
+
+K non-zero left singular vectors of H. The precoding matrix is then parameterized as 
+
+F = Ubase eUΣ eVH , (30) where eU ∈ CK×K , eV ∈ CK×K , and Σ = diag( s1, . . . , s K )
+
+satisfies the same singular-value constraints as in (22) or (23). The effective left factor Ubase eU remains semi-unitary. The reduced factors eU and eV are parameterized by a limited number of complex Givens rotations as eU =QPU 
+
+> ℓ=1
+
+Giℓjℓ (θℓ, ϕ ℓ), eV = QPV 
+
+> ℓ=1
+
+eGiℓjℓ (ϑℓ, φ ℓ), where 
+
+PU and PV control the number of retained Givens rota-tions for the left and right factors, respectively. The search complexity can be further reduced via block-coordinate up-dates, which sequentially optimize eU, Σ, and eV instead of jointly enumerating all parameter combinations. Since each retained Givens rotation is discretized with Lθ grid points for the rotation angle and Lϕ grid points for the phase, the complexity per block-coordinate iteration becomes 
+
+O (PU Lθ Lϕ + PV Lθ Lϕ + KL s) , which scales linearly with 
+
+PU , PV , and K. This complexity reduction, however, may incur performance loss, since the resulting solution depends on the initialization and may be trapped in a local optimum. Moreover, as the dimensionality of the search parameter space increases, identifying high-quality solutions under a fixed grid resolution and computational budget becomes difficult. The SVD-based search reveals the structural difference between GIM and PIM and can provide performance reference for small or medium size systems. The overall procedure of the proposed SVD-based search framework is summarized in Algorithm 1. IV. U NIFIED ALGORITHM VIA PROJECTED WMMSE FOR 
+
+ARBITRARY SIZE SYSTEMS 
+
+In this section, we develop a projected WMMSE-based al-gorithm for optimizing the MiLAC-induced precoding matrix 
+
+F, which has a much lower complexity than the SVD-based search framework and thus is more suitable for large-size systems. As established in Section II, the feasible structure of 
+
+F depends on the impedance-matching model: under GIM, F
+
+satisfies the contraction constraint FH F ⪯ IK , whereas under PIM, it is restricted to the semi-unitary constraint FH F = IK .
+
+Based on them, we first derive an efficient projected WMMSE update for GIM, where the projection is implemented by applying SVD to the tentative precoder followed by singular-value clipping. The PIM case can then be handled using the same framework by applying the corresponding semi-unitary projection. Based on (2), (4) and (10), the GIM precoding optimization problem is written as 
+
+max 
+
+> F∈CNt×K
+
+Rsum (F)s.t. FH F ⪯ IK .
+
+(31) Problem (31) is non-convex due to the coupled multiuser inter-ference terms in the sum-rate objective. To obtain an efficient iterative solution, we adopt the WMMSE reformulation [23]. The basic idea is to introduce, for each user, a scalar receive equalizer uk and a positive MSE weight qk, such that the original sum-rate maximization can be equivalently handled through a block-wise minimization over {uk}, {qk}, and the induced MiLAC precoder F.
+
+A. WMMSE Reformulation and Block-Wise Updates for GIM 
+
+We first establish the rate-WMMSE equivalence that con-nects the original sum-rate maximization problem with its WMMSE minimization reformulation. Let uk denote the scalar receive equalizer for user k, and define the symbol estimate as 
+
+ˆsk = u∗
+
+> k
+
+yk. (32) The corresponding MSE is given by 
+
+ek =E |u∗
+
+> k
+
+yk − sk|2
+
+=1 − 2 Re 
+
+(
+
+u∗
+
+> k
+
+r Pt
+
+K hHk fk
+
+)
+
++ |uk|2
+
+ Pt
+
+K
+
+> K
+
+X
+
+> j=1
+
+|hHk fj |2 + σ2
+
+> k
+
+ .
+
+(33) By introducing a positive MSE weight qk > 0 for each user, the original sum-rate maximization problem in (31) can be equivalently transformed into a WMMSE minimization 7
+
+problem [23]. The rate-WMMSE equivalence is summarized in the following lemma. 
+
+Lemma 1. For any fixed feasible precoder F, the achievable rate of user k satisfies 
+
+log 2 (1 + γk(F)) = 1log 2 
+
+
+
+1 − min    
+
+> uk,q k>0
+
+(qkek − log qk)
+
+
+
+,
+
+(34) 
+
+where ek is defined in (33) . The minimum of the problem in (34) is achieved by 
+
+u⋆k =
+
+q Pt 
+
+> K
+
+hHk fkPt
+
+> K
+
+PKj=1 |hHk fj |2 + σ2
+
+> k
+
+, (35) 
+
+and 
+
+q⋆k = ( e⋆k)−1 . (36) 
+
+Here, e⋆k is the minimum MSE obtained with uk = u⋆k.Proof. Please refer to Appendix B. ■
+
+According to Lemma 1, maximizing the sum-rate over F is equivalent, up to a constant scaling factor, to minimizing the objective of the following problem 
+
+min     
+
+> F,{uk},{qk>0}
+> K
+
+X
+
+> k=1
+
+(qkek − log qk)s.t. FH F ⪯ IK .
+
+(37) This naturally leads to an alternating optimization procedure. For a given precoder F, the receive equalizers and MSE weights are updated in closed form according to (35) and (36). On the other hand, for fixed {uk, q k}Kk=1 , the F-dependent part of the WMMSE objective can be written as the quadratic form 
+
+tr  FH AF  − 2 Re tr  FH C , (38) where 
+
+A =
+
+> K
+
+X
+
+> k=1
+
+qk|uk|2 Pt
+
+K hkhHk , (39) and 
+
+C =
+
+"
+
+q1
+
+r Pt
+
+K u1h1, . . . , q K
+
+r Pt
+
+K uK hK
+
+#
+
+. (40) Therefore, under the GIM model, the fixed-{uk, q k} F-subproblem becomes 
+
+min  
+
+> F
+
+tr  FH AF  − 2 Re tr  FH C
+
+s.t. FH F ⪯ IK . (41) The subproblem in (41) is a convex quadratic problem over the contraction set FH F ⪯ IK , and thus can in principle be solved by existing convex solvers such as CVX [24]. However, solving such a constrained quadratic program at each WMMSE iteration would introduce considerable com-putational overhead. Moreover, a solver-based treatment does not directly provide a unified implementation for PIM, whose feasible set is the non-convex semi-unitary set FH F = IK .Therefore, we adopt a projected-gradient update in this work, for which the projections onto the GIM or PIM MiLAC-induced feasible sets admit closed-form expressions. Specifically, the Wirtinger gradient of (38) with respect to the complex conjugate F∗ is given by 
+
+GF = AF − C. (42) Given a stepsize μ > 0, the tentative precoder matrix is 
+
+Z = F − μ (AF − C) . (43) Then, the updated precoding matrix can be obtained by projecting Z back onto the GIM feasible set 
+
+FGIM = F : FH F ⪯ IK . (44) The key step is to compute the Euclidean projection of the tentative precoder Z onto the GIM feasible set. Since the GIM constraint FH F ⪯ IK is equivalent to ∥F∥2 ≤ 1, the feasible set is a spectral-norm ball. Therefore, the projection can be performed in closed form by clipping the singular values of 
+
+Z. Let the SVD of Z be 
+
+Z = UZ diag( z1, . . . , z K )VHZ , (45) where zk ≥ 0 denotes the k-th singular value. The Euclidean projection of Z onto FGIM is then obtained by 
+
+ΠGIM (Z) = UZ diag (min {z1, 1}, . . . , min {zK , 1}) VHZ .
+
+(46) This projection preserves the left and right singular vectors of Z and truncates only the singular values that exceed the unit threshold. At each iteration, for fixed {uk, q k}, the projected WMMSE precoder update under the GIM model is given by 
+
+F+ = Π GIM (F − μ (AF − C)) . (47) A backtracking line search is then used to select μ such that the WMMSE objective with fixed {uk, q k} is non-increasing after each projected update. The overall algorithm is summarized in Algorithm 2. 
+
+B. Unified Projection for PIM 
+
+We next demonstrate that the projected WMMSE-based algorithm can be readily applied to the PIM case. The updates of the receive equalizers {uk} and MSE weights {qk}, as well as the gradient direction GF , remain the same as in the GIM case. The only required modification is the projection operation, which under the PIM model is performed over the semi-unitary feasible set 
+
+FPIM = F : FH F = IK ⊆ F GIM . (48) Using the SVD of Z as in (45), the projection onto FPIM is 
+
+ΠPIM (Z) = UZ VHZ . (49) Thus, the PIM projection forces all singular values of the induced precoder to be one, yielding 
+
+ηtx = ∥F∥2
+
+> F
+
+K = 1
+
+K
+
+> K
+
+X
+
+> k=1
+
+s2
+
+> k
+
+(F) = 1 . (50) In contrast, the GIM projection in (46) only clips singular values exceeding one and allows ηtx ≤ 1. This difference di-rectly reflects the power-radiation-efficiency versus precoding-flexibility tradeoff: PIM preserves full RF-to-antenna trans-mission efficiency but restricts the precoder to a semi-unitary 8
+
+Algorithm 2 Unified Projected WMMSE-based Algorithm for Arbitrary Size MiLAC precoder 
+
+Input: Channel matrix H, transmit-power budget Pt, noise variance {σ2
+
+> k
+
+}, and feasible initial set Finit .
+
+Output: Optimized MiLAC precoding matrix F⋆. 
+
+> 1:
+
+Set Rbest = −∞ . 
+
+> 2:
+
+for each initial point F(0) ∈ F init do  
+
+> 3:
+
+Set t = 0 . 
+
+> 4:
+
+repeat  
+
+> 5:
+
+Update {uk} according to (35).  
+
+> 6:
+
+Update {qk} according to (36).  
+
+> 7:
+
+Construct A and C according to (39) and (40).  
+
+> 8:
+
+Compute the gradient GF = AF (t) − C. 
+
+> 9:
+
+Choose stepsize μ by backtracking line search.  
+
+> 10:
+
+Update F(t+1) = Π {GIM ,PIM }
+
+ F(t) − μGF
+
+ us-ing (46) or (49).  
+
+> 11:
+
+Set t ← t + 1 . 
+
+> 12:
+
+until convergence is reached  
+
+> 13:
+
+Evaluate Rsum (F(t)). 
+
+> 14:
+
+if Rsum (F(t)) > R best then  
+
+> 15:
+
+F⋆ ← F(t) and Rbest ← Rsum (F(t)). 
+
+> 16:
+
+end if  
+
+> 17:
+
+end for  
+
+> 18:
+
+return F⋆.structure, whereas GIM permits singular-value attenuation and provides additional degrees of freedom for precoder design for interference mitigation. Since the overall WMMSE problem remains non-convex, the converged solution may depend on the initialization. To improve robustness, we employ a multi-start strategy. For each feasible initial precoder, the algorithm alternately updates 
+
+{uk}, {qk}, and F until convergence. In each iteration, A and 
+
+C are first constructed from the updated {uk, q k}. A tentative precoder is then obtained by a gradient step and projected onto the corresponding feasible set, as in (47). The projection is set to ΠGIM in (46) for GIM and to ΠPIM in (49) for PIM. Among all converged solutions, the one with the largest original sum-rate is selected as the final output. 
+
+C. Convergence and Complexity Analysis 
+
+For each initialization, the proposed algorithm alternately updates the receive equalizers, MSE weights, and induced MiLAC precoder. For a fixed procoder F, the updates of 
+
+{uk} and {qk} are optimal in closed form. For fixed {uk, q k},the GIM projected-gradient step with backtracking line search guarantees that the WMMSE objective is non-increasing after the precoder update. Since the WMMSE objective is lower bounded, the generated objective sequence converges. Due to the nonconvexity of the original sum-rate maximization problem, global optimality is not guaranteed. Nevertheless, under standard regularity conditions 2, any limit point of the generated sequence satisfies a first-order stationarity condition of the corresponding projected WMMSE problem.         
+
+> 2The standard regularity conditions include the boundedness of the feasible set, smoothness of the WMMSE objective with respect to Ffor fixed
+> {uk, q k}, and a stepsize rule satisfying sufficient descent.
+
+It is worth noting that the above convex-projection argument applies directly to GIM because, for fixed {uk, q k}, the GIM subproblem in (41) is convex over the contraction set 
+
+FGIM = {F : FH F ⪯ IK }. Therefore, this subproblem can be globally solved in principle. By contrast, the PIM counterpart is defined over the non-convex semi-unitary set 
+
+FPIM = {F : FH F = IK }, and thus the projected PIM update does not enjoy the same convex-projection guarantee, nor does it guarantee global optimality for the corresponding fixed-
+
+{uk, q k} subproblem. This distinction concerns only the fixed-
+
+{uk, q k} F-update subproblem; while the overall alternating WMMSE procedure remains non-convex for both GIM and PIM models, and global optimality of the original sum-rate maximization problem is not guaranteed in general. The computational complexity of each iteration mainly comes from three parts. First, updating the receive equalizers and MSE weights requires computing the effective channels 
+
+hHk fj for all user pairs, resulting in complexity O(NtK2).Second, constructing the matrix A in (39) requires summing 
+
+K rank-one matrices of size Nt × Nt, with complexity 
+
+O(N 2 
+
+> t
+
+K). Third, the projection step requires the SVD of an 
+
+Nt × K matrix. Since Nt ≥ K in the considered setup, its complexity is approximately O(NtK2). Therefore, excluding the additional cost of the backtracking line search, the per-iteration complexity is 
+
+O  N 2 
+
+> t
+
+K + NtK2 . (51) Compared with the fully SVD-based exhaustive search, whose complexity grows exponentially with the system dimension and grid resolution, the projected WMMSE method scales polynomially with Nt and K. Therefore, it provides an efficient solver for arbitrary size systems with either GIM-or PIM-based MiLAC precoding, while preserving the corre-sponding MiLAC-induced physical constraints. V. N UMERICAL RESULTS 
+
+We evaluate the proposed MiLAC precoding optimization framework under both line-of-sight (LoS) and Rayleigh fading channels. The simulations are designed to demonstrate two key aspects: the tradeoff between MiLAC radiated power and precoder design flexibility, and the performance gap be-tween physically realizable MiLAC precoder and fully digital precoder. Unless otherwise specified, the noise variance is normalized as σ2 
+
+> k
+
+= 1 for all users, and the transmit-power budget is expressed in terms of the signal-to-noise ratio (SNR). 
+
+A. Two-User LoS Channel 
+
+We first consider a small-size two-user LoS channel with 
+
+Nt = K = 2 to examine how user channel correlation affects the performance of MiLAC with GIM or PIM con-figurations. In this setup, the channel correlation between the two users is controlled by their angular separation, and the full-dimensional SVD-based exhaustive search is employed to exploit the feasible precoding structures under the GIM or PIM model. For the GIM-based MiLAC search, the singular values are discretized as sk ∈ { 0, 0.1, 0.2, . . . , 1}, k = 1 , 2,
+
+whereas the PIM precoding matrix has unit singular values, 90 20 40 60 80 
+
+Angular separation (degree)     
+
+> 0.2 0.25 0.3 0.35 0.4 0.45
+> Sum-rate (bit/s/Hz)
+> MiLAC-GIM
+> MiLAC-PIM
+> FD-Exhaustive Search
+> (a) 020 40 60 80
+
+Angular separation (degree)     
+
+> 345678
+> Sum-rate (bit/s/Hz)
+> MiLAC-GIM
+> MiLAC-PIM
+> FD-Exhaustive Search
+> (b) 020 40 60 80
+
+Angular separation (degree)   
+
+> 0.5 0.6 0.7 0.8 0.9 1
+> Transmission coefficient  tx
+> MiLAC-GIM
+> MiLAC-PIM
+> (c) Fig. 2. Performance under the LoS channel. (a) Sum-rate, SNR = −5 dB. (b) Sum-rate, SNR = 15 dB. (c) Transmission coefficient, SNR = 15 dB.
+
+i.e., s1 = s2 = 1 . For the fully digital benchmark, we also implement a grid-based exhaustive search over the SVD of the precoding matrix under the same total transmit-power constraint. Unlike MiLAC, the fully digital benchmark allows singular-value candidates satisfying s21 + s22 ≤ K. The channel vector of user k is modeled as 
+
+hk = at(θk), (52) where at(θk) = 1√Nt
+
+1, e jπ sin θk , . . . , e jπ (Nt−1) sin θk
+
+T de-notes the normalized transmit steering vector. The two users are symmetrically placed as θ1 = − ∆2 , θ 2 = ∆2 , where ∆
+
+denotes the angular separation between them. For the small-size system with Nt = K = 2 , the channel correlation is 
+
+hH 
+
+> 1
+
+h2 = 12
+
+ 1 + ejπ (sin θ2−sin θ1). Strict channel orthogonal-ity is achieved when 2 sin   ∆2
+
+ = 1 , which gives ∆ = 60 ◦.Fig. 2(a) and Fig. 2(b) compare the sum-rate versus the angular separation ∆ at SNR = −5 dB and SNR = 15 dB. At SNR = −5 dB, MiLAC-GIM and MiLAC-PIM achieve nearly identical performance, since the system is mainly noise-limited and interference mitigation is less critical. At SNR = 15 dB, MiLAC-GIM outperforms MiLAC-PIM over a wide range of angular separations, indicating that the enlarged feasible set of GIM is beneficial in interference-limited regimes due to more flexible interference shaping. When ∆ approaches 60 ◦,the two user channels become orthogonal, and the multiuser interference is naturally mitigated. In this case, the advantage of GIM over PIM diminishes, and the MiLAC-based schemes approach the fully digital benchmark. Fig. 2(c) shows the corresponding MiLAC transmission coefficient performance at SNR =15 dB. As expected, MiLAC-PIM always achieves unit transmission coefficient, i.e., ηtx =1, due to the zero-reflection constraint. In contrast, MiLAC-GIM generally has ηtx < 1 because non-zero RF-side reflec-tion is allowed. Therefore, the sum-rate advantage of GIM at high transmit power is not attributed to a larger transmitted or radiated power. Instead, it results from the additional precoder design flexibility enabled by relaxing the PIM-induced semi-unitary constraint. To further identify the source of the GIM gain, we plot the desired signal power and interference power of the two users separately in Fig. 3. The results show that the advantage of MiLAC-GIM mainly comes from lower interference rather than stronger desired-signal power. 
+
+B. Multiuser Rayleigh Fading Channel 
+
+We next evaluate the average sum-rate and MiLAC trans-mission coefficient under independent and identically dis-tributed (i.i.d.) Rayleigh fading channels using the proposed projected WMMSE-based algorithm. In this set of simulations, we fix the number of users as K = 4 and compare the performance under different numbers of transmit antennas and transmit SNR values. Two fully digital schemes are considered as benchmarks: fully digital weighted minimum mean-square error (FD-WMMSE) [23] and fully digital zero-forcing (FD-ZF). FD-WMMSE serves as the main benchmark, where the receive equalizers, MSE weights, and digital precoder are iteratively updated under the normalized total-power constraint 
+
+tr( WH W) ≤ K specified in (19). FD-ZF is included as a suboptimal baseline, which is obtained by channel inversion followed by power normalization under the same constraint. The aggregate channel matrix H ∈ CNt×K is generated with independent CSCG entries, i.e., 
+
+[H]n,k ∼ CN (0 , 1) , ∀n, k. (53) For each transmit-power value and each Nt, the average sum-rate is computed over 100 independent channel realizations. We first consider a highly loaded case with Nt = K = 4 ,where the number of transmit antennas equals the number of 10 0 20 40 60 80 
+
+Angular separation (degree)     
+
+> 0510 15
+> Signal power
+> User 1, MiLAC-GIM
+> User 2, MiLAC-GIM
+> User 1, MiLAC-PIM
+> User 2, MiLAC-PIM
+> (a) 020 40 60 80
+
+Angular separation (degree) 
+
+> 0510 15
+> Interference power
+> User 1, MiLAC-GIM
+> User 2, MiLAC-GIM
+> User 1, MiLAC-PIM
+> User 2, MiLAC-PIM
+> (b) Fig. 3. Received signal power and interference power under the LoS channel. (a) Signal power. (b) Interference power.
+
+served users and interference management becomes critical. As shown in Fig. 4(a), FD-WMMSE achieves the highest sum-rate due to its unconstrained baseband precoder design flexibility. In the low- and medium-SNR regimes, e.g., below approximately 15 dB, the MiLAC-based schemes can outper-form FD-ZF, since ZF eliminates interference at the expense of desired-signal power and array gain, which is not always favorable when noise remains significant. Among the MiLAC-based schemes, MiLAC-GIM consis-tently outperforms MiLAC-PIM, and the performance gap becomes more evident as the SNR increases. This is because, as the system becomes interference-limited at high SNR, the additional singular-value degrees of freedom allowed by GIM become more important for interference mitigation. By contrast, PIM enforces a semi-unitary precoding structure and always maintains ηtx = 1, which preserves full MiLAC transmission efficiency but limits the interference-shaping ca-pability of the MiLAC precoder. The transmission-coefficient result in Fig. 4(b) further supports this interpretation: MiLAC-GIM keeps ηtx ≈ 1 at low SNR, where preserving radiated 0 10 20 30 
+
+SNR (dB)    
+
+> 0510 15 20 25 30 35
+> Average sum-rate (bit/s/Hz)  MiLAC-GIM
+> MiLAC-PIM
+> FD-WMMSE
+> FD-ZF
+> (a) 010 20 30
+
+SNR (dB)     
+
+> 0.6 0.7 0.8 0.9 1
+> Transmission coefficient  tx
+> MiLAC-GIM
+> MiLAC-PIM
+> FD-WMMSE
+> FD-ZF
+> (b) Fig. 4. Performance under Rayleigh fading channels with fixed Nt=K= 4 .(a) Sum-rate. (b) Transmission coefficient/normalized radiated power.
+
+power is more important, whereas at high SNR the optimized GIM solution exhibits a reduced ηtx , reflecting the tradeoff between power radiation efficiency and interference mitigation flexibility. Therefore, the sum-rate gain of GIM over PIM comes from the controlled degradation of transmission coeffi-cient in exchange for improved interference mitigation. To further examine the impact of the number of transmit antennas, we increase Nt while keeping K = 4 fixed. As shown in Fig. 5, larger Nt improves the sum-rate performance of all schemes and narrows the gap between MiLAC-based precoding and fully digital precoding. This is because a larger transmit array provides more spatial degrees of freedom and makes the user channels more separable, thereby mitigating multiuser interference. For Nt = 8 , MiLAC-GIM still achieves a visible gain over MiLAC-PIM in the high-SNR regimes, indicating that the additional singular-value degrees of free-dom provided by GIM remain beneficial when the system is moderately loaded. When the number of antennas further increases to Nt = 32 ,MiLAC-GIM, MiLAC-PIM, FD-WMMSE, and FD-ZF exhibit 11 0 10 20 30 
+
+SNR (dB)    
+
+> 010 20 30 40 50
+> Average sum-rate (bit/s/Hz)  MiLAC-GIM
+> MiLAC-PIM
+> FD-WMMSE
+> FD-ZF
+> (a) 010 20 30
+
+SNR (dB)     
+
+> 0.75 0.8 0.85 0.9 0.95 1
+> Transmission coefficient  tx
+> MiLAC-GIM
+> MiLAC-PIM
+> FD-WMMSE
+> FD-ZF (b) 010 20 30
+
+SNR (dB)    
+
+> 010 20 30 40 50 60
+> Average sum-rate (bit/s/Hz)
+> MiLAC-GIM
+> MiLAC-PIM
+> FD-WMMSE
+> FD-ZF
+> (c) 010 20 30
+
+SNR (dB)              
+
+> 0.88 0.9 0.92 0.94 0.96 0.98 1
+> Transmission coefficient  tx
+> MiLAC-GIM
+> MiLAC-PIM
+> FD-WMMSE
+> FD-ZF (d) Fig. 5. Performance under Rayleigh fading channels with a fixed number of users K= 4 and different numbers of transmit antennas Nt. (a) Sum-rate with
+> Nt= 8 . (b) Transmission coefficient/normalized radiated power with Nt= 8 . (c) Sum-rate with Nt= 32 . (d) Transmission coefficient/normalized radiated power with Nt= 32 .
+
+much closer sum-rate performance. This suggests that, with sufficient transmit spatial degrees of freedom, the semi-unitary constraint imposed by PIM becomes less restrictive, since user channels tend to be nearly orthogonal and interference mitigation becomes easier. Consistently, as shown in Fig. 5(d), the transmission coefficient of MiLAC-GIM remains much closer to one than in the highly loaded Nt = K = 4 case of Fig. 4(b). This indicates that, when the spatial dimension is sufficiently large, the MiLAC precoding optimization relies less on additional precoder design flexibility for interference mitigation and can thus maintain higher RF-to-antenna trans-mission efficiency. These results indicate that the advantage of GIM is most pronounced in interference-limited multiuser scenarios, while PIM becomes nearly sufficient as the transmit array grows and the channel correlation decreases. VI. C ONCLUSION 
+
+This paper studied physically realizable lossless reciprocal MiLAC-aided precoding optimization in downlink multiuser MISO communication systems. By explicitly linking the susceptance matrix, the scattering matrix, and the induced transmit precoding matrix, we established a physics-compliant framework for MiLAC precoding optimization under the PIM or GIM model. The analysis revealed that MiLAC performance is governed by two coupled factors: the MiLAC transmission coefficient and the available precoder design flexibility. PIM eliminates RF-side reflection and guarantees unit transmission coefficient, but restricts the induced precoder to a semi-unitary structure. In contrast, GIM relaxes the zero-reflection condition and enlarges the feasible precoding space, at the cost of possible radiated-power reduction. To characterize and optimize this tradeoff, we developed an SVD-based parametric search framework for feasible-set characterization and small or medium size systems performance benchmarking, and further proposed a unified algorithm based on projected WMMSE for GIM/PIM precoding optimization in arbitrary size systems. Numerical results under both LoS and Rayleigh fading chan-nels showed that, in interference-limited multiuser scenarios, 12 
+
+GIM outperforms PIM and achieves sum-rate performance close to that of the baseline fully digital precoding system, by sacrificing part of the radiated power to gain additional degrees of freedom for interference mitigation. These results indicate that imperfect impedance matching should not be treated merely as a hardware nonideality, but can be exploited as a useful design degree of freedom for MiLAC-aided multiuser precoding. Future work beyond this paper may include extending the proposed GIM framework to wideband MiLAC-aided OFDM systems, where the frequency-dependent microwave response may introduce new tradeoffs among impedance matching, beam squint, and subcarrier-dependent precoding. Another promising direction is to develop transmission-coefficient-aware MiLAC design frameworks for extremely large-scale and/or movable antenna arrays. APPENDIX AA complex Givens rotation acting on a 2 × 2 subspace is defined as 
+
+G(θ, ˜β) = 
+
+"
+
+cos θ ej ˜β sin θ
+
+−e−j ˜β sin θ cos θ
+
+#
+
+, (54) where θ controls the rotation angle and ˜β determines the phase coupling between the two dimensions. To connect this complex Givens rotation with the standard four-parameter representation of a general 2×2 unitary matrix, consider 
+
+U = G(θ, ˜β)U0, (55) where 
+
+U0 = ejϕ 
+
+ejα 00 e−jα 
+
+
+
+. (56) Substituting (56) into (55) gives 
+
+U = ejϕ G(θ, ˜β)
+
+ejα 00 e−jα 
+
+
+
+. (57) By carrying out the matrix multiplication, we obtain 
+
+U = ejϕ 
+
+"
+
+ejα cos θ ej( ˜β−α) sin θ
+
+−ej(α− ˜β) sin θ e−jα cos θ
+
+#
+
+. (58) Defining 
+
+β = ˜β − α, (59) we have α − ˜β = −β, and thus (58) can be rewritten as 
+
+U(ϕ, α, β, θ ) = ejϕ 
+
+ ejα cos θ ejβ sin θ
+
+−e−jβ sin θ e−jα cos θ
+
+
+
+. (60) This is the standard four-parameter representation of a general 
+
+2 × 2 unitary matrix. Therefore, the complex Givens rotation parameterization used in the proposed SVD-based search is consistent with the conventional parameterization of 2 × 2
+
+unitary matrices. APPENDIX B: P ROOF OF LEMMA 1The proof is motivated by [23]. For fixed F and qk > 0,minimizing qkek − log qk with respect to uk is equivalent to minimizing the MSE ek. The resulting MMSE receive equalizer is given by (35), and the corresponding minimum MSE is 
+
+e⋆k = 11 + γk(F) . (61) For fixed ek, minimizing qkek − log qk over qk > 0 gives 
+
+q⋆k = 1 /e k and 
+
+min   
+
+> qk>0
+
+(qkek − log qk) = 1 + log ek. (62) Substituting ek = e⋆k = 1 /(1 + γk(F)) gives 
+
+min    
+
+> uk,q k>0
+
+(qkek − log qk) = 1 − log (1 + γk(F)) , (63) or equivalently, 
+
+log 2 (1 + γk(F)) = 1log 2 
+
+
+
+1 − min    
+
+> uk,q k>0
+
+(qkek − log qk)
+
+
+
+.
+
+(64) REFERENCES [1] E. Björnson, F. Kara, N. Kolomvakis, A. Kosasih, P. Ramezani, and M. B. Salman, “Enabling 6G performance in the upper mid-band by transitioning from massive to gigantic MIMO,” IEEE Open J. Commun. Soc. , vol. 6, pp. 5450–5463, Jun. 2025. [2] E. D. Carvalho, A. Ali, A. Amiri, M. Angjelichinoski, and R. W. Heath, “Non-stationarities in extra-large-scale massive MIMO,” IEEE Wireless Commun. , vol. 27, no. 4, pp. 74–80, Aug. 2020. [3] Y. Xu, E. G. Larsson, E. A. Jorswieck, X. Li, S. Jin, and T.-H. Chang, “Distributed signal processing for extremely large-scale antenna array systems: State-of-the-art and future directions,” IEEE J. Sel. Topics Signal Process. , vol. 19, no. 2, pp. 304–330, Mar. 2025. [4] E. G. Larsson, O. Edfors, F. Tufvesson, and T. L. Marzetta, “Massive MIMO for next generation wireless systems,” IEEE Commun. Mag. ,vol. 52, no. 2, pp. 186–195, Feb. 2014. [5] E. Björnson, E. G. Larsson, and T. L. Marzetta, “Massive MIMO: ten myths and one critical question,” IEEE Commun. Mag. , vol. 54, no. 2, pp. 114–123, Feb. 2016. [6] M. Nerini and B. Clerckx, “Analog computing for signal processing and communications – part I: Computing with microwave networks,” IEEE Trans. Signal Process. , vol. 73, pp. 5183–5197, Dec. 2025. [7] ——, “Analog computing for signal processing and communica-tions—part II: Toward gigantic MIMO beamforming,” IEEE Trans. Signal Process. , vol. 73, pp. 5198–5212, Dec. 2025. [8] ——, “Capacity of MIMO systems aided by microwave linear analog computers (MiLACs),” 2025. [Online]. Available: https: //arxiv.org/abs/2506.05983 [9] ——, “MIMO systems aided by microwave linear analog computers: Capacity-achieving architectures with reduced circuit complexity,” IEEE Trans. Wireless Commun. , vol. 25, pp. 14 597–14 610, Mar. 2026. [10] F. Sohrabi and W. Yu, “Hybrid digital and analog beamforming design for large-scale antenna arrays,” IEEE J. Sel. Topics Signal Process. ,vol. 10, no. 3, pp. 501–513, Apr. 2016. [11] Z. Wu, M. Nerini, and B. Clerckx, “Microwave linear analog computer (MiLAC)-aided multiuser MISO: Fundamental limits and beamforming design,” 2026. [Online]. Available: https://arxiv.org/abs/2601.10060 [12] X. Zhou, T. Fang, Y. Mao, and B. Clerckx, “Two-layer microwave linear analog computer (MiLAC)-aided multi-user MISO networks,” 2026. [Online]. Available: https://arxiv.org/abs/2604.24303 [13] Y. Peng, Z. Wu, and B. Clerckx, “Hybrid digital and microwave linear analog computer (MiLAC)-aided beamforming for multiuser MIMO-OFDM systems,” 2026. [Online]. Available: https://arxiv.org/ abs/2604.26532 [14] Q. Zhang, M. Nerini, and B. Clerckx, “Channel estimation in MIMO systems aided by microwave linear analog computers (MiLACs),” 2026. [Online]. Available: https://arxiv.org/abs/2601.11438 13 
+
+[15] M. Nerini and B. Clerckx, “Physics-compliant modeling and optimization of MIMO systems aided by microwave linear analog computers,” 2026. [Online]. Available: https://arxiv.org/abs/2602.19379 [16] T. Fang, X. Zhou, and Y. Mao, “On the performance of lossless reciprocal MiLAC architectures in multi-user networks,” 2026. [Online]. Available: https://arxiv.org/abs/2601.01834 [17] R. M. Fano, “Theoretical limitations on the broadband matching of arbitrary impedances,” J. Franklin Inst. , vol. 249, no. 1, pp. 57–83, Jan. 1950. [18] H. M. Nemati, C. Fager, U. Gustavsson, R. Jos, and H. Zirath, “Design of varactor-based tunable matching networks for dynamic load modulation of high power amplifiers,” IEEE Trans. Microw. Theory Techn. , vol. 57, no. 5, pp. 1110–1118, May 2009. [19] M. Alibakhshikenari et al. , “Optimum power transfer in RF front end systems using adaptive impedance matching technique,” Sci. Rep. ,vol. 11, no. 1, p. 11825, Jun. 2021. [20] M. Nerini, S. Shen, H. Li, M. Di Renzo, and B. Clerckx, “A universal framework for multiport network analysis of reconfigurable intelligent surfaces,” IEEE Trans. Wireless Commun. , vol. 23, no. 10, pp. 14 575– 14 590, Oct. 2024. [21] D. M. Pozar, Microwave engineering . John Wiley & Sons, 2011. [22] G. H. Golub and C. F. Van Loan, Matrix Computations . Johns Hopkins Univ. Press, 2013. [23] Q. Shi, M. Razaviyayn, Z.-Q. Luo, and C. He, “An iteratively weighted MMSE approach to distributed sum-utility maximization for a MIMO interfering broadcast channel,” IEEE Trans. Signal Process. , vol. 59, no. 9, pp. 4331–4340, Sep. 2011. [24] M. Grant and S. Boyd, “CVX: MATLAB software for disciplined convex programming,” Mar. 2014. [Online]. Available: http://cvxr.com/cvx/

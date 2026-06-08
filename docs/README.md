@@ -6,35 +6,31 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-07
-- 运行时间：2026-06-07 21:15:47 UTC
+- 最新运行日期：2026-06-08
+- 运行时间：2026-06-08 22:02:52 UTC
 - 运行状态：成功
-- 本次总论文数：5
-- 精读区：1
-- 速读区：4
+- 本次总论文数：3
+- 精读区：2
+- 速读区：1
 
 ### 今日简报（AI）
-今日精读1篇高性能计算电源传递的耦合电感阵列研究，速读4篇涵盖光电子设计、多速率仿真与FinFET优化。建议重点关注精读文章提出的封装嵌入式电感阵列方案。下一步可深入分析其集成制造工艺与实测性能。
-- 详情：[/202606/07/README](/202606/07/README)
+今日研读3篇论文，精读2篇聚焦信号完整性预布局优化与电路模型保持结构算子分裂，速读1篇涉及微波模拟多用户通信。  
+最值得关注《Amortized Neural Optimization》提出的可微代理方法（9.0分），以及《Structure-Preserving Operator Splitting》的JR分解技巧（8.0分）。  
+建议优先了解神经网络驱动的预布局设计空间高效搜索，有助于加速实际信号完整性分析。
+- 详情：[/202606/08/README](/202606/08/README)
 
 ### 精读区论文标签
-1. [Package-Embedded Coupled Inductor Arrays for High-Performance Computing Power Delivery](/202606/07/2606.02878v1-package-embedded-coupled-inductor-arrays-for-high-performance-computing-power-delivery)  
+1. [Amortized Neural Optimization for Pre-Layout Signal Integrity Design Space Exploration using Differentiable Surrogates](/202606/08/2606.07463v1-amortized-neural-optimization-for-pre-layout-signal-integrity-design-space-exploration-using-differentiable-surrogates)  
    标签：评分：9.0/10、query:si-pi
-   evidence：功率传输框架，封装嵌入式电感，PDN建模优化
+   evidence：面向预布局信号完整性的可微神经替代优化
+2. [Structure-Preserving Operator Splitting via JR-Decomposition for Circuit Models](/202606/08/2606.06153v1-structure-preserving-operator-splitting-via-jr-decomposition-for-circuit-models)  
+   标签：评分：8.0/10、query:bga-xtalk
+   evidence：基于结构保持分解的等效电路建模
 
 ### 速读区论文标签
-1. [Will Accurate Fields Mislead Photonic Design? FromGlobal Accuracy to Port Readout](/202606/07/2606.03038v1-will-accurate-fields-mislead-photonic-design-fromglobal-accuracy-to-port-readout)  
+1. [Microwave Linear Analog Computers Aided Multiuser Communication: General Impedance Matching and Precoding Optimization](/202606/08/2606.04532v1-microwave-linear-analog-computers-aided-multiuser-communication-general-impedance-matching-and-precoding-optimization)  
    标签：评分：7.0/10、query:si-pi
-   evidence：神经场代理用于光子设计优化，其方法论可迁移至SI/PI的机器学习优化
-2. [A Comparison of Multirate Co-Simulation Techniques for Field-Circuit Coupled Problems](/202606/07/2606.03594v1-a-comparison-of-multirate-co-simulation-techniques-for-field-circuit-coupled-problems)  
-   标签：评分：7.0/10、query:si-pi
-   evidence：多速率协同仿真方法用于场路耦合问题，可应用于PDN阻抗建模
-3. [PALTO: Physics-Informed Active Learning for Tri-Gate FinFET Design Optimization for Vertical Power Delivery](/202606/07/2606.01265v1-palto-physics-informed-active-learning-for-tri-gate-finfet-design-optimization-for-vertical-power-delivery)  
-   标签：评分：6.0/10、query:si-pi
-   evidence：面向功率传输的物理信息主动学习优化
-4. [Low Distortion Fusion Bonding using Pneumatically Warped Wafers](/202606/07/2606.04625v1-low-distortion-fusion-bonding-using-pneumatically-warped-wafers)  
-   标签：评分：6.0/10、query:si-pi
-   evidence：背面供电网络相关，研究PDN键合失真
+   evidence：高速互连中的阻抗匹配优化
 
 
 <div class="dpr-home-promo-card">

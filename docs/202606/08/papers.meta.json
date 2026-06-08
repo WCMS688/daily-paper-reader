@@ -1,0 +1,54 @@
+{
+  "label": "2026-06-08",
+  "date": "2026-06-08",
+  "generated_at": "2026-06-08T22:03:00",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202606/08/2606.07463v1-amortized-neural-optimization-for-pre-layout-signal-integrity-design-space-exploration-using-differentiable-surrogates",
+      "section": "deep",
+      "title_en": "Amortized Neural Optimization for Pre-Layout Signal Integrity Design Space Exploration using Differentiable Surrogates",
+      "authors": "Julian Withöft, Werner John, Emre Ecik, Ralf Brüning, Jürgen Götze",
+      "date": "2026-06-05",
+      "pdf": "https://arxiv.org/pdf/2606.07463v1",
+      "score": "9.0",
+      "evidence": "面向预布局信号完整性的可微神经替代优化",
+      "tldr": "预布局信号完整性设计空间探索因仿真和迭代优化计算成本高而受限。本文提出摊销神经优化，利用可微神经网络替代仿真模型，提取解析梯度训练全局优化策略，将优化过程离线学习并摊销。在DDR5 DFE、9维SerDes均衡等场景中，以约10%最优性损失实现3-4个数量级加速。该方法将昂贵优化转化为实时交互式预布局探索，显著提升EDA设计效率。",
+      "tags": "query:si-pi",
+      "abstract_en": "Pre-layout design space exploration (DSE) for high-speed signal integrity (SI) analysis is often limited by the computational cost of simulations and iterative optimization algorithms within modern electronic design automation (EDA) workflows. While machine learning surrogate models accelerate the simulation step, optimizing designs still requires utilizing iterative black-box search methods. This iterative nature scales poorly, making multi-corner sweeps computationally expensive. As a solution, this paper proposes amortized neural optimization (ANO) for pre-layout SI design. ANO entirely eliminates iterative black-box inference by utilizing fully differentiable neural network surrogate models. ANO extracts analytical gradients from the surrogate to train a global optimization policy. Instead of solving the optimization problem repeatedly at inference, the optimization process is learned offline and therefore amortized. Once the ANO policy is trained, it maps different channel contexts directly to near-optimal design parameters in a single deterministic forward pass. The efficiency and accuracy of the ANO framework are demonstrated based on three complex SI design scenarios, including DDR5 decision feedback equalization (DFE), 9-dimensional SerDes Tx/Rx co-equalization, and DDR3 DQS differential pair routing to optimize eye diagram metrics under intra-pair skew constraints. By trading roughly 10% in optimality compared to instance-specific black-box algorithms, it realizes speedups of three to four orders of magnitude. For a large-scale 320,000-instance multi-corner SerDes sweep optimization, ANO collapses what would have taken days of computation using iterative search algorithms into a single batched forward pass that completes in milliseconds. This transforms computationally expensive SI optimization into real-time and interactive pre-layout DSE.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/08/2606.06153v1-structure-preserving-operator-splitting-via-jr-decomposition-for-circuit-models",
+      "section": "deep",
+      "title_en": "Structure-Preserving Operator Splitting via JR-Decomposition for Circuit Models",
+      "authors": "Andreas Bartel, Malak Diab",
+      "date": "2026-06-04",
+      "pdf": "https://arxiv.org/pdf/2606.06153v1",
+      "score": "8.0",
+      "evidence": "基于结构保持分解的等效电路建模",
+      "tldr": "在端口哈密顿框架下，电路模型（MNA）的数值处理需能量保真分裂，但标准JR分解应用受限。本文引入增强型JR分解，专为MNA电路模型定制，放松了分解条件。数值实验表明该方法收敛且保持结构，拓展了JR分解在电路中的适用性。",
+      "tags": "query:bga-xtalk",
+      "abstract_en": "We investigate circuit models, namely, modified nodal analysis (MNA) in the port-Hamiltonian framework. Based on this, the JR-decomposition for the numerical treatment would offer an energy conform splitting. However, for circuit models, the application of the standard JR-decomposition is restricted. To enable a JR-decomposition for MNA, we need to relax the decomposition. To this end, we introduce the enhanced JR-decomposition, which is particularly tailored to the application to circuits. We conclude with a numerical example that illustrates the applicability of the proposed approach as well as its convergence and structure-preserving properties.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/08/2606.04532v1-microwave-linear-analog-computers-aided-multiuser-communication-general-impedance-matching-and-precoding-optimization",
+      "section": "quick",
+      "title_en": "Microwave Linear Analog Computers Aided Multiuser Communication: General Impedance Matching and Precoding Optimization",
+      "authors": "Rujing Xiong, Jie Xu, Rui Zhang",
+      "date": "2026-06-03",
+      "pdf": "https://arxiv.org/pdf/2606.04532v1",
+      "score": "7.0",
+      "evidence": "高速互连中的阻抗匹配优化",
+      "tldr": "针对微波线性模拟计算机辅助的多用户MISO下行系统，研究了一般阻抗匹配模型下的预编码优化以最大化系统和速率。提出基于奇异值分解的参数搜索框架（小系统）和基于投影加权最小均方误差的统一算法（任意规模）。仿真表明，一般阻抗匹配设计通过牺牲部分辐射功率换取预编码灵活性，有效抑制干扰，性能优于完美阻抗匹配且接近全数字系统。",
+      "tags": "query:si-pi",
+      "abstract_en": "Microwave linear analog computers (MiLACs) have recently emerged as a hardware-efficient solution for implementing multi-antenna communication systems. Unlike existing MiLAC designs based on the ideal assumption of perfect impedance matching (PIM) with reflection-free transmission, this paper investigates MiLAC-aided precoding optimization under a general impedance matching (GIM) model, which enables more flexible precoder design at the cost of a potential reduction in radiated power. Specifically, we consider a downlink multiuser multiple-input single-output (MISO) communication system and aim to maximize the system sum rate by optimizing the MiLAC-enabled transmit precoding subject to physical circuit constraints. The formulated problem is challenging to solve due to the intricate coupling between the precoding and impedance parameters. To address this challenge, we first develop a singular value decomposition (SVD)-based parametric search framework for small or medium size systems. This framework exploits the feasible precoder structure and explicitly captures the tradeoff between power radiation efficiency and precoder design flexibility. We then propose a unified algorithm for solving the optimization problem based on the projected weighted minimum mean-square error (WMMSE) principle for arbitrary size systems with GIM- or PIM-based MiLAC precoding. Simulation results demonstrate that the GIM-based MiLAC design consistently outperforms its PIM counterpart as a special realization, especially in interference-limited scenarios, by allowing a moderate reduction in radiated power in exchange for additional precoder design flexibility and more effective interference mitigation. It is also shown that GIM-based MiLAC design achieves performance close to that of the baseline fully digital precoding system.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
