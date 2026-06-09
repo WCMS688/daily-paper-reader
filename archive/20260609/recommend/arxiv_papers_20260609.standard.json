@@ -1,0 +1,133 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-09T22:04:51.435167+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2606.09326v1",
+      "source": "arxiv",
+      "title": "Generalized Cancellation of Capacitor Parasitic Inductance Using a Lattice Network and Its Application to Common-Mode Noise Reduction",
+      "abstract": "This letter presents a generalized technique for cancelling the parasitic inductance of capacitors using a lattice network. The Z-matrix-based equivalent transformation shows that the conventional vertically symmetric inductance condition is only a sufficient condition and can be relaxed. A vertically asymmetric lattice network is then proposed, enabling the parasitic inductance of capacitors to be cancelled by adjusting only one inductance. The method is further extended to common-mode noise reduction using a common-mode choke, and both concepts are experimentally verified.",
+      "authors": [
+        "Katsuya Nomura",
+        "Shuhei Chizuwa",
+        "Takashi Masuzawa"
+      ],
+      "primary_category": "math.OC",
+      "categories": [
+        "math.OC"
+      ],
+      "published": "2026-06-08T10:44:07+00:00",
+      "link": "https://arxiv.org/pdf/2606.09326v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "capacitor parasitic inductance cancellation for decoupling capacitor design",
+      "llm_evidence_cn": "电容器寄生电感消除，用于去耦电容设计",
+      "llm_evidence": "电容器寄生电感消除，用于去耦电容设计",
+      "canonical_evidence": "电容器寄生电感消除，用于去耦电容设计",
+      "llm_tldr_en": "Presents a lattice network technique to cancel capacitor parasitic inductance, enabling more effective decoupling capacitor design for PDN impedance optimization.",
+      "llm_tldr_cn": "该文针对电源分配网络中去耦电容的寄生电感问题，提出了一种基于格状网络的广义消除技术。通过Z矩阵等效变换，放松了传统对称电感条件，并采用垂直非对称结构仅需调整一个电感即可实现寄生电感消除。该方法还可扩展到共模噪声抑制。实验验证了其有效性，为PDN阻抗建模和去耦电容优化提供了新途径。",
+      "llm_tldr": "该文针对电源分配网络中去耦电容的寄生电感问题，提出了一种基于格状网络的广义消除技术。通过Z矩阵等效变换，放松了传统对称电感条件，并采用垂直非对称结构仅需调整一个电感即可实现寄生电感消除。该方法还可扩展到共模噪声抑制。实验验证了其有效性，为PDN阻抗建模和去耦电容优化提供了新途径。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "PDN impedance modeling and decoupling capacitor design",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.08313v1",
+      "source": "arxiv",
+      "title": "Feedforward Nonlinear Equalizer for Short- to Medium-Reach Wireline Links",
+      "abstract": "This paper presents a feedforward nonlinear equalizer (FFNE) framework for short- to medium-reach wireline links that removes the feedback-timing bottleneck of decision-feedback equalizers (DFEs) while approaching the noise-margin advantage within a characterized operating region. The proposed FFNE reduces short-window maximum-likelihood sequence estimation to a compact binary decision rule, enabling a low-complexity feedforward realization without transmitter-side encoding. For the single-postcursor NRZ case, the mathematical foundation, hardware implementation, tap adaptation, statistical analysis, and equalization limit relative to an ideal 1-tap DFE are established. A window-length-3 FFNE quantifies the performance-complexity tradeoff of longer sequence windows. The framework is further extended to PAM-4 modulation and simultaneous precursor/postcursor equalization through a pattern-detection-based FFNE (PD-FFNE), which outperforms conventional FFE+DFE baselines under representative channel conditions.",
+      "authors": [
+        "Kunmo Kim",
+        "Paul Kwon",
+        "Elad Alon",
+        "Ali Niknejad"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP"
+      ],
+      "published": "2026-06-06T19:58:57+00:00",
+      "link": "https://arxiv.org/pdf/2606.08313v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Feedforward nonlinear equalizer for wireline links improves signal integrity",
+      "llm_evidence_cn": "前馈非线性均衡器改善有线链路信号完整性",
+      "llm_evidence": "前馈非线性均衡器改善有线链路信号完整性",
+      "canonical_evidence": "前馈非线性均衡器改善有线链路信号完整性",
+      "llm_tldr_en": "Proposes a feedforward nonlinear equalizer that removes DFE feedback bottleneck and approaches DFE noise margin for short-to-medium reach wireline links, enabling low-complexity signal integrity improvement.",
+      "llm_tldr_cn": "短中距离有线链路中，判决反馈均衡器（DFE）的反馈时序限制成为高速信号完整性提升的瓶颈。本文提出前馈非线性均衡器（FFNE）框架，通过将短窗最大似然序列估计（MLSE）简化为紧凑二进制决策规则，消除了反馈时序瓶颈，同时保留了DFE的噪声容限优势。针对单后光标不归零（NRZ）信号，建立了完整的数学基础、硬件实现和自适应算法。统计分析和均衡极限比较表明，FFNE在性能上接近理想1抽头DFE，且避免了反馈时序路径，更适合高速实现。该工作为短中距离有线链路提供了低复杂度、高性能的均衡方案。",
+      "llm_tldr": "短中距离有线链路中，判决反馈均衡器（DFE）的反馈时序限制成为高速信号完整性提升的瓶颈。本文提出前馈非线性均衡器（FFNE）框架，通过将短窗最大似然序列估计（MLSE）简化为紧凑二进制决策规则，消除了反馈时序瓶颈，同时保留了DFE的噪声容限优势。针对单后光标不归零（NRZ）信号，建立了完整的数学基础、硬件实现和自适应算法。统计分析和均衡极限比较表明，FFNE在性能上接近理想1抽头DFE，且避免了反馈时序路径，更适合高速实现。该工作为短中距离有线链路提供了低复杂度、高性能的均衡方案。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Signal integrity analysis for high-speed interconnects",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.08161v1",
+      "source": "arxiv",
+      "title": "AttentionCap: Transformer Based Capacitance Matrix Learning Toward Full-Chip Extraction",
+      "abstract": "As capacitance extraction accuracy of rule-based pattern matching becomes difficult to sustain at advanced nodes, a growing trend emerges to develop deep-learning-based 2D capacitance models. However, existing MLP- and CNN-based methods constrain their input to fixed metal-layer combinations in a specific process node, limiting their usability in practice. Recognizing the inherent similarity between capacitance matrix and the prevailing attention mechanism, we propose AttentionCap, a customized Transformer for capacitance matrix learning, with a Gram representation framework, a physics-aligned symmetric-attention output layer, and a novel normalized Laplacian loss. We also introduce a process-node embedding to enable multi-node learning. Trained on synthetic data, AttentionCap attains 0.67\\%/3.99\\% self/coupling-capacitance error on unseen real designs under a multi-layer and multi-node setting, surpassing the CNN-Cap baseline with 4.6$\\times$/5.7$\\times$ lower self/coupling error and 192$\\times$ faster inference speed. A pretrained AttentionCap accurately transfers to an unseen node with only 5K samples and 4K finetuning steps. With sufficient accuracy on unseen real designs and strong transferability to new process nodes, AttentionCap offers highly practical value for modern EDA workflows. Code and data are available at https://github.com/THU-numbda/AttentionCap.",
+      "authors": [
+        "Jiechen Huang",
+        "Hector R. Rodriguez",
+        "Dingcheng Yang",
+        "Zuochang Ye",
+        "Yibo Lin",
+        "Wenjian Yu"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AR",
+        "math.NA"
+      ],
+      "published": "2026-06-06T13:20:09+00:00",
+      "link": "https://arxiv.org/pdf/2606.08161v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Transformer-based capacitance matrix learning for full-chip extraction, applicable to SI/PI parasitic modeling",
+      "llm_evidence_cn": "基于Transformer的电容矩阵学习用于全芯片提取，可应用于SI/PI寄生建模",
+      "llm_evidence": "基于Transformer的电容矩阵学习用于全芯片提取，可应用于SI/PI寄生建模",
+      "canonical_evidence": "基于Transformer的电容矩阵学习用于全芯片提取，可应用于SI/PI寄生建模",
+      "llm_tldr_en": "Introduces AttentionCap, a Transformer customized for capacitance matrix learning with Gram representation and symmetric attention, enabling multi-node process embedding.",
+      "llm_tldr_cn": "针对先进工艺下电容提取精度不足的问题，本文提出AttentionCap，一种基于Transformer的电容矩阵学习方法。通过Gram表示框架、物理对齐的对称注意力输出层和归一化拉普拉斯损失，实现了跨工艺节点的电容学习。实验表明，该方法在多个节点上取得高精度，为全芯片寄生参数提取提供了可迁移的机器学习方案。",
+      "llm_tldr": "针对先进工艺下电容提取精度不足的问题，本文提出AttentionCap，一种基于Transformer的电容矩阵学习方法。通过Gram表示框架、物理对齐的对称注意力输出层和归一化拉普拉斯损失，实现了跨工艺节点的电容学习。实验表明，该方法在多个节点上取得高精度，为全芯片寄生参数提取提供了可迁移的机器学习方案。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

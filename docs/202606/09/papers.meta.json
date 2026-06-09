@@ -1,0 +1,54 @@
+{
+  "label": "2026-06-09",
+  "date": "2026-06-09",
+  "generated_at": "2026-06-09T22:06:59",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202606/09/2606.09326v1-generalized-cancellation-of-capacitor-parasitic-inductance-using-a-lattice-network-and-its-application-to-common-mode-noise-reduction",
+      "section": "deep",
+      "title_en": "Generalized Cancellation of Capacitor Parasitic Inductance Using a Lattice Network and Its Application to Common-Mode Noise Reduction",
+      "authors": "Katsuya Nomura, Shuhei Chizuwa, Takashi Masuzawa",
+      "date": "2026-06-08",
+      "pdf": "https://arxiv.org/pdf/2606.09326v1",
+      "score": "9.0",
+      "evidence": "电容器寄生电感消除，用于去耦电容设计",
+      "tldr": "电容寄生电感会恶化高频性能，传统消除方法要求格型网络中电感垂直对称，条件严格。本文基于Z矩阵等效变换，发现该条件仅是充分条件，进而提出垂直不对称格型网络，只需调整一个电感即可消除寄生电感，并扩展至共模噪声抑制。实验验证了方法的有效性，为寄生电感消除提供了更灵活实用的方案。",
+      "tags": "query:si-pi",
+      "abstract_en": "This letter presents a generalized technique for cancelling the parasitic inductance of capacitors using a lattice network. The Z-matrix-based equivalent transformation shows that the conventional vertically symmetric inductance condition is only a sufficient condition and can be relaxed. A vertically asymmetric lattice network is then proposed, enabling the parasitic inductance of capacitors to be cancelled by adjusting only one inductance. The method is further extended to common-mode noise reduction using a common-mode choke, and both concepts are experimentally verified.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/09/2606.08313v1-feedforward-nonlinear-equalizer-for-short--to-medium-reach-wireline-links",
+      "section": "deep",
+      "title_en": "Feedforward Nonlinear Equalizer for Short- to Medium-Reach Wireline Links",
+      "authors": "Kunmo Kim, Paul Kwon, Elad Alon, Ali Niknejad",
+      "date": "2026-06-06",
+      "pdf": "https://arxiv.org/pdf/2606.08313v1",
+      "score": "8.0",
+      "evidence": "前馈非线性均衡器改善有线链路信号完整性",
+      "tldr": "短中距离有线链路中，判决反馈均衡器存在反馈时序瓶颈。本文提出前馈非线性均衡器框架，将短窗最大似然序列估计简化为二进制决策规则，实现低复杂度前馈实现。针对单后光标NRZ情况建立了数学理论与硬件实现，窗长3的FFNE量化了性能-复杂度权衡。扩展到PAM-4并通过模式检测FFNE，在代表性信道条件下优于传统FFE+DFE基线。该框架消除了反馈时序瓶颈，逼近DFE噪声裕度优势。",
+      "tags": "query:si-pi",
+      "abstract_en": "This paper presents a feedforward nonlinear equalizer (FFNE) framework for short- to medium-reach wireline links that removes the feedback-timing bottleneck of decision-feedback equalizers (DFEs) while approaching the noise-margin advantage within a characterized operating region. The proposed FFNE reduces short-window maximum-likelihood sequence estimation to a compact binary decision rule, enabling a low-complexity feedforward realization without transmitter-side encoding. For the single-postcursor NRZ case, the mathematical foundation, hardware implementation, tap adaptation, statistical analysis, and equalization limit relative to an ideal 1-tap DFE are established. A window-length-3 FFNE quantifies the performance-complexity tradeoff of longer sequence windows. The framework is further extended to PAM-4 modulation and simultaneous precursor/postcursor equalization through a pattern-detection-based FFNE (PD-FFNE), which outperforms conventional FFE+DFE baselines under representative channel conditions.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/09/2606.08161v1-attentioncap-transformer-based-capacitance-matrix-learning-toward-full-chip-extraction",
+      "section": "quick",
+      "title_en": "AttentionCap: Transformer Based Capacitance Matrix Learning Toward Full-Chip Extraction",
+      "authors": "Jiechen Huang, Hector R. Rodriguez, Dingcheng Yang, Zuochang Ye, Yibo Lin, Wenjian Yu",
+      "date": "2026-06-06",
+      "pdf": "https://arxiv.org/pdf/2606.08161v1",
+      "score": "7.0",
+      "evidence": "基于Transformer的电容矩阵学习用于全芯片提取，可应用于SI/PI寄生建模",
+      "tldr": "针对先进工艺节点下基于规则的模式匹配电容提取精度不足的问题，现有深度学习方法受限于固定金属层组合。本文提出AttentionCap，一种定制Transformer架构，通过Gram表示框架和物理对齐的对称注意力输出层学习电容矩阵，并引入工艺节点嵌入实现多节点训练。在合成数据上训练后，对未见真实设计在多层多节点设置下自/耦合电容误差仅0.67%/3.99%，相比CNN-Cap分别降低4.6倍和5.7倍，推理速度提升192倍。预训练模型仅需少量样本和微调即可迁移至新节点，展示了高实用价值。",
+      "tags": "query:si-pi",
+      "abstract_en": "As capacitance extraction accuracy of rule-based pattern matching becomes difficult to sustain at advanced nodes, a growing trend emerges to develop deep-learning-based 2D capacitance models. However, existing MLP- and CNN-based methods constrain their input to fixed metal-layer combinations in a specific process node, limiting their usability in practice. Recognizing the inherent similarity between capacitance matrix and the prevailing attention mechanism, we propose AttentionCap, a customized Transformer for capacitance matrix learning, with a Gram representation framework, a physics-aligned symmetric-attention output layer, and a novel normalized Laplacian loss. We also introduce a process-node embedding to enable multi-node learning. Trained on synthetic data, AttentionCap attains 0.67\\%/3.99\\% self/coupling-capacitance error on unseen real designs under a multi-layer and multi-node setting, surpassing the CNN-Cap baseline with 4.6$\\times$/5.7$\\times$ lower self/coupling error and 192$\\times$ faster inference speed. A pretrained AttentionCap accurately transfers to an unseen node with only 5K samples and 4K finetuning steps. With sufficient accuracy on unseen real designs and strong transferability to new process nodes, AttentionCap offers highly practical value for modern EDA workflows. Code and data are available at https://github.com/THU-numbda/AttentionCap.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

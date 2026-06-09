@@ -6,31 +6,33 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-08
-- 运行时间：2026-06-08 22:02:52 UTC
+- 最新运行日期：2026-06-09
+- 运行时间：2026-06-09 22:06:53 UTC
 - 运行状态：成功
 - 本次总论文数：3
 - 精读区：2
 - 速读区：1
 
 ### 今日简报（AI）
-今日研读3篇论文，精读2篇聚焦信号完整性预布局优化与电路模型保持结构算子分裂，速读1篇涉及微波模拟多用户通信。  
-最值得关注《Amortized Neural Optimization》提出的可微代理方法（9.0分），以及《Structure-Preserving Operator Splitting》的JR分解技巧（8.0分）。  
-建议优先了解神经网络驱动的预布局设计空间高效搜索，有助于加速实际信号完整性分析。
-- 详情：[/202606/08/README](/202606/08/README)
+今日阅读3篇论文，精读2篇，速读1篇，重点聚焦电容寄生电感消除与前馈非线性均衡器。
+
+最值得关注的是9分论文提出的晶格网络消除电容寄生电感方法，以及8分论文的短距有线链路前馈均衡器设计。
+
+建议普通读者优先阅读高分精读论文，速读论文的电容矩阵学习可作为芯片提取辅助参考。
+- 详情：[/202606/09/README](/202606/09/README)
 
 ### 精读区论文标签
-1. [Amortized Neural Optimization for Pre-Layout Signal Integrity Design Space Exploration using Differentiable Surrogates](/202606/08/2606.07463v1-amortized-neural-optimization-for-pre-layout-signal-integrity-design-space-exploration-using-differentiable-surrogates)  
+1. [Generalized Cancellation of Capacitor Parasitic Inductance Using a Lattice Network and Its Application to Common-Mode Noise Reduction](/202606/09/2606.09326v1-generalized-cancellation-of-capacitor-parasitic-inductance-using-a-lattice-network-and-its-application-to-common-mode-noise-reduction)  
    标签：评分：9.0/10、query:si-pi
-   evidence：面向预布局信号完整性的可微神经替代优化
-2. [Structure-Preserving Operator Splitting via JR-Decomposition for Circuit Models](/202606/08/2606.06153v1-structure-preserving-operator-splitting-via-jr-decomposition-for-circuit-models)  
-   标签：评分：8.0/10、query:bga-xtalk
-   evidence：基于结构保持分解的等效电路建模
+   evidence：电容器寄生电感消除，用于去耦电容设计
+2. [Feedforward Nonlinear Equalizer for Short- to Medium-Reach Wireline Links](/202606/09/2606.08313v1-feedforward-nonlinear-equalizer-for-short--to-medium-reach-wireline-links)  
+   标签：评分：8.0/10、query:si-pi
+   evidence：前馈非线性均衡器改善有线链路信号完整性
 
 ### 速读区论文标签
-1. [Microwave Linear Analog Computers Aided Multiuser Communication: General Impedance Matching and Precoding Optimization](/202606/08/2606.04532v1-microwave-linear-analog-computers-aided-multiuser-communication-general-impedance-matching-and-precoding-optimization)  
+1. [AttentionCap: Transformer Based Capacitance Matrix Learning Toward Full-Chip Extraction](/202606/09/2606.08161v1-attentioncap-transformer-based-capacitance-matrix-learning-toward-full-chip-extraction)  
    标签：评分：7.0/10、query:si-pi
-   evidence：高速互连中的阻抗匹配优化
+   evidence：基于Transformer的电容矩阵学习用于全芯片提取，可应用于SI/PI寄生建模
 
 
 <div class="dpr-home-promo-card">

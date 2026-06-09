@@ -1,0 +1,282 @@
+Title: Generalized Cancellation of Capacitor Parasitic Inductance Using a Lattice Network and Its Application to Common-Mode Noise Reduction
+
+URL Source: https://arxiv.org/pdf/2606.09326v1
+
+Published Time: Tue, 09 Jun 2026 02:04:32 GMT
+
+Number of Pages: 4
+
+Markdown Content:
+> 1
+
+# Generalized Cancellation of Capacitor Parasitic Inductance Using a Lattice Network and Its Application to Common-Mode Noise Reduction 
+
+Katsuya Nomura, Member, IEEE, Shuhei Chizuwa, Takashi Masuzawa, Member, IEEE 
+
+Abstract —This letter presents a generalized technique for cancelling the parasitic inductance of capacitors using a lattice network. The Z-matrix-based equivalent transformation shows that the conventional vertically symmetric inductance condition is only a sufficient condition and can be relaxed. A vertically asymmetric lattice network is then proposed, enabling the par-asitic inductance of capacitors to be cancelled by adjusting only one inductance. The method is further extended to common-mode noise reduction using a common-mode choke, and both concepts are experimentally verified. 
+
+Index Terms —EMI filter, capacitor, inductance cancellation, common-mode noise. 
+
+I. I NTRODUCTION 
+
+Capacitors are essential components in electromagnetic compatibility (EMC) design. They are used to bypass con-ducted noise by utilizing their low-impedance characteristics at high frequencies. However, it is well known that the performance of practical capacitors is significantly degraded at high frequencies by equivalent series inductance (ESL), which represents the parasitic inductance of the capacitor [1]. Therefore, when bypass capacitors are mounted, it is important to reduce ESL, for example, by shortening the connection path [2]. Nevertheless, ESL can be reduced but cannot be completely eliminated. In power converters, film capacitors and electrolytic capacitors are often used to satisfy require-ments for large capacitance and high ripple-current capability. These capacitors tend to have larger ESL than small ceramic capacitors [3]. As a technique that can theoretically eliminate the influence of ESL, ESL cancellation has been proposed in the field of power electronics. ESL cancellation techniques can be broadly classified into a method using mutual inductance between two inductors [4], [5] and a method forming a lattice network using two capacitors [6]. In the former method, among multiple inductive elements in a filter, the two inductors used for magnetic coupling can be selected with a certain degree of freedom [7], and several subsequent studies have 
+
+K. Nomura is with School of Engineering, Kwansei Gakuin University, Sanda 669-1330, Japan (e-mail:katsuya.nomura@kwansei.ac.jp). S. Chizuwa is with Mitsubishi Heavy Industries, Yokohama 231-8715, Japan. T. Masuzawa is with Mitsubishi Heavy Industries, Nagoya 453-8515, Japan. 𝑍 ଵୟ 𝑍 ଵୠ 𝑍 ଶ 𝑍 ଶ𝑉 ଵ 𝑉 ଶ𝐼 ଶ𝐼 ଶ𝐼 ଵ𝐼 ଵ
+
+(a) 𝑍 ଵ ′𝑍 ଶ ′𝑍 ଵ ′𝑉 ଵ𝐼 ଵ𝐼 ଵ𝑉 ଶ𝐼 ଶ𝐼 ଶ (b) Fig. 1: (a) Lattice network and (b) T-equivalent circuit. 
+
+been reported [8], [9]. In contrast, the latter method realizes cancellation by the equivalent transformation of a lattice net-work rather than by magnetic coupling. However, subsequent studies on this approach have been relatively limited [10]. One possible reason is that the lattice-network-based method has been considered to require all ESLs in the circuit to be equal for ESL cancellation, resulting in a strong constraint and low implementation flexibility. In this letter, the condition for ESL cancellation using a lattice network is reconsidered, and it is shown that the conventional vertically symmetric inductance condition can be relaxed. A Z-matrix-based equivalent transformation reveals that the conventional condition is only a sufficient condition. Based on this result, an ESL cancellation circuit using a verti-cally asymmetric lattice network is proposed. The proposed method is further extended to common-mode (CM) noise reduction using a CM choke. The remainder of this letter is organized as follows. Sec-tion II derives the ESL cancellation condition on the ba-sis of the T-equivalent representation of a lattice network. Section III experimentally verifies the effectiveness of the proposed method through S-parameter measurements using prototype circuits. Finally, Section IV concludes this letter. II. P RINCIPLE AND PROPOSED METHOD 
+
+Fig. 1(a) shows a lattice network. This circuit can be represented by the T-equivalent circuit shown in Fig. 1(b), as demonstrated by comparing the Z-matrices of the two circuits. 
+
+> arXiv:2606.09326v1 [math.OC] 8 Jun 2026 2
+
+First, the Z-matrix of the lattice network is derived. The definition of the Z-matrix is 
+
+V1
+
+V2
+
+
+
+=
+
+Z11 Z12 
+
+Z21 Z22 
+
+  I1
+
+I2
+
+
+
+. (1) First, 
+
+Z11 = V1
+
+I1 I2=0 
+
+= ( Z1a + Z2) ∥ (Z1b + Z2)= (Z1a + Z2)( Z1b + Z2)
+
+Z1a + Z1b + 2 Z2
+
+. (2) Similarly, 
+
+Z12 = V1
+
+I2 I1=0 
+
+= (Z1b + Z2)Z2 − (Z1a + Z2)Z1b
+
+Z1a + Z1b + 2 Z2
+
+= Z22 − Z1aZ1b
+
+Z1a + Z1b + 2 Z2
+
+. (3) From the symmetry of the circuit, 
+
+Z21 = Z12 , (4) 
+
+Z22 = Z11 (5) hold. Therefore, the Z-matrix [Zsym ] of the lattice network is given by 
+
+[Zsym ] = 
+
+
+
+(Z1a + Z2)( Z1b + Z2)
+
+Z1a + Z1b + 2 Z2
+
+Z22 − Z1aZ1b
+
+Z1a + Z1b + 2 Z2
+
+Z22 − Z1aZ1b
+
+Z1a + Z1b + 2 Z2
+
+(Z1a + Z2)( Z1b + Z2)
+
+Z1a + Z1b + 2 Z2
+
+ .
+
+(6) Next, the Z-matrix of the T-equivalent circuit is derived. The terminal voltages V1 and V2 are expressed in terms of the terminal currents I1 and I2 as 
+
+(V1 = Z′
+
+> 1
+
+I1 + Z′
+
+> 2
+
+(I1 + I2),V2 = Z′
+
+> 1
+
+I2 + Z′
+
+> 2
+
+(I1 + I2). (7) These equations can be rearranged as 
+
+(V1 = ( Z′ 
+
+> 1
+
++ Z′
+
+> 2
+
+)I1 + Z′
+
+> 2
+
+I2,V2 = Z′
+
+> 2
+
+I1 + ( Z′ 
+
+> 1
+
++ Z′
+
+> 2
+
+)I2. (8) Thus, the Z-matrix [ZT] of the T-equivalent circuit is 
+
+[ZT] = 
+
+Z′ 
+
+> 1
+
++ Z′ 
+
+> 2
+
+Z′
+
+> 2
+
+Z′ 
+
+> 2
+
+Z′ 
+
+> 1
+
++ Z′
+
+> 2
+
+
+
+. (9) By comparing (6) and (9), the following relations are obtained: 
+
+Z′ 
+
+> 1
+
+= 2Z1aZ1b + ( Z1a + Z1b)Z2
+
+Z1a + Z1b + 2 Z2
+
+, (10) 
+
+Z′ 
+
+> 2
+
+= Z22 − Z1aZ1b
+
+Z1a + Z1b + 2 Z2
+
+. (11) 𝐿 ଶ 𝐿 ଶ𝐿 ଵ௔ 𝐶 𝐿 ଵ௕ 𝐶 
+
+> Fig. 2: ESL cancellation circuit.
+
+𝐿 ଶ௔ 𝐿 ଶ௕ 𝐿 ଵ௔ 𝐿 ଵ௕ 𝐿 ଶ௔ 𝐿 ଶ௔ 𝐿 ଶ௔ 𝐿 ଶ௕ 𝐶 𝐶 𝐶 𝐶 
+
+> Fig. 3: ESL cancellation circuit for CM noise reduction.
+
+In particular, when Z1 = Z1a = Z1b holds, 
+
+Z′ 
+
+> 1
+
+= Z1, (12) 
+
+Z′ 
+
+> 2
+
+= Z2 − Z1
+
+2 (13) is obtained. Fig. 2 shows the circuit diagram of ESL cancellation using a lattice network. In the conventional method [6], it was explained that ESL cancellation requires 
+
+L1 = L1a = L1b. (14) Under this condition, the effective ESL of the capacitors is cancelled and becomes zero, as is clear from (13). However, this condition requires all four ESLs to be equal and therefore imposes a strong implementation constraint. In contrast, as is clear from (11), even when L1a and L1b are not equal, the inductance component of Z′ 
+
+> 2
+
+can be made zero if 
+
+L22 = L1aL1b (15) is satisfied. Therefore, the conventional condition in (14) is only one sufficient condition for ESL cancellation, and ESL cancellation can more generally be realized even with a vertically asymmetric lattice network. The proposed method can also be extended to CM noise reduction. Fig. 3 shows the ESL cancellation circuit for CM noise reduction. In this configuration, a CM choke provides inductance that does not affect the differential-mode. This inductance is not intended to directly suppress the CM current through the high impedance of the choke, as in a conventional EMI filter. Instead, it functions as an adjustment element 3Port 1 Port 2 
+
+𝐿 ଶ 𝐿 ଶ𝐿 ଵ௔ 𝐿 ଵ௕ 𝐶 𝐶 
+
+> (a)
+
+Port 1 Port 2 
+
+> (b) Fig. 4: Normal circuit and measurement setup: (a) circuit diagram and (b) photograph.
+
+for satisfying the ESL cancellation condition of the lattice network. Therefore, the required inductance is relatively small, suggesting that small magnetic cores can be used for imple-mentation. III. E XPERIMENTAL VERIFICATION 
+
+Prototype circuits were fabricated to verify the effective-ness of the proposed method. Figs. 4(a) and (b) show the normal circuit used for the measurement and a photograph of the setup, respectively. The circuits were constructed us-ing a breadboard, jumper wires, and two capacitors (Ruby-con, 450MPS105J, 1 μF). The two-port S-parameter S21 was measured using a network analyzer (OMICRON Lab, Bode 100). To suppress the influence of ground-loop-induced CM currents, CM chokes were formed by winding each port cable around nanocrystalline soft magnetic cores (Proterial, FT-3K50T F6045GS) during the measurement [11]. Fig. 5 shows the basic ESL cancellation circuit. Figs. 6 and 7 show the circuits based on the conventional and pro-posed conditions, respectively. In the conventional circuit, 
+
+L1a and L1b must be adjusted simultaneously to satisfy (14). In contrast, in the proposed circuit, a loop corresponding to L1a is introduced, making L1a clearly larger than L1b.Then, L1b is adjusted while L1a is fixed by changing the distance corresponding to L1b. Thus, the proposed circuit can satisfy the cancellation condition in (15) by adjusting only one inductance. Fig. 8 shows the measured S21 results. The dashed curves represent simulated results of Fig. 4(a) for different values of L2 with C = 1 μF and L1a = L1b = 0 nH . The normal circuit exhibits an ESL of approximately 30 nH . Both the conventional and proposed cancellation circuits reduce the effective ESL. In the proposed circuit, the best result 𝐿 ଵ௔ 𝐿 ଵ௕          
+
+> Fig. 5: Circuit diagram of the ESL cancellation circuit.
+> (a) Added jumper wires (b) Fig. 6: Conventional cancellation circuit: (a) without and (b) with additional jumper wires. Loop for 𝐿 ଵ௔
+> (a) Distance for 𝐿 ଵ௕ (b)
+> (c) (d) (e) Fig. 7: Proposed cancellation circuit: (a) loop for L1aand (b)–(e) different distances for L1b.
+
+Frequency (Hz)  
+
+> S21  (dB) 30 nH 20 nH 10 nH 5 nH 3 nH 1 nH 0 nH
+> Fig. 8: Measured results of S21 .
+
+is obtained for the third proposed configuration shown in Fig. 7(d), where the effective ESL is reduced to less than 
+
+1 nH . The degradation observed when the conductor spacing is either increased or decreased is consistent with (15), because 
+
+L1b becomes either smaller or larger than the value required for cancellation. The proposed method was also evaluated for CM noise reduction. Fig. 9 shows the normal and proposed CM verification circuits. Film capacitors (Nissei Electric, AMZB0050J15400000000, 150 nF ) and Ni-Zn ferrite cores (TDK, B64290P0037X001) were used, and S21 was measured 4𝐿 ଵ௔ 𝐿 ଵ௕ 𝐿 ଶ 𝐿 ଶ 𝐿 ଶ 𝐿 ଶ𝐶 𝐶 𝐶 𝐶 
+
+(a) 𝐿 ଵ௔ 𝐿 ଵ௕ (b) 
+
+(c) (d) Normal Proposed 1-core 2-core 3-core 4-core 5-core 
+
+(e) Fig. 9: CM verification circuits: (a),(b) circuit diagrams and (c),(d) pho-tographs of the normal and proposed circuits, respectively; (e) photographs of the configurations with different numbers of magnetic cores. 
+
+while varying the number of cores corresponding to L1a from one to five. Fig. 10 shows the measured results. In the normal circuit, the S21 changes almost monotonically with the number of cores. In contrast, the proposed circuit exhibits the lowest 
+
+S21 around the resonance region with four cores, and the S21 
+
+degrades when the number of cores is either increased or decreased. This behavior agrees with the tendency observed in Fig. 8 and confirms that the proposed cancellation concept is also effective for CM noise reduction. IV. C ONCLUSION 
+
+This letter generalized the condition for cancelling the parasitic inductance of capacitors using a lattice network. The Z-matrix-based equivalent transformation showed that the conventional vertically symmetric condition is only a sufficient condition and can be relaxed. Based on this result, a vertically asymmetric cancellation circuit was proposed, in which the condition can be satisfied by adjusting only one inductance. The method was also extended to CM noise reduction using a CM choke. The effectiveness of both the asymmetric ESL cancellation circuit and its CM-noise-reduction extension was verified through S-parameter measurements using prototype circuits. REFERENCES [1] H. W. Ott, Electromagnetic compatibility engineering . John Wiley & Sons, 2011. Frequency (Hz) 
+
+> S21  (dB)
+
+(a) Frequency (Hz) 
+
+> S21  (dB)
+
+(b) Fig. 10: S21 of the CM verification circuits: (a) normal circuit and (b) proposed circuit. [2] T. H. Hubing, J. L. Drewniak, T. P. Van Doren, and D. M. Hockanson, “Power bus decoupling on multilayer printed circuit boards,” IEEE Transactions on Electromagnetic Compatibility , vol. 37, no. 2, pp. 155– 166, 1995. [3] H. Wang and F. Blaabjerg, “Reliability of capacitors for dc-link applica-tions in power electronic converters—an overview,” IEEE Transactions on industry Applications , vol. 50, no. 5, pp. 3569–3578, 2014. [4] T. C. Neugebauer and D. J. Perreault, “Filters with inductance cancel-lation using printed circuit board transformers,” IEEE Transactions on Power Electronics , vol. 19, no. 3, pp. 591–602, 2004. [5] T. C. Neugebauer, J. W. Phinney, and D. J. Perreault, “Filters and com-ponents with inductance cancellation,” IEEE Transactions on Industry Applications , vol. 40, no. 2, pp. 483–491, 2004. [6] S. Wang, F. C. Lee, and W. G. Odendaal, “Cancellation of capacitor parasitic parameters for noise reduction application,” IEEE Transactions on power electronics , vol. 21, no. 4, pp. 1125–1132, 2006. [7] P. Wang, B. N. Sanusi, C. Liu, J. Huang, T.-G. Zsurzsan, M. A. Andersen, and Z. Ouyang, “Utilizing mutual coupling to eliminate parasitic inductance in emi filter capacitors for noise reduction,” IEEE Transactions on Industry Applications , vol. 60, no. 5, pp. 7206–7215, 2024. [8] A. J. McDowell and T. H. Hubing, “Parasitic inductance cancellation for surface mount shunt capacitor filters,” IEEE transactions on electro-magnetic compatibility , vol. 56, no. 1, pp. 74–82, 2013. [9] A. Kobayashi, Y. Sasaki, and N. Yoneda, “A new inductance cancelation scheme for surface mount shunt capacitor filters,” IEEE Transactions on Electromagnetic Compatibility , vol. 64, no. 3, pp. 732–740, 2022. [10] S. Wang, F. C. Lee, and J. D. van Wyk, “A study of integration of parasitic cancellation techniques for emi filter design with discrete components,” IEEE transactions on Power Electronics , vol. 23, no. 6, pp. 3094–3102, 2008. [11] A. Davis and S. Sandler, “The 2-Port Shunt-Thru Mea-surement and the Inherent Ground Loop,” Signal Integrity Journal, Apr. 2019, accessed: 2026-05-15. [Online]. Avail-able: https://www.signalintegrityjournal.com/articles/1202-the-2-port-shunt-thru-measurement-and-the-inherent-ground-loop
