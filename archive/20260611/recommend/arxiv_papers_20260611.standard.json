@@ -1,0 +1,60 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-11T20:57:58.634171+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2606.09129v1",
+      "source": "arxiv",
+      "title": "OpenOpt: An Open-Source SRAM Optimizer Based on Equivalent Circuit Model",
+      "abstract": "This paper proposes a co-optimization framework that jointly optimizes SRAM architecture and transistor sizing using equivalent circuit models. The framework simplifies inactive SRAM cells into equivalent RC loads and static power models, achieving up to 61.4$\\times$ simulation speedup while maintaining high fidelity (read/write delay error $<$0.22%, power error $<$1.68%). A joint search space encompassing architecture parameters and device sizing integrates seven algorithms including SA, PSO, Bayesian Optimization variants, and multi-objective evolutionary algorithms. Based on FreePDK45, ablation experiments confirm complementary gains from architecture selection and transistor sizing. Among all algorithms, MOEA/D achieves the best Figure of Merit (8.2721), yielding 6.2% improvement in SNM, 73.6% reduction in area, and 42.3% reduction in peak power. The framework is publicly available at https://github.com/W1Y1K1/OpenOpt.",
+      "authors": [
+        "Yikai Wang",
+        "Yiheng Wu",
+        "Can Wang",
+        "Bohao Liu",
+        "Junhao Ma",
+        "Zhuohua Liu",
+        "Qinxin Mei",
+        "Shan Shen"
+      ],
+      "primary_category": "cs.NE",
+      "categories": [
+        "cs.NE",
+        "cs.AR"
+      ],
+      "published": "2026-06-08T07:26:06+00:00",
+      "link": "https://arxiv.org/pdf/2606.09129v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "equivalent circuit modeling and optimization applicable to PDN and interconnect",
+      "llm_evidence_cn": "等效电路模型与优化方法可应用于PDN和互连建模",
+      "llm_evidence": "等效电路模型与优化方法可应用于PDN和互连建模",
+      "canonical_evidence": "等效电路模型与优化方法可应用于PDN和互连建模",
+      "llm_tldr_en": "This paper proposes an open-source SRAM optimizer using equivalent circuit models that simplify inactive cells as RC loads, achieving 61.4x speedup with high fidelity, and integrates multiple optimization algorithms.",
+      "llm_tldr_cn": "本文提出一个基于等效电路模型的开源SRAM优化框架，将非活跃单元简化为等效RC负载，实现61.4倍仿真加速且读写延迟误差低于0.22%，功率误差低于1.68%。框架整合了多种优化算法，其中MOEA/D取得了最佳综合指标。",
+      "llm_tldr": "本文提出一个基于等效电路模型的开源SRAM优化框架，将非活跃单元简化为等效RC负载，实现61.4倍仿真加速且读写延迟误差低于0.22%，功率误差低于1.68%。框架整合了多种优化算法，其中MOEA/D取得了最佳综合指标。",
+      "llm_tags": [
+        "query:si-pi:composite"
+      ],
+      "matched_query_tag": "query:si-pi:composite",
+      "matched_query_text": "Papers central to 板级、封装级、芯片级信号完整性与电源完整性（SI/PI）相关论文检索，涵盖高速互连、建模、PDN优化及机器学习应用。, especially work that connects or combines: Power integrity and PDN modeling optimization; Signal integrity analysis for high-speed interconnects; SerDes DDR and HBM channel modeling and simulation; PDN impedance modeling and decoupling capacitor design; SI/PI analysis for 2.5D 3D and Chiplet packaging; Machine learning methods for SI/PI analysis and optimization; Advanced modeling and optimization techniques for SI/PI in high speed systems; Machine learning applications for signal and power integrity analysis; SI/PI challenges and solutions for Chiplet and 3D heterogeneous integration; High speed channel characterization for SerDes and HBM interfaces.",
+      "matched_requirement_id": "req-composite-si-pi",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

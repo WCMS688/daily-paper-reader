@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-06-11 <!--dpr-date:20260611-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/11/2606.09129v1-openopt-an-open-source-sram-optimizer-based-on-equivalent-circuit-model" data-sidebar-item="{&quot;title&quot;: &quot;OpenOpt: An Open-Source SRAM Optimizer Based on Equivalent Circuit Model&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.09129v1-openopt-an-open-source-sram-optimizer-based-on-equivalent-circuit-model&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;等效电路模型与优化方法可应用于PDN和互连建模&quot;}">OpenOpt: An Open-Source SRAM Optimizer Based on Equivalent Circuit Model</a>
   * 2026-06-09 <!--dpr-date:20260609-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/09/2606.09326v1-generalized-cancellation-of-capacitor-parasitic-inductance-using-a-lattice-network-and-its-application-to-common-mode-noise-reduction" data-sidebar-item="{&quot;title&quot;: &quot;Generalized Cancellation of Capacitor Parasitic Inductance Using a Lattice Network and Its Application to Common-Mode Noise Reduction&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.09326v1-generalized-cancellation-of-capacitor-parasitic-inductance-using-a-lattice-network-and-its-application-to-common-mode-noise-reduction&quot;, &quot;score&quot;: &quot;9.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;电容器寄生电感消除，用于去耦电容设计&quot;}">Generalized Cancellation of Capacitor Parasitic Inductance Using a Lattice Network and Its Application to Common-Mode Noise Reduction</a>

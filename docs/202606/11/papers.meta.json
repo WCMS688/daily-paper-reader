@@ -1,0 +1,24 @@
+{
+  "label": "2026-06-11",
+  "date": "2026-06-11",
+  "generated_at": "2026-06-11T20:58:38",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202606/11/2606.09129v1-openopt-an-open-source-sram-optimizer-based-on-equivalent-circuit-model",
+      "section": "quick",
+      "title_en": "OpenOpt: An Open-Source SRAM Optimizer Based on Equivalent Circuit Model",
+      "authors": "Yikai Wang, Yiheng Wu, Can Wang, Bohao Liu, Junhao Ma, Zhuohua Liu, Qinxin Mei, Shan Shen",
+      "date": "2026-06-08",
+      "pdf": "https://arxiv.org/pdf/2606.09129v1",
+      "score": "7.0",
+      "evidence": "等效电路模型与优化方法可应用于PDN和互连建模",
+      "tldr": "SRAM优化面临仿真速度慢、难以兼顾架构与器件尺寸的问题。本文提出开源框架OpenOpt，基于等效电路模型将非活动单元简化为RC负载，实现61.4倍仿真加速且误差极小。联合搜索架构参数与晶体管尺寸，集成七种算法，其中MOEA/D取得最优品质因数8.2721，使SNM提升6.2%，面积缩减73.6%，峰值功耗降低42.3%。该框架已开源，为SRAM高效协同优化提供了实用工具。",
+      "tags": "query:si-pi",
+      "abstract_en": "This paper proposes a co-optimization framework that jointly optimizes SRAM architecture and transistor sizing using equivalent circuit models. The framework simplifies inactive SRAM cells into equivalent RC loads and static power models, achieving up to 61.4$\\times$ simulation speedup while maintaining high fidelity (read/write delay error $<$0.22%, power error $<$1.68%). A joint search space encompassing architecture parameters and device sizing integrates seven algorithms including SA, PSO, Bayesian Optimization variants, and multi-objective evolutionary algorithms. Based on FreePDK45, ablation experiments confirm complementary gains from architecture selection and transistor sizing. Among all algorithms, MOEA/D achieves the best Figure of Merit (8.2721), yielding 6.2% improvement in SNM, 73.6% reduction in area, and 42.3% reduction in peak power. The framework is publicly available at https://github.com/W1Y1K1/OpenOpt.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
