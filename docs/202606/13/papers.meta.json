@@ -1,0 +1,39 @@
+{
+  "label": "2026-06-13",
+  "date": "2026-06-13",
+  "generated_at": "2026-06-13T21:12:37",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202606/13/2606.11718v1-making-locality-aware-gemm-compatible-with-page-granularity-placement-on-chiplet-gpus",
+      "section": "quick",
+      "title_en": "Making Locality-aware GEMM Compatible with Page-Granularity Placement on Chiplet GPUs",
+      "authors": "Euijun Chung, Jae Hyung Ju, Hyesoon Kim",
+      "date": "2026-06-10",
+      "pdf": "https://arxiv.org/pdf/2606.11718v1",
+      "score": "7.0",
+      "evidence": "小芯片GPU内存局部性与HBM，涉及小芯片封装的SI/PI",
+      "tldr": "多芯片GPU因其非均匀内存系统，局部感知调度与固定页粒度数据放置存在不兼容问题，导致通用矩阵乘法（GEMM）性能受限。本文提出Chiplet-Contiguous Layout内存布局，将芯片局部数据连续存储，使局部感知放置兼容页粒度，无需修改操作系统或硬件。在Qwen 3 30B和Llama 3.1 70B的大语言模型GEMM上，该方法相比4KB交错减少远程HBM流量24.7倍和19.2倍，较粗粒度局部感知放置降低4.1倍和2.1倍。该工作为芯片GPU上的高效数据局部性优化提供了实用方案。",
+      "tags": "query:si-pi",
+      "abstract_en": "Multi-chiplet GPUs scale compute throughput and high-bandwidth memory (HBM) capacity, but their non-uniform memory system makes locality between chiplets and their data critical to the GPU's performance and energy efficiency. Locality-aware scheduling and data placement identify which data should reside near each chiplet. However, in general matrix multiplication (GEMM), locality-aware data placement often becomes incompatible with a fixed page-granularity data interleaving, since the optimal granularity for mapping data across chiplets varies widely across workloads. We propose Chiplet-Contiguous Layout, a global memory layout that stores chiplet-local data contiguously. Chiplet-Contiguous Layout enables locality-aware placement compatible with page-granularity placement across diverse large language model (LLM) GEMM shapes, without changes to the operating system or hardware. On representative LLM inference and training GEMMs from Qwen 3 30B and Llama 3.1 70B, Chiplet-Contiguous Layout on average reduces remote HBM traffic by 24.7x on Qwen and 19.2x on Llama over 4KB interleaving, and by 4.1x and 2.1x over coarse locality-aware placement.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/13/2606.09129v1-openopt-an-open-source-sram-optimizer-based-on-equivalent-circuit-model",
+      "section": "quick",
+      "title_en": "OpenOpt: An Open-Source SRAM Optimizer Based on Equivalent Circuit Model",
+      "authors": "Yikai Wang, Yiheng Wu, Can Wang, Bohao Liu, Junhao Ma, Zhuohua Liu, Qinxin Mei, Shan Shen",
+      "date": "2026-06-08",
+      "pdf": "https://arxiv.org/pdf/2606.09129v1",
+      "score": "6.0",
+      "evidence": "基于等效电路模型的SRAM优化，可用于PDN建模",
+      "tldr": "SRAM优化面临仿真成本高和架构与尺寸难以联合优化的挑战。本文提出OpenOpt开源框架，采用等效电路模型将非活动单元简化为RC负载，实现61.4倍仿真加速，误差低于0.22%。联合搜索架构参数与晶体管尺寸，集成SA、PSO、贝叶斯优化及多目标进化算法等七种方法。实验表明，MOEA/D算法取得最佳综合指标，SNM提升6.2%，面积减少73.6%，峰值功耗降低42.3%。该框架公开于GitHub，为SRAM设计提供高效开源优化工具。",
+      "tags": "query:si-pi",
+      "abstract_en": "This paper proposes a co-optimization framework that jointly optimizes SRAM architecture and transistor sizing using equivalent circuit models. The framework simplifies inactive SRAM cells into equivalent RC loads and static power models, achieving up to 61.4$\\times$ simulation speedup while maintaining high fidelity (read/write delay error $<$0.22%, power error $<$1.68%). A joint search space encompassing architecture parameters and device sizing integrates seven algorithms including SA, PSO, Bayesian Optimization variants, and multi-objective evolutionary algorithms. Based on FreePDK45, ablation experiments confirm complementary gains from architecture selection and transistor sizing. Among all algorithms, MOEA/D achieves the best Figure of Merit (8.2721), yielding 6.2% improvement in SNM, 73.6% reduction in area, and 42.3% reduction in peak power. The framework is publicly available at https://github.com/W1Y1K1/OpenOpt.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
