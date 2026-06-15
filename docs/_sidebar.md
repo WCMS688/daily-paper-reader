@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-06-15 <!--dpr-date:20260615-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/15/2606.11716v2-a-fast-locality-simulator-for-gemm-design-space-exploration-on-multi-chiplet-gpus" data-sidebar-item="{&quot;title&quot;: &quot;A Fast Locality Simulator for GEMM Design-Space Exploration on Multi-Chiplet GPUs&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.11716v2-a-fast-locality-simulator-for-gemm-design-space-exploration-on-multi-chiplet-gpus&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;多芯片GPU芯片间流量模拟&quot;}">A Fast Locality Simulator for GEMM Design-Space Exploration on Multi-Chiplet GPUs</a>
   * 2026-06-13 <!--dpr-date:20260613-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/13/2606.11718v1-making-locality-aware-gemm-compatible-with-page-granularity-placement-on-chiplet-gpus" data-sidebar-item="{&quot;title&quot;: &quot;Making Locality-aware GEMM Compatible with Page-Granularity Placement on Chiplet GPUs&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.11718v1-making-locality-aware-gemm-compatible-with-page-granularity-placement-on-chiplet-gpus&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;小芯片GPU内存局部性与HBM，涉及小芯片封装的SI/PI&quot;}">Making Locality-aware GEMM Compatible with Page-Granularity Placement on Chiplet GPUs</a>

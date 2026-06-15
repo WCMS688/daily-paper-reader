@@ -1,0 +1,24 @@
+{
+  "label": "2026-06-15",
+  "date": "2026-06-15",
+  "generated_at": "2026-06-15T22:16:30",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202606/15/2606.11716v2-a-fast-locality-simulator-for-gemm-design-space-exploration-on-multi-chiplet-gpus",
+      "section": "quick",
+      "title_en": "A Fast Locality Simulator for GEMM Design-Space Exploration on Multi-Chiplet GPUs",
+      "authors": "Euijun Chung, Hyesoon Kim",
+      "date": "2026-06-10",
+      "pdf": "https://arxiv.org/pdf/2606.11716v2",
+      "score": "7.0",
+      "evidence": "多芯片GPU芯片间流量模拟",
+      "tldr": "多芯片GPU中，远程HBM流量是性能瓶颈，GEMM的远程流量受内核选择影响。本文提出快速瓦片级局部性模拟器，模拟CTA调度与缓存，评估全尺寸LLM GEMM。结果显示远程流量波动达58倍，2D块交错遍历比1D最优减少5.1倍流量，证实CTA遍历顺序是关键设计参数。",
+      "tags": "query:si-pi",
+      "abstract_en": "Multi-chiplet GPUs split memory into local and remote HBM regions across a silicon interposer, and reducing the remote HBM traffic is crucial for the performance and energy efficiency of multi-chiplet GPUs. For general matrix multiplication (GEMM), the dominant operator in large language models (LLMs), the resulting inter-chiplet traffic depends strongly on kernel choices such as operand layout, CTA traversal order, and data placement, and the optimal strategy to minimize remote accesses is nontrivial. We present a fast, functional, tile-level locality simulator that models CTA scheduling, per-chiplet L2 caches, and local/remote HBM accesses to evaluate a full-size LLM GEMM configuration. Across representative LLM GEMMs, the simulator shows that remote traffic varies by up to 58x across the design space for the same GEMM dimensions. Moreover, using the simulator as feedback, an agentic AI discovers that a 2D block-swizzle CTA traversal reduces remote traffic over the best 1D traversal by up to 5.1x under round-robin placement, identifying CTA traversal order as a first-order, GEMM-dependent design knob for inter-chiplet traffic.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
