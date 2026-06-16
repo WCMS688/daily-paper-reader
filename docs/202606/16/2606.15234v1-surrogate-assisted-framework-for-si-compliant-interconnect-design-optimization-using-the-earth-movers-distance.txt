@@ -1,0 +1,606 @@
+Title: Surrogate-Assisted Framework for SI-Compliant Interconnect Design Optimization Using the Earth Mover's Distance
+
+URL Source: https://arxiv.org/pdf/2606.15234v1
+
+Published Time: Tue, 16 Jun 2026 00:44:09 GMT
+
+Number of Pages: 16
+
+Markdown Content:
+# Surrogate-Assisted Framework for SI-Compliant Interconnect Design Optimization Using the Earth Mover’s Distance 
+
+Emre Ecik 1, Werner John 2, Julian Withöft 1, Ralf Brüning 3, and Jürgen Götze 11Information Processing Lab, TU Dortmund University, 44227 Dortmund, Germany 
+
+> 2
+
+Pyramide2525/TU Dortmund University, 33100 Paderborn, Germany 
+
+> 3
+
+EMC Technology Center Paderborn, Zuken GmbH, 33100 Paderborn, Germany 
+
+Correspondence: Emre Ecik (emre.ecik@tu-dortmund.de) 
+
+This manuscript has been submitted to Advances in Radio Science for review (2026). 
+
+Abstract. This work presents a deterministic, machine-assisted framework for SI-compliant PCB design based on the Earth Mover’s Distance (EMD). In contrast to conven-tional surrogate-based optimization methods that rely on it-erative black-box search procedures, the proposed approach follows an interpretable, sequential evaluation strategy. Neu-ral surrogate models are first used to efficiently predict wave-form describing features from topology-dependent design parameters. A decision tree then acts as a physically moti-vated quality gate that identifies SI-compliant waveforms ac-cording to predefined SI criteria. Within the resulting valid solution space, the Earth Mover’s Distance is employed as a similarity metric to rank candidate designs according to their proximity to an ideal reference signal. This enables not only the deterministic identification of admissible parameter re-gions but also a transparent prioritization of physically supe-rior solutions without inverse modeling or stochastic search procedures. The methodology is demonstrated using a large-scale set of simulated DDR3 fly-by waveforms. By com-bining surrogate prediction, interpretable classification, and EMD-based waveform evaluation, the framework provides an explainable and computationally efficient alternative to conventional optimization strategies for supporting PCB de-velopment with AI-based methods. 
+
+1 Introduction 
+
+Modern EDA tools increasingly integrate methods of ma-chine learning (ML) to address the complex challenges of PCB design more efficiently (Zuken Ltd., 2023). In this con-text, ML techniques support designers in obtaining reliable results more quickly by using surrogate models to approx-imate, for example, eye diagrams (Ma et al., 2019) and S parameters (Li et al., 2020). In this way, time consuming field solvers can be replaced by fast predictions, which di-rectly improves both time to market (TTM) and time to vol-ume (TTV). The combination of surrogate models with op-timization algorithms has been used in the literature to pro-pose solution strategies for efficient and developer oriented PCB design that systematically accounts for the stringent re-quirements of signal integrity (Torun et al., 2018; Zhang et al., 2022; Medico et al., 2019). In these approaches, surro-gate models are typically employed as fast substitutes to iter-atively search for optimal solutions within a large parameter space. Such classical surrogate based optimizers primarily focus on the efficient identification of SI compliant parame-ters. Since the emphasis is placed on convergence, they of-ten provide little insight into the underlying decisions, which can represent a black box, particularly for less experienced designers. Moreover, a fixed model is usually employed, and the iterative search in the design space proceeds without re-finement of the prediction model during the process. In ad-dition to these approaches, the literature also reports two stage procedures for finding optimal solutions that follow a different methodological principle. These are domain inde-pendent optimization frameworks that have been presented as methodological concepts, for example in aerodynamics or materials science (Alexandrov et al., 2001; Pourkamali-Anaraki et al., 2024). They employ refinement oriented ideas to successively improve model quality by comparing differ-ent levels of accuracy or by systematically reducing statisti-cal uncertainty. The approaches mentioned above differ fun-damentally from the focus proposed in this work. The em-phasis of the presented results lies on the physical assess-ment and differentiation of design solutions that have already 
+
+> arXiv:2606.15234v1 [eess.SP] 13 Jun 2026
+
+2 E. Ecik et al.: Surrogate-Assisted SI-Compliant Interconnect Optimization Using the Earth Mover’s Distance 
+
+been identified as valid, with the aim of supporting designers in PCB development. Iterative black box optimizations are completely avoided and surrogate models are instead used exclusively as reliable physical data sources for a structured analysis of the design space. The method is deterministic and does not require any iterative search, which leads to higher computational efficiency and improved interpretability com-pared to approaches such as GA or BO. Rather than search-ing for a single optimal point, the method relies on deci-sion trees to evaluate signal integrity within a design space captured by comprehensive parameter space sampling (Ecik et al., 2023, 2024). Furthermore, no model is refined or in-verted; instead, only physically validated solutions are eval-uated. The entire process thus remains a forward directed approach, in which parameters are mapped unambiguously from the signal waveforms. This avoids the non uniqueness issues typical of inverse methods, where a single observed output can correspond to multiple distinct input configura-tions. While inverse approaches such as Pourkamali-Anaraki et al. (2024) must rely on statistical uncertainty models due to this mathematical underdetermination, this issue is struc-turally excluded in the framework presented here. If different parameter combinations lead to identical or similarly good SI signals, they are simply treated as valid candidate design so-lutions within the model. The evaluation is always carried out deterministically based on physical criteria. This results in a transparent, explainable, and fully forward oriented op-timization procedure that operates without inverse modeling steps and without statistical uncertainty estimates. The focus is therefore on interpretability in the sense of a white box model, whereby the explainability primarily concerns the downstream logic. First, a physically validated subset of SI compliant designs is identified and then partitioned into logi-cally interpretable regions by the tree structure. The method-ological extension introduced here through the use of the Earth Mover’s Distance (EMD) represents a significant ad-vancement over the purely statistical analysis based on prob-ability mass functions (PMF) in Ecik et al. (2024). While the PMF based approach aims to identify robust design regions by statistically evaluating valid parameter combinations, the EMD enables an additional and substantially more precise differentiation of the results by means of a physically moti-vated metric. Originally introduced by Rubner et al. (2000) for computer vision, the EMD (also known as the Wasser-stein metric) is used here to assess signal integrity by mea-suring the distance between a waveform and a reference. The waveform is interpreted as a normalized amplitude distribu-tion, allowing the EMD to quantify the amount of work re-quired to transform a given signal shape into the ideal refer-ence shape. Since the EMD establishes a metrically grounded ranking among the SI compliant solutions, it enables a clear qualitative assessment of the waveforms themselves. The fo-cus thus shifts from merely identifying safe design regions to the deterministic selection of the physically optimal so-lution within a transparently defined SI compliant domain. This combines the advantages of full design space cover-age through parameter space sampling with the transparency of a decision tree and the physical precision of the EMD metric, thereby forming a sequential framework for design optimization (see Figure 1). Conceptually, the implementa-tion of the decision tree is inspired by classical expert sys-tems. These systems, which shaped AI research in the 1960s and 1970s - prominently represented by pioneering projects such as DENDRAL (Lindsay et al., 1980) or MYCIN (Short-liffe, 1976) - are based on explicitly formulated if-then rules. In the present work, the definition of specific SI criteria is first used to establish a consistent labeling structure of the dataset as a physically grounded ground truth. To overcome the limitations of purely hand-coded rule structures, this ap-proach is then transferred into a generalizing expert model. While a classical expert system relies on rigidly programmed rules, the decision tree derives them automatically from ex-amples and identifies physical patterns in a data driven man-ner. This transition from a controlled rule base to a physically motivated generalization enables the correct classification of new, previously unseen signal waveforms. The decision tree thus functions as a model based quality gate that ensures deterministic and explainable validation. The following sec-tion establishes the methodological foundations required for the proposed framework (see Figure 1). Subsequently, it de-tails the sequential, physically inspired workflow designed to identify optimal SI-compliant signals and their correspond-ing design parameters. 
+
+2 Methodology 
+
+The methodology presented in this work follows a sequential logic (see Fig. 1) and integrates neural surrogate models for prediction, decision trees for interpretability, and the EMD metric for a physically grounded evaluation into a determin-istic optimization framework. At the beginning, the designer defines the parameter space boundaries, thereby specifying both the region to be explored and the associated design con-straints. From these parameter combinations, a physics in-spired feature engineering script first generates domain spe-cific input features. This step is essential, as it introduces do-main knowledge in a targeted manner. The small number of circuit parameters is transformed into a larger set of physi-cally meaningful input quantities, providing the subsequent multilayer perceptron (MLP) network with crucial learning support. The MLP then generates the waveform descriptors, which precisely characterize the properties of the underly-ing signals and serve as input for the next stage. A detailed description of the data generation phase is provided in Sec-tion 3. After the waveform descriptors have been computed, the decision tree - acting as a quality gate - selects the SI compliant signals from the proposed parameter space. After-ward, the EMD values are computed via a surrogate model and compared with a reference waveform that represents an E. Ecik et al.: Surrogate-Assisted SI-Compliant Interconnect Optimization Using the Earth Mover’s Distance 3
+
+ideal SI compliant signal (maximum possible slew rate with minimal overshoot). By selecting the waveforms with the lowest EMD values - i.e., those most similar to the refer-ence signal - the designer obtains a ranked list of optimal design parameters within the originally defined boundaries. It is important to note that the feature-engineering module and the MLP operate on parameter- and topology-bounded level, while the decision tree and the EMD surrogate are ap-plied exclusively at the waveform level, where the actual sig-nal evaluation takes place. Furthermore, this work adopts the assumption that the methodology focuses specifically on the signal integrity pipeline and prioritizes the optimization of signal morphol-ogy. To ensure a clear assessment of algorithmic performance in evaluating the signal shape, temporal parameters (e.g., signal propagation delays and bus skew) were deliberately treated as independent variables and excluded from the opti-mization framework. This separation of concerns aims to pre-serve a clean, detectable signal edge as a fundamental phys-ical prerequisite before higher-level timing synchronization or hardware-based compensation mechanisms (e.g., DDR3 write leveling) can operate effectively.       
+
+> Figure 1. EMD-Enhanced Optimization Framework for SI-Compliant Parameter Space Exploration
+
+2.1 Decision Trees 
+
+The decision tree used in this work is based on the CART al-gorithm (Breiman et al., 1984) as implemented in the MAT-LAB environment (The MathWorks Inc., 2024). The struc-tural hyperparameters of the tree were determined using Bayesian optimization and subsequently adopted as the start-ing point for the final training. This procedure is based on the pioneering work of Kushner (1964) and Mockus (1974), which aims to efficiently identify the global optimum of an unknown objective function. In its modern form, the frame-work follows the principle of Efficient Global Optimization (EGO; Jones et al., 1998). Although the CART method is classically associated with the Gini index (Gini, 1912) as its traditional impurity crite-rion, the hyperparameter optimization conducted in this work indicated a data-dependent selection of the split criterion. For smaller training datasets, the Gini-based criterion was selected, whereas for substantially larger datasets, entropy (Shannon, 1948) provided superior separation performance and was therefore chosen during optimization. Consequently, the implemented model retains the structural framework of CART while employing entropy-based split evaluation for larger training sets, consistent with the formulation of the C4.5 decision tree algorithm (Quinlan, 1993). This results in a data-driven hybrid decision tree formulation that adapts the impurity criterion to the respective training scenario. In addition, a cost matrix C was used during the train-ing of the decision tree. Since SI-compliant waveforms con-stituted only a small fraction of the dataset, false negatives (valid designs incorrectly classified as non–SI-compliant) were weighted more strongly than false positives (non–SI-compliant designs incorrectly classified as valid) via the pa-rameter ratio :
+
+C =
+
+ 0 1
+
+ratio 0
+
+
+
+. (1) While the structural tree parameters were determined by Bayesian optimization, the parameter ratio was set in a sub-sequent empirical analysis. For this purpose, the misclassifi-cation cost weighting was gradually adjusted across multiple training runs to counteract the underrepresentation of the SI-compliant class in the learning algorithm. The objective was to reduce false negatives in a targeted manner without caus-ing a disproportionate increase in false positives. 
+
+2.2 MLP and Residual Networks 
+
+Multi-Layer Perceptrons (MLPs) are fully connected feed-forward networks that model nonlinear relationships through a sequence of linear transformations followed by activation functions. A fully connected layer maps an input vector x
+
+by computing weighted sums of the inputs and applying an activation function ϕ to obtain the output vector y.For each component yk of the output vector, the following holds (The MathWorks Inc., 2024; Bishop, 2006): 
+
+yk = ϕ X
+
+> i
+
+Wk,i xi + bk
+
+!
+
+. (2) Here, Wk,i denote the weights, bk the bias term, and xi the components of the input vector. This work employs the Gaussian Error Linear Unit (GELU; The MathWorks Inc., 2024; Hendrycks et al., 2016) as the activation function. GELU is a probabilistic activation defined as: GELU (x) = x · Φ( x) = x
+
+2
+
+
+
+1 + erf 
+
+ x
+
+√2
+
+ 
+
+, (3) where Φ( x) represents the cumulative distribution function of the standard normal distribution. By avoiding hard thresh-olding, the GELU activation provides smoother gradients and supports stable convergence during training. 4 E. Ecik et al.: Surrogate-Assisted SI-Compliant Interconnect Optimization Using the Earth Mover’s Distance 
+
+To improve the trainability of deeper models, this work applies a residual learning approach as introduced by He et al. (2016). Instead of learning a direct mapping, the network learns a residual function F (x). The resulting output is given by: 
+
+yk = Fk(x) + xk. (4) This structure is implemented through skip connections that forward the input x unchanged to deeper layers, stabilizing gradient flow and enabling efficient training of deep architec-tures. Layer Normalization (The MathWorks Inc., 2024; Ba et al., 2016) is used to further stabilize the training dynamics. For each sample, the mean μ and variance σ2 are computed across all feature dimensions, and the normalized activations are obtained as: 
+
+ˆxi = xi − μ
+
+√σ2 + ϵ . (5) This yields consistent activation statistics independent of batch size and improves the robustness of the training pro-cess. 
+
+2.3 One-Dimensional Wasserstein Distance (Earth Movers Distance) and its Discrete Formulation 
+
+The goal of the Wasserstein distance is to quantify the sim-ilarity between two probability distributions. The concept originates from the theory of optimal transport introduced by Kantorovitch (1958), and was later formulated as a metric on probability measures by Vaserstein (1969). In many applica-tions, the Wasserstein distance is also referred to as the Earth Movers Distance (EMD), a term that became widely estab-lished in image processing through the work of Rubner et al. (2000). Since the general form of the optimal transport problem is difficult to solve, Vallender (1974) provided an explicit proof and a closed-form expression for the one-dimensional special case. In the one-dimensional setting, the W1 distance simpli-fies considerably. The similarity between two distributions 
+
+P and Q on the real line with finite first moments can be expressed as the integral of the absolute differences of their cumulative distribution functions (CDFs): 
+
+W1(P, Q ) = 
+
+> ∞
+
+Z
+
+> −∞
+
+|FP (x) − FQ(x)| dx. (6) Vallender showed that the one-dimensional Wasserstein distance can equivalently be expressed in terms of quantile functions.: 
+
+> 1
+
+Z
+
+> 0
+
+|F −1 
+
+> P
+
+(u) − F −1 
+
+> Q
+
+(u)| du =
+
+> ∞
+
+Z
+
+> −∞
+
+|FP (x) − FQ(x)| dx. (7) This duality is particularly important in the discrete case, where two vectors are to be compared. In this setting, the em-pirical quantile functions are obtained by sorting the samples of the two vectors x and y. As a result, the W1 distance in the discrete case can be written as: 
+
+W1(x, y ) = 1
+
+L
+
+> L
+
+X
+
+> i=1
+
+|x(i) − y(i)|, (8) where x(i) and y(i) denote the sorted values of the two vec-tors. L denotes the common length of the two vectors, corre-sponding to empirical distributions with uniform weights. 
+
+2.4 Genetic Algorithm 
+
+In analogy to previous results in Ecik et al. (2024), the ge-netic algorithm (GA) was used in this work as a reference method to enable a comparison with other approaches from the literature (Zhang et al., 2022). The genetic algorithm was developed by Holland (1975) and is today classified as a sub-field of evolutionary algorithms. This optimization method is based on the principle of natural evolution, starting with a random population of candidate solutions. The quality of each individual is evaluated using a fitness function, defined as a minimization measure that indicates how well a candi-date solution satisfies the optimization objective. Through the genetic operators crossover (recombination of features from two individuals to generate offspring) and mutation (random modification of individual components), new pop-ulations are generated over multiple generations. The goal is to gradually identify better solutions to the given optimiza-tion problem. In this work, the fitness function of the genetic algorithm is defined by the Earth Mover’s Distance. This approach en-sures comparability with the framework introduced in Fig-ure 1 by establishing a common evaluation basis grounded in the EMD. In contrast to the decision tree approach presented here, the genetic algorithm represents a population-based op-timization procedure. The decision tree approach relies on a deterministic selection mechanism in which suitable can-didate solutions are first identified and those with minimal EMD are then selected directly through a global selection process rather than through an iterative search. 
+
+2.5 Evaluation Metrics 
+
+For evaluating the model performance, different metrics were employed depending on the underlying learning task. Since the decision tree addresses a binary classification problem, classification-specific metrics such as sensitivity (recall), specificity, and the Matthews correlation coefficient (MCC) were applied. These metrics are based on the entries of the confusion matrix and are therefore well suited to quantify the predictive quality of binary class assignments. In particular, the MCC is advantageous for strongly imbalanced datasets, as it incorporates true positives (TP), true negatives (TN), E. Ecik et al.: Surrogate-Assisted SI-Compliant Interconnect Optimization Using the Earth Mover’s Distance 5
+
+false positives (FP), and false negatives (FN) into a single balanced performance indicator. In contrast, the surrogate models represent regression tasks, as they predict continuous target values rather than discrete class labels. Consequently, classification metrics based on confusion matrix statistics are not applicable in this context. Instead, the normalized root mean squared error (NRMSE) and the Pearson correlation coefficient (PCC) r
+
+were used for performance evaluation. The NRMSE quanti-fies the absolute prediction deviation in a normalized and di-mensionless form, enabling scale-independent comparisons across different datasets, model variants, and target variables. To ensure a data-leakage-free error assessment, the normal-ization parameters for the NRMSE calculations were deter-mined exclusively from the respective training datasets and subsequently applied to all corresponding test datasets. In ad-dition, the Pearson correlation coefficient evaluates the lin-ear agreement between predicted and actual target values, thereby providing a complementary assessment of trend con-sistency. The mathematical definitions of all evaluation metrics used are summarized in Table C1 in the Appendix C. 
+
+3 Data Generation and Processing Pipeline 
+
+Matlab (The MathWorks Inc., 2024) and the eCadstar SI sim-ulation tool (Zuken Ltd., 2023) were used to generate a very large dataset of simulations in batch mode. The investigated single-ended DDR3 network strcutures are illustrated in Fig-ure 2.  
+
+> Figure 2. Utilized DDR3 fly-by networks: (a) Simulation with sin-gle DRAM module; (b) Simulation with two DRAM modules
+
+In total, 125,000 simulations were performed for a DDR3 fly-by networks with one DRAM module and 492,075 sim-ulations were carried out for a configuration with two mod-ules. Since each DRAM represents an individual observation point, this resulted in a total of 125,000 and 984,150 ex-tracted waveforms, respectively. The specific parameter vari-ations used to generate this dataset, including trace lengths and VTT termination resistance values for a characteristic impedance of Z = 50 Ω , are detailed in Table 1.                      
+
+> Table 1. Parameter variations for the DDR3 fly-by networks One DRAM Two DRAMs Line 1 [mm] 1 to 491 ( ∆10) 1 to 391 ( ∆15) Line 2 [mm] N/A 1 to 391 ( ∆15) VTT line [mm] 1 to 491 ( ∆10) 1 to 391 ( ∆15) R 40 [ Ω]1 to 491 ( ∆10) 1 to 481 ( ∆20) No. of simulations 124,999 492,075 No. of waveforms 125,000 984,150
+
+As in previous work (Ecik et al., 2023, 2024), a stimulus frequency of 133 MHz was used and the simulations were performed using IBIS models for the memory controller and DRAM chips. After completing the simulations, the first period was con-sistently removed from all signals to avoid transient effects, leaving only three signal periods for evaluation. To reduce the simulation time given the large number of runs, the sam-pling interval during the simulations was set to 20 ps. During signal processing, it was then linearly interpolated to 2 ps, which improved the accuracy of the threshold evaluations in the subsequent steps. As shown in Figure 3, this type of interpolation noticeably improved the determination of the first two intersections of the waveform with its mid-level value for an SI-compliant signal. The red crosses indicate the intersection points obtained after interpolation, while the blue crosses correspond to the original waveform sampled at 20 ps. These intersection points, obtained from the inter-polated (red) waveforms, define the start and end of the ex-tracted signal segment and served as the basis for the subse-quent labeling and extraction of waveform descriptors.  
+
+> Figure 3. Comparison of an interpolated and original SI-compliant waveform (including overshoot range and upper edge slope criteria) for mid-mevel intersection determination
+
+Since a clear distinction between distortion-free and de-graded signals was required for training the model, the data underwent a labeling process. To generate a reliable ground truth, a rule-based script was first applied to categorize the simulation data according to defined SI criteria. The signal 6 E. Ecik et al.: Surrogate-Assisted SI-Compliant Interconnect Optimization Using the Earth Mover’s Distance 
+
+quality assessment was based on key metrics, including: (a) compliance with overshoot limits (< 0.11 V), (b) adherence to a minimum upper edge slope (> 1.5 V/ns), and (c) preser-vation of the logic levels ( Vinl (max )/Vinh (min )) specified in the IBIS receiver model and in JEDEC (2012). To convert this rigid logic into a generalized and robust methodology, the signals were subsequently transformed into physically meaningful waveform descriptors for training the decision-tree. This transformation from raw signals to waveform de-scriptors forms the essential link that enables the generaliza-tion capabilities of a decision tree while preserving physical interpretability. In addition, the same waveform descriptor set is employed for surrogate models, allowing for fast pre-dictions without rerunning computationally expensive simu-lations during inference. The extracted waveform descriptors are categorized into time-domain and frequency-domain rep-resentations. A detailed overview of the descriptors used to transform the signals into the physical domain is provided in Table A1 in the Appendix A section. For the final step of the data processing pipeline, the Wasserstein distances of the waveforms were computed ac-cording to Equation 8. The evaluation is performed on the extracted signal segments, as described previously. To ensure comparability of the Wasserstein distances across all signals, the amplitudes were scaled using min-max normalization. For the comparison, an ideal rectangular reference signal was assumed. The reference signals were generated using the networks shown in Figure 2. The line lengths were fixed at 1 mm, and the resistor in the TTL branch was set to 50 ohms to match the characteristic impedance Z of the net-works. Figure 4 shows these reference signals for the config-urations with one and two DDR3 modules. The signal shape was intentionally designed to provide adequate edge steep-ness while ensuring an overshoot-free waveform.  
+
+> Figure 4. Reference waveform used for the calculation of the EMD values across network configurations: (a) One DRAM module (see Figure 2 (a)); (b) two DRAM modules (see Figure 2 (b))
+
+Figure 5 shows an exemplary comparison between an SI-compliant and a non-SI-compliant waveform. It can be ob-served that the non-SI-compliant waveform exhibits a signif-icantly larger W1 distance compared to the nearly rectangular reference signal. It is important to emphasize that the Wasserstein-based metric does not perform any intrinsic SI verification. In-stead, it solely quantifies the similarity to the ideal rectan-gular shape. The actual SI classification is carried out by the decision tree in a previous step.  
+
+> Figure 5. Comparison between an SI-compliant waveform with low W1 distance and a non-SI-compliant waveform with higher W1 dis-tance
+
+Both the training of the decision tree and the training of the surrogate models used to accelerate the predictions are described in the following section. 
+
+4 Implementation of a Physics-Inspired Multi-Model Pipeline 
+
+In addition to training the decision tree, further models are required to support the developer and to avoid costly sim-ulations and complex computations - the so called surro-gate models. In this work, a multilayer perceptron network with a residual block and layer normalization serves as the starting point. The predictions of this stage act as inputs to the subsequent models, resulting in a sequential modeling approach. Consequently, these predictions are essential and must be obtained with high accuracy. Regarding the input for the multilayer perceptron network, the parameter combi-nations of the two networks described in Table 1 were ini-tially used. However, it became evident during implementa-tion that experiments based solely on the raw parameters -both for the network with three input variables and for the model with four input variables (see Figure 2) - were insuf-ficient. The available information was too limited to reliably predict the highly complex target quantities (see Table A1 in the Appendix A). The waveform descriptors to be approx-imated arise from nonlinear transformations of the signal, such as derivatives, windowing operations, energy and en-tropy measures, and spectral analyses. As a result, they ex-hibit substantially higher structural complexity. To address this issue, additional features were constructed in the sense of physics inspired feature engineering. These features reflect E. Ecik et al.: Surrogate-Assisted SI-Compliant Interconnect Optimization Using the Earth Mover’s Distance 7
+
+both physical relationships and the hierarchical structure of the data generation process. They include normalized base quantities, geometric relations between trace lengths, physi-cally motivated characteristics such as reflection coefficient and conductance, harmonic Fourier features, and interaction terms. Through this extension, the model receives prepro-cessed, structured, and physically interpretable information. This improves convergence and significantly enhances gen-eralization capability. Specifically, the input space was ex-panded to a dimension of d = 62 for the configuration with a single DDR3 module (see Fig. 2 (a)) and d = 92 for the dual-module setup (see Fig. 2 (b)). A complete overview of all constructed features is provided in Table B1 in the Ap-pendix B. Based on this foundation, the surrogate models described in the following section were subsequently implemented. 
+
+4.1 Implementation of a Multilayer Perceptron Network for Waveform Descriptor Prediction 
+
+The implemented model was designed as a residual deep multilayer perceptron (MLP) developed specifically for sta-ble and high-precision feature representation. Its structural layout is divided into three main components. First, the data pass through a feature-expansion network consisting of four fully connected (FC) layers. This stage projects the input features stepwise through 256, 256, and 512 neurons into a 1024-dimensional representation space. Each layer is stabi-lized by layer normalization and uses the GELU activation function. The core of the architecture is a residual block with a skip connection. This block splits the 1024-dimensional signal into a shortcut path that preserves the identity map-ping and a main path that applies the nonlinear transforma-tion. Their subsequent recombination by addition reduces gradient-related issues and increases the model’s capacity, enabling the learning of fine-grained nonlinear corrections. The final component is the tail section. This output stage maps the refined representations from the residual block to the target parameters through two additional specialized lay-ers, each with 512 neurons. The complete structure of the surrogate network is shown in Figure 6. The choice of a deep residual architecture is motivated by the high structural complexity of the underlying waveform descriptors. These descriptors result from strongly nonlinear transformations of the signal and exhibit an elevated level of representational complexity. In addition, a large training dataset of approximately 0.8 ·492,075 samples is available, providing sufficient data complexity to reliably train a high-capacity model. Smaller network architectures tested in pre-liminary experiments showed insufficient model capacity and tended to represent the nonlinear relationships within the feature space only incompletely. The selected residual deep MLP therefore enables a significantly improved approxima-tion of the underlying functional structure while maintain-ing stable optimizability. This component plays a central role within the overall system, as its outputs serve as high-precision and stable representations for downstream models in the pipeline. As a result, the network functions not only as a regression model but also as a deterministic feature genera-tor within a multi-stage modeling framework. The quality of these representations directly affects the performance of the subsequent classification models. The choice of a deep ar-chitecture is therefore further motivated by the requirement to minimize error propagation within the model cascade. Training for both models was performed over 600 epochs. To achieve stable convergence together with strong gener-alization, a unified one-cycle learning-rate schedule (Smith and Topin, 2019) with annealing was applied. During an ini-tial warm-up phase, the learning rate increased linearly from a starting value of 1e-4 to a maximum of 1e-3, followed by a controlled cosine-based decay to a final minimum of 1e-5. The computational workload was executed on a high-performance hardware system consisting of an Intel Xeon Platinum 8268 CPU and an NVIDIA RTX A6000 GPU. The large GPU memory capacity of 48 GB VRAM made it pos-sible to use a batch size of 8192, which stabilized gradient estimates within the one-cycle schedule and ensured efficient utilization of the parallel compute units. After implementation, the quality of the surrogate model was evaluated using the regression metrics defined in Ta-ble C1. The corresponding results are summarized in Table 2. Overall, the metrics show that the proposed residual deep MLP approximates the target quantities of the waveform de-scriptors with high accuracy and stable generalization across all considered network configurations. For the single mod-ule configuration, both the training and test datasets exhibit median NRMSE values below 1.0%. The maximum NRMSE values remain low as well, with an upper bound of 1.4%, in-dicating that no pronounced local approximation errors oc-cur. The consistently high Pearson correlation coefficients of 0.99 further demonstrate that the internal structure of the waveform representation is preserved reliably in addition to the absolute target values. A similarly stable behavior is ob-served for the dual module topology. For both the IC5 and IC7 branches, median NRMSE values of at most 1.1%, max-imum NRMSE values of no more than 2.3%, and Pearson correlation coefficients of 0.99 are achieved on both training and test data. This confirms that the descriptor spaces asso-ciated with each memory module can be reconstructed with high precision independently of one another. In summary, the implemented surrogate networks provide a reliable determin-istic basis for the subsequent classification models. For completeness, Figure 7 shows the scatter plots of the predicted waveform descriptors. All diagrams exhibit a very high level of agreement. Neither systematic deviations nor noticeable dispersion patterns are visible. The data points are tightly concentrated along the ideal line, which further con-firms the high precision of the predictions across the entire value range. 8 E. Ecik et al.: Surrogate-Assisted SI-Compliant Interconnect Optimization Using the Earth Mover’s Distance                       
+
+> Figure 6. Architecture of the proposed surrogate neural network for waveform descriptor prediction
+> Table 2. Surrogate network regression performance across network configurations (see Figure 2) Type Configuration Median NRMSE Max NRMSE Median PCC
+> Single-module (see Fig. 2 (a))
+> IC7 - Train 0.006 0.010 0.99 IC7 - Test 0.007 0.014 0.99
+> Dual-module (see Fig. 2 (b))
+> IC5 - Train 0.003 0.013 0.99 IC5 - Test 0.010 0.018 0.99 IC7 - Train 0.003 0.004 0.99 IC7 - Test 0.011 0.023 0.99
+
+4.2 Implementation of the Decision Tree 
+
+To prevent data leakage throughout the pipeline, the same training data split as in the MLP implementation was used. Although the waveforms measured at the inputs of IC5 and IC7 exhibit different configuration-specific signal character-istics, the objective during the training of the decision tree shifts from configuration-dependent signal modeling to a generalized classification of signal quality. As shown in Fig-ure 1, the decision-tree model operates at the waveform-based AI level. Consequently, the extracted waveform de-scriptors are merged at the training level. According to Ta-ble 1, the configuration with two DRAM modules results in a combined training pool of 0.8 × 984,150 waveforms, corre-sponding to the selected training proportion. The merging is based exclusively on the training set from the first surrogate-modeling stage, under the assumption that the extracted waveform descriptors represent configuration-independent signal characteristics. The resulting classifier is therefore trained on a shared feature space and is capable of learning generalized decision boundaries for assessing signal quality independently of the underlying network configuration. The test datasets from IC5 and IC7 remain strictly separated to avoid data leakage and to ensure an unbiased evaluation of generalization capability across both configurations. The ra-tio value defined in Equation 1 was set to 8 for both net-works in Figure 2 to deliberately reduce the class imbalance between minority and majority classes, as described in Sec- 
+
+> Figure 7. Combined scatter plots of the 12 waveform descriptors for training and test data: (a) Single-module configuration - IC7 (see Fig. 2(a)); (b) Dual-module configuration - IC5 (see Fig. 2(b)); (c) Dual-module configuration - IC7 (see Fig. 2(b))
+
+E. Ecik et al.: Surrogate-Assisted SI-Compliant Interconnect Optimization Using the Earth Mover’s Distance 9
+
+tion 2.1. After implementation, the model quality was eval-uated using the metrics presented in Table C1. The results, summarized in Table 3, show that the decision tree consti-tutes a well-generalizing model, as the performance indica-tors between training and test datasets exhibit consistent and balanced behavior for both configurations. For the single-module case, a sensitivity of at least 99.3% is achieved, in-dicating that SI-compliant waveforms are reliably identified as valid. At the same time, a minimum specificity of 99.5% is obtained, ensuring that non-SI-compliant signals are also correctly detected. A high MCC value of at least 0.95 further confirms that the decision tree makes precise and balanced decisions despite the existing class imbalance. For the con-figuration with two DRAM modules, similarly strong results are observed. With a sensitivity of at least 98.4% and a speci-ficity of at least 98.2% in the test datasets, high detection rates for both SI-compliant and non-SI-compliant waveforms are achieved. A minimum MCC value above 0.85 demon-strates the reliable performance of the decision tree in the case of a very large number of waveforms. In summary, the decision tree achieves a balanced trade-off between sensitiv-ity and specificity and exhibits stable generalization capabil-ity across different network configurations.                   
+
+> Table 3. Decision tree performance across network configurations (see Figure 2) Type Configuration Sensitivity Specificity MCC
+> Single-module (see Fig. 2 (a))
+> IC7 - Train 0.996 0.995 0.95 IC7 - Test 0.993 0.995 0.95
+> Dual-module (see Fig. 2 (b))
+> Train (IC5 + IC7 combined) 0.995 0.989 0.90 IC5 - Test 0.984 0.982 0.85 IC7 - Test 0.990 0.994 0.93
+
+4.3 Implementation of a Multilayer Perceptron Network for Wasserstein Value Prediction 
+
+The model implemented for predicting the Wasserstein dis-tance was designed as a sequential deep multilayer percep-tron (MLP). In contrast to the high dimensional residual ar-chitecture used for the waveform descriptors, a simpler struc-ture was chosen here to account for the lower dimensionality of the target value ( R1) and to avoid overfitting. The architec-ture of the Wasserstein surrogate model is shown in Figure 8. Within the optimization Framework (see Figure 1), the net-work serves as an accurate estimator of the similarity of the signal distributions (EMD). The structural design consists of three consecutive fully connected blocks, each comprising 256 neurons. To stabilize the training process and ensure a robust gradient flow, each block applies layer normalization after the dense layer, fol-lowed by a nonlinear activation using the GELU function. The final output layer consists of a single neuron with linear activation, which performs the regression of the normalized Wasserstein distance. The Wasserstein surrogate model op-erates on the same waveform-based AI level as the decision tree and is therefore trained on the combined dataset. The IC5 and IC7 test sets remain separated to ensure an unbiased evaluation of generalization. Optimization was carried out over 400 epochs using a one cycle learning rate schedule as described in Section 4.1. After a warm up phase of 10%, the learning rate increases to a maximum of 1e − 3 (single module) or 2e − 3 (dual module), before decaying to a minimum of 1e−6 via cosine annealing. In the training runs, the batch size was again set to 8192.         
+
+> Figure 8. The Wasserstein surrogate model maps the predicted waveform descriptors ˆy∈R12 to the estimated Wasserstein distance
+> ˆyEM D ∈R1using three sequential fully connected layers
+
+Table 4 summarizes the results, following the structure of Section 4.1. For the configurations considered, the model achieved NRMSE values below 1% both during training and on the test data, indicating strong generalization capability without pronounced local approximation errors. In addition to the absolute error values, the Pearson correlation coeffi-cients of 0.99 further confirm that the relationships in the Wasserstein distances are captured accurately.              
+
+> Table 4. Performance of the Wasserstein-Surrogate across network configurations (see Figure 2) Type Configuration NRMSE PCC
+> Single-module (see Fig. 2 (a))
+> IC7 - Train 0.002 0.99 IC7 - Test 0.004 0.99
+> Dual-module (see Fig. 2 (b))
+> Train (IC5 + IC7 combined) 0.002 0.99 IC5 - Test 0.002 0.99 IC7 - Test 0.002 0.99
+
+The scatter plots in Figure 9 demonstrate strong approxi-mation performance across all evaluated configurations, with the data points closely following the ideal line and exhibiting no systematic bias. This confirms that the implemented cas-cade provides a robust foundation for the subsequent classi-fication of system states. It should be noted that the values in the scatter plot lie on larger scales and are no longer con-centrated mainly between 0 and 1. This is due to the fact that a logarithmic transformation followed by inversion and ex-ponentiation of the EMD values was applied. The purpose 10 E. Ecik et al.: Surrogate-Assisted SI-Compliant Interconnect Optimization Using the Earth Mover’s Distance 
+
+of this transformation was to map originally small distances, which correspond to high similarity, to larger numerical val-ues and thereby stretch the relevant similarity region. As a result, fine differences between good matches become more visible and receive a stronger weighting during training.  
+
+> Figure 9. Scatter plots of the EMD values for training and test data: (a) Single-module configuration - IC7 (see Fig. 2(a)); (b) Dual-module configuration - IC5 and IC7 (see Fig. 2(b))
+
+5 System Integration and Earth Mover’s Distance-Based Evaluation 
+
+After the implementation, the individual models were in-tegrated into a consistent framework. To assess the perfor-mance and stability of the complete pipeline, representative evaluations were conducted. Starting from the single-receiver network shown in Figure 1 (a), two central application sce-narios are examined in detail in the following. These sce-narios are designed to evaluate the predictive capabilities of the framework under varying conditions. The first applica-tion scenario primarily serves as a proof of concept, demon-strating that the system is capable of generating valid design proposals within a plausible defined parameter space. 
+
+Parameter Space 1 (given by the designer) - single DRAM 
+
+Parameter Range (17,384 combinations) 
+
+Trace L1 20 mm to 125 mm (∆L = 1 mm )Trace L2 2 mm to 5 mm (∆L = 1 mm )Resistor (TTL branch) 40 Ω to 80 Ω (∆R = 1 Ω )
+
+The choice of these bounds follows specific design con-siderations. The restrictive upper limit for the stub length L2 reflects the fundamental design rule of keeping stubs as short as possible to avoid signal reflections. In contrast, the inter-val selected for L1 represents typical topological constraints, where variations in trace length are physically limited by lay-out restrictions. The prediction results for the five best design variants, ranked according to the Earth Mover’s Distance (EMD), are summarized in Table 5. To validate the perfor-mance of the proposed method, an additional reference so-lution was computed using a Genetic Algorithm (GA). This serves as a benchmark to assess the accuracy of the frame-work’s predicted optima as well as the required computation time. It can be observed that, due to the iterative nature of the Genetic Algorithm, a suitable solution is obtained only after more than one minute of evolutionary progress. This solution matches the top-5 list generated by the EMD-based approach presented here, confirming the validity and efficiency of the proposed framework.                 
+
+> Table 5. Comparison of the top 5 EMD-based parameter solutions and the Genetic Algorithm result for parameter space 1
+> Method Best Parameter Combination(s) Computation Time [s]
+> Top 5 EMD-based solutions
+> [20 ,2,40] [20 ,2,41] [20 ,2,42] [21 ,2,40] [21 ,2,41]
+> 0.43 Genetic Algorithm [20 ,2,41] 78.04
+
+In Figure 10, all design proposals generated by the EMD-based method are shown in the form of corresponding simu-lation results. Each waveform was re-simulated based on the design parameters proposed by the framework, allowing a di-rect assessment of their signal-integrity performance. It can be observed that all resulting waveforms exhibit an adequate rectangular shape and, in the high-state plateau, no overshoot occurs. This is achieved under the constraint that the signal rise time is maximized. E. Ecik et al.: Surrogate-Assisted SI-Compliant Interconnect Optimization Using the Earth Mover’s Distance 11  
+
+> Figure 10. Re-simulation of the top-5 parameter combinations pro-posed in Table 5
+
+Two lower-ranked parameter combinations from the EMD-sorted list of SI-compliant signals within parameter space 1 were also re-simulated, namely the sets [121, 4, 41] and [110, 2, 41]. The corresponding results are shown in Figure 11. It can be clearly observed that these signals still exhibit an adequate waveform with an acceptable rise time. However, compared to the top-5 designs shown in Fig-ure 10, their waveforms display a more irregular shape in the high-state plateau. This highlights the advantage of se-lecting the best parameter sets using the Earth Mover’s Dis-tance, in contrast to the statistical method presented in Ecik et al. (2024). After narrowing down the desired or relevant parameter ranges, the designer can use the EMD-based rank-ing to perform a more differentiated selection among the SI-compliant candidates.  
+
+> Figure 11. Re-simulation of lower-ranked parameter combinations for parameter space 1 (single DRAM module)
+
+For an additional test, a second parameter space was de-fined, in which the selected value ranges were intentionally chosen far outside typical and reasonable design rules. 
+
+Parameter Space 2 (given by the designer) - single DRAM                   
+
+> Parameter Range (396 combinations)
+> Trace L1150 mm to 155 mm (∆L= 1 mm )Trace L2120 mm to 125 mm (∆L= 1 mm )Resistor (TTL branch) 150 Ω to 160 Ω (∆R= 1 Ω )
+
+For this additional experiment, the implemented frame-work was able to determine within only 0.29 seconds that no SI-compliant solutions existed in the selected parame-ter space 2. In contrast, the Genetic Algorithm proposed the parameter combination [150, 120, 150] in 3.5 seconds. As shown in Figure 12, this result is clearly not SI-compliant. The waveform does not meet the required rise-time charac-teristics due to the lack of monotonicity in the rising edge. In this case, the Genetic Algorithm simply operated within the specified parameter bounds and returned the best candidate according to its internal optimization criteria, even though the resulting waveform is unsuitable. This example highlights the advantage of the proposed decision-tree-based approach, which performs an internal SI check and immediately warns the designer when no SI-compliant signals are present in the selected parameter re-gion. While it would be possible to extend the Genetic Al-gorithm with additional hand-crafted SI constraints to avoid such cases, doing so would weaken the goal of a general-izable, model-driven approach and would move the method closer to the rigid rule-based structures discussed before.  
+
+> Figure 12. Re-simulation of the parameter combination [150, 120, 150] proposed by the GA (parameter space 2; single DRAM mod-ule)
+
+Analogous to the procedure described above, two param-eter ranges were also investigated for the network with two memory modules (see Figure2 (b)). 
+
+Parameter Space 1 (given by the designer) - dual DRAM 
+
+Parameter Range (19,844 combinations) 
+
+Trace L1 10 mm to 20 mm (∆L = 1 mm )Trace L2 10 mm to 20 mm (∆L = 1 mm )Trace L3 2 mm to 5 mm (∆L = 1 mm )Resistor (TTL branch) 30 Ω to 70 Ω (∆R = 1 Ω )
+
+Parameter Space 2 (given by the designer) - dual DRAM                         
+
+> Parameter Range (2,376 combinations)
+> Trace L1150 mm to 155 mm (∆L= 1 mm )Trace L2120 mm to 125 mm (∆L= 1 mm )Trace L3100 mm to 105 mm (∆L= 1 mm )Resistor (TTL branch) 150 Ω to 160 Ω (∆R= 1 Ω )
+
+12 E. Ecik et al.: Surrogate-Assisted SI-Compliant Interconnect Optimization Using the Earth Mover’s Distance 
+
+The evaluation and re-simulation results are summarized in Table 6 and figures 13 to 15. The presentation follows the same logic as applied to the single memory module network (see Figure 2 (a)).                              
+
+> Table 6. Comparison of the solutions for parameter space 1 and 2 (dual DRAM configuration)
+> Method Best Parameter Combination(s) Computation Time [s]
+> Top 5 EMD-based solutions (parameter space 1)
+> [20 ,10 ,4,41] [20 ,10 ,5,42] [20 ,10 ,5,41] [20 ,11 ,5,41] [20 ,11 ,4,41]
+> 0.89 Genetic Algorithm (parameter space 1) [20 ,10 ,4,41] 60.34 Top 5 EMD-based solutions (parameter space 2) No SI-compliant solutions found 0.27 Genetic Algorithm (parameter space 2) [150 ,120 ,100 ,152] 3.22
+> Figure 13. Re-simulation of the top-5 parameter combinations (pa-rameter space 1; dual DRAM configuration): (a) IC5 SI-compliant waveforms; (b) IC7 SI-compliant waveforms
+
+6 Conclusions 
+
+The results presented in Chapter 5 demonstrate the efficiency of the chosen approach. By combining neural surrogate mod-els, a decision tree, and the Earth Mover’s Distance, SI-compliant signals could be evaluated with high accuracy, and valid design regions were identified deterministically. The proposed Framework, validated through re-simulations, en-ables a physically motivated and granular ranking of solu-tions relative to an ideal reference signal via the EMD. This provides a more differentiated analysis than the purely sta-tistical evaluation in Ecik et al. (2024) and offers designers   
+
+> Figure 14. Re-simulation of lower-ranked parameter combinations ([19, 17, 4, 41], [13, 18, 5, 42]) from EMD-sorted list (parameter space 1; dual DRAM configuration): (a) IC5 SI-compliant wave-forms; (b) IC7 SI-compliant waveforms
+> Figure 15. Re-simulation of the parameter combination [150, 120, 100, 152] proposed by the GA (parameter space 2; dual DRAM configuration): (a) IC5 waveforms; (b) IC7 waveforms
+
+the flexibility to investigate specific parameter regions in a targeted manner. Due to its low computational cost, this effi-cient approach represents a powerful alternative to classical optimization strategies. Looking ahead, the method should be extended and trans-ferred to technologies such as DDR4 and DDR5. These stan-dards introduce specific challenges, including substantially higher data rates and the adaptive adjustment of on-chip ref-erence voltages. Since evaluating SI compliance based on conventional transient waveforms becomes increasingly im-practical for DDR4/5, the identification of valid parameter configurations must shift toward alternative target metrics such as eye diagrams and bit-error rates.  
+
+> Code and data availability. Due to project restrictions, the source codes and datasets are not publicly available. For more information, please contact the main author.
+
+E. Ecik et al.: Surrogate-Assisted SI-Compliant Interconnect Optimization Using the Earth Mover’s Distance 13 
+
+Author contributions. EE designed the AI approaches and imple-mented the resulting models based on decision trees, including the corresponding training procedures. In addition, EE developed the concept of combining the Earth Mover’s Distance with further AI models to enable a more precise identification of SI-compliant sig-nals. EE also carried out essential adaptations and further devel-opments of existing approaches as well as code components from earlier work. Moreover, EE authored both the initial and the final version of the manuscript. WJ and RB contributed to a deeper un-derstanding of the SI knowledge domain and to the evaluation of the prediction results. They also supported the further development of the AI models in the context of SI-specific design requirements and participated in revising the manuscript. JW and EE incorpo-rated results from earlier work on the use of genetic algorithms into this study in a revised form. JW additionally discussed the results together with WJ, JG, and RB and contributed editorial input. JG supervised the entire research process at the Information Process-ing Lab and performed the final review. 
+
+Competing interests. The contact author has declared that none of the authors has any competing interests. 
+
+Acknowledgements. This work is funded as part of the research project KI4BoardNet in the funding programme MANNHEIM (BMBF) (Grant numbers 16ME0777/9). The responsibility for this publication is held by the authors only. The original presentation was held at the U.R.S.I. Kleinheubach Conference 2025. 
+
+Appendix A: Waveform Descriptors for the Training of the AI-Models 
+
+A total of 12 waveform descriptors were extracted from each signal for training the AI models. Table A1 provides an overview of all computed descriptors. For completeness, the mathematical definitions of the cal-culated descriptor set are provided below. The formulations are based on established definitions in Mishra et al. (2004), Peeters (2004), Blanco et al. (1998), Shannon (1948), Sil-verman (1986) and The MathWorks Inc. (2024). The same formulations are used for all signals, with differences only in the input domain: descriptors are computed either over the entire signal (global descriptors) or within a detected signal segment (windowed descriptors). In the following equations, 
+
+xi and wi denote the discrete amplitude and energy samples of the respective signal or segment, where i = 1 , . . . , N and 
+
+N represents the total number of samples. The signal win-dow is defined based on a thresholding approach relative to the mean signal level. The onset of the window corresponds to the first sample exceeding this threshold and is used as the reference point for subsequent feature extraction. Here, the mid-level baseline corresponds to the first value of the de-tected signal window and serves as the reference point for feature computation. 
+
+Table A1. Overview of extracted waveform descriptors Descriptor Description Scope Normalized Upper edge slope Slope to 90% peak from mid-level baseline windowed No Maximum slope Maximum of smoothed signal slope windowed No Mean squared difference Mean squared dif-ference of succes-sive samples windowed No Skewness (norm.) Skewness of nor-malized window windowed Yes Kurtosis (norm.) Kurtosis of normal-ized window windowed Yes Skewness (glob.) Global skewness global No Kurtosis (glob.) Global kurtosis global No Peak-to-peak amplitude Maximum minus minimum of signal global No Energy variance Variance of the en-ergy distribution windowed No KDE entropy Entropy via Kernel Density Estimation windowed Yes Wavelet entropy Wavelet entropy (1st-order Haar) windowed Yes 95% Z-Score Statistical distance of 95th percentile windowed Yes 
+
+The waveform descriptors are categorized into time-domain and time-frequency-domain descriptors. Entropy-based descriptors are computed across multiple signal repre-sentations, including the time and time-frequency domains. 
+
+A1 Time-domain features 
+
+Time-domain descriptors are computed directly from the raw signal or signal segments. This group includes statistical descriptors, energy-based measures and classical temporal characteristics. The mean and standard deviation are used as auxiliary sta-tistical measures and are defined as: 
+
+μ = 1
+
+N
+
+> N
+
+X
+
+> i=1
+
+xi, σ =
+
+vuut 1
+
+N
+
+> N
+
+X
+
+> i=1
+
+(xi − μ)2. (A1) Skewness and kurtosis are computed as standardized cen-tral moments: Skewness = 1
+
+N
+
+> N
+
+X
+
+> i=1
+
+ xi − μσ
+
+3
+
+, (A2) Kurtosis = 1
+
+N
+
+> N
+
+X
+
+> i=1
+
+ xi − μσ
+
+4
+
+. (A3) 14 E. Ecik et al.: Surrogate-Assisted SI-Compliant Interconnect Optimization Using the Earth Mover’s Distance 
+
+For normalized descriptors, min–max scaling is applied prior to computation as follows: 
+
+xi, norm = xi − min( xi)max( xi) − min( xi) . (A4) Energy is defined via squared signal amplitudes: 
+
+wi = x2 
+
+> i
+
+. (A5) The energy-based descriptor used in this work is the variance of the energy distribution derived from the sequence wi.Furthermore, the peak-to-peak amplitude is defined as: 
+
+App = max( xi) − min( xi). (A6) The upper edge slope is computed as the slope between the signal value at the detected window onset and the first occurrence of 90% of the maximum signal amplitude within the same window: UpperEdgeSlope = x(t90 ) − xmid −level 
+
+t90 − tmid −level 
+
+.
+
+The maximum slope is defined as: 
+
+mi = movingAverage (xi − xi−1), (A7) MaxSlope = max( mi). (A8) In this work, the mean squared difference is utilized to characterize overshoot behavior. By calculating the average of squared first-order differences, it captures high-frequency variations typical for ringing: MeanSqDiff = 1
+
+N − 1 
+
+> N−1
+
+X
+
+> i=1
+
+(xi+1 − xi)2. (A9) The 95% Z-Score provides a measure of extreme values relative to the distribution: 
+
+Z95 = P95 − μσ . (A10) 
+
+A2 Entropy-based features 
+
+All entropy measures are based on the Shannon entropy def-inition: 
+
+H = − X
+
+> i
+
+pi log 2(pi), (A11) where pi denotes a normalized probability distribution de-rived from the respective signal representation. The KDE-based entropy employs a Gaussian Kernel Den-sity Estimation (KDE) to estimate the probability distribution 
+
+pi over a fixed grid of M amplitude points gi:
+
+pi = 1
+
+N · h
+
+> N
+
+X
+
+> j=1
+
+K
+
+ gi − xj
+
+h
+
+
+
+, (A12) where K denotes the Gaussian kernel, h is the bandwidth, and xj represents the signal samples. The smoothing factor 
+
+h controls the trade-off between detail and noise suppression. The resulting discrete distribution pi is normalized such that P pi = 1 and subsequently used to calculate the Shannon en-tropy according to Equation (A11). The wavelet entropy used in this work is based on first-order local differences rather than a full multiscale decom-position. A discrete Haar wavelet is applied at the first decomposi-tion level (level-1 detail coefficients): 
+
+h = 1
+
+√2 [1 , −1] . (A13) The corresponding wavelet coefficients are obtained via convolution ck = ( x∗h)k. Subsequently, an energy represen-tation is constructed from the squared coefficients Ek = c2
+
+> k
+
+.A normalized probability distribution is then defined as: 
+
+pi = Ek
+
+P 
+
+> j
+
+Ej
+
+. (A14) Finally, the wavelet entropy is computed using the Shan-non entropy definition in Equation (A11), where pi repre-sents the probability distribution over the respective repre-sentation indices. 
+
+Appendix B: Physics-Inspired Feature Engineering 
+
+The feature-engineering procedure is defined with respect to the underlying DDR3 fly-by network topology shown in Fig-ure 2. Depending on the configuration considered, either a single or a dual DRAM module setup is used, resulting in a variable number of transmission line parameters. This leads to input sets with a cardinality of two or three line parame-ters, corresponding to the respective network topology. 
+
+Appendix C: Mathematical Definintion of the Evaluation Metrics 
+
+Table C1 provides an overview of all performance measures applied in this work, together with their mathematical for-mulations. Because the analysis includes both binary classi-fication and continuous regression tasks, the chosen metrics cover evaluation criteria relevant to both domains. E. Ecik et al.: Surrogate-Assisted SI-Compliant Interconnect Optimization Using the Earth Mover’s Distance 15 
+
+Table B1. Feature set of physics-inspired engineered inputs Feature Formula Physics-inspired Motivation Normalized base features 
+
+param i =
+
+> param raw −param min
+> param max −param min
+
+Normalized physical input parameters (line lengths, re-sistance); basis for all de-rived features Line lengths 
+
+Li
+
+Li =
+
+param i, Tline 
+
+Geometric line lengths influ-encing Delay Line length differences 
+
+dij = Li − Lj Relative line lengths; mod-els propagation delay differ-ences Line termination 
+
+R = param raw,R Termination resistance; af-fects reflection behavior Reflection factor 
+
+Γ = 50 −R 
+
+> 50+ R
+
+Reflection coefficient rela-tive to fixed characteristic impedance of Z= 50 Ω 
+
+inv(R), abs( Γ), Γ2
+
+1/R, |Γ|, Γ2 Measures for conductance, reflection magnitude and re-flected power Fourier features (1st–4th order) 
+
+Φi =sin( k2π param i),
+
+cos( k2π param i),
+
+k = 1 .. 4
+
+Capture periodic patterns; harmonics up to 4th order Interactions param i · param j Nonlinear coupling between parameters Hierarchical interactions 
+
+ϕi · param j Fourier × parameter; cap-tures modulated nonlinear relationships Interference features 
+
+sin(2 π(param i±
+
+param j )) 
+
+Sensitive to relative differ-ences between parameters Quadratic features param 2 
+
+> i
+
+Models nonlinear effects Cubic features param 3 
+
+> i
+
+Captures higher-order non-linearities Absolute distances 
+
+|param i −
+
+param j |
+
+Models relative differences and delay variations Quadratic distances 
+
+(param i −
+
+param j )2
+
+Emphasizes larger devia-tions log(R) log( R) Stabilizes large dynamic ranges Log deviation from Z= 50 Ω log( |R−50 |+1) Robust measure of impedance mismatch Rnorm R−50 50 Relative deviation from char-acteristic impedance Z= 50 Ω 
+
+Rdev 2 (R − 50) 2 Quadratic deviation from characteristic impedance Z= 50 Ω 
+
+Resistive cross features 
+
+R · param i Coupling between resistance and parameter Reflective cross features 
+
+Γ · param i Coupling between reflection and parameter Quadratic parameters 
+
+P 
+
+> i
+
+param 2 
+
+> i
+
+Global measure of parameter intensity 
+
+Table C1. Overview of all evaluation metrics used for model as-sessment. Metric Mathematical Formulation Sensitivity (Recall; Murphy, 2012) 
+
+# T P T P + F N 
+
+Specificity (Murphy, 2012) 
+
+# T N T N + F P 
+
+MCC (Matthews, 1975)                   
+
+> T P ·T N −F P ·F N
+> p(T P +F P )( T P +F N )( T N +F P )( T N +F N )
+
+NRMSE (range-normalized; Khoshvaght, 2025) 
+
+# q 1
+
+> N
+
+# PNi=1 (yi − ˆyi)2
+
+# ytrain max − ytrain min 
+
+Pearson correlation coefficient r
+
+(Pearson, 1896; Murphy, 2012) 
+
+# PNi=1 (yi − ¯y)(ˆ yi − ¯ˆy)
+
+# qPNi=1 (yi − ¯y)2 PNi=1 (ˆ yi − ¯ˆy)2
+
+Note: yi and ˆyi denote the observed and predicted values for the 
+
+i-th sample; ¯y and ¯ˆy represent their respective means; N is the total number of samples. 
+
+References 
+
+Alexandrov, N.M., Lewis, R.M., Gumbert, C.R., Green, L.L, New-man, P.A.: Approximation and model management in aerody-namic optimization with variable-fidelity models. Journal of Air-craft, vol. 38(6), 1093–1101, 2001. Ba, J. L., Kiros, J. R., Hinton, G.E.: Layer Normalization, arXiv [preprint], https://arxiv.org/abs/1607.06450 (last access: 01 Feb. 2026), 2016. Bishop, C.M.: Pattern Recognition and Machine Learning, New York, Springer, ISBN: 978-0387310732 , 2006. Blanco, S., Figliola, A., Quiroga, R. Q., Rosso, O. A., Serrano, E.: Time-frequency analysis of electroencephalogram series, III. Wavelet packets and information cost function, Physical Review E, 57, 932-940, 1998. Breiman, L., Friedman, J. H., Olshen, R. A., and Stone, C. J.: Classi-fication and Regression Trees, Chapman&Hall/CRC, New York, USA, ISBN 978-0-412-04841-8, 1984. Ecik, E., John, W., Withöft, J., and Götze, J.: Anomaly Detection with Decision Trees for AI Assisted Evaluation of Signal In-tegrity on PCB Transmission Lines, Adv. Radio Sci., 21, 37–48, https://doi.org/10.5194/ars-21-37-2023, 2023. Ecik, E., John, W., Withöft, J., Brüning, R., Götze, J.: A Statistically Evaluated Decision Tree Approach for SI-Compliant PCB De-sign, 2024 International Symposium on Electromagnetic Com-patibility - EMC Europe, Bruges, Belgium, 2024. Gini, C.: Variabilità e mutabilità: contributo allo studio delle dis-tribuzioni e delle relazioni statistiche, Tipogr. di P. Cuppini, Bologna, 1912. 16 E. Ecik et al.: Surrogate-Assisted SI-Compliant Interconnect Optimization Using the Earth Mover’s Distance 
+
+He, K., Zhang, X., Ren, S., Sun, J.: Deep Residual Learning for Image Recognition, 2016 IEEE Conference on Computer Vi-sion and Pattern Recognition (CVPR), Las Vegas, pp. 770-778, https://doi.org/10.1109/CVPR.2016.90, 2016. Hendrycks, D., Gimpel, K.: Gaussian error linear units (GELUs), arXiv [preprint], https://arxiv.org/abs/1606.08415 (last access: 01 Feb. 2026), 2016. Holland, J. H.: Adaptation in natural and artificial systems: An introductory analysis with applications to biology, control, and artificial intelligence. University of Michigan Press, ISBN 0472084607,1975. JEDEC Solid State Technology Association: DDR3 SDRAM Stan-dard, Standard No. JESD79-3F, 2012. Jones, D.R., Schonlau, M., Welch, W.J.: Efficient Global Optimization of Expensive Black-Box Func-tions, Journal of Global Optimization 13, 455–492, https://doi.org/10.1023/A:1008306431147, 1998. Kantorovitch, L.: On the Translocation of Masses, Management Science 5(1):1-4, https://doi.org/10.1287/mnsc.5.1.1, 1958. Khoshvaght, H., Permala, R. R., Razmjou, A., Khiadani, M.: A crit-ical review on selecting performance evaluation metrics for su-pervised machine learning models in wastewater quality predic-tion, Journal of Environmental Chemical Engineering, vol. 13, https://doi.org/10.1016/j.jece.2025.119675, 2025. Kushner, H. J.: A New Method of Locating the Maximum Point of an Arbitrary Multipeak Curve in the Presence of Noise, Journal of Basic Engineering 86 (1), 97–106, 1964. Li, X., Hu, Q.: A Machine Learning based Channel Mod-eling for High-speed Serial Link, 2020 IEEE 6th In-ternational Conference on Computer and Communications (ICCC), Chengdu, China, 11–14 December 2020, 1511–1515, https://doi.org/10.1109/ICCC51575.2020.9345183, 2020. Lindsay, R. K., Buchanan, B. G., Feigenbaum, E. A., Lederberg, J.: Applications of Artificial Intelligence for Organic Chemistry -The Dendral Project, McGraw-Hill Book Company, ISBN 0-07-037895-9, 1980. Ma, H., Li, E.-P., Cangellaris, A. C., and Chen, X.: Compar-ison of Machine Learning Techniques for Predictive Mod-eling of High-Speed Links, 2019 IEEE 28th Conference on Electrical Performance of Electronic Packaging and Sys-tems (EPEPS), Montreal, Canada, 6–9 October 2019, 1–3, https://doi.org/10.1109/EPEPS47316.2019.193199, 2019. Matthews, B. W.: Comparison of the predicted and observed sec-ondary structure of T4 phage lysozyme, Biochimica et Biophys-ica Acta (BBA), vol. 405(2), 442–451, 1975. Medico, R., Spina, D., Ginste, D. V., Deschrijver, D., and Dhaene, T.: Machine-Learning-Based Error Detection and Design Optimization in Signal Integrity Applica-tions, IEEE T. Compon. Pack. Man., 9, 1712–1720, https://doi.org/10.1109/TCPMT.2019.2916902, 2019. Misra, H., Ikbal, S., Bourlard, H., Hermansky, H.: Spec-tral entropybased feature for robust ASR, 2004 IEEE International Conference on Acoustics, Speech, and Signal Processing, Montreal, QC, Canada, pp. I-193, https://doi.org/10.1109/ICASSP.2004.1325955, 2004. Mockus, J.: On Bayesian Methods for Seeking the Extremum, in Proceedings of the IFIP Technical Conference, Springer-Verlag, Berlin, Heidelberg, 400–404, 1974. Murphy, K.P.: Machine Learning: A Probabilistic Perspective. Cambridge, MIT Press, ISBN 0262018020, 2012. Pearson, K.: VII. Mathematical contributions to the theory of evo-lution. - III. Regression, Heredity, and Panmixia, Philos Trans A Math Phys Eng Sci, vol. 187, 253–318, 1896. Peeters, G.: A Large Set of Audio Features for Sound Description (Similarity and Classification) in the CUIDADO Project, Tech-nical Report, IRCAM: Paris, France, 2004. Pourkamali-Anaraki, F., Husseini, J.F., Pineda, E.J., Bednar-cyk, B.A., Stapleton, S.E.: Two-stage surrogate model-ing for data-driven design optimization with application to composite microstructure generation. Engineering Ap-plications of Artificial Intelligence, vol. 138, 109436, https://doi.org/10.1016/j.engappai.2024.109436, 2024. Quinlan, J. R.: C4.5: Programs for Machine Learning, Morgan Kaufmann Publishers Inc., Morgan Kaufmann series in machine learning, San Francisco, CA, USA, ISBN 1-55860-238-0, 1993. Rubner, Y., Tomasi, C., Guibas, L.J.: The Earth Mover’s Distance as a Metric for Image Retrieval. International Journal of Computer Vision 40, 99–121, https://doi.org/10.1023/A:1026543900054, 2000. Shannon, C.E.: A Mathematical Theory of Communication, Bell System Technical Journal, vol. 27, pp. 379–423 and 623–656, 1948. Shortliffe, E.H.: Computer-Based Medical Consultations: MYCIN. New York, NY, USA: Elsevier, 1976. ISBN: 978-0-444-00179-5. Silverman, B. W.: Density Estimation for Statistics and Data Anal-ysis, Chapman & Hall/CRC, 1986. Smith, L.N., Topin, N.: Super-convergence: very fast training of neural networks using large learning rates, Proc. SPIE 11006, Artificial Intelligence and Machine Learning for Multi-Domain Operations Applications, https://doi.org/10.1117/12.2520589, 2019. The MathWorks Inc.: MATLAB (version 2024b), MathWorks [soft-ware], https://www.mathworks.com/ (last access: 30 Jan. 2026), 2024. Torun, H. M., Larbi, M., and Swaminathan, M.: A Bayesian Framework for Optimizing Interconnects in High-Speed Chan-nels, 2018 IEEE MTT-S International Conference on Numeri-cal Electromagnetic and Multiphysics Modeling and Optimiza-tion (NEMO), Reykjavik, Iceland, 8–10 August 2018, 1–4, https://doi.org/10.1109/NEMO.2018.8503097, 2018. Vallender, S. S.: Calculation of the Wasserstein Distance between Probability Distributions on the Line, Theory of Probability and its Applications 18 (4), 3–786, https://doi.org/10.1137/1118101, 1974. Vaserstein, L.N.: Markov Processes over Denumerable Products of Spaces, Describing Large Systems of Automata, Probl. Peredachi Inf., 5:3, 64–72, Problems Inform. Transmission, 5:3, 47–52, 1969. Zhang, H. H., Xue, Z. S., Liu, X. Y., Li, P., Jiang, L., and Shi, G. M.: Optimization of High-Speed Channel for Signal Integrity With Deep Genetic Algorithm, IEEE T. Electromagn. C., 64, 1270-1274, https://doi.org/10.1109/TEMC.2022.3161298, 2022. Zuken Ltd.: eCADSTAR Electrical Editor (version 2023.0.0.50349), Zuken Ltd. [software], https://www.zuken.com (last access: 01 Feb. 2026), 2023.

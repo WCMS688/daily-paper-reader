@@ -1,0 +1,24 @@
+{
+  "label": "2026-06-16",
+  "date": "2026-06-16",
+  "generated_at": "2026-06-16T23:03:03",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202606/16/2606.15234v1-surrogate-assisted-framework-for-si-compliant-interconnect-design-optimization-using-the-earth-movers-distance",
+      "section": "deep",
+      "title_en": "Surrogate-Assisted Framework for SI-Compliant Interconnect Design Optimization Using the Earth Mover's Distance",
+      "authors": "Emre Ecik, Werner John, Julian Withöft, Ralf Brüning, Jürgen Götze",
+      "date": "2026-06-13",
+      "pdf": "https://arxiv.org/pdf/2606.15234v1",
+      "score": "9.0",
+      "evidence": "用于SI合规PCB互连设计优化的代理辅助框架",
+      "tldr": "针对PCB设计中的信号完整性（SI）合规优化问题，本文提出一种基于推土机距离（EMD）的确定性机器学习辅助框架。该方法先用神经网络代理模型预测波形特征，再通过决策树筛选SI合规波形，最后利用EMD评估波形与理想参考的相似度，实现无逆建模或随机搜索的透明化设计排序。在大规模DDR3飞掠波形数据集上验证，该框架提供了可解释且计算高效的AI辅助PCB开发替代方案。",
+      "tags": "query:si-pi",
+      "abstract_en": "This work presents a deterministic, machine-assisted framework for SI-compliant PCB design based on the Earth Mover's Distance (EMD). In contrast to conventional surrogate-based optimization methods that rely on iterative black-box search procedures, the proposed approach follows an interpretable, sequential evaluation strategy. Neural surrogate models are first used to efficiently predict waveform describing features from topology-dependent design parameters. A decision tree then acts as a physically motivated quality gate that identifies SI-compliant waveforms according to predefined SI criteria. Within the resulting valid solution space, the Earth Mover's Distance is employed as a similarity metric to rank candidate designs according to their proximity to an ideal reference signal. This enables not only the deterministic identification of admissible parameter regions but also a transparent prioritization of physically superior solutions without inverse modeling or stochastic search procedures. The methodology is demonstrated using a large-scale set of simulated DDR3 fly-by waveforms. By combining surrogate prediction, interpretable classification, and EMD-based waveform evaluation, the framework provides an explainable and computationally efficient alternative to conventional optimization strategies for supporting PCB development with AI-based methods.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
