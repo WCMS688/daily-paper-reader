@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-06-17 <!--dpr-date:20260617-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/17/2606.17893v1-condition-wise-sinkhorn-drifting-for-one-shot-learned-channel-simulation" data-sidebar-item="{&quot;title&quot;: &quot;Condition-Wise Sinkhorn Drifting for One-Shot Learned Channel Simulation&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.17893v1-condition-wise-sinkhorn-drifting-for-one-shot-learned-channel-simulation&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;学习的信道仿真方法可迁移至SerDes/HBM信道建模&quot;}">Condition-Wise Sinkhorn Drifting for One-Shot Learned Channel Simulation</a>
   * 2026-06-16 <!--dpr-date:20260616-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/16/2606.15234v1-surrogate-assisted-framework-for-si-compliant-interconnect-design-optimization-using-the-earth-movers-distance" data-sidebar-item="{&quot;title&quot;: &quot;Surrogate-Assisted Framework for SI-Compliant Interconnect Design Optimization Using the Earth Mover&#x27;s Distance&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.15234v1-surrogate-assisted-framework-for-si-compliant-interconnect-design-optimization-using-the-earth-movers-distance&quot;, &quot;score&quot;: &quot;9.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;用于SI合规PCB互连设计优化的代理辅助框架&quot;}">Surrogate-Assisted Framework for SI-Compliant Interconnect Design Optimization Using the Earth Mover&#x27;s Distance</a>

@@ -1,0 +1,24 @@
+{
+  "label": "2026-06-17",
+  "date": "2026-06-17",
+  "generated_at": "2026-06-17T21:26:05",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202606/17/2606.17893v1-condition-wise-sinkhorn-drifting-for-one-shot-learned-channel-simulation",
+      "section": "quick",
+      "title_en": "Condition-Wise Sinkhorn Drifting for One-Shot Learned Channel Simulation",
+      "authors": "Rick Fritschek, Rafael F. Schaefer",
+      "date": "2026-06-16",
+      "pdf": "https://arxiv.org/pdf/2606.17893v1",
+      "score": "6.0",
+      "evidence": "学习的信道仿真方法可迁移至SerDes/HBM信道建模",
+      "tldr": "学习型通信系统的可微训练需大量评估随机信道，扩散式反向采样代价高。本文提出条件式Sinkhorn漂移，一种一次性信道替代方法，保持传输符号不变，仅迁移条件输出分布。通过在相同符号的重复输出上构建条件Sinkhorn目标，并用有限样本重心速度和分离粒子回归训练生成器。在AWGN、瑞利衰落、SSPA非线性和TDL信道上实验，条件式Sinkhorn在条件诊断和符号编码检验中优于其他一次性方法，但扩散模型在困难符号错误率曲线上仍最强。贡献：为需频繁信道调用的场景提供条件保持的高效模拟器。",
+      "tags": "query:si-pi",
+      "abstract_en": "Learned communication systems may evaluate stochastic channel surrogates millions of times inside differentiable training loops, making diffusion-style reverse sampling expensive. This paper proposes condition-wise Sinkhorn drifting, a one-shot channel surrogate that preserves the transmitted symbol and transports only the conditional output laws \\(p(y\\mid x)\\). We formulate a conditional Sinkhorn objective over repeated outputs at the same transmitted symbol and train the generator with finite-sample barycentric velocities followed by detached particle regression. Experiments on additive white Gaussian noise (AWGN), Rayleigh fading, solid-state power amplifier (SSPA) nonlinearity, and a compact tapped-delay-line (TDL) channel compare direct drifting, joint Sinkhorn drifting, condition-wise Sinkhorn drifting, conditional denoising diffusion probabilistic modeling (DDPM), denoising diffusion implicit modeling (DDIM), and Wasserstein generative adversarial network (WGAN) references. Within the evaluated one-shot drifting-family variants, condition-wise Sinkhorn is strongest under conditional diagnostics and symbolic-coding checks, while diffusion remains strongest on the hardest downstream symbol-error-rate (SER) curves. The resulting operating point is a condition-preserving one-shot simulator for settings where repeated channel calls make diffusion-style sampling too costly.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
