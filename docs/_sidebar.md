@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-06-23 <!--dpr-date:20260623-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/23/2606.22393v1-hford-hybrid-forward-optimization-and-reverse-design-method-and-its-applications-to-on-chip-millimeter-wave-inductive-elements" data-sidebar-item="{&quot;title&quot;: &quot;HFORD: Hybrid Forward Optimization and Reverse Design Method and Its Applications to On-Chip Millimeter-Wave Inductive Elements&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.22393v1-hford-hybrid-forward-optimization-and-reverse-design-method-and-its-applications-to-on-chip-millimeter-wave-inductive-elements&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;片上电感优化方法可用于SI/PI建模&quot;}">HFORD: Hybrid Forward Optimization and Reverse Design Method and Its Applications to On-Chip Millimeter-Wave Inductive Elements</a>
   * 2026-06-17 <!--dpr-date:20260617-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/17/2606.17893v1-condition-wise-sinkhorn-drifting-for-one-shot-learned-channel-simulation" data-sidebar-item="{&quot;title&quot;: &quot;Condition-Wise Sinkhorn Drifting for One-Shot Learned Channel Simulation&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.17893v1-condition-wise-sinkhorn-drifting-for-one-shot-learned-channel-simulation&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;学习的信道仿真方法可迁移至SerDes/HBM信道建模&quot;}">Condition-Wise Sinkhorn Drifting for One-Shot Learned Channel Simulation</a>

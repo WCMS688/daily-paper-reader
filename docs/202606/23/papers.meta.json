@@ -1,0 +1,24 @@
+{
+  "label": "2026-06-23",
+  "date": "2026-06-23",
+  "generated_at": "2026-06-23T21:57:15",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202606/23/2606.22393v1-hford-hybrid-forward-optimization-and-reverse-design-method-and-its-applications-to-on-chip-millimeter-wave-inductive-elements",
+      "section": "quick",
+      "title_en": "HFORD: Hybrid Forward Optimization and Reverse Design Method and Its Applications to On-Chip Millimeter-Wave Inductive Elements",
+      "authors": "Yuzhen Song, Yifan Wang, Guqiao Chen, Hanyu Liu, Qi Wu, Guangyi Lu, Haiming Wang, Wei Hong",
+      "date": "2026-06-21",
+      "pdf": "https://arxiv.org/pdf/2606.22393v1",
+      "score": "7.0",
+      "evidence": "片上电感优化方法可用于SI/PI建模",
+      "tldr": "毫米波片上电感布局合成面临非线性映射、昂贵仿真和逆向设计非唯一性等挑战。提出HFORD混合前向优化与逆向设计方法，集成随机森林、变分自编码器、混合密度网络和粒子群优化，通过层次化流程将器件目标映射为布局种子。两个设计示例表明，该方法将设计周期从数小时缩短至数分钟，同时满足设计规则约束。",
+      "tags": "query:si-pi",
+      "abstract_en": "On-chip inductive elements are pivotal in determining both the silicon footprint and performance of millimeter-wave (mmWave) integrated circuits. However, the layout-level synthesis of these passive devices is severely challenged by highly nonlinear geometry-to-performance mappings, computationally expensive full-wave electromagnetic simulations, topology-dependent design spaces, and the inherent non-uniqueness of inverse design. To overcome these bottlenecks, we propose a hybrid forward optimization and reverse design (HFORD) method for the target-to-layout synthesis of mmWave inductive elements. Utilizing a unified core to map device-level requirements to layout-level seeds, HFORD structures direct device targets and translates circuit specifications into a hierarchical synthesis flow. Specifically, sparse-fitting sampling is introduced to improve coverage across critical performance regions, while compact response-fitting coefficients significantly reduce training dimensionality. The HFORD core integrates a random forest for topology selection, a variational autoencoder for spectral feature generation, a mixture density network for probabilistic inverse mapping, and particle swarm optimization for latent space exploration. This integration improves the feasibility of the generated layout seeds under design rule check (DRC) constraints. Two design examples demonstrate that the proposed method accelerates the design cycle from hours to minutes compared to conventional optimization methods.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
