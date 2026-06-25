@@ -1,0 +1,24 @@
+{
+  "label": "2026-06-25",
+  "date": "2026-06-25",
+  "generated_at": "2026-06-25T22:11:04",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202606/25/2606.23390v1-symbol-rate-code-rate-trade-offs-for-imdd-200g400g-per-lane-lpo-transceivers",
+      "section": "deep",
+      "title_en": "Symbol Rate-Code Rate Trade-offs for IM/DD 200G/400G per Lane LPO Transceivers",
+      "authors": "José Núñez-Kasaneva, Yunus Can Gültekin, Stefanos Dris, Paraskevas Bakopoulos, Nikos Argyris, Gabriele Liga",
+      "date": "2026-06-22",
+      "pdf": "https://arxiv.org/pdf/2606.23390v1",
+      "score": "9.0",
+      "evidence": "高速IM/DD LPO收发器的符号率与编码率折衷分析",
+      "tldr": "针对200G/400G每通道线性驱动光模块（LPO）中带宽受限的强度调制/直接检测（IM/DD）系统，本文分析了符号率与前向纠错（FEC）码率的最佳权衡。采用PAM-4/6/8调制格式，以二元对称信道容量作为硬判决译码下的可达信息率指标。结果表明，将FEC码率降至KP4基线以下可使高阶PAM格式（PAM-6/8）以显著低于PAM-4的符号率满足吞吐目标，从而有效缓解带宽瓶颈。该权衡分析为LPO收发器的码率与符号率协同优化提供了定量指导，对设计低功耗高速光互连具有重要意义。",
+      "tags": "query:si-pi",
+      "abstract_en": "We analyze the symbol rate-code rate trade-off in bandwidth-limited IM/DD systems targeting LPO transceivers, using PAM-4/6/8 as candidate modulation formats. We use the capacity of the binary symmetric channel as an achievable information rate under hard-decision decoding, serving as a performance metric for 200G and 400G per-lane throughput targets. Our results show that reducing the FEC code rate below the KP4 baseline allows higher-order PAM formats to operate at substantially lower symbol rates than PAM-4 while meeting the throughput requirement.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

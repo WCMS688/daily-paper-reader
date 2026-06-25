@@ -1,0 +1,237 @@
+Title: Symbol Rate-Code Rate Trade-offs for IM/DD 200G/400G per Lane LPO Transceivers
+
+URL Source: https://arxiv.org/pdf/2606.23390v1
+
+Published Time: Tue, 23 Jun 2026 03:16:16 GMT
+
+Number of Pages: 4
+
+Markdown Content:
+# Symbol Rate-Code Rate Trade-offs for IM/DD 200G/400G per Lane LPO Transceivers 
+
+Jos´ e N ´ u ˜ nez-Kasaneva 1, Yunus Can G ¨ ultekin 1, Stefanos Dris 2, Paraskevas Bakopoulos 2, Nikos Argyris 2, Gabriele Liga 1
+
+> 1
+
+Department of Electrical Engineering, Eindhoven University of Technology (TU/e), 5600MB Eindhoven, the Netherlands 
+
+> 2
+
+NVIDIA, Ermou 56, 10563 Athens, Greece email:j.i.nunez.kasaneva@tue.nl 
+
+ABSTRACT We analyze the symbol rate–code rate trade-off in bandwidth-limited IM/DD systems targeting LPO transceivers, using PAM-4/6/8 as candidate modulation formats. We use the capacity of the binary symmetric channel as an achievable information rate under hard-decision decoding, serving as a performance metric for 200G and 400G per-lane throughput targets. Our results show that reducing the FEC code rate below the KP4 baseline allows higher-order PAM formats to operate at substantially lower symbol rates than PAM-4 while meeting the throughput requirement. 
+
+Keywords: intensity-modulation/direct-detection (IM/DD), linear-drive pluggable optics (LPO), short-reach data-center interconnects (DCIs), Forward Error Correction (FEC). 
+
+1. I NTRODUCTION 
+
+Artificial intelligence workloads are driving higher per-lane data rates in short-reach data-center interconnects (DCIs), where intensity-modulation/direct-detection (IM/DD) with pulse-amplitude modulation (PAM) formats remain attractive for their cost, complexity, and energy-efficiency advantages [1]. Current commercial deploy-ments have reached 200 Gb/s per lane with PAM-4 [2]. However, scaling to 400 Gb/s and beyond is mainly hindered by two constraints: (i) the bandwidth limitations in the transmission chain [3] and (ii) transmitter laser relative intensity noise (RIN) [4]. In particular, in IM/DD linear drive pluggable optics (LPO) transceivers, frequency-dependent loss arising from electronic components such as packages and printed circuit boards (PCBs), specifically the PCB traces that connect the optical module to the host digital signal processor, introduces strong intersymbol interference, especially at the high symbol rates required for 400 Gb/s/lane. PAM-4 remains the most widely adopted modulation format and is typically combined with precoding/equalization blocks as well as low-latency forward error correction (FEC) such as KP4, as defined in the IEEE 802.3dj standard [5]. On the other hand, increasing the modulation order M (e.g., PAM-6/8 [6], [7]) remains an attractive option, as it reduces the required symbol rate and, consequently, the DAC and ADC sampling rates, thereby lowering power consumption. However, higher-order PAM is generally believed to require a higher signal-to-noise ratio (SNR) at the receiver to achieve sufficiently low post-decoding error probabilities. This perception stems from the standard practice of fixing the FEC code rate (KP4) and using the pre-FEC bit error rate (BER) at the target baud rate as the pass/fail criterion against the KP4 threshold. This fixed-rate criterion penalizes higher-order PAM, which may not meet the KP4 threshold under severe bandwidth limitations and channel losses, even though higher modulation cardinalities can significantly reduce symbol rate and DAC/ADC power. In this paper, we challenge this fixed-rate evaluation framework by characterizing IM/DD PAM-4/6/8 per-formance under variable code rate and symbol rate using achievable information rates (AIR) for hard-decision decoding. We show that pairing higher modulation orders with appropriately reduced code rates unlocks signif-icant design flexibility, enabling 200G and 400G per-lane operation under stringent bandwidth constraints that would not be possible under a fixed-rate KP4 adoption. 
+
+2. S YSTEM MODEL 
+
+We model an IM/DD LPO system as depicted in Fig. 1. At the transmitter, a bit sequence b is mapped to a PAM-M symbol sequence ( M ∈ { 4, 6, 8}). The resulting symbols are upsampled by an ideal DAC using rectangular pulse shaping, followed by a Gaussian filter to smooth the waveform before the electrical front-end. The transmitter frontend emulates the PCB channel via a linear loss filter, which imposes a fixed loss of 9 dB at 
+
+53 GHz [8] and whose frequency response is shown in Fig. 2. PCB crosstalk is modeled as a colored zero-mean Gaussian process nXT (t) added at the PCB frequency response output. The PCB loss is compensated by an active continuous-time linear equalizer (CTLE), modeled as a peaking filter using a second-order low-pass filter with a tunable damping factor, designed to fully restore the signal at the Nyquist frequency. The CTLE introduces additive noise nC (t), modeled as zero-mean white Gaussian noise. The noise powers of nXT (t) and nC (t) are set equal and jointly adjusted to yield a specified transmitter SNR (TRX-SNR) at the CTLE output u(t).             
+
+> 979-8-3195-4420-9/26/$31.00 © 2026 IEEE
+> arXiv:2606.23390v1 [eess.SP] 22 Jun 2026 2
+> DAC
+> PAM-M
+> TRX-DSP
+> b
+> +
+> PCB
+> +
+> CTLE MZM
+> +
+> ×
+> I0
+> nRIN (t)
+> Laser
+> u(t)
+> nXT (t)nC(t)
+> |ERx (t)|2+
+> PD
+> +
+> TIA PCB
+> nT(t)nS(t)
+> ETx (t)ERx (t)
+> Electrical: Optical:
+> 1 Sa /sym
+> ADC
+> FFE
+> MLSE
+> Demapper ˆb
+> RX-DSP
+> Figure 1: Schematic diagram of the IM/DD system investigated in this work.
+> 020 60 100
+> −10
+> 0
+> 10
+
+-3 dB 
+
+53 GHz    
+
+> BW (GHz)
+> Magnitude (dB)
+> PCB Peaking Filter (CTLE) Butterw. Filter (MZM)
+> Figure 2: Frequency responses of the individual TRX/RX filter blocks.
+
+The Mach–Zehnder modulator (MZM) is modeled using a 4th-order Butterworth filter, whose frequency response is shown in Fig. 2, followed by the sinusoidal electro-optical transfer function. The MZM operates in push-pull configuration, driven by a continuous-wave laser with optical intensity I0 and colored RIN nRIN (t) whose total power equals that of an equivalent white noise spectrum. The MZM bias voltage and drive ampli-tude determine the operating point, setting both the extinction ratio (ER) [1] and the optical modulation amplitude (OMA). The resulting optical signal ETX (t) propagates over a single-mode fiber with 3 dB attenuation before arriving at the receiver frontend. A photodiode (PD) performs square-law detection, followed by a 6th-order Butterworth filter modeling the photodiode frequency response. The detected current is amplified by a transimpedance amplifier (TIA), modeled as a peaking filter to pre-compensate the receiver PCB loss at the Nyquist frequency. Shot noise nS(t)
+
+and thermal noise nT(t) are added as zero-mean Gaussian processes, after which a PCB loss filter is applied. Finally, the received signal is sampled at 1 Sa/sym via an ideal ADC assuming ideal time recovery and then processed by the receiver DSP chain. The intersymbol interference induced by bandwidth limitations in the system and additive noise is mitigated by a feed-forward equalizer (FFE) with 12 taps (8 pre-cursor, 3 post-cursor), followed by a 1-tap maximum-likelihood sequence estimator (MLSE). A hard symbol-to-bit demapper then recovers the estimated bit sequence ˆb.
+
+3. R ESULTS 
+
+3.1 Achievable Information Rate 
+
+In this work, we adopt AIRs to analyze the performance of a coded IM/DD transmission system. An AIR is a transmission rate (but not necessarily the maximum) at which reliable transmission can be achieved for a given channel and transmitter-receiver processing pair, via a sufficiently strong channel code. Specifically, here, we compute AIRs for uniform PAM-M constellations with (ideal) hard-decision (HD) binary decoders. Let M
+
+be the PAM order, m = log 2 M be the number of bits mapped to each PAM symbol, and p is the average HD BER measured at the output of the hard demapper in the RX-DSP in Fig. 1. Then, an AIR in bits per symbol is given by the quantity [9, Sec. III-C] 
+
+AIR HD = m [1 − H2(p)] ,
+
+where H2(p) = −p log 2 p − (1 − p) log 2(1 − p) is the binary entropy function. The corresponding achievable throughput (in bit/s) is TAIR = Rs · AIR HD where Rs denotes the symbol rate. 
+
+3.2 Numerical Results 
+
+In this section, we numerically compare the performance of PAM-M formats for 200 and 400 Gb/s transmis-sion, sweeping BMZM across the 45-65 GHz and 100-120 GHz ranges, respectively, using the model described in Sec. 2 and shown in Fig. 1. The simulation parameters are listed in Table I. Fig. 3a shows the BER versus Rs for the 200G pre-FEC transmission scenario. Under the fixed-rate KP4 criterion, PAM-4 is the only modulation format that achieves the KP4 FEC threshold, reaching up to 120 Gbaud with 65 GHz MZM bandwidth, which is above the 105 .83 GBd required to support a net transmission of 200 Gwith KP4, but only 90 Gbaud for 45 GHz MZM. PAM-6 and PAM-8 fail to meet the KP4 threshold across all tested bandwidths, which under a fixed-rate evaluation would incorrectly suggest these formats are unsuitable. Across all PAM-M formats, the minimum BER occurs at approx. 90 Gbaud, due to the combined TX/RX filtering effects, which become more detrimental as the symbol rate increases. This slight performance dip is due to the CTLE peaking response in Fig. 2: the stronger the peaking response due to the higher symbol rate, the steeper the high-frequency roll-off, suppressing the out-of-band noise from all noise contributions except thermal noise, which is introduced after the RX-CTLE, and slightly improves the BER performance. However, beyond a given symbol rate, ISI dominates the performance. At lower symbol rates, maintaining a fixed data rate requires higher modulation orders, which increases the required SNR. Consequently, the BER increases at 3        
+
+> 60 70 80 90 100 110 120 130 140
+> 10 −6
+> 10 −5
+> 10 −4
+> 10 −3
+> 10 −2
+> 10 −1
+> KP4
+
+Rs (Gbaud) 
+
+> BER
+
+PAM-4 PAM-6 PAM-8 BMZM = 45 GHz BMZM = 55 GHz BMZM = 65 GHz           
+
+> (a) Bit error rate (BER) vs. symbol rate ( Rs).
+> 60 70 80 90 100 110 120 130 140
+> 50
+> 100
+> 150
+> 200
+> 250
+> 300
+> 28 GBd
+> 20 .8GBd
+
+Rs (Gbaud)                  
+
+> TAIR  (Gbps)
+> (b) Achievable throughput ( TAIR ) vs. Rs.
+> 60 70 80 90 100 110 120 130 140
+> 0.4
+> 0.5
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+> 1
+> Rc=0.92
+> Rc= 0 .96 Rc= 1 KP4
+> 28 GBd
+> 20 .8GBd
+> Max
+> rate backoff
+
+Rs (Gbaud)               
+
+> Rc
+> Rreq c
+> Rair c
+> .
+> (c) Code rate ( Rc) vs. Rs.
+> Figure 3: Performance with varying BMZM (45 –65 GHz) at 30 dB SNR, 9dB PCB loss at 53 GHz, and RIN = −149 .5dB/Hz for the
+> 200 Gb/s scenario. TABLE I: Simulation Parameters
+
+Parameter Value 
+
+Simulation Sampling Rate 2 Sa/sym PCB Loss @ 53 GHz 9 dB TRX SNR 30 dB @200G, 28 dB @400G RIN −149 .5 dB/Hz MZM Bias Vπ /4
+
+MZM Extinction Ratio 4.5 dB MZM Opt. Modulation Amplitude 5 dBm Optical ch. Attenuation 3 dB Thermal noise (RMS) 14 pA /√Hz 
+
+symbol rates below the optimum ( Rs < 90 GBd). The achievable throughput ( TAIR ) is shown in Fig. 3b. In contrast to the fixed-rate KP4 picture, the AIR analysis reveals that 200 Gb/s can be achieved at 72 , 79 .2, and 100 Gbaud for PAM-8, PAM-6, and PAM-4, respectively (diamond markers), corresponding to baud-rate reductions of 28 Gbaud (PAM-8) and 20 .8 Gbaud (PAM-6) relative to PAM-4, achievable by pairing higher-order formats with an appropriately chosen code rate. Square markers achieve the same throughput at higher symbol rates and are of no practical interest. Across the tested MZM 3-dB bandwidths, all formats reach 200 Gb/s except PAM-4 at BMZM = 45 GHz, where ISI is so strong as to prevent the target throughput from being reached. Fig. 3c shows the achievable code rate Rair c supportable by the channel under ideal HD decoding for the 
+
+55 GHz MZM, and the required code rate Rreq c to deliver a net data rate of 200 Gb/s, both as a function of 
+
+Rs. Any Rs-Rc pair satisfying Rreq c ≤ Rair c represents a feasible operating point for 200 Gb/s transmission, and the two intersections where Rreq c = Rair c delimit the achievable Rs range. Towards the center of this feasible range, a gap emerges between Rair c and Rreq c , which represents a rate backoff margin that can be used to relax the FEC performance requirements and accommodate the suboptimality of practical FEC schemes. However, exploiting this margin comes at the cost of an increased symbol rate compared to the minimum achievable under a very strong, low-rate FEC. This gap is maximized approximately in the middle of the Rs operating range for each modulation format; for example, in the PAM-8 case, the maximum rate backoff occurs around 
+
+Rs = 100 GBd (see vertical green arrow in Fig. 3b). Beyond this point, increasing Rs simultaneously shrinks the rate backoff margin and raises the symbol rate, making operation in this region less attractive. Using KP4 (RKP4 c ≈ 0.9449 ) as a benchmark, the selected operating points (filled markers) correspond to Rc = 0 .96 for PAM-6 and Rc = 0 .92 for PAM-8, yielding symbol rate reductions of 20 .8 GBd and 28 GBd relative to PAM-4 while providing a moderate backoff margin below Rair c .Fig. 4a shows the BER versus Rs for the 400G scenario. Under the fixed-rate KP4 criterion, PAM-4 is the only format that reaches the KP4 FEC threshold, crossing it at approximately 200 and 205 GBd for the 
+
+110 –120 GHz BMZM . However, this remains below the 212 GBd required to support net 400 G transmission with KP4, and PAM-6 and PAM-8 fail to meet the KP4 threshold entirely. Figure 4b illustrates the TAIR versus 
+
+Rs. The AIR analysis reveals that 400 Gb/s can be achieved at symbol rates of 145 .9, 161 .4, and 200 GBd for PAM-8, PAM-6, and PAM-4, respectively, corresponding to baud rate reductions of 54 .1 GBd (PAM-8) and 38 .6 GBd (PAM-6) relative to PAM-4. All PAM-M formats can reach 400 Gb/s across all tested MZM bandwidths. Figure 4c compares the achievable code rate Rair c for the 100 GHz MZM and the required code rate Rreq c as a function of Rs. Similar to the 200 Gb/s case, the intersection between Rair c and Rreq c delimits the feasible Rs range; outside this range, the target throughput cannot be met even with an ideal FEC. Within the feasible range, a rate backoff margin emerges between Rair c and Rreq c , which relaxes the FEC performance requirements at the cost of a moderately increased symbol rate compared to the minimum achievable under a very strong, low-rate FEC. This margin reaches a maximum at 190 GBd for PAM-8 (see Fig. 4b); beyond this point, increasing Rs simultaneously reduces the available coding margin and raises the bandwidth requirement. The selected operating point at Rc = 0 .91 for PAM-8 achieves a symbol rate reduction of 54 .1 GBd relative to PAM-4, confirming that the symbol rate advantage of higher-order PAM formats is preserved at 400 Gb/s, with the rate backoff providing additional margin for practical FEC implementation. 120 140 160 180 200 220 240 
+
+> 10 −5
+> 10 −4
+> 10 −3
+> 10 −2
+> 10 −1
+> KP4
+
+Rs (Gbaud) 
+
+> BER
+
+PAM-4 PAM-6 PAM-8 BMZM = 100 GHz BMZM = 110 GHz BMZM = 120 GHz         
+
+> (a) Bit error rate (BER) vs. symbol rate ( Rs).
+> 120 140 160 180 200 220 240
+> 200
+> 250
+> 300
+> 350
+> 400
+> 450
+> 500
+> 54 .1GBd
+> 38 .6GBd
+
+Rs (Gbaud)                 
+
+> TAIR  (Gbps)
+> (b) Achievable throughput ( TAIR ) vs. Rs.
+> 120 140 160 180 200 220 240
+> 0.5
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+> 1
+> Rc=0.91
+> Rc=1
+> Rc=0.95 KP4
+> 38 .6GBd
+> 54 .1GBd
+> Max
+> rate backoff
+
+Rs (Gbaud)               
+
+> Rc
+> Rreq c
+> Rair c
+> (c) Code rate ( Rc) vs. Rs.
+> Figure 4: Performance with varying BMZM (100 –120 GHz) at SNR 28 dB, PCB loss 9dB at 53 GHz, and RIN = −149 .5dB/Hz for the
+> 400 Gb/s scenario.
+
+4. C ONCLUSIONS 
+
+We analyze the symbol rate–code rate trade-off for PAM-4/6/8 IM/DD systems targeting 200G and 400G per-lane LPO transceivers under stringent bandwidth constraints. Our results show that the standard fixed-rate KP4 paradigm penalizes higher-order PAM formats, which cannot meet the KP4 threshold under severe bandwidth limitations despite offering significant symbol rate advantages over PAM-4. By instead characterizing performance via an achievable information rate under hard-decision decoding, we identify feasible symbol rate operating regions under variable-rate hard-decision FEC. Within these regions, we identify a code rate backoff margin that can accommodate practical FEC schemes for DCI applications. As a result, we show that a moderate FEC rate reduction compared to the KP4 benchmark allows higher-order PAM formats to achieve substantial symbol rate reductions relative to PAM-4 at both 200G and 400G, unlocking significant design flexibility in the symbol rate and bandwidth allocation of future LPO transceivers. Future work will investigate the performance of pragmatic FEC schemes and their required code rate backoff, as well as the implementation complexity tradeoffs associated with lower FEC code rates and higher-order modulation formats. 
+
+ACKNOWLEDGEMENTS 
+
+This project has received funding from the European Union’s Horizon Europe research and innovation program under the Marie Skłodowska-Curie grant agreement No 101119983. 
+
+REFERENCES 
+
+[1] D. Che and X. Chen, “Modulation Format and Digital Signal Processing for IM-DD Optics at Post-200G Era,” JLT , vol. 42, no. 2, pp. 588–605, Jan. 2024. [2] C. St-Arnault, S. Bernal, D. Kita, R. Dickson, M. Y. Abdelaziz, A. Nikic, B. Qiu, B. Krueger, F. Pittal` a, C. Reimer, B. Beggs, N. Ben-Hamida, and D. V. Plant, “Net 3.2 Tbps 225 Gbaud PAM4 O-Band IM/DD 2 km Transmission Using FR8 and DR8 with a CMOS 3 nm SerDes and TFLN Modulators,” in OFC .Optica Publishing Group, 2025, p. Th4B.1. [3] X. Pang, O. Ozolins, R. Lin, L. Zhang, A. Udalcovs, L. Xue, R. Schatz, U. Westergren, S. Xiao, W. Hu, G. Jacobsen, S. Popov, and J. Chen, “200 Gbps/Lane IM/DD Technologies for Short Reach Optical Interconnects,” JLT , vol. 38, no. 2, pp. 492–503, 2020. [4] G. P. Agrawal, Fiber-Optic Communication Systems . John Wiley & Sons, 2012. [5] A. Farhood et al. , “Concatenated FEC baseline proposal for 200 Gb/s per lane IM-DD optical PMD,” IEEE P802.3dj Ethernet Task Force, Feb. 2023. [6] A. Uchiyama, S. Okuda, T. Tsuji, Y. Hokama, M. Shirao, K. Abe, T. Yamatoya, and Y. Yamauchi, “Demonstration of 155 Gbaud PAM4 and PAM6 EML with Narrow High-Mesa EA Modulator for 400 Gbps per Lane Transmission,” in OFC , 2024, pp. 1–3. [7] M. S.-B. Hossain, J. Wei, F. Pittal` a, N. Stojanovi´ c, S. Calabr` o, T. Rahman, T. Wettlin, C. Xie, M. Kuschnerov, and S. Pachnicke, “Single-Lane 402 Gb/s PAM-8 IM/DD Transmission Based on a Single DAC and an O-Band Commercial EML,” in OECC , 2021, pp. 1–3. [8] F. Luo, L. Fang, C. Cheng, L. Guo, D. Shen, H. Kang, A. Sun, Z. Su, and X. Jiang, “800G Linear Direct Drive Network System Design & Implementation,” in Proceedings of DesignCon 2024 . Santa Clara, CA, USA: DesignCon, 2024. [9] A. Sheikh, A. G. i. Amat, and G. Liva, “Achievable information rates for coded modulation with hard decision decoding for coherent fiber-optic systems,” JLT , vol. 35, no. 23, pp. 5069–5078, 2017.

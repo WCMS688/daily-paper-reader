@@ -1,0 +1,56 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-25T22:09:13.350807+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 0,
+    "quick_skim_target": 11,
+    "quick_selected": 0
+  },
+  "deep_dive": [
+    {
+      "id": "2606.23390v1",
+      "source": "arxiv",
+      "title": "Symbol Rate-Code Rate Trade-offs for IM/DD 200G/400G per Lane LPO Transceivers",
+      "abstract": "We analyze the symbol rate-code rate trade-off in bandwidth-limited IM/DD systems targeting LPO transceivers, using PAM-4/6/8 as candidate modulation formats. We use the capacity of the binary symmetric channel as an achievable information rate under hard-decision decoding, serving as a performance metric for 200G and 400G per-lane throughput targets. Our results show that reducing the FEC code rate below the KP4 baseline allows higher-order PAM formats to operate at substantially lower symbol rates than PAM-4 while meeting the throughput requirement.",
+      "authors": [
+        "José Núñez-Kasaneva",
+        "Yunus Can Gültekin",
+        "Stefanos Dris",
+        "Paraskevas Bakopoulos",
+        "Nikos Argyris",
+        "Gabriele Liga"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP"
+      ],
+      "published": "2026-06-22T14:18:12+00:00",
+      "link": "https://arxiv.org/pdf/2606.23390v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "analysis of symbol rate and code rate trade-offs for high-speed IM/DD LPO transceivers using PAM modulation",
+      "llm_evidence_cn": "高速IM/DD LPO收发器的符号率与编码率折衷分析",
+      "llm_evidence": "高速IM/DD LPO收发器的符号率与编码率折衷分析",
+      "canonical_evidence": "高速IM/DD LPO收发器的符号率与编码率折衷分析",
+      "llm_tldr_en": "This paper analyzes the symbol rate-code rate trade-off in bandwidth-limited IM/DD systems for 200G/400G per lane LPO transceivers, showing that reducing FEC code rate allows higher-order PAM formats to operate at lower symbol rates.",
+      "llm_tldr_cn": "该论文针对带宽受限的IM/DD系统，分析了符号率与编码率之间的折衷关系，面向每通道200G/400G的LPO收发器，采用PAM-4/6/8调制格式。研究表明，将FEC编码率降低到KP4基线以下，可以使高阶PAM格式以远低于PAM-4的符号率运行，同时满足吞吐量要求。这为高速SerDes和HBM接口的信道设计提供了重要参考。",
+      "llm_tldr": "该论文针对带宽受限的IM/DD系统，分析了符号率与编码率之间的折衷关系，面向每通道200G/400G的LPO收发器，采用PAM-4/6/8调制格式。研究表明，将FEC编码率降低到KP4基线以下，可以使高阶PAM格式以远低于PAM-4的符号率运行，同时满足吞吐量要求。这为高速SerDes和HBM接口的信道设计提供了重要参考。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "High speed channel characterization for SerDes and HBM interfaces",
+      "matched_requirement_id": "req-10",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": []
+}

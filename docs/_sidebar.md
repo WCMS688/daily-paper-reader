@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-06-25 <!--dpr-date:20260625-->
+    * 精读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/25/2606.23390v1-symbol-rate-code-rate-trade-offs-for-imdd-200g400g-per-lane-lpo-transceivers" data-sidebar-item="{&quot;title&quot;: &quot;Symbol Rate-Code Rate Trade-offs for IM/DD 200G/400G per Lane LPO Transceivers&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.23390v1-symbol-rate-code-rate-trade-offs-for-imdd-200g400g-per-lane-lpo-transceivers&quot;, &quot;score&quot;: &quot;9.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;高速IM/DD LPO收发器的符号率与编码率折衷分析&quot;}">Symbol Rate-Code Rate Trade-offs for IM/DD 200G/400G per Lane LPO Transceivers</a>
   * 2026-06-23 <!--dpr-date:20260623-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/23/2606.22393v1-hford-hybrid-forward-optimization-and-reverse-design-method-and-its-applications-to-on-chip-millimeter-wave-inductive-elements" data-sidebar-item="{&quot;title&quot;: &quot;HFORD: Hybrid Forward Optimization and Reverse Design Method and Its Applications to On-Chip Millimeter-Wave Inductive Elements&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.22393v1-hford-hybrid-forward-optimization-and-reverse-design-method-and-its-applications-to-on-chip-millimeter-wave-inductive-elements&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;片上电感优化方法可用于SI/PI建模&quot;}">HFORD: Hybrid Forward Optimization and Reverse Design Method and Its Applications to On-Chip Millimeter-Wave Inductive Elements</a>
