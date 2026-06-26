@@ -6,23 +6,21 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-25
-- 运行时间：2026-06-25 22:10:56 UTC
+- 最新运行日期：2026-06-26
+- 运行时间：2026-06-26 22:05:21 UTC
 - 运行状态：成功
 - 本次总论文数：1
 - 精读区：1
 - 速读区：0
 
 ### 今日简报（AI）
-今日精读一篇高评分（9.0/10）论文，聚焦IM/DD 200G/400G每通道LPO收发机的符号率与码率权衡。  
-值得关注的核心方向是：高速短距光互连中，通过调整符号率与编码率可优化系统性能与成本。  
-建议普通读者关注该技术在数据中心光模块中的实用化进展，可进一步阅读原文了解Trade-off具体数值。
-- 详情：[/202606/25/README](/202606/25/README)
+今日精读一篇关于3.5D异构封装的研究，重点探讨如何通过预硅固件协同优化减轻工艺引起的性能退化。最值得关注的方向是固件与封装工艺的联合设计，可有效提升芯片良率与可靠性。建议读者关注该方法的实际测试数据及与传统方案的对比效果。
+- 详情：[/202606/26/README](/202606/26/README)
 
 ### 精读区论文标签
-1. [Symbol Rate-Code Rate Trade-offs for IM/DD 200G/400G per Lane LPO Transceivers](/202606/25/2606.23390v1-symbol-rate-code-rate-trade-offs-for-imdd-200g400g-per-lane-lpo-transceivers)  
+1. [Toward Mitigating Process-Induced Performance Degradation in 3.5D Heterogeneous Packages via Pre-Silicon Firmware Co-Optimization](/202606/26/2606.26176v1-toward-mitigating-process-induced-performance-degradation-in-35d-heterogeneous-packages-via-pre-silicon-firmware-co-optimization)  
    标签：评分：9.0/10、query:si-pi
-   evidence：高速IM/DD LPO收发器的符号率与编码率折衷分析
+   evidence：3.5D异构封装热-电协同仿真用于信号/电源完整性分析
 
 ### 速读区论文标签
 - 本次无速读推荐。

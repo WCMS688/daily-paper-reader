@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-06-26 <!--dpr-date:20260626-->
+    * 精读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/26/2606.26176v1-toward-mitigating-process-induced-performance-degradation-in-35d-heterogeneous-packages-via-pre-silicon-firmware-co-optimization" data-sidebar-item="{&quot;title&quot;: &quot;Toward Mitigating Process-Induced Performance Degradation in 3.5D Heterogeneous Packages via Pre-Silicon Firmware Co-Optimization&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.26176v1-toward-mitigating-process-induced-performance-degradation-in-35d-heterogeneous-packages-via-pre-silicon-firmware-co-optimization&quot;, &quot;score&quot;: &quot;9.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;3.5D异构封装热-电协同仿真用于信号/电源完整性分析&quot;}">Toward Mitigating Process-Induced Performance Degradation in 3.5D Heterogeneous Packages via Pre-Silicon Firmware Co-Optimization</a>
   * 2026-06-25 <!--dpr-date:20260625-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/25/2606.23390v1-symbol-rate-code-rate-trade-offs-for-imdd-200g400g-per-lane-lpo-transceivers" data-sidebar-item="{&quot;title&quot;: &quot;Symbol Rate-Code Rate Trade-offs for IM/DD 200G/400G per Lane LPO Transceivers&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.23390v1-symbol-rate-code-rate-trade-offs-for-imdd-200g400g-per-lane-lpo-transceivers&quot;, &quot;score&quot;: &quot;9.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;高速IM/DD LPO收发器的符号率与编码率折衷分析&quot;}">Symbol Rate-Code Rate Trade-offs for IM/DD 200G/400G per Lane LPO Transceivers</a>
