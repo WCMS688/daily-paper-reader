@@ -1,0 +1,24 @@
+{
+  "label": "2026-06-27",
+  "date": "2026-06-27",
+  "generated_at": "2026-06-27T21:09:37",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202606/27/2606.24046v1-rapid-finfet-modelling-using-an-autoencoder",
+      "section": "quick",
+      "title_en": "Rapid FinFET Modelling Using an Autoencoder",
+      "authors": "Amit Sarkar Suman Sau, Swagata Mandal",
+      "date": "2026-06-23",
+      "pdf": "https://arxiv.org/pdf/2606.24046v1",
+      "score": "6.0",
+      "evidence": "机器学习自编码器用于快速器件建模，可应用于SI/PI仿真加速",
+      "tldr": "针对FinFET器件建模中传统紧凑模型耗时长、依赖物理方程的问题，提出基于自动编码器的机器学习框架。通过BSIM-CMG校准生成I-V曲线数据集，训练自编码器将完整曲线压缩至低维潜空间，并显式引入VDS作为输入以增强偏置依赖性。重构的I-V曲线可直接提取阈值电压、亚阈值摆幅和峰值跨导等关键参数。该方法仅需少量数据即可实现高精度建模，为快速器件表征、建模和电路仿真提供了高效工具。",
+      "tags": "query:si-pi",
+      "abstract_en": "This work presents a machine learning framework that leverages an autoencoder (AE) for the efficient modeling of FinFET. We first calibrated a BSIM-CMG model to generate a dataset of current-voltage (ID-VG) characteristics. This data was used to train an autoencoder that compresses full I-V curves into a low-dimensional latent space, which intrinsically encodes key device physics. A key innovation is the explicit incorporation of parameter such as drain to source voltage (VDS) as an input feature, enhancing the model ability to capture bias dependent variation. The trained model successfully reconstructs full I-V curves and directly extracts critical device metrics including threshold voltage (VTH), subthreshold slope (SS), and peak transconductance (gm). This approach demonstrates that data driven compact models, built from actual characterization data, can achieve high accuracy with minimal training data, providing a powerful tool for rapid device characterization, modelling and circuit level simulation.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

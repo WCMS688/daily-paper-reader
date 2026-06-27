@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-06-27 <!--dpr-date:20260627-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/27/2606.24046v1-rapid-finfet-modelling-using-an-autoencoder" data-sidebar-item="{&quot;title&quot;: &quot;Rapid FinFET Modelling Using an Autoencoder&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.24046v1-rapid-finfet-modelling-using-an-autoencoder&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;机器学习自编码器用于快速器件建模，可应用于SI/PI仿真加速&quot;}">Rapid FinFET Modelling Using an Autoencoder</a>
   * 2026-06-26 <!--dpr-date:20260626-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/26/2606.26176v1-toward-mitigating-process-induced-performance-degradation-in-35d-heterogeneous-packages-via-pre-silicon-firmware-co-optimization" data-sidebar-item="{&quot;title&quot;: &quot;Toward Mitigating Process-Induced Performance Degradation in 3.5D Heterogeneous Packages via Pre-Silicon Firmware Co-Optimization&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.26176v1-toward-mitigating-process-induced-performance-degradation-in-35d-heterogeneous-packages-via-pre-silicon-firmware-co-optimization&quot;, &quot;score&quot;: &quot;9.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;3.5D异构封装热-电协同仿真用于信号/电源完整性分析&quot;}">Toward Mitigating Process-Induced Performance Degradation in 3.5D Heterogeneous Packages via Pre-Silicon Firmware Co-Optimization</a>

@@ -1,0 +1,55 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-27T21:09:02.805821+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2606.24046v1",
+      "source": "arxiv",
+      "title": "Rapid FinFET Modelling Using an Autoencoder",
+      "abstract": "This work presents a machine learning framework that leverages an autoencoder (AE) for the efficient modeling of FinFET. We first calibrated a BSIM-CMG model to generate a dataset of current-voltage (ID-VG) characteristics. This data was used to train an autoencoder that compresses full I-V curves into a low-dimensional latent space, which intrinsically encodes key device physics. A key innovation is the explicit incorporation of parameter such as drain to source voltage (VDS) as an input feature, enhancing the model ability to capture bias dependent variation. The trained model successfully reconstructs full I-V curves and directly extracts critical device metrics including threshold voltage (VTH), subthreshold slope (SS), and peak transconductance (gm). This approach demonstrates that data driven compact models, built from actual characterization data, can achieve high accuracy with minimal training data, providing a powerful tool for rapid device characterization, modelling and circuit level simulation.",
+      "authors": [
+        "Amit Sarkar Suman Sau",
+        "Swagata Mandal"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "physics.app-ph"
+      ],
+      "published": "2026-06-23T01:15:50+00:00",
+      "link": "https://arxiv.org/pdf/2606.24046v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "machine learning autoencoder for rapid device modeling, applicable to SI/PI simulation acceleration",
+      "llm_evidence_cn": "机器学习自编码器用于快速器件建模，可应用于SI/PI仿真加速",
+      "llm_evidence": "机器学习自编码器用于快速器件建模，可应用于SI/PI仿真加速",
+      "canonical_evidence": "机器学习自编码器用于快速器件建模，可应用于SI/PI仿真加速",
+      "llm_tldr_en": "Autoencoder-based framework compresses I-V curves into latent space for rapid FinFET modeling, enabling fast extraction of device metrics; method transferable to SI/PI modeling.",
+      "llm_tldr_cn": "该论文提出一种基于自编码器的机器学习框架，用于快速建模FinFET器件。通过将BSIM-CMG生成的I-V曲线压缩到低维潜空间，并显式加入漏源电压特征，模型可高效重建完整曲线并提取阈值电压等关键参数。该方法展示了机器学习在器件建模中的潜力，其思路可迁移至SI/PI领域的互连或PDN快速建模，但论文本身未直接涉及信号或电源完整性。",
+      "llm_tldr": "该论文提出一种基于自编码器的机器学习框架，用于快速建模FinFET器件。通过将BSIM-CMG生成的I-V曲线压缩到低维潜空间，并显式加入漏源电压特征，模型可高效重建完整曲线并提取阈值电压等关键参数。该方法展示了机器学习在器件建模中的潜力，其思路可迁移至SI/PI领域的互连或PDN快速建模，但论文本身未直接涉及信号或电源完整性。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
