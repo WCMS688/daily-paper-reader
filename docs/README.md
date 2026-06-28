@@ -6,24 +6,26 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-27
-- 运行时间：2026-06-27 21:09:33 UTC
+- 最新运行日期：2026-06-28
+- 运行时间：2026-06-28 20:37:14 UTC
 - 运行状态：成功
 - 本次总论文数：1
 - 精读区：0
 - 速读区：1
 
 ### 今日简报（AI）
-今日仅速读1篇论文，主题为使用自编码器快速建模FinFET。最值得关注的是该方法通过自编码器实现快速、准确的FinFET建模。适合对器件建模有需求的读者，可速读原文了解核心思路。
-- 详情：[/202606/27/README](/202606/27/README)
+今日阅读了一篇利用图神经网络代理模型加速超导电路仿真的论文（评分6.0/10）。  
+值得关注的方向是GNN在超导电路模拟中的可扩展性优势，以及替代传统仿真器的潜力。  
+建议后续关注该模型在真实量子硬件验证中的表现，并对比其他物理信息神经网络方法。
+- 详情：[/202606/28/README](/202606/28/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Rapid FinFET Modelling Using an Autoencoder](/202606/27/2606.24046v1-rapid-finfet-modelling-using-an-autoencoder)  
+1. [SuperCond-GNN: Scalable Graph Neural Network Surrogate for Superconducting Circuit Simulations](/202606/28/2606.23548v1-supercond-gnn-scalable-graph-neural-network-surrogate-for-superconducting-circuit-simulations)  
    标签：评分：6.0/10、query:si-pi
-   evidence：机器学习自编码器用于快速器件建模，可应用于SI/PI仿真加速
+   evidence：图神经网络代理模型用于电路仿真，可迁移至PDN建模
 
 
 <div class="dpr-home-promo-card">

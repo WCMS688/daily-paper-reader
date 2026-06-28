@@ -1,0 +1,54 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-28T20:36:15.976670+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2606.23548v1",
+      "source": "arxiv",
+      "title": "SuperCond-GNN: Scalable Graph Neural Network Surrogate for Superconducting Circuit Simulations",
+      "abstract": "This paper presents SuperCond-GNN, a graph neural network-based surrogate model for predicting the voltage distribution in high-temperature superconducting (HTS) magnets. HTS magnets are modeled as lumped-element equivalent circuits and mapped onto graph representations, enabling message passing GNNs to learn the electrical response as a function of circuit topology, material properties, and operating current. As a proof of concept, tape stacks of up to 10 tapes are considered across a range of circuit topologies and operating conditions. The surrogate is trained on data generated from circuit simulations and achieves a mean MAPE of 4.3 % within the prescribed design space. The predicted nodal voltages enable fast and scalable inference of current redistribution and local operating conditions across a wide range of circuit configurations. The effect of incorporating physics-informed regularization via Kirchhoff's current law is also evaluated, and generalizability to unseen topologies is assessed through zero-shot inference and few-shot fine-tuning. While demonstrated on tape stack circuits, the graph-based framework is topology-agnostic and naturally extensible to more complex HTS cable and magnet configurations, offering a scalable alternative to conventional circuit solvers for downstream applications such as design space exploration, current sharing analysis, and real-time magnet monitoring.",
+      "authors": [
+        "Nandana Menon",
+        "Giorgio Vallone"
+      ],
+      "primary_category": "physics.acc-ph",
+      "categories": [
+        "physics.acc-ph",
+        "cs.LG"
+      ],
+      "published": "2026-06-22T16:22:01+00:00",
+      "link": "https://arxiv.org/pdf/2606.23548v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "graph neural network surrogate for circuit simulation, applicable to PDN modeling",
+      "llm_evidence_cn": "图神经网络代理模型用于电路仿真，可迁移至PDN建模",
+      "llm_evidence": "图神经网络代理模型用于电路仿真，可迁移至PDN建模",
+      "canonical_evidence": "图神经网络代理模型用于电路仿真，可迁移至PDN建模",
+      "llm_tldr_en": "A GNN surrogate predicts voltage distribution in HTS magnet equivalent circuits, achieving 4.3% MAPE, enabling fast scalable circuit simulation. Method transferable to PDN optimization.",
+      "llm_tldr_cn": "针对高温超导磁体集总参数等效电路的电压分布预测问题，提出图神经网络代理模型SuperCond-GNN。该方法将电路拓扑映射为图结构，用消息传递机制学习电路响应，在十带堆叠设计中实现4.3%平均百分比误差。该代理模型可替代传统电路仿真，提供快速可扩展的电压预测，其方法论可推广至电源分配网络（PDN）的阻抗建模与优化。",
+      "llm_tldr": "针对高温超导磁体集总参数等效电路的电压分布预测问题，提出图神经网络代理模型SuperCond-GNN。该方法将电路拓扑映射为图结构，用消息传递机制学习电路响应，在十带堆叠设计中实现4.3%平均百分比误差。该代理模型可替代传统电路仿真，提供快速可扩展的电压预测，其方法论可推广至电源分配网络（PDN）的阻抗建模与优化。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Advanced modeling and optimization techniques for SI/PI in high speed systems",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

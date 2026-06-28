@@ -1,0 +1,24 @@
+{
+  "label": "2026-06-28",
+  "date": "2026-06-28",
+  "generated_at": "2026-06-28T20:37:20",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202606/28/2606.23548v1-supercond-gnn-scalable-graph-neural-network-surrogate-for-superconducting-circuit-simulations",
+      "section": "quick",
+      "title_en": "SuperCond-GNN: Scalable Graph Neural Network Surrogate for Superconducting Circuit Simulations",
+      "authors": "Nandana Menon, Giorgio Vallone",
+      "date": "2026-06-22",
+      "pdf": "https://arxiv.org/pdf/2606.23548v1",
+      "score": "6.0",
+      "evidence": "图神经网络代理模型用于电路仿真，可迁移至PDN建模",
+      "tldr": "针对高温超导磁体电路仿真计算成本高的问题，提出将HTS磁体集总参数等效电路映射为图，利用消息传递图神经网络学习电压分布。在多达10个带材的堆栈上实现平均绝对百分比误差4.3%。该方法支持快速电流再分配推断，通过物理信息正则化增强可解释性，且图框架拓扑无关，可扩展至复杂HTS磁体配置，为设计空间探索和实时监测提供可扩展替代方案。",
+      "tags": "query:si-pi",
+      "abstract_en": "This paper presents SuperCond-GNN, a graph neural network-based surrogate model for predicting the voltage distribution in high-temperature superconducting (HTS) magnets. HTS magnets are modeled as lumped-element equivalent circuits and mapped onto graph representations, enabling message passing GNNs to learn the electrical response as a function of circuit topology, material properties, and operating current. As a proof of concept, tape stacks of up to 10 tapes are considered across a range of circuit topologies and operating conditions. The surrogate is trained on data generated from circuit simulations and achieves a mean MAPE of 4.3 % within the prescribed design space. The predicted nodal voltages enable fast and scalable inference of current redistribution and local operating conditions across a wide range of circuit configurations. The effect of incorporating physics-informed regularization via Kirchhoff's current law is also evaluated, and generalizability to unseen topologies is assessed through zero-shot inference and few-shot fine-tuning. While demonstrated on tape stack circuits, the graph-based framework is topology-agnostic and naturally extensible to more complex HTS cable and magnet configurations, offering a scalable alternative to conventional circuit solvers for downstream applications such as design space exploration, current sharing analysis, and real-time magnet monitoring.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

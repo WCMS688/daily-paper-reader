@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-06-28 <!--dpr-date:20260628-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/28/2606.23548v1-supercond-gnn-scalable-graph-neural-network-surrogate-for-superconducting-circuit-simulations" data-sidebar-item="{&quot;title&quot;: &quot;SuperCond-GNN: Scalable Graph Neural Network Surrogate for Superconducting Circuit Simulations&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.23548v1-supercond-gnn-scalable-graph-neural-network-surrogate-for-superconducting-circuit-simulations&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;图神经网络代理模型用于电路仿真，可迁移至PDN建模&quot;}">SuperCond-GNN: Scalable Graph Neural Network Surrogate for Superconducting Circuit Simulations</a>
   * 2026-06-27 <!--dpr-date:20260627-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/27/2606.24046v1-rapid-finfet-modelling-using-an-autoencoder" data-sidebar-item="{&quot;title&quot;: &quot;Rapid FinFET Modelling Using an Autoencoder&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.24046v1-rapid-finfet-modelling-using-an-autoencoder&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;机器学习自编码器用于快速器件建模，可应用于SI/PI仿真加速&quot;}">Rapid FinFET Modelling Using an Autoencoder</a>
