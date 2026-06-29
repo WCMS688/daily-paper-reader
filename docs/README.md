@@ -6,26 +6,26 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-28
-- 运行时间：2026-06-28 20:37:14 UTC
+- 最新运行日期：2026-06-29
+- 运行时间：2026-06-29 20:58:13 UTC
 - 运行状态：成功
 - 本次总论文数：1
-- 精读区：0
-- 速读区：1
+- 精读区：1
+- 速读区：0
 
 ### 今日简报（AI）
-今日阅读了一篇利用图神经网络代理模型加速超导电路仿真的论文（评分6.0/10）。  
-值得关注的方向是GNN在超导电路模拟中的可扩展性优势，以及替代传统仿真器的潜力。  
-建议后续关注该模型在真实量子硬件验证中的表现，并对比其他物理信息神经网络方法。
-- 详情：[/202606/28/README](/202606/28/README)
+1) 今日精读一篇高分论文，聚焦3.5D异构封装中通过预硅固件协同优化缓解工艺导致的性能退化。  
+2) 最值得关注的方向：在封装设计前期引入固件优化，可有效对抗工艺变异对性能的影响。  
+3) 建议后续深入该研究的仿真方法及实际部署案例，以评估自身项目的适配性。
+- 详情：[/202606/29/README](/202606/29/README)
 
 ### 精读区论文标签
-- 本次无精读推荐。
+1. [Toward Mitigating Process-Induced Performance Degradation in 3.5D Heterogeneous Packages via Pre-Silicon Firmware Co-Optimization](/202606/29/2606.26176v2-toward-mitigating-process-induced-performance-degradation-in-35d-heterogeneous-packages-via-pre-silicon-firmware-co-optimization)  
+   标签：评分：9.0/10、query:si-pi
+   evidence：针对3.5D异构集成封装的电热协同仿真，涉及HBM和PowerVia
 
 ### 速读区论文标签
-1. [SuperCond-GNN: Scalable Graph Neural Network Surrogate for Superconducting Circuit Simulations](/202606/28/2606.23548v1-supercond-gnn-scalable-graph-neural-network-surrogate-for-superconducting-circuit-simulations)  
-   标签：评分：6.0/10、query:si-pi
-   evidence：图神经网络代理模型用于电路仿真，可迁移至PDN建模
+- 本次无速读推荐。
 
 
 <div class="dpr-home-promo-card">

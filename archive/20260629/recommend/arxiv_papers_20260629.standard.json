@@ -1,0 +1,51 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-29T20:56:43.437420+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 0,
+    "quick_skim_target": 11,
+    "quick_selected": 0
+  },
+  "deep_dive": [
+    {
+      "id": "2606.26176v2",
+      "source": "arxiv",
+      "title": "Toward Mitigating Process-Induced Performance Degradation in 3.5D Heterogeneous Packages via Pre-Silicon Firmware Co-Optimization",
+      "abstract": "This paper presents a pre-silicon analysis of XRM-SSD V24/V7.0, a physics-aware predictive firmware scheduling layer for Intel's 3.5D heterogeneous integrated packages (Foveros Direct 3D + PowerVia + EMIB-T + UCIe + HBM5). Using detailed thermal-electrical co-simulation over a 90,000-step LLM inference dataset, we show that proactive workload-density-driven thermal hinting (20-50 ms look-ahead) enables pre-positioning of PowerVia voltage rails. Key results include a thermal-load correlation of R^2 = 0.9911, compensated CPO spectral drift below 0.36 nm (21% of TSMC tolerance budget), and HBM leakage current clamped below 1 MB/hr across all load states. Monte Carlo analysis (N=2,000 trials) confirms robustness under process variation. V7.0 extends the framework to multi-tile architectures with an N x N thermal coupling matrix and two-pole kernel. The approach demonstrates potential for 20-30% released compute and 65-68% EDA guard-band reduction. All metrics are engineering projections from pre-silicon characterization. Silicon validation on Intel 18A platforms is pending. This work highlights firmware-hardware co-optimization as an effective approach to mitigating physical limits in advanced 3.5D packaging.",
+      "authors": [
+        "Chi Fei Chung"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR"
+      ],
+      "published": "2026-06-24T11:26:08+00:00",
+      "link": "https://arxiv.org/pdf/2606.26176v2",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Thermal-electrical co-simulation for 3.5D heterogeneous integrated packages with HBM and PowerVia",
+      "llm_evidence_cn": "针对3.5D异构集成封装的电热协同仿真，涉及HBM和PowerVia",
+      "llm_evidence": "针对3.5D异构集成封装的电热协同仿真，涉及HBM和PowerVia",
+      "canonical_evidence": "针对3.5D异构集成封装的电热协同仿真，涉及HBM和PowerVia",
+      "llm_tldr_en": "This paper pre-silicon analyzes a physics-aware firmware scheduling layer for Intel's 3.5D packages, using thermal-electrical co-simulation to mitigate thermal-induced performance degradation, achieving high correlation and reduced spectral drift.",
+      "llm_tldr_cn": "该论文针对英特尔3.5D异构封装（Foveros Direct 3D + PowerVia + EMIB-T + UCIe + HBM5）提出了一种物理感知的固件调度层（XRM-SSD V24/V7.0）。通过详细的电热协同仿真，利用前瞻性工作负载密度热提示预先调整PowerVia电压轨，显著降低了热致性能退化。结果显示热负载相关系数R^2=0.9911，补偿后的CPO光谱漂移低于0.36纳米，HBM漏电流在所有负载状态下均控制在1 MB/hr以下。蒙特卡洛分析证实了设计的鲁棒性，为先进封装中的电源完整性和热管理提供了新方法。",
+      "llm_tldr": "该论文针对英特尔3.5D异构封装（Foveros Direct 3D + PowerVia + EMIB-T + UCIe + HBM5）提出了一种物理感知的固件调度层（XRM-SSD V24/V7.0）。通过详细的电热协同仿真，利用前瞻性工作负载密度热提示预先调整PowerVia电压轨，显著降低了热致性能退化。结果显示热负载相关系数R^2=0.9911，补偿后的CPO光谱漂移低于0.36纳米，HBM漏电流在所有负载状态下均控制在1 MB/hr以下。蒙特卡洛分析证实了设计的鲁棒性，为先进封装中的电源完整性和热管理提供了新方法。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "SI/PI analysis for 2.5D 3D and Chiplet packaging",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": []
+}

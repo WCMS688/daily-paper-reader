@@ -1,0 +1,24 @@
+{
+  "label": "2026-06-29",
+  "date": "2026-06-29",
+  "generated_at": "2026-06-29T20:58:19",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202606/29/2606.26176v2-toward-mitigating-process-induced-performance-degradation-in-35d-heterogeneous-packages-via-pre-silicon-firmware-co-optimization",
+      "section": "deep",
+      "title_en": "Toward Mitigating Process-Induced Performance Degradation in 3.5D Heterogeneous Packages via Pre-Silicon Firmware Co-Optimization",
+      "authors": "Chi Fei Chung",
+      "date": "2026-06-24",
+      "pdf": "https://arxiv.org/pdf/2606.26176v2",
+      "score": "9.0",
+      "evidence": "针对3.5D异构集成封装的电热协同仿真，涉及HBM和PowerVia",
+      "tldr": "针对3.5D异构封装工艺引发的性能退化，提出预硅前固件协同优化框架XRM-SSD V24/V7.0。该方法通过预测性热负载密度提示，在20-50毫秒前瞻内预置PowerVia电压轨。热-电联合仿真显示，热负载相关性R²达0.9911，CPO光谱漂移低于0.36纳米，HBM漏电流钳制在1 MB/hr以下。该技术有望释放20-30%计算能力并减少65-68% EDA保护带，为固件-硬件协同优化缓解先进封装物理限制提供了有效途径。",
+      "tags": "query:si-pi",
+      "abstract_en": "This paper presents a pre-silicon analysis of XRM-SSD V24/V7.0, a physics-aware predictive firmware scheduling layer for Intel's 3.5D heterogeneous integrated packages (Foveros Direct 3D + PowerVia + EMIB-T + UCIe + HBM5). Using detailed thermal-electrical co-simulation over a 90,000-step LLM inference dataset, we show that proactive workload-density-driven thermal hinting (20-50 ms look-ahead) enables pre-positioning of PowerVia voltage rails. Key results include a thermal-load correlation of R^2 = 0.9911, compensated CPO spectral drift below 0.36 nm (21% of TSMC tolerance budget), and HBM leakage current clamped below 1 MB/hr across all load states. Monte Carlo analysis (N=2,000 trials) confirms robustness under process variation. V7.0 extends the framework to multi-tile architectures with an N x N thermal coupling matrix and two-pole kernel. The approach demonstrates potential for 20-30% released compute and 65-68% EDA guard-band reduction. All metrics are engineering projections from pre-silicon characterization. Silicon validation on Intel 18A platforms is pending. This work highlights firmware-hardware co-optimization as an effective approach to mitigating physical limits in advanced 3.5D packaging.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
