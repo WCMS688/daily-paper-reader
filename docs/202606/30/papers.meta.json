@@ -1,0 +1,39 @@
+{
+  "label": "2026-06-30",
+  "date": "2026-06-30",
+  "generated_at": "2026-06-30T21:38:18",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202606/30/2606.28837v1-a-comprehensive-design-framework-for-vertical-power-delivery-in-high-performance-computing",
+      "section": "deep",
+      "title_en": "A Comprehensive Design Framework for Vertical Power Delivery in High-Performance Computing",
+      "authors": "Sriharini Krishnakumar, Yaroslav Popryho, Mingeun Choi, Ramin Rahimzadeh Khorasani, Madhavan Swaminathan, Satish Kumar, Inna Partin-Vaisband",
+      "date": "2026-06-27",
+      "pdf": "https://arxiv.org/pdf/2606.28837v1",
+      "score": "9.0",
+      "evidence": "面向异构集成芯片的垂直功率传输设计",
+      "tldr": "高性能计算系统中供电效率低于70%成为瓶颈，现有设计缺乏系统方法论。本文提出分布式垂直供电（DVPD）框架，采用GaN功率开关和单元电感电容阵列，实现48V至1V多级转换。在48V-1V案例中系统效率达84%，面积占用54%，提升至87.6%时占用75%面积，稳态压降仅2.7%。该框架为晶圆级HPC平台提供了可行的供电方案。",
+      "tags": "query:si-pi",
+      "abstract_en": "Power delivery -- including high-to-low voltage conversion, complex power distribution across heterogeneously integrated chiplets, and efficient interconnect allocation -- remains a critical bottleneck in high-performance computing (HPC) systems. Existing vertical power delivery (VPD) solutions are estimated to achieve less than 70\\% system-wide end-to-end power delivery efficiency, defined from platform input power to delivered on-chip load power, with substantial energy lost as heat before reaching on-chip point-of-loads (POLs). In the absence of systematic design methodologies, evaluating power quality, exploring architectural alternatives, and optimizing performance rely on computationally prohibitive simulations, resulting in suboptimal designs. This paper introduces an end-to-end scalable power delivery framework for HPC systems, including distributed VPD (DVPD) architecture, DVPD design optimization methodology, and analytical models. The framework leverages substrate-embedded GaN power switches together with arrays of unit inductors and capacitors tailored for HPC applications. Multi-stage power conversion schemes (48V-to-1V, 48V-to-24V-to-1V, and 48V-to-12V-to-1V) are explored, with system-wide voltage drops and power losses evaluated under steady-state conditions. Design specifications for passive and active devices are formulated to meet next-generation efficiency targets. For the 48V-to-1V case, the proposed DVPD approach achieves 84\\% system-wide efficiency while occupying 54\\% of the area beneath the load system, with efficiency increasing to 87.6\\% at 75\\% area utilization across a 1--50~kW load range. Furthermore, steady-state voltage drops peak at 2.7\\% and transient drops at 9\\% (without decoupling capacitors), demonstrating the viability of DVPD for future wafer-scale HPC platforms.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/30/2606.28754v1-shift-dynamic-compute-relocation-framework-for-communication-aware-chiplet-based-systems",
+      "section": "quick",
+      "title_en": "SHIFT: Dynamic Compute Relocation Framework for Communication-Aware Chiplet-Based Systems",
+      "authors": "Arvin Delavari, Leonid Popryho, Inna Partin-Vaisband, Boris Vaisband",
+      "date": "2026-06-27",
+      "pdf": "https://arxiv.org/pdf/2606.28754v1",
+      "score": "7.0",
+      "evidence": "芯片间通信感知工作负载放置",
+      "tldr": "芯粒系统中通信复杂性日益突出。SHIFT框架通过动态迁移计算节点上下文与数据至更优位置，结合多层路由和轻量级ML辅助策略优化调度。在随机负载下，成功率达75.2%-97.9%，延迟降低16.4%-62.5%，吞吐量提升12.5倍。LLM负载下性能提升4.9倍，能量效率提升1.8倍，展现了与大规模平台的兼容性。",
+      "tags": "query:si-pi",
+      "abstract_en": "The increasing communication complexity of large-scale heterogeneous systems has motivated runtime methodologies for communication-aware workload placement and routing optimization. These communication limitations are addressed in this paper by proposing SHIFT, a novel topology-agnostic approach that transfers compute node context and data to a more suitably positioned node, rather than only shifting data as in conventional networks-on-chip. The proposed strategy is evaluated on a chiplet-based architecture utilizing a fine-pitch integration platform featuring multiple bandwidth-domains for heterogeneous workloads. The proposed architecture employs multi-layered routing between functional or memory chiplets and utility chiplets, which serve as intelligent nodes for routing and compute relocation. Adaptive scheduling and routing utilize a modified shortest-path algorithm for large-scale systems, complemented by a lightweight ML-assisted policy that infers traffic conditions to improve adaptivity. To establish a performance baseline, the initial assessment uses random instruction vectors and data patterns to evaluate the fundamental capabilities of SHIFT. Simulation results exhibit successful relocations over total trials ranging from 75.2% to 97.9% across configurations, with average latency improvements of 16.4%-62.5% and a maximum of 76.8%. In addition, throughput is improved by up to 12.5x, power dissipation per unit area is reduced by ~8%, energy-per-bit is reduced by up to 58.3%, and performance is improved by 18%. To evaluate efficiency under high logic and data density, the framework was tested on standard LLM workloads. Results exhibit average improvements of 4.9x, 5.9x, and 1.8x in runtime, throughput, and energy-efficiency, respectively, surpassing state-of-the-art wafer-scale LLM services and demonstrating compatibility with large-scale platforms and applications.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

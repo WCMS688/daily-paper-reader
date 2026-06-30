@@ -6,26 +6,26 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-29
-- 运行时间：2026-06-29 20:58:13 UTC
+- 最新运行日期：2026-06-30
+- 运行时间：2026-06-30 21:38:10 UTC
 - 运行状态：成功
-- 本次总论文数：1
+- 本次总论文数：2
 - 精读区：1
-- 速读区：0
+- 速读区：1
 
 ### 今日简报（AI）
-1) 今日精读一篇高分论文，聚焦3.5D异构封装中通过预硅固件协同优化缓解工艺导致的性能退化。  
-2) 最值得关注的方向：在封装设计前期引入固件优化，可有效对抗工艺变异对性能的影响。  
-3) 建议后续深入该研究的仿真方法及实际部署案例，以评估自身项目的适配性。
-- 详情：[/202606/29/README](/202606/29/README)
+今天精读高性能计算垂直供电设计框架，速览芯片间通信感知计算重定位技术。最值得研读的是《A Comprehensive Design Framework for Vertical Power Delivery in High-Performance Computing》（9.0分），其系统化方法突破HPC供电瓶颈。建议优先精读高评分论文，再结合速读文章思路，思考异构集成中功耗与通信的权衡。
+- 详情：[/202606/30/README](/202606/30/README)
 
 ### 精读区论文标签
-1. [Toward Mitigating Process-Induced Performance Degradation in 3.5D Heterogeneous Packages via Pre-Silicon Firmware Co-Optimization](/202606/29/2606.26176v2-toward-mitigating-process-induced-performance-degradation-in-35d-heterogeneous-packages-via-pre-silicon-firmware-co-optimization)  
+1. [A Comprehensive Design Framework for Vertical Power Delivery in High-Performance Computing](/202606/30/2606.28837v1-a-comprehensive-design-framework-for-vertical-power-delivery-in-high-performance-computing)  
    标签：评分：9.0/10、query:si-pi
-   evidence：针对3.5D异构集成封装的电热协同仿真，涉及HBM和PowerVia
+   evidence：面向异构集成芯片的垂直功率传输设计
 
 ### 速读区论文标签
-- 本次无速读推荐。
+1. [SHIFT: Dynamic Compute Relocation Framework for Communication-Aware Chiplet-Based Systems](/202606/30/2606.28754v1-shift-dynamic-compute-relocation-framework-for-communication-aware-chiplet-based-systems)  
+   标签：评分：7.0/10、query:si-pi
+   evidence：芯片间通信感知工作负载放置
 
 
 <div class="dpr-home-promo-card">
