@@ -123,6 +123,9 @@ window.SubscriptionsManager = (function () {
     'ICML',
   ]);
   const MAX_CONFERENCE_STORED_TOTAL = 30000;
+  const CONFERENCE_ESTIMATE_PAPERS_UNIT = 10000;
+  const CONFERENCE_ESTIMATE_MINUTES_PER_UNIT = 5;
+  const CONFERENCE_ESTIMATE_COST_PER_UNIT = 0.2;
 
   const normalizeText = (v) => String(v || '').trim();
   const truncateDisplayText = (value, maxChars) => {
@@ -141,6 +144,21 @@ window.SubscriptionsManager = (function () {
     return Number.isFinite(num) ? num : 0;
   };
   const formatCount = (value) => toSafeInteger(value).toLocaleString('en-US');
+  const formatEstimateMinutes = (value) => {
+    const num = Number(value);
+    if (!Number.isFinite(num) || num <= 0) return '0';
+    if (Math.abs(num - Math.round(num)) < 0.05) return String(Math.round(num));
+    return num.toFixed(1);
+  };
+  const estimateConferenceRetrieval = (storedTotal, profileCount) => {
+    const estimatedPapers = Math.max(0, toSafeInteger(storedTotal)) * Math.max(0, toSafeInteger(profileCount));
+    const units = estimatedPapers / CONFERENCE_ESTIMATE_PAPERS_UNIT;
+    return {
+      estimatedPapers,
+      minutes: units * CONFERENCE_ESTIMATE_MINUTES_PER_UNIT,
+      cost: units * CONFERENCE_ESTIMATE_COST_PER_UNIT,
+    };
+  };
   const normalizeConferenceStatsKey = (value) => {
     const compact = normalizeText(value)
       .toLowerCase()
@@ -845,9 +863,8 @@ window.SubscriptionsManager = (function () {
         conferenceHintEl.style.color = '#c00';
       } else if (confCount > 0 && profCount > 0) {
         const totalTasks = confCount * profCount;
-        const estMin = totalTasks * 5;
-        const estCost = (totalTasks * 0.2).toFixed(1);
-        conferenceHintEl.textContent = `${profCount} 个词条 × ${confCount} 个会议（库内约 ${formatCount(conferenceStoredTotal)} 篇）= ${totalTasks} 组任务，预计耗时约 ${estMin} 分钟，费用约 ¥${estCost}`;
+        const estimate = estimateConferenceRetrieval(conferenceStoredTotal, profCount);
+        conferenceHintEl.textContent = `${profCount} 个词条 × ${confCount} 个会议（库内约 ${formatCount(conferenceStoredTotal)} 篇，估算处理 ${formatCount(estimate.estimatedPapers)} 篇）= ${totalTasks} 组任务，预计耗时约 ${formatEstimateMinutes(estimate.minutes)} 分钟，费用约 ¥${estimate.cost.toFixed(2)}`;
         conferenceHintEl.style.color = '';
       } else if (confCount > 0 && profCount === 0) {
         conferenceHintEl.textContent = '请先在上方勾选词条（最多 2 个）。';

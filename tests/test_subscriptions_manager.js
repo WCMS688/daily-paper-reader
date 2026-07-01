@@ -313,6 +313,9 @@ function testConferenceRunAllowsMoreThanFiveYearsWhenStoredTotalUnderLimit() {
   assert.equal(btn.disabled, false);
   assert.equal(hintEl.textContent.includes('最多同时选择 5 个会议年份'), false);
   assert.equal(hintEl.textContent.includes('库内约 6,000 篇'), true);
+  assert.equal(hintEl.textContent.includes('预计耗时约 3 分钟'), true);
+  assert.equal(hintEl.textContent.includes('费用约 ¥0.12'), true);
+  assert.equal(hintEl.textContent.includes('6 组任务，预计耗时约 30 分钟'), false);
 
   __setQuickRunConferenceBtn(null);
   __setConferenceHintEl(null);
