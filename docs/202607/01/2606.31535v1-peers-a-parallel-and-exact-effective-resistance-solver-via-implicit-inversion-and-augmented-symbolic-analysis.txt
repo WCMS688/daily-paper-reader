@@ -1,0 +1,1279 @@
+Title: arxiv_v1.pdf
+
+URL Source: https://arxiv.org/pdf/2606.31535v1
+
+Published Time: Wed, 01 Jul 2026 01:01:51 GMT
+
+Number of Pages: 14
+
+Markdown Content:
+PEERS:  A Parallel and Exact Effective Resistance Solver via Implicit Inversion and Augmented Symbolic Analysis 
+
+Baiyu Chen, Lin Gan, Guangwen  Yang*,  and Wenjian  Yu*,  Fellow,  IEEE 
+
+Abstract —High-precision effective resistance computation is acornerstone of Electronic Design Automation (EDA) sign-off, yet it remains a fundamental bottleneck in large-scale power grid analysis, spectral sparsification, and circuit reliability. Existing approaches face a prohibitive  "precision-memory  impasse":  ap¬ proximate methods lack the stringent accuracy required for high-stakes industrial sign-off, while exact methods either suffer from redundant query overheads or trigger O(n 2) memory explosions. To resolve this, we propose PEERS, a Parallel and Exact Effective Resistance Solver powered by an implicit inverse computing model of the Cholesky factor By integrating a state-inherited augmented depth-first search (DFS) with a dynamic query up¬ date  mechanism,  PEERS eliminates numerical redundancy and evaluates all-edge resistance queries in a single parallel sweep. We provide a rigorous Work-Span analysis, proving that for graphs satisfying an O(n a) separator theorem, PEERS achieves a theoretically optimal parallel span of  。(九°)  while strictly maintaining O(nnz(L)) space complexity. Numerical evaluations on industrial benchmarks demonstrate that PEERS achieves an average speedup of  83.3 x over state-of-the-art parallel solvers under identical memory constraints.  Notably,  PEERS processes a 1-million-node industrial graph in just 18.8 seconds and scales to 17 million nodes in under an hour, providing the first computationally feasible path for exact all-edge resistance analysis in multi-million-gate designs. 
+
+Index Terms —Effective Resistance, Sparse Matrix Methods, Parallel Algorithms, Spectral Graph Theory, Implicit Inversion. 
+
+I. Introduction Effective resistance serves as a cornerstone metric in spec¬ tral graph theory and circuit analysis. For a weighted graph 
+
+G = (V, E, W) interpreted as a resistive network, the effective resistance Ruv between nodes u and  u corresponds to the po¬ tential difference induced by a unit current in jection-extraction pair. Beyond its physical interpretation in  Kirchhoff's  laws, effective resistance has emerged as  a vital analytical tool for characterizing graph connectivity, structural robustness, and spectral invariants. The seminal work of Spielman and Srivastava [1] demon¬ strated that all edge effective resistances are the fundamental weights required to construct spectral sparsifiers that pre¬ serve the Laplacian quadratic form. Consequently, this metric has found extensive application across the Electronic Design Automation (EDA) landscape, including power-grid IR-drop   
+
+> The authors
+
+are with the Department of Computer Science and Technology, Tsinghua University, Beijing 100084, China (e-mail: chenby23@mails.tsinghua.edu.cn; lingan@tsinghua.edu.cn; ygw@tsinghua.edu.cn; yu-wj@tsinghua.edu.cn). * Corresponding authors. 
+
+analysis [2], graph clustering [3], algebraic multigrid precon¬ ditioning, and recently, mitigating over-squashing in graph neural networks (GNNs) [4]. In these contexts — particularly for industrial power delivery networks (PDNs) — high numeri¬ cal precision is non-negotiable, as approximation artifacts can lead to pessimistic timing violations or catastrophic reliability oversights. Despite its utility, the exact evaluation of all-edge effective resistances remains a formidable computational bottleneck for large-scale systems. Given a graph Laplacian  Lg,  the resistance between nodes u and  o is  typically computed as 
+
+Ruv  = (eu — ev) T L^(eu  — %).  For a query set of  馆
+
+edges, a naive exact approach necessitates m independent sparse linear system solves. For modern industrial-scale graphs containing millions of nodes (n) and edges (m), this O(m) 
+
+solve-dependency is computationally prohibitive. Existing strategies to mitigate this cost generally fall into two categories, each with inherent limitations: 
+
+• Approximate Methods: Techniques such as random sketching [1], [5] and random walks [6], [7] reduce work by sacrificing exactness. However, their complexity scales poorly with the target error tolerance e (O(e -2)), and they lack the strict numerical reliability required for  ''sign-off' 
+
+quality circuit analysis. 
+
+• Direct and Inverse-based Methods: Sparse direct solvers leverage Cholesky factorization to provide exact solutions. While reliable, repeated triangular solves incur massive redundant traversals of the factor structure. Con¬ versely, explicit inverse-factorization methods [8] attempt to precompute 上一匕 but they trigger an O(n 2) memory explosion as the inverse Cholesky factor loses the sparsity of the original factor. Parallelization offers a potential remedy, yet it is often hampered by the irregular memory access patterns of sparse traversals. Domain decomposition [9] can introduce dense Schur complements that negate parallel gains, while standard task-based parallelization of m queries often suffers from severe thread-contention and synchronization overheads. To break this precision-memory impasse, we propose 
+
+PEERS (Parallel and Exact Effective Resistance Solver). PEERS is founded on the insight that the numerical entries of the inverse Cholesky factor can be computed implicitly  by 
+
+traversing the symbolic sparsity pattern of the original factor. Unlike prior work, PEERS avoids the O(n 2) storage of L-1by using a dynamic accumulation mechanism that evaluates resistance contributions in a single parallel sweep. 
+
+This work has been submitted to the IEEE for possible publication. Copyright may be transferred without notice, after which this version may no longer be accessible. IEEE TRANSACTIONS ON COMPUTER-AIDED DESIGN OF INTEGRATED CIRCUITS AND SYSTEMS, VOL.  XX,  NO.  X,  MAY 2026 2           
+
+> TABLE I
+> Complexity and Accuracy Comparison of Effective Resistance Solvers for All-Edge Queries
+
+Method Category Representative Factorization All-Edge Query Work Parallel Span Space Accuracy 
+
+Approximate Random Walks N/A O(m  log 。n/e 2) High 1 c-approx. Equation-Based LSolve [10] 2 nn z^ Lrea.ch(e))) O(n a) 2 O(nnz{L) + F • n) 2 Exact Explicit Inverse INV [8] 3 O(n 3) O(mn)  *)3  O(n 2 + Pn) Exact 
+
+Implicit PEERS  O(Wchol)  (9(n Q;nnz(L)) O(n a) O(nnz(L)  + P • n。)  Exact 
+
+This is due to irregular memory access patterns and high synchronization overhead. 2 Under the theoretical Work-Span model  (P  —> oo), LSolve achieves  。(九°)  span. However, initializing dense right-hand side vectors per query incurs an work penalty. Furthermore, achieving optimal span triggers a memory explosion because each of the P concurrent threads requires an independent (9(n) workspace. If space is strictly bounded to  0(rmz(L)),  parallel execution is severely bottlenecked into sequential batches. 3 Explicit inverse formulation recursively computes rows from n down to 1. Each row strictly depends on subsequent rows, creating a linear dependency chain that limits the span to  O(n).  Additionally, explicit inversion introduces severe dense fill-in, driving computational work to O(n 3) and destroying memory sparsity.  
+
+> *
+
+Notation: Wchoi denotes the work complexity of sparse Cholesky factorization. P denotes the number of parallel threads,  a is the graph separator exponent  (eg,  a = 1/2  for planar graphs and  a = 2/3  for  3D  grids). 
+
+As summarized in Table I, PEERS breaks this precision¬ memory impasse by avoiding the (9(n 2) storage of L -1, yielding exact resistance values while matching the shallow parallel span of nested dissection. Experimental eval¬ uations on industrial benchmarks with up to 17 million nodes demonstrate that PEERS reshapes the scalability of exact solvers. On a 1.6-million-edge graph, PEERS completes all¬ edge queries in 18.8 seconds —an  83.3  x speedup over state-of-the-art parallel solvers —while maintaining a memory footprint strictly bounded by the density of the Cholesky factor. In fact, the necessity for exact effective resistance in PEERS extends beyond theoretical graph sparsification into critical VLSI sign-off tasks. In modem Power Delivery Network (PDN) analysis, effective resistance is the primary metric for identifying weak links —local areas with high resistive paths to the power source that are prone to  IR-drop  violations. Furthermore, Electromigration (EM) assessment requires high-precision current density modeling; even minor inaccuracies from approximate solvers can lead to optimistic life-time esti¬ mations, potentially resulting in post-silicon failures. PEERS provides the numerical  "ground  truth”  required for these high-stakes reliability assessments at a scale previously reserved for approximate methods. The primary contributions of this work are summarized as follows: 
+
+• Implicit Inversion Architecture: We develop a mathe¬ matical framework to compute exact resistances via the implicit inverse of the Cholesky factor, bypassing the 
+
+0(^2)  memory barrier. 
+
+• Augmented Symbolic Analysis: We introduce areusable-state traversal mechanism that minimizes sym¬ bolic overhead by exploiting the transitive closure prop¬ erties of the elimination tree. 
+
+• Work-Span Theoretical Guarantees: We provide rig¬ orous proofs showing that for graphs with O(n a) sepa¬ rators, PEERS achieves a near-optimal parallel span of 
+
+0( 几°),  ensuring scalability on massively parallel archi¬ tectures. 
+
+• Scalable EDA Benchmarking: We demonstrate that PEERS can solve previously intractable industrial prob¬ lems, providing a robust, zero-variance alternative to approximate solvers for large-scale circuit analysis. IL Preliminaries and Related Work 
+
+In this section, we formalize the mathematical foundation of effective resistances and review the current state-of-the-art exact computation techniques. We specifically emphasize the structural relationship between the Laplacian matrix and the Cholesky factor, which underpins the efficiency of the proposed PEERS solver. 
+
+A. Mathematical Foundations of Effective Resistances 
+
+Consider a weighted undirected graph  G = (V, w) with 
+
+\V\ = n and \E\  = m.  The combinatorial Laplacian matrix 
+
+Lq  e 股九  x九 is  defined as: 
+
+LG = D -W = £ (1) where D is the diagonal degree matrix, W is the adjacency matrix, and  气/  = L — 1,  is the incidence vector. By grounding an arbitrary node g E V (setting its potential to zero) and removing its corresponding row and column, Lq 
+
+becomes a reduced Laplacian matrix, which is Symmetric Positive Definite (SPD). The effective resistance Rst between nodes  s and t is physically interpreted as the voltage drop induced between them  by  a unit current injection. Numerically, this is expressed using the inverse of the reduced Laplacian: 
+
+Rst  = (2) 
+
+By performing a Cholesky factorization Lg  = LL T, where 
+
+£ is  a lower triangular matrix and Z is the inverse of  L, 
+
+the effective resistance can be computed via two triangular substitutions = Z: s — Z： 工)： 
+
+Rst  = ^ es,t — IZ 
+
+Expanding this for the grounded cases yields the piecewise form: 
+
+# { \\ zs,t Hi?  s r g"  # g
+
+3眩 力 =g  (4) 
+
+回脸  ，= gIEEE TRANSACTIONS ON COMPUTER-AIDED DESIGN OF INTEGRATED CIRCUITS AND SYSTEMS, VOL.  XX,  NO.  X,  MAY 2026 3
+
+B. Exact Computation and the Sparsification Bottleneck 
+
+The exact computation of {Re | e e E}  is  the  compu¬ tational cornerstone of spectral sparsification (Algorithm 1). As proved by Spielman and Srivastava [1], sampling edges with probabilities proportional to weRe yields a sparsifier that preserves the  graph's  spectral properties with high probability. 
+
+Algorithm 1 Graph Sparsification by Effective Resistances 
+
+Input: Q — (V, E, w):  a weighted graph,  q:  expected number of added edges in the sparsifier. 
+
+Output:  S:  a sparsifier. 
+
+1： Compute effective resistance Re of every edge  e e E in 
+
+graph  G. 
+
+2： for i = 1, 2, • • • , q do 
+
+3：  Choose a random e of P with probability pe propor¬ tional to Rewe. 
+
+4： Add the chosen  e to  S with weight — .
+
+5： end for 
+
+6： Return  S. 
+
+Despite its theoretical elegance, Step 1 remains the primary bottleneck for large-scale applications in VLSI and social networks. Current exact methods generally follow two paths: 
+
+Algorithm 2 LSolve Algorithm [10] 
+
+Input: L: the Cholesky factor,  b:  the right-hand side,  G‘： the constructed graph. 
+
+Output:  c:  solution of Lx  = b. 
+
+1： x
+
+# — the  set of nodes that can be reached in  DFS  from the nonzeros in b. 
+
+2： c
+
+# — b
+
+3： for  / e x do 
+
+4： for z = j + 2, • • • , n and  工力  彳0 do 
+
+5： Xi  — g —
+
+6： end for 
+
+7： end for 
+
+8： Return x. 
+
+1) Sparse Substitution (LSolve: Since es^t  is  a 2-sparse vector, the term x = L~ xes^ can be solved us¬ ing the LSolve algorithm [10]. LSolve utilizes the reachability in the factor graph to only visit nodes 
+
+k such that (L~ 1b)k 关 0, yielding a complexity of 
+
+O(nnz{Lreach)). However, performing this for all  m
+
+edges results in a total work of O(m • nnz{Lreach)). 
+
+2)  Explicit Inverse Calculation: Alternatively, one can compute  Z = I/-】 explicitly [8] with: 
+
+Ng  = y eg  + 〉] -丁
+
+# 一 Zj  , i = — 1,  • ,1. 
+
+/> 汲％ •，层 o 镇
+
+While this allows fast query time per edge, the explicit  Z
+
+is typically dense, leading to O(n 2) memory and O(n 3) time complexity, which is prohibitive for graphs where 
+
+n > 10 5.  」
+
+C. Relationship  to  Existing Sparse Inverse Frameworks 
+
+The proposed PEERS framework is related to several prior directions in sparse numerical linear algebra, including sparse triangular solves, explicit inverse methods, and selected in¬ version techniques. However, PEERS differs fundamentally from these approaches in its computational objective, dataflow organization, and cross-query execution model. 
+
+1) Comparison  with  Sparse Triangular Solves: Traditional sparse triangular solve methods, such as LSolve [10], evaluate each effective resistance query independently through repeated sparse forward/backward substitutions. Although these ap¬ proaches preserve the sparsity of the Cholesky factor, they treat individual edge queries  as  independent computational tasks. For all-edge effective resistance computation, neighbor¬ ing queries exhibit substantial overlap in their reachable elimination-tree subgraphs. Independent sparse solves there¬ fore repeatedly traverse many identical symbolic paths, pro¬ ducing significant redundancy in both symbolic analysis and numerical propagation. In contrast, PEERS reorganizes the computation around implicit inverse row traversals rather than independent edge queries. The framework amortizes symbolic exploration across adjacent rows using inherited traversal state, thereby reducing redundant elimination-tree discovery across the complete all¬ edge workload. 
+
+2)  Comparison  with  Explicit  Inverse  Methods: Explicit inverse-based approaches [8], [9] attempt to materialize entries of the inverse Cholesky factor or inverse Laplacian matrix. While such methods may reduce per-query arithmetic cost, explicit inverse formation generally introduces severe fill-in, causing both memory usage and computational work to grow toward dense complexity for large sparse graphs. PEERS avoids explicit inverse materialization entirely. In¬ stead, the framework performs transient implicit inverse traver¬ sals whose intermediate numerical values are consumed im¬ mediately by the resistance accumulation phase and then discarded. Consequently, the memory complexity remains pro¬ portional to the sparsity of the Cholesky factor rather than the inverse matrix. 
+
+3) Parallel Execution Characteristics: The PEERS frame¬ work is designed explicitly for scalable parallel all-edge effective resistance evaluation under the Work-Span model. The row-wise traversal structure exposes coarse-grained par¬ allelism across independent implicit inverse rows, while the elimination-tree dependency structure bounds the critical path length. Under nested-dissection reorderings, the resulting span is asymptotically bounded by the elimination-tree height, yield¬ ing 
+
+% = 0( 吟.
+
+Combined with dynamic query accumulation and lock-free task scheduling, this enables PEERS to efficiently exploit modern multi-core architectures for exact all-edge resistance computation. Therefore, although PEERS shares certain structural foun¬ dations with existing sparse inverse and triangular solve frame¬ works, its combination of transient implicit inversion, cross-IEEE TRANSACTIONS ON COMPUTER-AIDED DESIGN OF INTEGRATED CIRCUITS AND SYSTEMS, VOL.  XX,  NO.  X,  MAY 2026 4
+
+query symbolic amortization, and fused resistance accumula¬ tion yields a distinct computational architecture specifically optimized for scalable exact all-edge effective resistance eval¬ uation. 
+
+D Theoretical Foundations 
+
+The modern EDA algorithms, particularly those involving Gaussian elimination or Cholesky factorization, have close relationship with the separator theorem. This theorem characterizes the ease with which a graph can be decomposed into smaller, independent sub-problems. 
+
+Definition 1. A class of graphs Q satisfies (9(n a) separator theorem if n-vertex graph  G e G be partitioned into sets A, B, and C such that: 
+
+V = A U B U C, (A x B) n = 0 (6) 
+
+where the  size  of the separator C is  bounded by \C\ cn afor 〃 constant c, the partitions A and  B are balanced 
+
+such  that \A\, \B\ |n. In the context of VLSI design, circuit netlists often exhibit specific values for the exponent  a: 
+
+• Planar/2D Structures  (a  = 1/2):  Early-stage placement and routing on individual metal layers typically resemble planar graphs, where the separator grows as O(y/n). 
+
+• 3D  Layouts and Power  Grids  (a  = 2/3):  Modem Fin-FET designs and multi-layer power distribution networks (PDNs) behave like  3D  meshes, yielding separators of size  。(滔/ 3). 
+
+The existence of small separators is the fundamental reason why Nested Dissection reordering can reduce the complexity of solving a sparse system Ax = b. For a graph with an O(n a) separator, the number of non-zeros in the Cholesky factor L
+
+is bounded by: rmz  = 叫 “ = 1(2 
+
+## ' [0(*),  a >1/2 
+
+For 3D circuit structures  (a  = 2/3),  this results in  nnz(L)  =
+
+0(九 4/3),  which  is significantly more efficient than the O(n 2) density seen in general matrices. The computational efficiency of the PEERS framework is predicated on the structural interplay between the sparsity of the Cholesky factor L and the topological properties of its associated elimination tree. We formalize this relationship using two foundational lemmas from sparse matrix theory, which bridge the gap between the graph-based traversals in PEERS and formal asymptotic complexity. 
+
+Lemma 1 (Inverse Structural Property [11]). Let L e 股九'九 
+
+be  /e  lower triangular Cholesky factor of a sparse symmetric positive definite (SPD) matrix A. The non-zero structure of the  inverse  Cholesky factor Z = £一1  is  strictly constrained by the elimination tree 丁 associated  with  L. Specifically, entry  4#  be non-zero only if node j is ancestor 
+
+# "k in  T ( where j k). 
+
+Lemma 2 (Nested Dissection Complexity [12]). Let G =
+
+(V,E)  be a graph  with  n vertices that satisfies an O(n a) separator theorem. If the Cholesky factorization is performed 
+
+using  a Generalized Nested Dissection reordering, the number of non-zeros in the factor L (nnz(L))  and  the maximum depth of the elimination tree  T (h(T)) are bounded  as  follows: 
+
+• Planar and 2D Graphs ( a = 1/2);  nnz{L)  = O(n log n) 
+
+> 八
+
+(7)  = 0(，^). 
+
+• 3D Grids  and  Circuit Layouts  (a  = 2/3);  nnz(L)  =
+
+O(n 4/ 3) and  无(T)  = O(n 2/ 3). III. PEERS: Parallel Exact Effective Resistance Solver via Implicit Inversion In this section, we present the architecture of PEERS, a framework designed to achieve exact all-edge effective resistance computation with O{nnz{L)} space complexity and near-optimal parallel scalability. The core of PEERS rests on three pillars: (i) an implicit row-wise inversion model 
+
+that circumvents the density of the explicit inverse, (ii) an 
+
+augmented symbolic analysis via incremental DFS to iden¬ tify structural dependencies in  O(nnz(L))  time, and (iii) a dynamic query update mechanism that processes edge¬ based resistance queries on-the-fly. Finally, we integrate these components into a unified parallel algorithm optimized for multi-core architectures. 
+
+A. Implicit Computational Model for Cholesky Inversion 
+
+The standard approach to computing the inverse Z = L-1typically follows a column-by-column substitution, which is inherently sequential and results in a dense matrix Z. We propose a paradigm shift: computing the inverse row-by-row  and  implicitly. This transition offers two fundamental advantages for large-scale graphs: 1) Memory Efficiency: By processing Z row-by-row, we can accumulate the contribution of each row  Zj,： to the final effective resistance values and immediately discard the row. This eliminates the need to explicitly store the O(n 2) entries of the dense inverse, maintaining amemory footprint proportional to the sparse Cholesky factor L. 
+
+2) Massive Parallelism: Each row of the inverse can be computed independently. As established in Theorem 4, this allows the solver to exploit both row-level and instruction-level parallelism, significantly reducing the parallel span  Tg. 
+
+To facilitate this implicit computation, we define the Factor Graph H = (V, E, w) derived from the Cholesky factor L. 
+
+Definition 2 (Factor Graph  丸) ・ Let P be the permutation vector generated by a fill-reducing reordering  (e.g.,  AMD  or 
+
+Nested Dissection). The graph  is  constructed  as  follows: 
+
+• Vertex Mapping:  Each  vertex u EV in the original graph G is mapped  to  a unique vertex Pu E V in the factor 
+
+graph. 
+
+• Edge  Construction: A directed  edge  exists from node jto node i (denoted  as  j T i)  if and only if Lji  # 0 加r
+
+/ > E.  〜
+
+• Weight Assignment:  Each  directed  edge  分)  E E is 
+
+assigned  a weight Wji  = —警. 12345678910 10 1 23456978                
+
+> IEEE TRANSACTIONS ON COMPUTER-AIDED DESIGN OF INTEGRATED CIRCUITS AND SYSTEMS, VOL. XX, NO. X, MAY 2026 5
+
+The construction of H requires only O^nnz(L)) time and space,  as  it directly mirrors the non-zero structure of the lower triangular factor. As illustrated in Fig. 1 , the directed edges in 
+
+# " represent the numerical dependencies during substitution. Specifically, the value of the inverse at index (J,  E)  is the sum of weighted path products from 分 to  / in 
+
+# ” a property that we exploit in our BFS-like implicit traversal.             
+
+> Fig. 1. Sparsity pattern of Cholesky factor (left) and its corresponding graph
+> 丸(right)
+
+A Structural Properties of the Factor Graph 
+
+Based on the construction of the factor graph  ",  we establish two fundamental structural theorems that bridge the numerical dependencies of the Cholesky inverse with the topological properties of H. 
+
+Theorem 1. The factor graph = (V, E, w)  is  a Directed Acyclic Graph (DAG). Proof. By construction, a directed edge  (%  v) E E exists only if w > v. Therefore, every directed edge  in  H strictly decreases the node index. Assume, for contradiction, that contains adirected cycle 
+
+― ~ ♦…  ~ W ~ . (8) Since each edge strictly decreases the index, we obtain the chain of inequalities 
+
+> … > W > (9) This implies which is impossible. 
+
+Hence,  no directed cycle can exist in H, and the graph is acyclic. Therefore,  丸 is  a DAG. 
+
+Theorem  2 (Reachability Necessary Condition). Let L e
+
+R n X n be a nonsingular lower triangular matrix,  M力
+
+Z = £-1.  Construct the factor graph = (V,  E)  such  that  a
+
+directed edge  (E,  k)  e E exists whenever  £泳 # 0 i > k. 
+
+1fzM  壬 0， then  there exists a directed path from node i to node j in  H.  Equivalently, the nonzero pattern of Z is contained  within  the reachability relation induced by  H. 
+
+Proof. Since L is nonsingular and lower triangular, its inverse 
+
+Z = £-1  is also lower triangular. From the identity 
+
+LZ = I, 
+
+the entries of Z satisfy 
+
+"A 
+
+> £—1
+> k=j
+
+We prove the theorem by induction  on  / —Base case: i = j. 
+
+Since 
+
+% = 4A 0, 
+
+(10) there exists a trivial path of length zero from node i to itself. 
+
+Inductive step: 
+
+Assume the statement holds for all pairs (p,J) satisfying 
+
+p — j < i — j. Now consider i > j and suppose that 
+
+Zij  芦 0. From (10), there must exist at least one index k satisfying 
+
+j < k < i
+
+such that 
+
+Lik  # 0 and  ^kj  卢
+
+Because  壬 0 and i 〉k,  the factor graph contains the directed edge 
+
+i T k. 
+
+If  k = /,  then the edge i T j itself forms  a directed path, and the proof is complete. Otherwise, j < k < i. Since 
+
+k — j j, 
+
+the induction hypothesis applies to the pair  (kJ).  Therefore, there exists a directed path from node k to node  / in 
+
+Combining this path with the edge i T k yields a directed path from node i to node j. 
+
+Hence, whenever 关 0,  node j is reachable from node i
+
+in H. C. Implicit Inverse via Topologically Ordered Traversal 
+
+The core of PEERS is the ability to compute any specific row  Zj,： of the inverse Cholesky factor Z = L-1 by traversing the factor graph 
+
+# "without generating the dense matrix Z. By expanding the relation LZ = I and isolating  Z/®  we derive the following recursive accumulation: 
+
+如=  怙，  (11) where  颜 = —以』/〃』 corresponds to the weights of the directed edges in H. 
+
+To maximize computational efficiency, we leverage the sparsity of the row. Based on Theorem 1 (DAG property) and Theorem  2 (Reachability), we conclude that can only be non-zero if node i is reachable from node j in H. 
+
+Consequently, we propose a two-phase approach: Symbolic Reachability Analysis followed by Numerical Accumula¬ tion. IEEE TRANSACTIONS ON COMPUTER-AIDED DESIGN OF INTEGRATED CIRCUITS AND SYSTEMS, VOL.  XX,  NO.  X,  MAY 2026 6
+
+Algorithm  3 Symbolic Reachability Analysis (Augmented 
+
+DFS) 
+
+1： Input: Factor Graph target row index current node 
+
+i, visitation array  vis,  in-degree array d. 
+
+2： visi 
+
+# — 1
+
+3： for  all  (E,  k)  e 历 do 
+
+4： 媒
+
+# — 媒 + 1 > Increment in-degree for numerical phase 
+
+5： if visk = 0 then 
+
+6： Recursive call to Alg.  3 for node  k. 
+
+7： end if 
+
+8： end for Algorithm 4 Implicit Row-wise Inverse Computation 
+
+1： Input: L^j, initialized arrays v,vis, d
+
+# — 0. 
+
+2： Output:  o:  The J -th row of Z = L~ x .
+
+3： Phase 1: Symbolic Analysis 
+
+4： Invoke Alg.  3 starting from node j. 
+
+5： Phase 2: Topologically Ordered Numerical BFS 
+
+6： Initialize queue  Q
+
+# — {/},  set Vj 
+
+# — 1/Ljj. 
+
+7： while Q is not empty do 
+
+8：  s Q.pop();  viss 
+
+# — 0. 
+
+9： for all  js, * e 后 do 
+
+10： vt Vt~\~ ws^vs  > Weighted accumulation 
+
+11：  山 — — 1
+
+12：  if  或 = 0 then 
+
+13：  Q. push  > Ready for processing 
+
+14： end if 
+
+15： end for 
+
+16： end while 
+
+17： return v. 
+
+Algorithmic Significance: Unlike traditional substitu¬ tion for solving one row, which relies on sequential for-ward/backward substitution, Algorithm  4 uses a topological ordering defined  by  the in-degrees dt. This allows all nodes at the same topological depth to be processed in parallel. Phase 1(Alg.  3)  ensures that we only visit nodes within the reachable subgraph  %,  effectively reducing the complexity of comput¬ ing a single row from O(nnz{L)) to O(nnz{Lreach)\ where 
+
+Lreach contains only the non-zeros belonging to columns reachable from node This strategic sparsity leverage is fundamental to achieving the sub-second performance reported in our results. 
+
+D Augmented  Symbolic Analysis via Incremental  DFS 
+
+A naive implementation of the symbolic reachability anal¬ ysis (Alg.  3)  for each row independently would result in atotal time complexity of O(nnz(Z)), potentially negating the efficiency gains of the implicit model. Furthermore, storing independent reachability metadata for n rows would trigger an  (9(冷2)  memory explosion. However, a critical structural observation of the factor graph 
+
+H reveals significant overlap between the reachable subgraphs 
+
+Hi and  %.  Specifically, for any directed edge (i, J)  e E, the reachable set  Sj  is a subset of  (S, C Si). 
+
+To exploit this redundancy while maintaining a minimal memory footprint,  we  propose an Incremental DFS approach with a globally  shared state. Rather than re-initializing the auxiliary in-degree array  d e %九  for each row, we process rows in a topological sequence. By utilizing a single persistent array d and  'Tolling  back"  only the disparate components of the state via the Inverse Symbolic Traversal (Alg.  5 and Fig. 
+
+2),  we ensure that the auxiliary memory overhead is strictly O(n) for the limited number of processors. This mechanism allows for the reuse of previous DFS results, effectively reducing the amortized computational com¬ plexity to  O(nnz  Crucially, by traversing rows according to their topological order in H and applying state-reversal logic, the transition from  Z*： to Zo^ necessitates only minimal local updates. Consequently, the total memory requirement for PEERS remains <9(nnz(L) + n), ensuring that the pre¬ processing overhead is dominated by the sparse factor L rather than the dense implicit inverse Z. 
+
+Algorithm  5 Inverse Symbolic Traversal (State Rollback) 
+
+1： Input: Factor Graph ” current node  i,  next target node 
+
+o, visitation array  vis,  in-degree array d. 
+
+2： visi 
+
+# — 0 > Reset visitation for state reuse 
+
+3： for all (i,  k)  e 后 do 
+
+4： 诵
+
+# — 诵 一 1 > Decrement in-degree to revert state 
+
+5：  if  瀛 = 0 and  k # o then 
+
+6： Recursive call to Alg.  5 for node k. 
+
+7：  end if 
+
+8： end for 
+
+9： return 
+
+E.  Structural Rollback State Consistency 
+
+Let denote the set of nodes reachable from node i in H. 
+
+In high-performance parallel contexts, we typically process branches of the elimination tree where the intersection Si  D Sj 
+
+is non-empty. If a subsequent target node  o is not contained within the current reachable set  S,,  a Structural Rollback is required to maintain consistency. Algorithm  5 facilitates this by decrementing in-degrees and resetting visitation flags strictly for the subset  Sj \ (the set-theoretic difference). This ensures that the global state (ms,  d) 
+
+is restored to a state corresponding to a common ancestor in the elimination tree before the solver explores a disjoint branch. Consequently, the total symbolic work is bounded by the number of non-zeros in L, achieving optimal amortized complexity for all-edge queries. The process is also illustrated in Fig.  3. 
+
+F. Integrated PEERS Algorithm  with  State-Inheritance 
+
+The efficiency of the PEERS framework relies on mini¬ mizing state re-initialization between successive row compu¬ tations. By maintaining a persistent in-degree array d and performing incremental updates, we avoid the O(nnz^L)) 
+
+overhead of clearing auxiliary arrays for every row. The complete integration of the implicit inverse calculation with augmented DFS and state rollback is detailed in Algorithm  6. 1 23456 v[6]=8 d[6]=0 v[5]=0 d[5]=1 v[4]=0 d[4]=1 v[2]=0 d[2]=1 v[3]=0 d[3]=2 v[1]=0 d[1]=2 0.25 0.25 0.25 0.5 0.25 0.5 0.5 q=[6]                                 
+
+> 123456v[6]=8 d[6]=0 v[5]=2 d[5]=0 v[4]=2 d[4]=0 v[2]=0 d[2]=1 v[3]=0 d[3]=2 v[1]=2 d[1]=1 0.25 0.25 0.25 0.5 0.25 0.5 0.5 q=[5, 4]
+> 123456v[6]=8 d[6]=0 v[5]=2 d[5]=0 v[4]=2 d[4]=0 v[2]=0 d[2]=1 v[3]=1 d[3]=1 v[1]=2 d[1]=1 0.25 0.25 0.25 0.5 0.25 0.5 0.5 q=[4]
+> 123456v[6]=8 d[6]=0 v[5]=2 d[5]=0 v[4]=2 d[4]=0 v[2]=0.5 d[2]=0 v[3]=2 d[3]=0 v[1]=2 d[1]=1 0.25 0.25 0.25 0.5 0.25 0.5 0.5 q=[3, 2]
+> 123456v[6]=8 d[6]=0 v[5]=2 d[5]=0 v[4]=2 d[4]=0 v[2]=0.5 d[2]=0 v[3]=2 d[3]=0 v[1]=3 d[1]=0 0.25 0.25 0.25 0.5 0.25 0.5 0.5 q=[1]
+> 123456v[6]=8 d[6]=0 v[5]=2 d[5]=0 v[4]=2 d[4]=0 v[2]=0.5 d[2]=0 v[3]=2 d[3]=0 v[1]=3 d[1]=0 0.25 0.25 0.25 0.5 0.25 0.5 0.5 q=[]
+> 123456
+> 1234568
+> 12345698
+> IEEE TRANSACTIONS ON COMPUTER-AIDED DESIGN OF INTEGRATED CIRCUITS AND SYSTEMS, VOL. XX, NO. X, MAY
+
+2026 7
+
+Fig.  2.  An illustrative example of implicit row-wise inverse computation. Fig.  3.  An illustrative example of inverse symbolic traversal 
+
+G.  Dynamic Query Update via Row-wise Accumulation 
+
+Since the PEERS framework computes the Cholesky in¬ verse implicitly to maintain space complexity, the effective resistances cannot be calculated via explicit matrix multiplication. However, we observe that the total effective resistance  %力 can be decomposed into independent contri¬ butions from each row of Z = 77T.  Based  on the identity 
+
+Rst = \\Zes^,\\2, we derive the following accumulation for¬ mula: 
+
+n |(Z 〃s — y # g
+
+Rst  = %),  如 ± = g 
+
+> I
+
+## 〔Z需 s = g
+
+(12) where g denotes the grounded node. This formulation allows us to update the query answers on-the-fly as each row  &： is generated, after which the row can be immediately discarded. To efficiently map these updates to specific edge queries, we define a Query Graph Q = (V, E,w): 
+
+• Edge Set  应： For the  k-th  effective resistance query between nodes u and v in the original graph  G,  we add an undirected edge between their permuted indices Pu 
+
+and  Pv  in  Q. 
+
+• Weight Set w: Each edge  (兄, J%) is assigned a weight 
+
+wuv = k, serving as a pointer to the specific index in the global answer array ans. 
+
+Algorithm 7 details this dynamic update process. By only iterating over the non-zero indices identified in the symbolic phase  (qo  . . . qtaii),  we  ensure the update complexity is strictly proportional to the number of active queries in the current 
+
+row's  reachability set. 
+
+H. Parallel Framework  and  System Integration 
+
+The additive nature of the row-wise contribution (Equation 12) renders the PEERS solver inherently data-parallel. Since each row  Z/,： independently contributes to the global effective resistance array, we can distribute the computation across  P
+
+processing cores with minimal synchronization. However, a naive parallelization would suffer from two bottlenecks: (i) memory contention over auxiliary arrays (ms, d, v) and (ii) redundant symbolic analysis. To address these, we employ a thread-local state model where each IEEE TRANSACTIONS ON COMPUTER-AIDED DESIGN OF INTEGRATED CIRCUITS AND SYSTEMS, VOL.  XX,  NO.  X,  MAY 2026 8
+
+Algorithm  6 Implicit Inverse Computation via Augmented 
+
+DFS  Search 
+
+1： Input: Factor Graph ” Cholesky factor L, target row j, 
+
+persistent in-degree array  d,  visitation array vis, auxiliary arrays  o,  caZ, Id. 
+
+2： Output:  u:  The J -th row  of  Z = Z/T. 
+
+3： Step 1: Symbolic Update 
+
+4： Invoke Alg.  4 at node j to update current vis and d based on structural reachability. 
+
+5： Step 2: Numerical Accumulation 
+
+6： Vj 
+
+# — 1/ Ljj , calj 
+
+# 一 1, head  J 0,  tail  J 0,  qo 
+
+# — j. 
+
+7： while head tail do 
+
+8：  s
+
+# — qhead ；head 
+
+# — head  + 1. 
+
+9： for  all  (s, 力)  e 后 do 
+
+10：  比—仇  + ws,tvs 
+
+11：  /由 
+
+# — max (Zd 力 ，由)  > Preserve original state for rollback 
+
+12：  d%  — d%  — 1
+
+13：  if  = 0 then 
+
+14： tail 
+
+# — tail + 1; qtan 
+
+# — t. 
+
+15： end if 
+
+16： end for 
+
+17： end while 
+
+18： Step  3:  State Restoration and Recursion 
+
+19： for  £ = 0 to tail do 
+
+20：  dq, 
+
+# — ldqi ; ldqi 
+
+# ― 0. 
+
+21： end for 
+
+22： for  all  (E,/)  e 后 do 
+
+23：  if cali = 0 then 
+
+24： Recursive call to compute row i incrementally. 
+
+25：  Invoke Alg.  5 (State Rollback) at node i relative to j. 
+
+26： end if 
+
+27： end for 
+
+28： return v. 
+
+core maintains its own workspace, and a lock-free dynamic scheduling mechanism based on the factor graph topology. 
+
+Lock-Free Scheduling and Redundancy Avoidance: To ensure high throughput, PEERS utilizes a lock-free  "claim'' 
+
+strategy. As detailed in Step  2 of Algorithm  8,  each  thread attempts to claim a row j by atomically updating  cq/ 『] 
+
+from —1 to its thread ID. This prevents multiple threads from performing the same row inversion while avoiding the overhead of heavy mutexes. 
+
+A unique  feature of PEERS is its integration with the 
+
+Augmented DFS. When a thread finishes row i and moves to its child in the factor graph (row  /),  it first checks if 
+
+cal[j]  = — 1. If row j is unclaimed, the thread continues its incremental traversal, thereby maximizing the  ''reuse”  of the symbolic state (vis^ d). If j has already been claimed by another thread, the current thread performs a Structural Rollback (Algorithm 5) and seeks the next available branch  in 
+
+the elimination tree. This hybrid of static topological guidance and dynamic task claiming ensures optimal load balancing even for highly irregular graph structures. 
+
+Parallel Complexity and Memory Analysis: The over¬ 
+
+Algorithm 7 Dynamic Update for Query Answers in Row j
+
+1： Input: Factor Graph ” row values  o,  active nodes q from Alg. 6, Query Graph Q = ，艮  份)， answer array ans. 
+
+2： Output: Updated ans. 
+
+3： Step X: Mark Active Row Sparsity 
+
+4： for  5 = 0 to  tail do 
+
+5：  〃
+
+# — 仇； 
+
+# — 1 > Flag indices where Zju  壬 0
+
+6： end for 
+
+7： Step 2: Incremental Contribution Accumulation 
+
+8： for  i = 0 to tail do 
+
+9：  〃
+
+# — ％ 人
+
+10： for all (u, vadj)  G B do  〉Iterate over queries involving node u
+
+11：  id wUiVadj 
+
+12：  if cVadj  = 1 and 〃> vadj then 
+
+13： ansid 
+
+# — ansid  +(加  - vVadj) 2
+
+14： else 
+
+6 if  加吟  = 0 then 
+
+16：  ansid 
+
+# — ansid  + 好 > Case where one node is grounded or outside reachability 
+
+17： end if 
+
+18： end if 
+
+19： end for 
+
+20： end for 
+
+21： return  ans 
+
+all parallel PEERS algorithm is presented  in  Alg.  8 and illustrated in Fig. 4. Unlike standard equation-based solvers where parallelization is often throttled by the memory footprint of dense auxiliary vectors, PEERS leverages the structural properties of the elimination tree to maintain a lean memory profile. The total space complexity is O^nnz(L)  + P • 71°). 
+
+While  a global workspace of size is required to store the Cholesky factor, the per-thread auxiliary overhead is strictly bounded. As proven in Lemma 3, each implicit inverse row traversal only visits nodes within its own reachable subgraph in the elimination tree. Consequently, each of the  P
+
+threads only requires a sparse workspace (for the value array 
+
+v and structural markers Id) of size O(n a\ where na is the tree height. This represents a significant reduction from the 
+
+O(P ・n)  requirement of standard solvers, ensuring that PEERS remains within the capacity of the last-level cache (LLC) even at high thread counts. IV. Theoretical Guarantees In this section, we establish the formal theoretical founda¬ tions of the PEERS framework. We first present a rigorous proof of the  algorithm's  numerical exactness, demonstrating that the implicit row-wise accumulation yields the identical result to the explicit Moore-Penrose inverse approach. Sub¬ sequently, we analyze the asymptotic serial complexity and parallel span, providing a theoretical justification for the sub¬ linear scaling observed in our experimental evaluations. 
+
+A. Proof of Exactness 
+
+The effective resistance Rst between two nodes  s and t in a graph G is traditionally defined using the pseudo-inverse 1 2 3 4 5 6 7 8 9 10 
+
+12345678910 Cholesky Factor L
+
+1 2 3 4 5 6 7 8 9 10 
+
+12345678910 
+
+Z=L -1 Update Relevant Effective Resistances With (16) 
+
+IEEE TRANSACTIONS ON COMPUTER-AIDED DESIGN OF INTEGRATED CIRCUITS AND SYSTEMS, VOL.  XX,  NO.  X,  MAY 2026 9
+
+Fig.  4.  Overall graphical framework 
+
+Algorithm 8 Overall Parallel PEERS Algorithm 
+
+1： Input: Graph  G,  Query set Q, Number of threads P. 
+
+2： Output: Global answer array ans. 
+
+3： Step 1: Pre-processing 
+
+4： Ground node  g,  apply AMD reordering, and compute Cholesky factor L. 
+
+5： Construct Factor Graph H and Query Graph Q. 
+
+6： Initialize global atomic flag array cal [n] 
+
+# — — 1 and 6ms [Q] 
+
+# — 0. 
+
+7： Step 2: Parallel Row Computation 
+
+8： for all threads p e {1,  , P}  in parallel do 
+
+9： Initialize thread-local arrays: 
+
+10： 
+
+vp,viSp,dpyqp^ldp, local_ansp. 
+
+for J = 1 to n do 
+
+11： > Atomic Compare-and-Swap (CAS) to claim row j
+
+12： if  CAS(ca/ 『]： — l,p)  is successful then 
+
+13： Compute row  Zj,： using Alg.  6. 
+
+14： Update  local_ansp  using Alg.  7. 
+
+15： end if 
+
+16： end for 
+
+17： end for 
+
+18： Step  3:  Global Reduction 
+
+19： for all queries  k e {1,  .. . JQ|}  do 
+
+20： ans[k\ 
+
+# — £ j】local_ans@ 网. 
+
+21： end for 
+
+22： return ans. 
+
+of the Laplacian matrix Lq. For a connected graph with achosen ground node  g,  the reduced Laplacian Lr (obtained by removing the row and column corresponding to  g)  is asymmetric positive definite (SPD) matrix. 
+
+Lemma  3 (Traversal Equivalence to Triangular Substitution). 
+
+Let L be a nonsingular  lower  triangular matrix  and  历才 
+
+Z = 上-i.  For any column index j, the row-wise traversal performed by Algorithm 4 computes the entries of  Z： 」that satisfy the triangular system 
+
+上之  =马，  (13) 
+
+where  与 加 the j-th unit basis vector. Furthermore, every entry computed during the traversal  is 
+
+identical  to  the value obtained  by  exact forward substitution. Proof. Since L is lower triangular and nonsingular, the system 
+
+Lz^  = ej admits a unique solution. Algorithm  4 processes nodes according to the topological order induced by the factor graph  丸.  By Theorem 1, H
+
+is acyclic, and every directed edge corresponds to a lower triangular dependency. For each node  i,  the traversal updates the intermediate value according to the recurrence which is precisely the standard forward-substitution formula for triangular inversion. Because all predecessor dependencies are completed before node i is processed, every update uses fully resolved values. Therefore, the traversal computes exactly the same numerical solution as classical triangular substitution. Since the triangular system has a unique solution, the entries generated by the traversal are identical to the corresponding entries  of  Z = £T. 
+
+Theorem  3 (Numerical Exactness of PEERS). Let Lr  = LL Tdenote the Cholesky factorization of the reduced Laplacian matrix Lr. For pair of nodes s, t G V, the effective resistance computed  by  PEERS  is  mathematically equivalent 
+
+%。 the exact effective resistance associated with Lr. Proof. The exact effective resistance between nodes  s and t
+
+is given by 
+
+&力  = & — ^t) T Lr 1(es — ej  (15) 
+
+where  % denotes the  分-th  unit basis vector. Substituting the Cholesky factorization Lr  = LL T yields 
+
+Rst — & - et) T (LL T)~ 1(es — 4) 
+
+= & 一 37( 小尸厂 1&  一 ej.  (16) IEEE TRANSACTIONS ON COMPUTER-AIDED DESIGN OF INTEGRATED CIRCUITS AND SYSTEMS, VOL.  XX,  NO.  X,  MAY 2026 10 
+
+Let  Z = Z/T.  Then 
+
+几[  =||，&  — (17) 
+
+Expanding the squared norm gives 
+
+> n
+
+Rst = £(&s  -4)2.  (18) 
+
+> i=l
+
+PEERS evaluates the summation in (18) through row-wise implicit computation of the inverse factor entries. 
+
+By  Lemma  3,  the traversal performed by Algorithm  4
+
+is algebraically equivalent to exact triangular substitution. Consequently, every computed entry  Z”  is identical to the corresponding entry of the exact inverse factor L-1. The dynamic accumulation stage of PEERS computes the terms  0$  — Z说 产 exactly as they are generated and sums them without approximation. Therefore, the final accumulated quantity is algebraically identical to (18). Hence, the effective resistance returned by PEERS is math¬ ematically equivalent to the exact effective resistance,  up  to standard floating-point roundoff effects inherent  in  numerical linear algebra implementations. 
+
+A Total Complexity Analysis 
+
+Theorem 4 (Total Complexity of PEERS). Let G = (V, E) be a sparse graph  with  n = \V\ vertices and m = |E^|  edges 
+
+satisfying O(n a) separator theorem  with  a 1/2.  Let Ldenote the sparse Cholesky factor of the reduced Laplacian matrix obtained  using  a Generalized Nested Dissection order¬ ing,  and  let  T denote the associated elimination tree. Then the total numerical  work  required  by  PEERS  %。 compute the exact effective resistances  for  m queried edges satisfies 
+
+"total  = 。( 几° •(nnz^L) +m)) . (19) 
+
+Furthermore, because m nnz(L) 〉
+
+the complexity simplifies  切
+
+Wwtai  = 。(废  •nnz(L)) . (20) 
+
+In particular: 
+
+1)  For  planar graphs two-dimensional  grids,  where a = 1/2 and  nnz(£)  = O(nlogn), 
+
+Wtotal  = 。(九 I*  log  71). 
+
+2)  For  three-dimensional  grids  and related circuit struc¬ tures, where  a = 2/3  nnz(L)  = O(n 4/ 3), 
+
+Wtotal  = OS?). 
+
+Proof. The PEERS framework consists of two computational phases: 1) implicit inverse traversal; 
+
+2)  dynamic query accumulation. We analyze the complexity of each phase separately. 
+
+Part I: Implici^Inverse Traversal Complexity 
+
+Let 
+
+# "= (V, E) denote the factor graph associated with the lower triangular Cholesky factor L. 
+
+For each column k of L, define 
+
+= I{£ > k ： ¥。}I ,
+
+namely the number of subdiagonal nonzeros in column  k. 
+
+During the computation of the J-th implicit inverse row, let 
+
+Sj denote the set of visited vertices. For every visited vertex 
+
+k e Sj ,
+
+the traversal scans all outgoing factor-graph adjacencies asso¬ ciated with column k. Therefore, the traversal work for row j
+
+is 
+
+Winvj  = £ 依・ (21) 
+
+> keSj
+
+Summing over all rows gives 
+
+> n
+
+Winv  = ££  Q.  (22)  
+
+> /=1 k£Sj
+
+Recall that Z = £-1.  From the structural properties of sparse triangular inversion [1 1],  a vertex k participates in the traversal of row j only if 
+
+Zjk  壬 0is structurally nonzero. Therefore,  
+
+> nn
+
+Q3)  
+
+> /=1 k=l
+
+where I(-) denotes the indicator function. Reordering the summation gives 
+
+> n
+
+Winv  工£气  nnz(Z：,Q,  (24) 
+
+> “=i
+
+where  rmz(Z：,Q  denotes the number of structurally nonzero entries in column k of Z. 
+
+It is important to distinguish the structural behavior of rows and columns of the lower triangular inverse Z. Rows of  Z
+
+may contain many structurally nonzero entries, corresponding to descendant relationships in the elimination tree. However, the structurally nonzero entries in a fixed column k of Z are contained within the ancestor set of node  k in the elimination tree. Let Anc(k^  T)  denote the ancestor set of node k in  T. 
+
+From the structural characterization of sparse triangular inverses [11], the structurally nonzero entries in column k of 
+
+Z = £-1  are contained within Anc(k, T). Therefore, 
+
+nnz(Z：fk) \Anc(k,T)\.  (25) 
+
+Because the elimination tree defines a unique parent for every non-root node, the ancestor set of node k forms a simple path from k to the root. Hence, 
+
+\Anc(k,T)\ < h(T\  (26) 
+
+where  无(T)  denotes the height of the elimination tree. IEEE TRANSACTIONS ON COMPUTER-AIDED DESIGN OF INTEGRATED CIRCUITS AND SYSTEMS, VOL.  XX,  NO.  X,  MAY 2026 11 
+
+Under Generalized Nested Dissection orderings applied to graphs satisfying an O(n a) separator theorem, the elimination¬ tree height satisfies 
+
+拉(丁)  = 6( 户)，  (27) following classical separator-based sparse factorization analy¬ sis [11], [12]. Therefore, 
+
+nnz(Z:^  = 0(4).  (28) 
+
+Substituting into the traversal complexity expression yields 
+
+> n
+
+Winv<O(n a^ck.  (29) 
+
+> k=l
+
+Because n
+
+## £%  = 7mz (£), 
+
+> k=i
+
+we obtain 
+
+Winv = • nnz^  • (30) 
+
+Part II: Dynamic Query Accumulation Complexity 
+
+Recall that Q = (V,  石)  denote the query graph consisting of all edge-resistance queries. During the processing of row j, 
+
+Algorithm  7 iterates over every active vertex 
+
+u e S, ,
+
+and  scans all query adjacencies incident to u. 
+
+Let deg(u) denote the degree of vertex u in  the query graph. Then the query-update work for row j is 
+
+WqueryJ  = 〉] (31) 
+
+Summing over all rows gives 
+
+> n
+
+^^query  = EE  deg(u).  (32)  
+
+> /=1 uESj
+
+Reordering the summation yields 
+
+> n
+
+^^query  = £deg®)  nnz{Z.}U),  (33) 
+
+> U=1
+
+because a vertex u participates in  a row traversal only when the corresponding inverse entry is structurally nonzero. Using the previously established bound 
+
+nnz(Z：,u)  = 。(几 °), 
+
+we obtain  n
+
+Wquery  9( 九°)  £deg(u).  (34) 
+
+> 7/,
+
+=l
+
+Since the query graph is undirected, 
+
+> n
+
+deg(u)  = 2m = ©(m), which gives 
+
+Wquery  =。• (35) 
+
+Part III: Total Complexity 
+
+Combining the traversal and query-update costs yields 
+
+Wtotal = Winv  + %uery  =。州  •九政( d) + 9(6  •庐) .
+
+(36) 
+
+Because the sparse Cholesky factor contains all original graph adjacencies together with additional fill-in entries, 
+
+m nnz(L), 
+
+we finally obtain 
+
+Wtotai  = 6(/  •期IZ(£))  • (37) 
+
+Applying the classical nested-dissection bounds: 
+
+• for planar graphs and two-dimensional grids, 
+
+nnz(£)  = O(nlogn), yielding 
+
+Motal  = 。(九 L5  1og  联
+
+• for three-dimensional grids, 
+
+nnz(L)  = 9(n4/3), 
+
+yielding 」
+
+Wtotal = 。(几 2). 
+
+This establishes the stated complexity bounds. 
+
+C. Parallel Complexity Analysis 
+
+Definition  3 (Work and Span). Let Tp denote the execution time of algorithm p processors. 
+
+1) Work (Ti): the total number of operations performed  by 
+
+a serial execution; 
+
+2)  Span  (T^): the length  of  the longest sequential de¬ pendency chain  in  the computation DAG, corresponding  
+
+> /o
+
+execution  on  an ideal machine with infinitely many processors; 
+
+3)  Parallel Speedup:  Sq  = 患. 
+
+Lemma 4 (Critical Path of a Single Row Traversal). Let 
+
+T denote the elimination tree associated  with  the sparse Cholesky factor L. Then the span required  /o  compute 
+
+single  implicit inverse  ww  血 PEERS satisfies 
+
+Too(row/)  = 9(6(7)),  (38) 
+
+where  九(丁)  denotes the height of the elimination tree. Proof. The implicit inverse traversal evaluates dependencies induced  by  the sparse triangular factor L. 
+
+For every structurally nonzero entry 
+
+Lt,s  # 土 > s, 
+
+the computation associated with node t depends on the previously computed value at node  s.  Thus, each traversal dependency follows the partial order induced by the sparse triangular structure. From the structural properties of sparse Cholesky factoriza¬ tions, every such dependency chain is contained within the ancestor structure of the elimination tree T. 
+
+Therefore, any sequential dependency chain encountered during the traversal corresponds to a path in T. IEEE TRANSACTIONS ON COMPUTER-AIDED DESIGN OF INTEGRATED CIRCUITS AND SYSTEMS, VOL.  XX,  NO.  X,  MAY 2026 12 
+
+Since the longest root-to-leaf path in T has length  无(T), 
+
+the length of any dependency chain is bounded by Under the Work-Span model, all operations whose depen¬ dencies have been satisfied may execute concurrently. Hence, the span of a single row traversal equals the length of its longest dependency chain, yielding 
+
+Tg(row  /)  =”"))• 
+
+Theorem  5 (Parallel Span Complexity of PEERS). Let G be a graph  satisfying O(n a) separator theorem with  q
+
+1/2. Assume the sparse Cholesky factorization  is  generated 
+
+using  a Generalized Nested Dissection ordering. Under the 
+
+idealized  Work-Span model  with  sufficient processors, the total span complexity of PEERS for computing all queried effective resistances satisfies 
+
+% = O(n a). (39) 
+
+In  particular: 
+
+• Tg  = O(y/n) for planar  graphs  two-dimensional 
+
+grids; 
+
+• Tg  = 。(小巡)  for three-dimensional  grids. 
+
+Proof. The PEERS framework consists of two computational phases: 1) implicit inverse traversal;  
+
+> 2)
+
+dynamic resistance accumulation. 
+
+Part I: Implicit Inverse Traversal 
+
+Under the Work-Span model, different row traversals may execute concurrently once their local dependencies are satis¬ fied. Therefore, the total span of the traversal phase is bounded by the maximum span among all row traversals. 
+
+By  Lemma 4, 
+
+Too,inv  = 。(慨 T)) ・
+
+Part II: Dynamic Resistance Accumulation 
+
+For each queried edge  (s"),  PEERS accumulates indepen¬ dent contributions 
+
+力)  — (Zjs  - Zjt)2 
+
+across all rows j. 
+
+Once the corresponding row traversals have completed, these contributions may be accumulated using a parallel re¬ duction tree. Reducing n values requires (9 (log n) span. Because all queried edges may be reduced concurrently, the total accumulation span satisfies 
+
+Too, query  = O(log72 ).
+
+Part III: Total Span 
+
+Combining both phases yields 
+
+Tg  = 3MT))  + O(log 叫
+
+Under Generalized Nested Dissection orderings applied to graphs satisfying an  。(废) separator theorem, the elimination¬ tree height satisfies 
+
+田T)  = 0废) 
+
+by classical separator-based sparse factorization theory [11], [12]. Therefore, 
+
+Too = O(n a) + O(logn). 
+
+Since 
+
+a 1/2, 
+
+we have 
+
+logn  = 0( 九。). 
+
+Hence, 
+
+% = 9( 叫. 
+
+This establishes the stated span bounds. V. Numerical Experiments We evaluate the practical performance, numerical accuracy, and scalability of the proposed PEERS framework on large-scale sparse graph benchmarks arising from EDA and scien¬ tific computing applications. The implementation is written in  C++  with OpenMP-based shared-memory parallelization. The experiments focus on the all-edge effective resistance computation problem, which constitutes one of the most com¬ putationally demanding workloads in spectral sparsification and graph-based circuit analysis [1]. This setting is repre¬ sentative of several EDA applications, including power-grid reduction, signal-integrity analysis, and graph-based circuit partitioning [13], [14]. 
+
+A. Experimental Setup 
+
+The evaluation includes three categories of sparse graph benchmarks: 1) IBM PowerGrid (ibmpg) benchmarks [14],  
+
+> 2)
+
+sparse matrices from the SuiteSparse collection [15], 
+
+3)  and three large-scale industrial designs (macro 1-3). All experiments were conducted on a Linux server equipped with Intel Xeon  8375c  CPUs and 512 GB  RAM.  Unless otherwise specified, all methods utilized  64  CPU threads. To ensure fairness, all compared methods used identical matrix reorderings and were executed under the same hardware environment and numerical precision settings. We compare PEERS against three representative baselines: 1) Cholmod [16]: a high-performance sparse direct solver based on repeated sparse triangular solves; 2) LSolve [10]: a conventional Laplacian-system solving framework;  
+
+> 3)
+
+INV [8]: a recent inverse-factorization-based effective resistance solver. For all methods, the reported runtime includes both numer¬ ical factorization and effective resistance computation time. The maximum relative error is evaluated against the direct LSolve solution. IEEE TRANSACTIONS ON COMPUTER-AIDED DESIGN OF INTEGRATED CIRCUITS AND SYSTEMS, VOL.  XX,  NO.  X,  MAY 2026 13             
+
+> TABLE II
+> Performance comparison of exact effective resistance solvers using 64 CPU threads.
+> Case
+
+|V| 回 Tchol        
+
+> (s)
+> Cholmod [16] LSolve [10] INV [8] Proposed PEERS
+
+mem  Ttot  mem  Ttot  err mem  Ttot  err mem  Ttot  Spi  Sp2  Sp3                                                         
+
+> ibmpg3 8.5E5 1.4E6 13.3 2.0 5745 2.3 1156 4.50E-6 37.3 182 8.33E-11 3.7 31.5 182 36.7 5.8
+> ibmpg4 9.5E5 1.6E6 27.9 2.4 8389 3.1 2557 9.42E-11 63.2 432 8.80E-11 4.7 63.4 132 40.3 6.8
+> ibmpg5 1.1E6 1.6E6 6.25 2.1 5477 2.1 551 1.25E-8 30.0 89.5 6.93E-11 3.7 18.8 291 29.3 4.8
+> ibmpg6 1.7E6 2.5E6 5.68 3.2 11411 3.1 463
+
+1.45E-8 46.4 5.1 5.19E-11 5.3  22.7  503 20.4 5.1                                        
+
+> ibmpg7 1.5E6 2.4E6 30.9 3.4 16077 4.0 3974 2.23E-8 79.3 413 9.22E-11 6.3 71.4 225 55.7 5.8
+> ibmpg8 1.5E6 2.4E6 30.4 3.4 16044 4.0 4256 4.23E-6 81.9 430 9.20E-11 6.3 70.7 227 60.2 6.1 G2_circuit 1.5E5 2.9E5 2.00 0.4 182 0.4
+
+77.5 8.83E-11  4.6  22.0 1.21E-11 0.7 4.31 42.2 18.0 5.1 G3_circuit 1.6E6 3.1E6 134  4.6  34663  6.1 15739 9.65E-11 180.2 1763 8.24E-11 9.1 260 133 60.5  6.8                 
+
+> thermal2 1.2E6 3.7E6 12.2 2.7 18188 2.9 3485 2.39E-11 78.2 372 2.23E-11 5.6 65 280 53.6
+
+5.7                     
+
+> tmt_sym 7.3E5 1.8E6 10.4 1.6 6692 1.8 1501 9.58E-11 33.5 150 2.00E-11 3.4 31.8 210 47.2 4.7
+> macro 14.1E6 1.3E7 12.2
+
+- failed  6.3  8575 1.95E-9  230.3  323  9.69E-11 14.8 103 - 83.3  3.1 macro2  8.6E6  2.8E7 886 - failed - failed - failed - - 45.7  2044 - - -    
+
+> macro3 1.7E7 5.0E7 1161
+
+- failed - failed - failed - - 78.6 3317 - - -
+
+Tchol- Cholesky factorization time;  Ttot： total runtime including factorization; err: maximum relative error against LSolve; mem: peak memory consumption in  GB.  Spi,  S@2,  and  S@3  denote the runtime speedup of PEERS over Cholmod, LSolve, and  INV,  respectively. 
+
+A Numerical Accuracy Stability 
+
+Table II shows that PEERS consistently achieves high numerical accuracy across all evaluated benchmarks. The maximum relative error remains close to machine precision, typically below 10 -10. This behavior is expected because PEERS performs exact sparse-factor-based accumulation with¬ out relying on randomized sketching or approximation proce¬ dures. Compared with the inverse-based INV method [8], PEERS exhibits improved numerical consistency on several bench¬ marks. For example, on  ibmpg3  and  ibmpg8,  INV produces relative errors on the order of 10 - 6, whereas PEERS maintains errors near machine precision. These results suggest that the implicit traversal strategy preserves numerical robustness while avoiding explicit inverse materialization. 
+
+A potential concern in all-edge solvers is the accumula¬ tion of floating-point errors during large-scale summations. PEERS mitigates this through its row-wise implicit traversal (Algorithm 4). Since the effective resistances are computed via the weighted sum of entries from the implicit model, the error growth is bounded by the depth of the elimination tree 
+
+%(T).  By  utilizing a persistent state and structural rollback, PEERS avoids the catastrophic cancellation often associated with high-frequency iterative updates. Numerical experiments confirm that PEERS maintains a relative error of less than 10 -10 compared to direct inversion using double-precision arithmetic. 
+
+C Computational Efficiency 
+
+The experimental results demonstrate that PEERS substan¬ tially reduces the computational cost of exact all-edge effec¬ tive resistance evaluation. Across the evaluated benchmarks, PEERS consistently outperforms conventional repeated-solve approaches and explicit inverse-based methods. Compared with Choi mod-based repeated triangular solves, PEERS achieves speedups ranging from  42.2  x to 503 x. The improvement is particularly significant for workloads involv¬ ing all-edge queries, where repeated sparse solves become increasingly expensive. Compared with LSolve, PEERS achieves speedups between 
+
+18.0  x and  83.3 x.  In addition, several large-scale benchmarks (macro2 and macro3) could not be completed by LSolve or INV within the available computational resources, whereas PEERS successfully computed exact effective resistances for graphs containing up to 17 million nodes and 50 million edges. Compared with the recent INV framework [8], PEERS provides additional runtime reduction while using substantially less memory. This improvement is primarily attributed to the implicit inverse traversal strategy, which avoids explicit inverse construction and reduces memory traffic during query evaluation. 
+
+D Memory Scalability 
+
+Memory efficiency is critical for large-scale effective resis¬ tance computation because inverse-factor representations can become substantially denser than the original sparse factors. The results show that PEERS maintains significantly lower memory overhead than explicit inverse-based approaches. For the largest benchmark (macro3), PEERS completes the computation using  78.6  GB memory, whereas the explicit inverse-based INV framework fails due to memory limitations. In practice, the memory footprint of PEERS remains much closer to the sparsity scale of the Cholesky factor itself, en¬ abling exact computation on problem sizes that are otherwise difficult to process using explicit inverse storage. Overall, the experimental results indicate that PEERS pro¬ vides a practical framework for scalable and exact effective resistance computation on large sparse graphs arising in EDA applications. VI. Conclusion The exact computation of all-edge effective resistances has long been constrained by the dichotomy between slow iterative solvers  and  memory-exhaustive explicit matrix inversions. IEEE TRANSACTIONS ON COMPUTER-AIDED DESIGN OF INTEGRATED CIRCUITS AND SYSTEMS, VOL.  XX,  NO.  X,  MAY 2026 14 
+
+This paper introduced PEERS, a high-performance, massively scalable framework that bridges the gap between theoretical exactness and computational feasibility. By conceptualizing 
+
+an  implicit inverse computing model, PEERS bypasses the prohibitive O(n 2) memory overhead associated with explicit inverse factors. Our state-inherited augmented DFS traversals restrict symbolic complexity to O{nnz{L)\ while a dynamic query mechanism allows for the real-time, zero-variance ac¬ cumulation of effective resistances in a single parallel sweep. Extensive numerical evaluations on industrial benchmarks confirm that PEERS dramatically reshapes the performance landscape. It achieves maximum speedups of 503 x over direct solvers like Cholmod,  83.3 x over parallel LSolve, and 
+
+6.8 义 over state-of-the-art explicit inverse methods, all while maintaining strict memory efficiency. Most notably, PEERS successfully computes exact solutions for graphs with over 17 million nodes and 50 million edges in under an hour on standard server hardware —tasks that previously resulted in out-of-memory failures or intractable runtimes. By providing 
+
+an  architecturally shallow, exact, and parallel-native solver, PEERS unlocks unprecedented scales for the next generation of graph-based circuit analysis, spectral sparsification, and layout optimization tools. 
+
+> Acknowledgment
+
+The authors acknowledge the use of generative AI tools during the preparation of this manuscript to improve readabil¬ ity, linguistic quality, and presentation clarity. Specifically, the Gemini  3 suite and ChatGPT  5.5  were used to generate edi¬ torial suggestions and alternative phrasings for portions of the manuscript, including the Introduction, theoretical exposition, numerical experiments, and Conclusion. The authors manually evaluated, selected, and integrated these suggestions where appropriate. The AI tools were used solely for language and presentation assistance and did not contribute scientific ideas, theoretical results, algorithmic designs, experimental data, or research conclusions. All technical content and scientific contributions presented in this work are the original work of the authors. 
+
+> [6] [7] [8]
+
+[9] [10] [11] [12] [13] [14] [15] [16] 
+
+M.  Liao, R.-H. Li,  Q.  Dai, H. Chen,  H.  Qin, and  G.  Wang, 
+
+"Efficient  resistance distance computation: The power of landmark¬ based  approaches,”  Proc. ACM Manag. Data, vol. 1, no. 1, May  2023. 
+
+[Online]. Available: https://doi.Org/10.l 145/3588922 
+
+G.  Cui, H. Wang, and  Z.  Wei,  "Mixing  time matters: Accelerating effective resistance estimation via bidirectional  method,”  in  Proceedings of the 31st ACM SIGKDD Conference on  Knowledge  Discovery and Data Mining V.l, ser. KDD  '25.  New York, NY, USA: Association for Computing Machinery,  2025,  p.  177-188. [Online]. Available: https://doi.org/10. 1145/3690624.3709298 Z. Liu and W.  Yii,  "Computing  effective resistances on large graphs based on approximate inverse of cholesky  factor,”  in 2023 Design, Automation  & Test in Europe Conference  & Exhibition (DATE),  2023, 
+
+pp. 1-6. B. Chen,  Z.  Liu,  Y.  Zhang, and  W.  Yu,  "Boosting  graph spectral sparsification via parallel sparse approximate inverse of cholesky  factor," 
+
+in 2024 29th Asia  and  South Pacific Design Automation Conference (ASP-DAC),  2024,  pp.  866-871. T.  A.  Davis, Direct Methods for Sparse Linear Systems. Society for Industrial and Applied Mathematics, 2006. [Online]. Available: 
+
+# ，SIAM Journal  on  Matrix Analysis and Applications, vol. 15, no. 1, pp. 62-79, 1994. [Online].  Available:  https://doi.org/10.1137/S0895479887139455 
+
+R. J. Lipton, D. J. Rose, and  R.  E.  Taijan,  "Generalized  nested 
+
+dissection,”  SIAM Journal  on  Numerical Analysis, vol. 16, no.  2,  pp. 
+
+346-358,  1979. [Online]. Available: https://d0i.0rg/l 0. 1137/07 16027 
+
+Z.  Zhao and  Z.  Feng,  "Effective-resistance  preserving spectral reduction of  graphs,”  in  2019 56th ACM/IEEE Design Automation Conference (DAC), 2019, pp. 1-6. 
+
+S.  R.  Nassif,  “IBM  power grid  benchmarks.”  [Online]. Available: https://web.ece.ucsb.edu/ lip/PGBenchmarks/ibmpgbench.html 
+
+"SuiteSparse  Matrix Collection? [Online]. Available: https://sparse.tamu.edu/ T. A. Davis,  "SuiteSparse.”  [Online]. Available: http://faculty.cse.tamu.edu/davis/suitesparse.html https://epubs.siam.org/doi/abs/10. 1137/1 .97808987 1888 1
+
+J.  R. Gilbert, "Predicting structure in sparse matrix compi 
+
+References  
+
+> [1]
+
+D.  A.  Spielman and  N.  Srivastava,  "Graph  sparsification by effective 
+
+resistances,”  SIAM Journal Computing, vol. 40, no. 6, pp. 1913-1926, 2011. [Online]. Available: https://doi.org/10. 1137/080734029 [2]  S.  Kose and  E.  G.  Friedman,  "Efficient  algorithms for fast ir drop analysis exploiting  locality,”  Integration, 
+
+vol. 45, no. 2, pp. 149-161, 2012. [Online]. Available: https ://www.sciencedirect.com/science/article/pii/SO 167 9260 11 0007 94  
+
+> [3]
+
+V.  L. Alev,  N.  Anari, L. C. Lau, and  S.  Oveis  Gharan,  "Graph 
+
+Clustering using Effective  Resistance,”  in 9th Innovations in Theoretical Computer Science Conference (ITCS 2018), ser. Leibniz International Proceedings in Informatics (LIPIcs),  A.  R. Karlin, Ed., vol. 94. Dagstuhl, Germany: Schloss Dagstuhl - Leibniz-Zentrum fur Informatik, 2018,  pp.  41:1^-1:16. [Online]. Available: https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.ITCS.2018.41 [4]  M.  Black,  Z.  Wan,  A.  Nayyeri, and  Y.  Wang,  "Understanding  over¬ squashing in gnns through the lens of effective  resistance,"  in Proceed¬ ings of the  40 加 International Conference on Machine  Learning,  ser. 
+
+ICML'23.  JMLR.org, 2023. [5] R. V. Dwaraknath, I. Karmarkar, and  A.  Sidford,  "Towards  optimal 
+
+effective  resistance  estimation,”  in  Proceedings of the  37 伪 International Conference on Neural Information Processing Systems, ser. NIPS  '23. 
+
+Red Hook, NY, USA: Curran Associates Inc.,  2023.

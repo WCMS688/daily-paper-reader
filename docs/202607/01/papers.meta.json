@@ -1,0 +1,69 @@
+{
+  "label": "2026-07-01",
+  "date": "2026-07-01",
+  "generated_at": "2026-07-01T22:10:04",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202607/01/2606.29272v1-pcgd-physics-guided-conditional-graph-diffusion-for-tcad-device-simulation",
+      "section": "deep",
+      "title_en": "PCGD: Physics-Guided Conditional Graph Diffusion for TCAD Device Simulation",
+      "authors": "Yihan Zhang, Zhiteng Zhang, Kun Chen, Chen Wang",
+      "date": "2026-06-28",
+      "pdf": "https://arxiv.org/pdf/2606.29272v1",
+      "score": "8.0",
+      "evidence": "物理引导的图扩散用于TCAD器件模拟，直接应用机器学习于半导体建模",
+      "tldr": "TCAD器件模拟因迭代求解漂移扩散方程而计算成本高昂，现有ML代理缺乏迭代优化。提出物理引导条件图扩散框架PCGD，在非结构网格上预测耦合场，通过条件感知去噪器和物理引导混合目标在扩散轨迹中逐步施加约束。在混合PN/MOS基准上达到0.835%平均误差，优于基线，PDE残差降低三个数量级。通过LoRA微调可泛化到新拓扑，实现高效场级分析。",
+      "tags": "query:si-pi",
+      "abstract_en": "Technology computer-aided design (TCAD) semiconductor device simulation is fundamentally constrained by the high computational cost of iteratively solving coupled drift-diffusion equations. Existing ML surrogates either reduce internal physics to macroscopic scalar regressions, or rely on single-step mappings that lack the iterative refinement required to resolve stiff, coupled fields. To address this, we introduce PCGD, a Physics-Guided Conditional Graph Diffusion framework operating natively on unstructured TCAD meshes to predict coupled electrostatic and carrier density fields. PCGD employs a Condition-Aware MeshGraphNet denoiser that explicitly injects boundary conditions and device structure context via global cross-attention. By augmenting data-driven denoising with a physics-guided hybrid objective that integrates exponent-free quasi-Fermi gradient matching with noise-aware PDE residuals, PCGD progressively enforce physical constraints in the iterative diffusion trajectory. This strategy successfully bypasses the numerical instabilities typical of stiff drift-diffusion equations. Evaluated on a challenging mixed PN/MOS benchmark, PCGD significantly outperforms deterministic one-step regression (1.207% error) and local diffusion (1.585% error) baselines by achieving a sub-percent mean relative field error of 0.835%, while concurrently reducing maximum PDE residual errors by nearly three orders of magnitude compared to pure diffusion. It also transfers robustly to unseen SOI topologies (0.815% error) via LoRA adaptation, using 5.30$\\times$ less data and 14.34$\\times$ fewer parameters than full fine-tuning. Ultimately, PCGD bridges the computational efficiency of generative surrogates with the rigorous physical fidelity of traditional TCAD, unlocking highly scalable, field-level analysis for robust device engineering.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/01/2606.31535v1-peers-a-parallel-and-exact-effective-resistance-solver-via-implicit-inversion-and-augmented-symbolic-analysis",
+      "section": "deep",
+      "title_en": "PEERS: A Parallel and Exact Effective Resistance Solver via Implicit Inversion and Augmented Symbolic Analysis",
+      "authors": "Baiyu Chen, Lin Gan, Guangwen Yang, Wenjian Yu",
+      "date": "2026-06-30",
+      "pdf": "https://arxiv.org/pdf/2606.31535v1",
+      "score": "8.0",
+      "evidence": "用于电网PDN分析的精确有效电阻求解器",
+      "tldr": "高精度有效电阻计算是EDA签收的瓶颈，现有方法面临精度与内存的困境。PEERS通过隐式逆Cholesky因子模型，结合状态继承增强DFS和动态查询更新，实现单次并行扫描完成所有边电阻查询。在满足O(n^α)分隔定理的图上达到理论最优并行跨度，空间复杂度O(nnz(L))。工业基准测试平均加速83.3倍，百万节点仅需18.8秒，首次为多百万门设计提供精确全边电阻分析的可行路径。",
+      "tags": "query:si-pi",
+      "abstract_en": "High-precision effective resistance computation is a cornerstone of Electronic Design Automation (EDA) sign-off, yet it remains a fundamental bottleneck in large-scale power grid analysis, spectral sparsification, and circuit reliability. Existing approaches face a prohibitive \"precision-memory impasse\": approximate methods lack the stringent accuracy required for high-stakes industrial sign-off, while exact methods either suffer from redundant query overheads or trigger $O(n^2)$ memory explosions. To resolve this, we propose PEERS, a Parallel and Exact Effective Resistance Solver powered by an implicit inverse computing model of the Cholesky factor. By integrating a state-inherited augmented depth-first search (DFS) with a dynamic query update mechanism, PEERS eliminates numerical redundancy and evaluates all-edge resistance queries in a single parallel sweep. We provide a rigorous Work-Span analysis, proving that for graphs satisfying an $O(n^α)$ separator theorem, PEERS achieves a theoretically optimal parallel span of $O(n^α)$ while strictly maintaining $O(nnz(L))$ space complexity. Numerical evaluations on industrial benchmarks demonstrate that PEERS achieves an average speedup of 83.3x over state-of-the-art parallel solvers under identical memory constraints. Notably, PEERS processes a 1-million-node industrial graph in just 18.8 seconds and scales to 17 million nodes in under an hour, providing the first computationally feasible path for exact all-edge resistance analysis in multi-million-gate designs.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/01/2606.25595v1-optimizing-semiconductor-device-simulations-through-low-precision-arithmetic",
+      "section": "quick",
+      "title_en": "Optimizing Semiconductor Device Simulations through Low-Precision Arithmetic",
+      "authors": "Alexander Maeder, Denghui Lu, Nicolas Vetsch, Vincent Maillou, Anders Winka, Jiang Cao, Mauro Dossena, Alexandros Nikolaos Ziogas, Mathieu Luisier",
+      "date": "2026-06-24",
+      "pdf": "https://arxiv.org/pdf/2606.25595v1",
+      "score": "6.0",
+      "evidence": "低精度加速半导体模拟，与先进建模优化技术相关",
+      "tldr": "随着GPU架构转向低精度计算单元，传统FP64半导体器件模拟面临挑战。本文利用开源quatrex量子输运求解器，系统研究低精度算术在半导体模拟中的可行性，通过三个基准结构分析数值稳定性。最终在更真实系统中，以40%更少资源实现51%吞吐量提升且保持精度。该工作为低精度HPC应用提供了实践指导。",
+      "tags": "query:si-pi",
+      "abstract_en": "Architectural changes in GPUs, especially the promotion of low-precision computational units, pose significant challenges to traditional, FP64-based high-performance computing (HPC) applications, while also presenting opportunities. Adopting reduced-precision data formats is a promising avenue to exploit the increased throughput capabilities. However, straightforward data conversions may lead to degraded accuracy or even erroneous results. For a given application, only an in-depth analysis of its numerical stability can reveal the potential of low-precision arithmetic. In this work, we consider the open-source quatrex package, a quantum transport solver capable of breaking the sustained FP64 Eflop/s barrier, to illustrate trade-offs between accuracy losses and computational speed-ups when moving from high- to low-precision formats. We use three representative benchmark structures to explore the application's numerical properties. Applying the gained insights to a larger, more realistic system, we achieve up to 51% higher throughput while maintaining accurate results, on 40% fewer HPC resources than the FP64 reference.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/01/2606.29629v2-energy-efficient-multimodal-inference-serving-with-tri-serve",
+      "section": "quick",
+      "title_en": "Energy-Efficient Multimodal Inference Serving with Tri-serve",
+      "authors": "Ziyang Jia, Sara Rashidi Golrouye, Laxmi Bhuyan, Benjamin Kubwimana, Devashree Tripathy, Zexin Li, Cong Liu, Daniel Wong",
+      "date": "2026-06-28",
+      "pdf": "https://arxiv.org/pdf/2606.29629v2",
+      "score": "6.0",
+      "evidence": "GPU电源管理与频率优化以提升能效",
+      "tldr": "多模态模型推理的GPU硬件PMU自主频率管理导致三种功率低效：级间依赖空转时仍高频运行、算术强度与频率负相关（计算密集阶段频率反而低）、高算术强度阶段热节流降频。本文提出Tri-serve，一种软件DVFS控制器，联合优化这三类低效，在商用GPU上实现22%能效提升且无延迟或吞吐量损失。该工作揭示了硬件频率决策的缺陷，并提供轻量级软件解决方案。",
+      "tags": "query:si-pi",
+      "abstract_en": "Multimodal model inference creates substantial energy demand with growing performance requirements. Within GPUs, power is autonomously managed by an on-board power management unit (PMU), which makes frequency boosting/throttling decisions. However, we find that these hardware-managed frequency decisions can cause significant power inefficiency.   This work identifies three classes of power inefficiencies within modern multimodal inference serving: (1) inter-stage dependency stalls run at near maximum frequency despite being idle; (2) anti-correlation between auto-boost frequency and arithmetic intensity (A.I.) results in compute-bound phases (e.g., prefill) running at lower frequency and vice versa; and (3) thermal throttling degrades SM frequency and throughput.   We propose Tri-serve, a software-based DVFS controller that jointly accounts for three classes of inefficiency -- inter-stage Dependency stalls, the Arithmetic-intensity effect on frequency and power, and the Thermal-throttling effect of high A.I. phases -- to deliver energy-efficient multimodal serving on commodity GPUs. We show that Tri-serve achieves 22% energy efficiency improvement with no latency or throughput impacts.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,846 @@
+Title: PCGD: Physics-Guided Conditional Graph Diffusion for TCAD Device Simulation
+
+URL Source: https://arxiv.org/pdf/2606.29272v1
+
+Published Time: Tue, 30 Jun 2026 01:03:13 GMT
+
+Number of Pages: 12
+
+Markdown Content:
+> 1
+
+# PCGD: Physics-Guided Conditional Graph Diffusion for TCAD Device Simulation 
+
+Yihan Zhang, Zhiteng Zhang, Kun Chen, and Chen Wang 
+
+Abstract —Technology computer-aided design (TCAD) semi-conductor device simulation is fundamentally constrained by the high computational cost of iteratively solving coupled drift-diffusion equations. Existing ML surrogates either reduce in-ternal physics to macroscopic scalar regressions, or rely on single-step mappings that lack the iterative refinement required to resolve stiff, coupled fields. To address this, we introduce PCGD, a Physics-Guided Conditional Graph Diffusion frame-work operating natively on unstructured TCAD meshes to predict coupled electrostatic and carrier density fields. PCGD employs a Condition-Aware MeshGraphNet denoiser that explicitly injects boundary conditions and device structure context via global cross-attention. By augmenting data-driven denoising with aphysics-guided hybrid objective that integrates exponent-free quasi-Fermi gradient matching with noise-aware PDE resid-uals, PCGD progressively enforce physical constraints in the iterative diffusion trajectory. This strategy successfully bypasses the numerical instabilities typical of stiff drift-diffusion equa-tions. Evaluated on a challenging mixed PN/MOS benchmark, PCGD significantly outperforms deterministic one-step regression (1.207% error) and local diffusion (1.585% error) baselines by achieving a sub-percent mean relative field error of 0.835%, while concurrently reducing maximum PDE residual errors by nearly three orders of magnitude compared to pure diffusion. It also transfers robustly to unseen SOI topologies (0.815% error) via LoRA adaptation, using 5.30 × less data and 14.34 ×
+
+fewer parameters than full fine-tuning. Ultimately, PCGD bridges the computational efficiency of generative surrogates with the rigorous physical fidelity of traditional TCAD, unlocking highly scalable, field-level analysis for robust device engineering. 
+
+Index Terms —Diffusion models, Graph neural networks, Physics-informed learning, Semiconductor device simulation, TCAD 
+
+I. I NTRODUCTION 
+
+Technology computer-aided design (TCAD) is fundamental to predictive semiconductor device analysis. It solves coupled electrostatic and carrier-transport equations across complex device geometries, doping profiles, and boundary conditions [1], [2]. However, this high fidelity comes at a substantial computational cost, creating a bottleneck for design-space exploration and inverse optimization. While machine-learning surrogates aim to accelerate this process, most conventional models operate as ”black boxes”. These models directly map device parameters to macroscopic terminal responses, such as I–V curves [3]–[5]. Although sufficient for circuit-level modeling, these lumped metrics obscure the internal physics 
+
+Y. Zhang, Z. Zhang, K. Chen, and C. Wang are with the College of Integrated Circuits & Micro-Nano Electronics, Fudan University, Shanghai 200433, China. K. Chen and C. Wang are also with the Shanghai Integrated Circuit Manu-facturing Innovation Center, Shanghai 201203, China (Corresponding authors: K. Chen; C. Wang, e-mail: chenk18@fudan.edu.cn; chen w@fudan.edu.cn). 
+
+that is essential for device optimization. To diagnose mi-croscopic failures and guide spatial topology optimization, it is imperative to break this black box and directly predict high-resolution field-level states—such as peak electric fields, leakage paths, and depletion boundaries [1], [6]. Recent graph-based approaches have been introduced on unstructured device meshes to predict these internal fields [7], [8]. However, generating a complete, fully coupled device state remains fundamentally challenging owing to the extreme stiffness and strong exponential nonlinearity of semiconductor physics. The electrostatic potential and carrier densities are tightly coupled through drift-diffusion equations, with carrier concentrations spanning dozens of orders of magnitude [9], [10]. Additionally, steep spatial gradients emerge abruptly at PN junctions and material interfaces. Existing single-step deterministic regression models struggle with these harsh physical constraints and abrupt spatial variations [7], [8]. When these models attempt to simultaneously balance global field accuracy against sensitive local conservation laws, they encounter gradient conflicts. This typically hinders the training process, leading to over-smooth predictions that fail to resolve critical high-frequency spatial details [11], [12]. Overcoming this multiphysics challenge requires a mecha-nism that separates macroscopic field construction from mi-croscopic residual enforcement. Generative diffusion models offer a well suited solution. The iterative denoising trajectory elegantly decomposes the generation task: the model first establishes the global topological distribution during early high-noise stages, and subsequently resolves sharp local gra-dients during later low-noise stages [12]. More importantly, this timeline provides a natural schedule for progressively enforcing physics guidance. Highly nonlinear PDE residuals can be suppressed when the predicted state is unreliable, and then progressively activated as the prediction approaches the valid physical manifold. This effectively bypasses the gradient divergence that destabilizes standard training. Despite this immense potential, the application of diffusion to solve stiff, nonlinearly coupled drift-diffusion systems directly on irregular TCAD graphs remains unexplored. To bridge this gap, we introduce PCGD, a Physics-guided Conditional Graph Diffusion framework for semiconductor TCAD surrogates. PCGD formulates coupled-field prediction as conditional generative denoising directly on native TCAD meshes. It jointly generates (ψ, log n, log p) on the unstruc-tured device graph, injects bias conditions and device context globally through cross-attention tokens, and progressively in-troduces physics guidance via a noise-aware, adaptively scaled PDE residual loss and an exponent-free edge-force regularizer. 
+
+> arXiv:2606.29272v1 [cs.LG] 28 Jun 2026 2
+
+The core contributions of this work are threefold:  
+
+> •
+
+Mesh-Native Graph Diffusion Framework: We pro-pose a graph-diffusion framework that operates directly on irregular TCAD finite-volume meshes. This represen-tation avoids rasterization and preserves the native con-nectivity used for field generation and residual evaluation.  
+
+> •
+
+Global Conditioning via Cross-attention Message Passing: PCGD introduces a Condition-Aware Mesh-GraphNet that encodes contact biases and device context as conditioning tokens. By injecting these tokens globally through cross-attention, this architecture allows every mesh node to access terminal and structural information directly, without relying solely on long-range local mes-sage passing.  
+
+> •
+
+Hybrid Physics-Guided Training with Noise-Aware Adaptation: PCGD leverages the iterative diffusion tra-jectory to enforce physical constraints progressively. It utilizes a stable, exponent-free edge-force regularizer to safely steer early denoising, while dynamically activating exact PDE residual losses only when predictions ap-proach the valid solution manifold. This hybrid approach prevents the extreme nonlinearity of drift-diffusion equa-tions from destabilizing the early, high-noise stages of generation. To validate the geometric adaptability and physical general-ization of the framework, we evaluated PCGD on a highly challenging mixed benchmark comprising both PN diodes and planar MOSFETs. Across 6,763 validation snapshots spanning distinct topologies and operation modes, PCGD successfully captures disparate device physics simultaneously without suf-fering from catastrophic forgetting or geometric overfitting. The iterative refinement and global conditioning mechanisms reduce the mean coupled-field relative L2 error from 1.585% 
+
+(local diffusion without cross-attention) and 1.207% (one-step direct regression) down to 0.720% for pure condition-aware diffusion. Furthermore, the full PCGD objective retains a sub-percent mean error of 0.835% while reducing the aggregate residual error by 17 .5% relative to pure diffusion. On an unseen SOI-MOSFET family, rank-8 LoRA adaptation reaches a mean error of 0.815% while using 5.30 × fewer target trajectories and 14.34 × fewer trainable parameters than a full-fine-tuning reference that reaches 0.723% .II. R ELATED WORK 
+
+A. Machine Learning Surrogates for TCAD Simulation 
+
+Previous research in machine-learning-based semiconduc-tor modeling has primarily focused on compact or black-box surrogates. These models directly map terminal biases and device parameters to current–voltage (I–V ), charge– voltage, capacitance–voltage ( C–V ), variability, or lumped performance metrics [3]–[5], [13]. While valuable for circuit simulation and rapid design-space exploration, these terminal-level outputs do not resolve the detailed spatial fields required to inspect localized transport mechanisms or evaluate micro-scopic conservation laws. To resolve these field-level device states, neural operators and physics-informed neural networks (PINNs) are employed to learn continuous representations of the internal physical fields [14], [15]. By embedding the coupled drift-diffusion residuals directly into the training loss function, these mod-els enforce physical consistency, allowing both forward and inverse device modeling [9], [10]. However, these mesh-free or coordinate-based approaches often struggle with the geometric complexity of real-world devices. They face sig-nificant challenges in adapting to irregular topologies, abrupt material interfaces, and steep spatial gradients, highlighting the necessity of preserving the native unstructured TCAD mesh. To adapt field generation to complex device topologies, graph-based surrogates have been proposed to preserve the na-tive TCAD mesh. Fan et al. predict electrostatic potential and terminal I–V characteristics on unstructured device graphs, while Jang et al. jointly estimate potential, carrier densities, current, and I–V curves directly on three-dimensional meshes [7], [8]. Physics-informed graph models have also been ap-plied to coupled electro-thermal field prediction [16]. These approaches extend field-level TCAD prediction to irregular meshes and multiple physical outputs. However, they are still primarily deterministic final-state regressors: converged device states are directly predicted by the network based on device structures and bias conditions, with limited mechanisms for iterative conditioning or progressive physical correction. 
+
+B. Generative Modeling for PDE Solving 
+
+Generative PDE models move beyond deterministic point prediction by learning distributions over solution fields and progressively refining samples through iterative denoising or continuous probability flows [17], [18]. Frameworks like PDE-Refiner demonstrate the value of iterative refinement for neural PDE prediction, while recent diffusion models extend gener-ative simulation from structured grids to unstructured mesh graphs [12], [19]–[21]. Physics-informed diffusion and flow-matching methods further introduce governing-equation con-straints during generation. However, applying these physical constraints often exposes a severe, inherent trade-off between distributional fidelity and residual satisfaction, leading to gra-dient conflicts when enforcing highly stiff local physics during the noisy stages of generation [11], [22]. Despite this progress, generative modeling of coupled mul-tiphysics fields—particularly those exhibiting extreme stiff-ness and exponential nonlinearity like semiconductor trans-port—remains largely unaddressed. Existing studies on cou-pled diffusion, such as ACM-FD, M2PDE, and GenCP, primar-ily explore flexible probabilistic emulation or coupled infer-ence from decoupled training data [23]–[25]. When applied to drift-diffusion systems, the exponential coupling of variables causes traditional physics-guided training to diverge rapidly. To bridge this gap, PCGD jointly generates the device state on native TCAD meshes and stabilizes training with noise-aware PDE residuals, which effectively balances data-driven generation and stiff physical constraints. III. M ETHODOLOGY 
+
+PCGD targets a field-level TCAD surrogate problem rather than scalar device-metric regression. The intended work-3Diffusion 
+
+Denoising 
+
+Noisy 
+
+Fields 
+
+Clean 
+
+Fields 
+
+Training Objective Condition Condition -Aware MeshGraphNet 
+
+𝒚 !"# 𝒚 $𝒚 % 𝒚 !
+
+> Conditon
+> Tokenizer
+
+BC       
+
+> 𝑉 !"#$ =1V
+> 𝑉 %&"'( =0.2V
+> 𝑉 )*+&,$ =0V
+
+Device Structure         
+
+> Conditioning Tokens
+> Mesh
+> Graph
+> Encoder
+> Mesh
+> Graph
+> Decoder
+> Multi -Head
+> Cross -Attention ×𝐿 KV
+> Scaled Dot -
+> Product Attention ×𝑛
+> heads
+> Q
+> OConcat
+> Cross -Attentive
+> Message Passing ×𝐿
+> Node
+> Feature
+> Condition -
+> Aware
+> Feature
+
+ℒ = 𝜆 )ℒ) + 𝜆 *ℒ* + 𝜆 +ℒ+                      
+
+> 1) Data -Driven Denoising
+> ℒ!=MSE ˆ𝜖 ",𝜖 "
+> 2) Quasi -Fermi Gradient Matching
+> ℒ#=MSE (Δ$ˆΦ%,Δ$Φ%)
+> 3) Noise -Aware PDE Residuals
+> ℒ&=𝑤 &𝑡 ∥ℛˆ𝑌 %∥'
+> '
+> ˆ𝜖 "𝜖 "
+> Δ$ˆΦ%Δ$Φ%
+> ˆ𝑌 %
+> ℛ⋅
+> Fig. 1. Overview of the PCGD framework. The condition-aware MeshGraphNet denoiser maps noisy physical fields, native TCAD mesh features, and contact-bias/device conditioning tokens to clean electrostatic and carrier-density fields, with training supervised by denoising, quasi-fermi gradient matching, and noise-aware PDE-residual objectives.
+
+flow replaces repeated, computationally expensive Newton-Raphson TCAD solver for nonlinear drift-diffusion equations, while retaining the ability to route high-residual cases back to the traditional TCAD solver. Fig. 1 summarizes this mesh-native framework. 
+
+A. TCAD-to-Graph Problem Formulation 
+
+A defining challenge in applying generative AI to physi-cal simulations is the data representation. While most exist-ing generative models for PDEs rely on uniform Cartesian grids, industrial TCAD tools (e.g., Sentaurus) solve the drift-diffusion equations using the Finite Volume Method (FVM) on highly irregular, adaptive meshes. Rasterizing these meshes into grids destroys critical spatial resolution near interfaces and introduces interpolation artifacts. To achieve seamless toolchain compatibility, PCGD oper-ates directly on the native TCAD mesh. We formalize the device mesh as a spatial graph G = (V, E ), where V
+
+represents the set of N mesh nodes and E represents the set of M edges defining the FVM connectivity. For each node i ∈ V , we define a static input feature vector 
+
+xi ∈ Rdv encompassing local physical properties: spatial coordinates, net doping concentration, material permittivity, control volume, and a boolean contact indicator. For each edge 
+
+(i, j ) ∈ E, we define edge features eij ∈ Rde containing geometric properties critical for flux calculation, such as the internode direction, distance, and cross-sectional coupling area. The physical state at any node i is defined by the coupled vector of electrostatic potential and logarithmic carrier densi-ties: 
+
+yi = ψi, log ni, log pi
+
+⊤ ∈ R3. (1) These node-level states assemble into the global field matrix 
+
+Y ∈ RN ×3. Given the graph structure G, the global static feature matrices XV and XE , and a set of global conditioning variables c (which encode the terminal bias voltage and structural layout), the objective of our surrogate model is to accurately predict the target converged state, denoted as Y0.This mesh-native approach avoids interpolation overhead and strictly preserves the discretization parameters exactly as the TCAD solver sees them. For multi-region devices, specialized interface edges are introduced to maintain topological con-nectivity; the complete schema for these features and edges is detailed in Appendix C. 
+
+B. Mesh-Native Diffusion for Progressive Field Refinement 
+
+Rather than employing a one-step deterministic regression mapping from inputs to target fields Y0, we formulate this prediction as a generative task. Specifically, we model the conditional probability distribution pθ (Y0 | G, X V , X E , c ) via an iterative denoising process [17], which reconstructs the target fields through a controlled sequence of state corruption and progressive restoration. The forward trajectory systematically obscures the con-verged electrostatic and carrier profiles by injecting Gaussian noise until the fields approach an uncorrelated distribution. Conversely, the reverse process acts as a sequence of con-ditioned refinement steps, where a neural denoiser iteratively extracts the underlying field structure from the noise. This step-by-step resolution mechanism inherently allows the model 4
+
+to reconstruct the solution across scales: it first recovers the macroscopic potential landscape at high noise levels, and sub-sequently resolves the highly localized, sharp field boundaries as the noise approaches zero. Mathematically, the forward diffusion process progressively corrupts the clean global field state Y0 over T timesteps via a fixed Markov chain, adding Gaussian noise scaled by a variance schedule β1, . . . , β T :
+
+q(Yt | Yt−1) = N (Yt; p1 − βtYt−1, β tI). (2) Leveraging the properties of Gaussian distributions, we can sample the noisy global state at any arbitrary timestep t
+
+directly in closed form: 
+
+Yt = √¯αtY0 + √1 − ¯αtϵt, ϵ ∼ N (0 , I), (3) where αt = 1 − βt and ¯αt = Qts=1 αs.To invert this corruption trajectory and recover the clean fields from pure noise YT ∼ N (0 , I), we utilize a parameter-ized neural network to estimate the injected noise. Conditioned on the global static mesh features and the explicit device variables, this mapping is defined as: 
+
+ˆϵt = ϵθ (Yt, t, c, X V , X E ). (4) The model is optimized by minimizing the expected mean squared error between the exact injected noise ϵt and the network’s prediction across all diffusion timesteps: 
+
+LD = Et,Y 0,ϵ 
+
+∥ϵt − ϵθ (Yt, t, c, X V , X E )∥22
+
+ . (5) At any timestep t, the predicted noise ϵθ enables an analytical projection of the noisy global state Yt back to an estimate of the clean target fields, denoted as ˆY0:
+
+ˆY0 = Yt − √1 − ¯αtϵθ
+
+√¯αt
+
+. (6) This intermediate global prediction, ˆY0, is the essential for integrating physics into the generative process. A structural advantage of the diffusion trajectory is that the physical validity of ˆY0 progressively evolves. At high noise levels (large t), ˆY0 resides far from the solution manifold, dominated by high-frequency artifacts and extreme local gradients. As denoising enters the low-noise regime (small t), the macro-scopic field profiles stabilize into a physically meaningful state. As discussed later, this noise-to-clean evolution provides a natural ”validity coordinate,” dictating exactly when residual gradients become directionally informative and numerically safe to enforce. 
+
+C. Condition-Aware MeshGraphNet Architecture 
+
+The Conventional MeshGraphNet relies solely on local mes-sage passing to propagate boundary bias conditions and macro-scopic device topology across a complex mesh [26], which suffers from severe computational inefficiency and structural information attenuation. To inject this context globally, PCGD encapsulates boundary conditions and device structure into a unified set of condition tokens Z.These tokens are constructed by concatenating boundary tokens ( Zbc ) and structure tokens ( Zstruct ). For each contact 
+
+k, Zbc ,k encodes its spatial coordinates, material context, and terminal bias voltages via an MLP mapping. Concurrently, 
+
+Zstruct provides a fixed-length global summary of the static device topology via a query-based attention mechanism: a set of learnable device queries ( Qdevice ) attends over all projected static node features XV . This mechanism allows the model to adaptively aggregate the heterogeneous mesh geometry into a compact semantic representation. The complete condition matrix Z acts as a global ”semantic prompt,” formed by concatenating these token sets: 
+
+Z = [ Zbc ∥ Zstruct ] . (7) During the forward pass, Z is injected via residual cross-attention immediately following every local message-passing block: 
+
+m(ℓ) 
+
+> ij
+
+= MLP (ℓ)
+
+> e
+
+
+
+h(ℓ) 
+
+> i
+
+, h (ℓ) 
+
+> j
+
+, e ij 
+
+
+
+,h(ℓ+1)  
+
+> i
+
+= MLP (ℓ)
+
+> v
+
+h(ℓ) 
+
+> i
+
+, X
+
+> j:( j,i )∈E
+
+m(ℓ)
+
+> ji
+
+ ,
+
+(8) 
+
+˜H(ℓ) = H(ℓ)+CrossAttn 
+
+
+
+LN( H(ℓ)), LN( Z), LN( Z)
+
+
+
+. (9) Here, h(ℓ) 
+
+> i
+
+represents the hidden embedding of node i in layer ℓ, m(ℓ) 
+
+> ij
+
+is the directed edge message, and H(ℓ) is the dense matrix that stacks all current embeddings of nodes. LN 
+
+denotes standard Layer Normalization. In Equation 9, all mesh nodes act as queries, while the condition tokens Z act as keys and values. This attention mechanism bypasses topological graph distances, granting every node direct access to terminal constraints and the structural layout, thereby substantially accelerating convergence to the correct physical operating condition. 
+
+D. Hybrid Physics-Guided Training Objective 
+
+While the denoising objective (LD) successfully aligns the network with the target data distribution, it provides no structural guarantee of flux continuity. To enforce the governing physical laws of semiconductor devices, PCGD explicitly regularizes the predicted clean state ˆY0 through a multi-objective training scheme. Direct enforcement of exact physical constraints is numeri-cally challenging. Standard finite-volume TCAD evaluates car-rier transport via the Scharfetter-Gummel (SG) discretization, where the electron flux along an edge (i, j ) relies on the Bernoulli function B(x) = x/ (exp( x) − 1) :
+
+Jn,ij ∝ niB
+
+
+
+− ∆ij ψVT
+
+
+
+− nj B
+
+ ∆ij ψVT
+
+
+
+. (10) The exponential dependence on the normalized potential dif-ference ( ∆ij ψ/V T ) creates an extreme dynamic range. Eval-uating these stiff exponentials on FP32 GPUs during early, noisy diffusion stages invariably induces numerical instability and gradient explosion. To address this issue, we propose a hybrid physics-guided objective: a stable, exponent-free transport proxy to safely steer early denoising, complemented by dynamically stabilized 5
+
+noise-aware exact PDE residuals for fine-grained physical correction. First, we introduce an exponent-free regularizer termed ”quasi-fermi gradient matching” (LG). As shown in Ap-pendix B, learning the highly nonlinear SG current math-ematically reduces to matching the normalized quasi-Fermi potential gradients. For any global state Y , we define these current driving forces along the edge eij as: 
+
+Φψ (Y, e ij ) = ∆ij ψVT
+
+,
+
+Φn(Y, e ij ) = ln(10)∆ ij log n − ∆ij ψVT
+
+,
+
+Φp(Y, e ij ) = ln(10)∆ ij log p + ∆ij ψVT
+
+.
+
+(11) The quasi-Fermi gradient matching loss LG is explicitly formulated as the cumulative squared error of these transport driving forces across all mesh edges, computed between the predicted field ˆY0 and the ground-truth target field Y0:
+
+LG = 1
+
+|E|
+
+X
+
+> (i,j )∈E
+
+X
+
+> r∈{ ψ,n,p }
+
+
+
+Φr ( ˆY0, e ij ) − Φr (Y0, e ij )
+
+2
+
+.
+
+(12) Minimizing LG allows the model to safely capture funda-mental transport dynamics across all denoising stages without computing stiff exponentials. Second, exact finite-volume conservation requires the full discrete governing equations. PCGD utilizes GPU-accelerated graph operators (Appendix D) to evaluate the exact PDE residuals—Poisson ( Rψ ), electron ( Rn) and hole ( Rp) con-tinuity—directly on ˆY0:
+
+LP( ˆY0, c ) = λψ ∥Rψ ( ˆY0, c )∥22 + λn∥Rn( ˆY0, c )∥22
+
++ λp∥Rp( ˆY0, c )∥22. (13) To safely optimize these highly nonlinear exact residuals, we implement a dual-tier stabilization strategy: 
+
+1) Validity-Aware SNR Gating ( wP): We regulate LP
+
+using the diffusion signal-to-noise ratio, clamped by a safety threshold γsafe :
+
+wP(t) = max 
+
+
+
+0, 1 − γsafe 
+
+SNR( t)
+
+
+
+. (14) This smoothly deactivates the physics penalty for noisy states (SNR( t) < γsafe ), ensuring the exact residuals contribute gradients only when predictions lie within a physically valid neighborhood. 
+
+2) Adaptive Batch Balance ( αbal ): Even within safe SNR regimes, the extreme stiffness of discrete PDE constraints can trigger erratic gradient spikes. To prevent batch-level residual spikes from dominating the loss, we dynamically bound the relative influence of the physics penalty to a predefined ratio 
+
+rP:
+
+αbal = rP
+
+sg( LD)sg( LP) , (15) where sg( ·) is the stop-gradient operator. Integrating these components, our complete training objec-tive ( Ltotal ) achieves a robust balance between data fidelity and physical consistency while effectively mitigating numeri-cal instability: 
+
+Ltotal = λDLD + λGLG + αbal wP(t)LP. (16) IV. E XPERIMENTAL RESULTS 
+
+A. Experiment Setup 
+
+Dataset We evaluate PCGD on a mixed sequential TCAD benchmark comprising 166,379 training and 6,763 validation snapshots from 16,183 distinct devices. Each trajectory com-prises a sequence of converged bias snapshots from a single device’s voltage sweep on its native unstructured finite-volume mesh. All train/validation splits are performed at the device-trajectory level, ensuring that no geometry or bias trajectory from a validation device appears in training. The graph input encodes physical, geometric, and terminal attributes to predict the coupled state (ψ, log n, log p) across all nodes. To ensure robust cross-architectural generalization, the benchmark is deliberately designed with a trade-off between sample volume and graph complexity. Specifically, PN diodes constitute ap-proximately 67% of the dataset, providing extensive geometric and doping profile variations across diverse polarities, whereas planar MOSFETs make up the remaining 33% and introduce significantly higher structural complexity. Planar-MOSFET meshes average 1,755 nodes and 10,106 edges, yielding roughly 3.9× the density of their PN-diode equivalents (455 nodes, 2,571 edges). By spanning this wide spectrum of high-volume fundamental junctions and high-complexity multi-terminal structures, the benchmark rigorously tests model generality. Table I summarizes key parameter distributions.                                                                                     
+
+> TABLE I SUMMARY OF THE MIXED SEQUENTIAL TCAD BENCHMARK DATASET .
+> Parameter PN-Diode Planar-MOSFET Dataset (Samples)
+> Train snapshots 111 ,487 54 ,892
+> Validation snapshots 4,715 2,048
+> Total devices 10 ,648 5,535
+> Device Variants
+> Types n-on-p,p-on-nNMOS, PMOS Bias regimes Forward, Reverse Output, Transfer
+> Geometry
+> Lateral dimension Lx(μm) 0.10 −52 .8–Junction depth ( μm) 2.9×10 −4−0.89 –Vertical dimension Ly(μm) 0.01 −5.1–Gate length Lg(μm) –0.05 −5.0
+> Bulk thickness tbulk (μm) –1.0−10 .0
+> Oxide thickness tox (nm) –2.0−50 .0
+> Doping
+> Profiles Erfc, Gaussian, Logistic Gaussian Concentration ( log 10 cm −3)13 .0−20 .515 .0−21 .0
+> Length scale σx(μm) 0.005 −0.25 0.006 −0.69
+> Meshing
+> Nodes (Range) 39 −1,709 1,008 −2,876
+> Nodes (Mean) 455 1,755
+> Edges (Range) 158 −10 ,018 5,724 −16 ,680
+> Edges (Mean) 2,571 10 ,106
+
+Evaluated Models & Architecture We benchmark five model variants to decouple the gains from deterministic regression, iterative generative refinement, global condition injection, and physics-guided supervision. The deterministic 6                              
+
+> TABLE II SUMMARY OF EVALUATED BASELINES AND ABLATION MODELS . A LL VARIANTS SHARE A PARAMETER -MATCHED BACKBONE TO ISOLATE THE EFFECTS OF GENERATIVE REFINEMENT ,GLOBAL CONDITIONING ,AND HYBRID PHYSICAL SUPERVISION .
+> Model Params Method Global Cross-attn Gradient Matching PDE Residual
+> Direct Regression 3.673M Regression ✓××
+> Diffusion w/o attn 3.674M Diffusion ×××
+> Diffusion 3.673M Diffusion ✓××
+> +Gradient 3.673M Diffusion ✓✓×
+> +Gradient+Phys 3.673M Diffusion ✓✓✓
+
+baseline, Direct Regression , is a mesh-native one-step re-gressor trained on the same mixed PN/MOS TCAD dataset and evaluated using the same condition-aware MeshGraphNet. To isolate the effect of diffusion sampling without global conditioning, Diffusion w/o cross-attn keeps the diffusion denoising backbone but replaces each cross-attention block with a parameter-matched residual node MLP that does not read terminal or device-level condition tokens. The condition-aware Diffusion model restores cross-attention to globally in-ject boundary voltages and device context while relying solely on the data-driven denoising objective, thereby testing the role of global conditioning under iterative refinement. Finally, 
+
+Diffusion+Gradient adds exponent-free quasi-Fermi gradient matching, and the full PCGD model further incorporates adap-tive PDE residual supervision, isolating the accuracy–residual tradeoff introduced by physics regularization. Table II gives a compact ablation overview, while Appendix A summarizes the training protocol at a high level. 
+
+Measurement of fidelity and physics consistency Solution accuracy is primarily quantified by the relative L2 error averaged across the three predicted fields: 
+
+RelL2 avg = 13
+
+X  
+
+> q∈{ ψ, log n, log p}
+
+∥ˆq − q∥2
+
+∥q∥2 + ϵ , (17) where ϵ is a small numerical constant. Prior to error com-putation, analytical Dirichlet values are strictly imposed on contact nodes to evaluate interior and near-contact fidelity under rigid terminal constraints. Furthermore, physics con-sistency is assessed using the graph finite-volume residual operators employed during training. We evaluate the Pois-son ( Rψ ), electron-continuity ( Rn), and hole-continuity ( Rp)residuals over their respective physical masks, reporting a log-compressed maximum residual error: 
+
+Er = log 
+
+
+
+1 + max  
+
+> i
+
+|Rr (i)|2
+
+, r ∈ { ψ, n, p }, (18) with the aggregate residual error defined as Eres = Eψ +
+
+En + Ep. Lower values denote superior physics adherence. The maximum-residual formulation heavily penalizes local-ized physical violations—such as those near critical depletion zones or oxide interfaces—even when the global mean field error remains low. 
+
+B. Accuracy and Physics Consistency 
+
+Sub-Percent Accuracy via Condition-Aware Diffusion. 
+
+Fig. 2a–c summarizes the validation results across 6,763 graph snapshots, firmly validating our core hypothesis that iterative generative refinement is essential for capturing highly localized, stiff physical transitions. Deterministic single-step models are prone to over-smoothing the steep gradients inher-ent to semiconductor interfaces and depletion zones, resulting in their relative L2 error typically plateaus prematurely during optimization. In contrast, the progressive refinement of the diffusion trajectory effectively resolves these abrupt physical transitions by decoupling macroscopic field topology con-struction from microscopic detail refinement. Consequently, condition-aware Diffusion significantly reduces the mean rel-ative L2 error from 1.207% (Direct Regression ) to 0.720% ,while tightening the 25th–75th percentile error interval from 
+
+0.337% –1.377% to 0.316% –0.807% .Furthermore, moving from local diffusion to condition-aware diffusion verifies the importance of global conditioning: restoring cross-attention to terminal and device tokens lowers the field error from 1.585% to 0.720% , demonstrating that the diffusion process alone is insufficient without direct access to global operating constraints. 
+
+Achieving Physical Consistency via Hybrid Supervision. 
+
+The ablation study of the three generative variants demon-strates the effectiveness of the hybrid objective in securing strict governing-equation compliance without compromising point-wise field accuracy. While pure Diffusion strictly opti-mizes data fidelity (achieving a 0.720% field error), it lacks physical constraints, yielding the highest aggregate residual error ( 16 .44 ). Incorporating quasi-Fermi gradient matching (Diffusion+Grad ) specifically targets the transport processes, reducing the mean electron- and hole-continuity residual errors from 5.08 to 4.33 and 2.70 to 2.14 , respectively, bringing the aggregate residual down to 15 .20 . Combining this quasi-Fermi gradient regularization with adaptive physics supervision ( Dif-fusion+Grad+Phys ) provides complementary gains. This full hybrid approach further suppresses the aggregate residual error to 13 .56 while safely maintaining a sub-percent mean field error of 0.835% , successfully achieving both high geometric fidelity and robust physical consistency. Beyond aggregate metrics, the device split underscores the distinct consistency challenges inherent in multi-terminal topologies. Planar MOSFETs consistently exhibit larger resid-ual errors than PN diodes across all diffusion variants, de-spite achieving comparatively lower relative L2 field errors (0.407% vs. 0.960% under pure Diffusion ). As visualized in Fig. 3, PCGD successfully synthesizes the sharp boundaries of depletion regions and the extreme spatial confinement of carrier inversion channels, as evidenced by the stark transition zones in the simulated spatial profiles. This high visual fidelity, combined with deeply suppressed residual heatmaps under the hybrid objective, confirms that PCGD effectively circumvents the extreme stiffness of the drift-diffusion system to faithfully recover critical high-frequency localized physics. 
+
+C. Convergence Dynamics 
+
+As depicted in Fig. 2d–f, the optimization trajectories over 200 epochs demonstrate robust convergence under joint-distribution training. While directly enforcing highly nonlinear 7Direct  
+
+> Reg.
+> No
+> attn
+> Diff. +Grad. +Grad.
+> +Phys
+> 10 0
+> Avg relative L2 (%)
+> 1.70
+> 0.56
+> 2.30
+> 0.66
+> 0.96
+> 0.41
+> 1.09
+> 0.46
+> 1.11
+> 0.48
+
+a Field accuracy by device  
+
+> PN diode
+> MOSFET
+> Direct
+> Reg.
+> No
+> attn
+> Diff. +Grad. +Grad.
+> +Phys
+> 0
+> 10
+> 20
+> 30
+> 40
+> Residual error
+> 8.7
+> 24.6
+> 9.0
+> 26.7
+> 8.8
+> 26.3
+> 7.8
+> 24.9
+> 7.1
+> 21.9
+
+b Residual consistency by device     
+
+> 0.75 1.00 1.25 1.50 1.75
+> Avg relative L2 (%)
+> 13
+> 14
+> 15
+> 16
+> 17
+> Residual error
+
+c Accuracy-residual tradeoff         
+
+> Direct Reg.
+> No attn Diff.
+> +Grad.
+> +Grad.+Phys
+> 050 100 150 200
+> Epoch
+> 10 4
+> 10 3
+> 10 2
+> 10 1
+> Train MSE
+
+d Training denoising MSE     
+
+> 050 100 150 200
+> Epoch
+> 10 0
+> 10 1
+> Validation avg RelL2 (%)
+
+e Validation field accuracy     
+
+> 050 100 150 200
+> Epoch
+> 15.0
+> 17.5
+> 20.0
+> 22.5
+> 25.0
+> Validation residual error
+
+f Validation residual consistency     
+
+> Direct Reg. No cross-attn Diffusion +Gradient +Gradient+Phys
+
+Fig. 2. Main mixed-device validation and convergence comparison. (a,b) Final field accuracy and residual consistency split by PN diode and MOSFET families. (c) Accuracy–residual tradeoff among the five ablation points. (d–f) Training denoising MSE and full-sampling validation dynamics. The sequence from Direct Regression to diffusion, from local diffusion to condition-aware diffusion, and from data-only diffusion to physics-regularized PCGD isolates the contributions of iterative refinement, global conditioning, and physical regularization. 
+
+PDE constraints on single-step models often triggers severe gradient divergence, PCGD’s iterative generative paradigm inherently circumvents these conflicts. By dynamically gating the physics penalty based on the denoising progression, the core data-driven objectives decrease consistently by approxi-mately three orders of magnitude (from roughly 1.5 × 10 −1
+
+to 1.0 × 10 −4) across all diffusion variants, indicating stable neural approximations and robust geometric adaptability. Crucially, the full-sampling validation curves reveal an inherent disconnect between proxy denoising objectives and true physical consistency. While all condition-aware diffusion models converge to similar denoising MSEs, their validation residual errors diverge significantly ( 16 .51 , 15 .29 , and 13 .61 
+
+for Diffusion, Diffusion+Gradient, and full PCGD, respec-tively, at epoch 200). This observation confirms that minimiz-ing data-driven reconstruction loss is insufficient to guarantee physical conservation. Instead, quasi-Fermi gradient matching and adaptive residual supervision actively correct the sampled physical state during inference, embedding essential domain consistency that cannot be captured by the isolated forward-path training loss alone. 
+
+D. Structural Adaptability to Unseen Topologies 
+
+To determine whether the pretrained PCGD representa-tion abstracts reusable physical dynamics rather than overfit-ting to pretraining geometries, we evaluate its transferability to Silicon-On-Insulator (SOI) MOSFETs. This device fam-ily introduces severe out-of-distribution (OOD) topological shifts—namely, a thin silicon film, a buried-oxide (BOX) region, and a handle substrate—that are entirely absent from the pretraining dataset. Direct zero-shot transfer highlights the inherent difficulty of this geometric shift. Across the 1,312 held-out SOI snapshots, the model yields a high mean relative 
+
+L2 error of 17.90%. This degradation is pervasive rather than isolated, as evidenced by a median error of 15.98% and a 90th percentile (P90) error surging to 31.57%. These metrics confirm that zero-shot extrapolation to fundamentally new material layouts remains challenging and necessitates representational realignment. While such realignment is necessary, if the network has acquired general physical priors, it should obviate the need to relearn the governing physics from scratch. To investigate this, we apply parameter-efficient fine-tuning via rank-8 LoRA adapters. Using a highly restricted adaptation set of 1,000 target trajectories (updating only 0.256M parameters, or 6.52% 8PCGD field Ground truth PCGD - GT Residual heatmap 
+
+log n
+
+log p
+
+> 0.75
+> 0.50
+> 0.25
+> 0.00
+> 0.25
+> 0.75
+> 0.50
+> 0.25
+> 0.00
+> 0.25
+> 0.0050
+> 0.0025
+> 0.0000
+> 0.0025
+> 0.0050
+> 3
+> 2
+> 1
+> 0
+> 1
+> log 10  |R |
+> 0
+> 5
+> 10
+> 15
+> 0
+> 5
+> 10
+> 15
+> 0.10
+> 0.05
+> 0.00
+> 0.05
+> 0.10
+> 20
+> 15
+> 10
+> 5
+> log 10  |Rn|
+> 5
+> 10
+> 15
+> 5
+> 10
+> 15
+> 0.2
+> 0.0
+> 0.2
+> 15
+> 10
+> 5
+> 0
+> log 10  |Rp|
+> Validation MOSFET #166, step 8: D=-0.173, G=-0.327, S=0, B=0 V
+> avg RelL2 0.416% | residual error 10.98
+
+Fig. 3. MOSFET coupled-field reconstruction and residual localization for the Diffusion+Grad+Phys variant. Rows correspond to ψ, log n, and log p; columns show the PCGD field, ground-truth TCAD field, signed field difference, and the corresponding log 10 |R| residual heatmap. The residual column uses the Poisson residual Rψ for ψ, electron-continuity residual Rn for log n, and hole-continuity residual Rp for log p. Contact nodes are clamped to analytical Dirichlet values before residual evaluation. 
+
+of the model capacity), the overall mean relative L2 error sharply decreases by a factor of 22 × to 0.815%. More impor-tantly, this adaptation guarantees exceptional fidelity in typical scenarios, driving the median error down to just 0.537%. It also demonstrates remarkable worst-case robustness: the P90 error is strictly bounded at 1.52%, with 94.3% of all predictions falling below a 2% error threshold. Crucially, localized errors near device boundaries (one-hop near-contact) drop from 1.742% (zero-shot) to 0.487%. As depicted in Fig. 4, this data-efficient adaptation successfully mitigates the OOD topological shift. To benchmark this efficiency, we establish a full-parameter fine-tuning reference (updating all 3.673M base parameters using 5,304 trajectories). This high-cost upper bound achieves a 0.723% mean error, with a 0.471% median and a 1.35% P90. The marginal performance gaps across all three distributional metrics between the parameter-efficient LoRA adaptation and the full-fine-tuning reference validate our core hypothesis: the native-mesh architecture and condition-token mechanism successfully encode fundamental, reusable physical dynamics. Consequently, when confronted with an unseen device topol-ogy, the generative surrogate requires only lightweight recali-bration of structural boundaries, rather than a comprehensive retraining of the physical transport behavior. V. D ISCUSSION AND FUTURE WORK 
+
+Empirical evaluations demonstrate that PCGD successfully overcomes the limitations of single-step regression models. ID   
+
+> MOS
+> Zero-
+> shot
+> LoRA Full
+> FT
+> 10 0
+> 10 1
+> Avg RelL2 (%)
+> 0.48%
+> 17.90%
+> 0.81% 0.72%
+
+a Validation field error       
+
+> 010 20 30
+> Optimizer step 1e3
+> 10 3
+> 10 2
+> Epoch-avg. loss
+
+b Adaptation loss 
+
+> LoRA (BS 32)
+> Full FT (BS 128)
+
+Fig. 4. SOI-MOSFET adaptation. (a) Validation field-error distributions: rank-8 LoRA reaches 0.815% mean error, approaching the 0.723% full-fine-tuning reference while using 14.34 × fewer trainable parameters. (b) Representative 100-epoch total-loss dynamics. Global batch sizes of 32 for LoRA and 128 for full fine-tuning make the optimizer-step counts appear similar, while full fine-tuning processes 5.50 × more target snapshots, corresponding to approximately fivefold theoretical training time under matched utilization. 
+
+By decoupling macroscopic field generation from microscopic physical corrections, its iterative denoising trajectory avoids the gradient conflicts typically caused by stiff PDE constraints. Furthermore, since pure data-driven generation cannot guar-antee local conservation laws alone, explicit physics regular-ization proves essential for maintaining strict physical consis-tency across multi-terminal devices. Building on this validated framework, several key areas remain for future development. 9
+
+A. Generalization and Out-of-Distribution Extrapolation 
+
+Efficient rank-8 LoRA adaptation on unseen Silicon-On-Insulator (SOI) MOSFETs confirms that PCGD successfully captures fundamental carrier transport and electrostatics. How-ever, the model still exhibits severe zero-shot degradation under major topological shifts, even without introducing new transport physics. This reveals a persistent gap between struc-tural interpolation and true physical extrapolation. To build a universal foundational model, future work must expand the pretraining corpus to encompass broader boundary conditions, material interfaces, and extreme regimes. Examples include high-voltage avalanche breakdown in PiN diodes, distinct current-control mechanisms in Bipolar Junction Transistors (BJTs), and even randomly generated, non-functional device geometries designed for the learning of universal, topology-agnostic representations. 
+
+B. Scaling to 3-D Simulation 
+
+A primary motivation for replacing traditional TCAD solvers is computational scalability. Simulating advanced 3-D architectures (e.g., FinFETs and GAA nanosheets) requires massive, irregular meshes with drastically increased node counts ( N ) and suffers severe nonlinearities induced by quan-tum confinement effects and complex high-k/metal interfaces. Traditional solvers, constrained by Newton-Raphson iterations and sparse Jacobian inversions, exhibit super-linear complexity between O(N 1.5) and O(N 2), imposing a severe computa-tional bottleneck. In contrast, PCGD’s message-passing for-mulation scales exclusively with the number of mesh edges. Given the bounded local connectivity of physical meshes, this translates directly to an asymptotic linear complexity of O(N ).Leveraging this intrinsic algorithmic advantage for large-scale 3-D simulation presents a compelling direction for future work. 
+
+C. Hybrid AI-TCAD Simulation Workflow 
+
+Traditional TCAD workflows rely on sequential voltage ramping, an inherently fragile process where stiff intermedi-ate states can induce Jacobian singularities and catastrophic sweep divergence. PCGD mitigates this by generating full-field states directly from terminal conditions, decoupling from convergent steps. This independence enables a robust hybrid simulation workflow. PCGD rapidly generates AI-driven initial fields and employs GPU-accelerated operators to instantly quantify their PDE residuals. Low-residual predictions serve as high-quality initial guesses that strongly facilitate rapid TCAD convergence. Moreover, at challenging bias points where Newton-Raphson solvers typically stall, PCGD presents a promising pathway for bypassing singularities. By providing stable starting states for subsequent steps, this approach could help prevent the premature termination of voltage sweeps. This synergistic integration selectively combines AI-accelerated ini-tialization with exact TCAD resolution, expediting large-scale design exploration while strictly preserving physical fidelity. VI. C ONCLUSION 
+
+Traditional TCAD simulations are computationally expen-sive, and existing machine-learning surrogates often sacrifice crucial microscopic field details by relying on structured grids or scalar metrics. To overcome this, we propose PCGD, a physics-guided generative conditional graph diffusion frame-work that operates directly on native unstructured TCAD meshes. By integrating a condition-aware MeshGraphNet de-noiser with an exponent-free edge-force regularizer and noise-aware PDE residual supervision, PCGD progressively enforces exact physical constraints while effectively circumventing the gradient divergence typical of stiff nonlinear systems. Empirical results on a challenging mixed PN/MOS bench-mark demonstrate that PCGD overcomes the accuracy lim-itations of one-step regression and local diffusion models, achieving a sub-percent mean relative field error of 0.835% while simultaneously reducing aggregate physical residuals by 17.5% compared to pure data-driven diffusion model. Further-more, the framework demonstrates robust physical transfer-ability. By leveraging parameter-efficient LoRA adaptation, it successfully extrapolates to unseen SOI-MOSFET topologies, achieving a 0.815% error while utilizing 5.30 × less data and 14.34 × fewer trainable parameters than full fine-tuning. Moving forward, PCGD’s O(N ) linear asymptotic complexity and its ability to generate physically consistent initial states provide a strong foundation for scaling to massive 3-D ar-chitectures and enabling highly robust, accelerated hybrid AI-TCAD simulation workflows. REFERENCES [1] S. Selberherr, Analysis and Simulation of Semiconductor Devices . Vi-enna, Austria: Springer Vienna, 1984. [2] D. Scharfetter and H. Gummel, “Large-signal analysis of a silicon Read diode oscillator,” IEEE Transactions on Electron Devices , vol. 16, no. 1, pp. 64–77, Jan. 1969. [3] J. Wang, Y.-H. Kim, J. Ryu, C. Jeong, W. Choi, and D. Kim, “Artificial Neural Network-Based Compact Modeling Methodology for Advanced Transistors,” IEEE Transactions on Electron Devices , vol. 68, no. 3, pp. 1318–1325, Mar. 2021. [4] C.-T. Tung and C. Hu, “Neural Network-Based BSIM Transistor Model Framework: Currents, Charges, Variability, and Circuit Simulation,”             
+
+> IEEE Transactions on Electron Devices , vol. 70, no. 4, pp. 2157–2160, Apr. 2023. [5] K. M. Mamun, N. Pala, and M. S. A. Shawkat, “A Comprehensive Review of Machine Learning Approaches for Semiconductor Device Modeling and Simulation,” IEEE Access , vol. 13, pp. 162 969–162 991, 2025. [6] M. A. Stettler, S. M. Cea, S. Hasan, L. Jiang, P. H. Keys, C. D. Landon, P. Marepalli, D. Pantuso, and C. E. Weber, “Industrial TCAD: Modeling Atoms to Chips,” IEEE Transactions on Electron Devices , vol. 68, no. 11, pp. 5350–5357, Nov. 2021. [7] W. Jang, S. Myung, J. M. Choe, Y.-G. Kim, and D. S. Kim, “TCAD Device Simulation With Graph Neural Network,” IEEE Electron Device Letters , vol. 44, no. 8, pp. 1368–1371, Aug. 2023. [8] G. Fan, T. Ma, X. Sun, L. Shao, and K. L. Low, “Graph Attention Network-Based Unified TCAD Modeling Enabling Fast Design Technol-ogy Co-Optimization Through Transfer Learning,” IEEE Transactions on Electron Devices , vol. 72, no. 1, pp. 474–481, Jan. 2025. [9] B. Cao, Y.-D. Wang, N.-E. Zhang, Y.-Z. Liang, and W.-Y. Yin, “A Physics-Informed Neural Networks Algorithm for Simulating Semicon-ductor Devices,” in 2023 International Applied Computational Electro-magnetics Society Symposium (ACES-China) .Hangzhou, China: IEEE, Aug. 2023, pp. 1–3. [10] R. Riganti, M. G. C. Alasio, E. Bellotti, and L. D. Negro, “DDNet: A Unified Physics-Informed Deep Learning Framework for Semiconductor Device Modeling,” 2025. 10
+
+[11] G. Baldan, Q. Liu, A. Guardone, and N. Thuerey, “PHYSICS VS DISTRIBUTIONS: PARETO OPTIMAL FLOW MATCHING WITH PHYSICS CONSTRAINTS,” in International Conference on Learning Representations , 2026. [12] P. Lippe, B. S. Veeling, P. Perdikaris, R. E. Turner, and J. Brandstetter, “PDE-Refiner: Achieving Accurate Long Rollouts with Neural PDE Solvers,” in Advances in Neural Information Processing Systems , vol. 36, 2023. [13] H. Zhang, Y. Jing, and P. Zhou, “Machine Learning-Based Device Mod-eling and Performance Optimization for FinFETs,” IEEE Transactions on Circuits and Systems II: Express Briefs , vol. 70, no. 4, pp. 1585– 1589, Apr. 2023. [14] L. Lu, P. Jin, and G. E. Karniadakis, “DeepONet: Learning nonlinear operators for identifying differential equations based on the universal approximation theorem of operators,” Nature Machine Intelligence ,vol. 3, no. 3, pp. 218–229, Mar. 2021. [15] L. Lu, X. Meng, Z. Mao, and G. E. Karniadakis, “DeepXDE: A deep learning library for solving differential equations,” SIAM Review , vol. 63, no. 1, pp. 208–228, Jan. 2021. [16] C. Zhang, W. Lu, H. Su, X. Zhou, L. Long, Y. Hu, J. Zeng, L. Zheng, and X. Cheng, “A Deep Learning-Accelerated Unified Electro-Thermal Modeling Framework for Wide-Bandgap Power Devices,” in 2025 IEEE International Electron Devices Meeting (IEDM) . IEEE, Dec. 2025, pp. 1–4. [17] J. Ho, A. Jain, and P. Abbeel, “Denoising Diffusion Probabilistic Models,” Dec. 2020. [18] Y. Song, J. Sohl-Dickstein, D. P. Kingma, A. Kumar, S. Ermon, and B. Poole, “SCORE-BASED GENERATIVE MODELING THROUGH STOCHASTIC DIFFERENTIAL EQUATIONS,” in International Con-ference on Learning Representations , 2021. [19] M. Lino, T. Pfaff, and N. Thuerey, “Learning Distributions of Complex Fluid Simulations with Diffusion Graph Networks,” in International Conference on Learning Representations , 2025. [20] T. W¨ urth, N. Freymuth, G. Neumann, and L. K¨ arger, “Diffusion-Based Hierarchical Graph Neural Networks for Simulating Nonlinear Solid Mechanics,” 2025. [21] F. Giral, ´A. Manzano, I. G´ omez, D. Fern´ andez-Comesa˜ na, C. Garc´ ıa-S´ anchez, R. Vinuesa, P. Koumoutsakos, and S. L. Clainche, “Graph-based Diffusion Surrogates for Generative Interpolation of Urban Wind Flows,” Journal of Physics: Conference Series , vol. 3230, no. 1, p. 012004, May 2026. [22] J.-H. Bastek, W. Sun, and D. M. Kochmann, “Physics-Informed Diffu-sion Models,” Mar. 2025. [23] D. Long, Z. Xu, G. Yang, A. Narayan, and S. Zhe, “Arbitrarily-Conditioned Multi-Functional Diffusion for Multi-Physics Emulation,” Jun. 2025. [24] T. Zhang, Z. Liu, F. Qi, Y. Jiao, and T. Wu, “M2PDE: Compositional Generative Multiphysics and Multi-component PDE Simulation,” May 2025. [25] T. Gao, H. Zheng, W. Deng, H. Feng, T. Zhang, R. Feng, Q. Chen, and T. Wu, “GenCP: TOWARDS GENERATIVE MODELING PARADIGM OF COUPLED PHYSICS,” in International Conference on Learning Representations , 2026. [26] T. Pfaff, M. Fortunato, A. Sanchez-Gonzalez, and P. W. Battaglia, “Learning Mesh-Based Simulation with Graph Networks,” Jun. 2021. 
+
+APPENDIX AEXPERIMENTAL PROTOCOL 
+
+A. Model Training and Fine-Tuning Protocols 
+
+Table III summarizes the PCGD denoiser architecture set-tings and the coefficients of the physics-guided objective in Eq. 16. For the SOI-MOSFET transfer task, we apply a parameter-efficient low-rank adaptation strategy to selected conditioning and message-passing components while keeping most pre-trained weights frozen. Both adaptation and full fine-tuning initialize from the same pretrained checkpoint and retain the same normalization conventions and physics-guided objectives used during pretraining so that transfer improvements reflect domain realignment rather than a change in supervision. 
+
+TABLE III PCGD DENOISER ARCHITECTURE AND PHYSICS -OBJECTIVE PARAMETERS .
+
+Parameter Value Architecture (Condition-Aware MeshGraphNet) 
+
+Message-passing blocks 16 
+
+Hidden width 128 
+
+Normalization LayerNorm Attention heads 4
+
+Terminal boundary tokens 4
+
+Structure tokens 16 
+
+Trainable parameters 3.673 M
+
+Physics Objective Parameters 
+
+Denoising weight λD 1.0
+
+Quasi-Fermi gradient weight λG 2 × 10 −2
+
+Physics balance ratio rP 0.03 
+
+Physics weights λψ , λ n, λ p 1, 1, 10 4
+
+B. Baseline Architectures 
+
+To ensure a rigorous evaluation, the main comparison uses same-backbone controls that remove only the mechanism un-der test. The deterministic Direct Regression baseline uses the same condition-aware graph backbone as PCGD but performs one-step supervised prediction from a boundary-initialized graph state to the final coupled fields, thereby isolating the benefit of iterative generative refinement from architectural capacity. The Diffusion w/o cross-attn baseline retains the diffusion objective and boundary inpainting procedure but replaces global condition injection with parameter-matched local residual processing that does not read terminal or device-level condition tokens, specifically ablating global condition-ing while preserving comparable modeling capacity. APPENDIX BMATHEMATICAL CONNECTION BETWEEN 
+
+SCHARFETTER -G UMMEL FLUX AND QUASI -F ERMI 
+
+GRADIENTS 
+
+For an oriented mesh edge eij (from node j to i), let the normalized potential difference be ηij = ∆ ij ψ/V T , where 
+
+∆ij ψ = ψj − ψi. The standard SG electron flux Jn,ij is proportional to: 
+
+Jn,ij ∝ niB(−ηij ) − nj B(ηij ) (19) where B(η) = η/ (exp( η) − 1) is the Bernoulli function. Utilizing the identity B(−η) = exp( η)B(η), we can rewrite the flux as: 
+
+Jn,ij ∝ B(ηij ) [ ni exp( ηij ) − nj ] (20) Recognizing that the model directly predicts the base-10 logarithmic carrier density log n, we substitute nj =
+
+ni exp(ln(10)∆ ij log n) into the equation: 
+
+Jn,ij ∝ B(ηij ) [ ni exp( ηij ) − ni exp(ln(10)∆ ij log n)] 
+
+∝ niB(ηij ) exp( ηij ) [1 − exp(ln(10)∆ ij log n − ηij )] 
+
+(21) The term inside the inner exponent is exactly the electron quasi-Fermi gradient Φn defined in Eq. 11. Thus, the SG electron flux can be analytically factored into: 
+
+Jn,ij ∝ niB(ηij ) exp( ηij ) [1 − exp(Φ n)] (22) 11 2) PyG mesh graph 
+
+1) TCAD finite -volume fields 
+
+mesh -field 
+
+mapping 
+
+3) Multi -region interface handling 
+
+4) Feature schema      
+
+> Interface edge (topological only)
+> Δ"!" =0,&!" =0
+
+mesh of simulation outputs 
+
+!, log & , log '
+
+region material, device geometry, 
+
+contact info, physics conditions 
+
+> Si Interior Node
+> Cnotact Node
+> Interior Edge
+> (within material)
+> Oxide Interior Node
+
+Nodes = mesh vertices 
+
+Edges = mesh connectivity 
+
+Zoom -in of Si/SiO 2 interface Oxide -side     
+
+> nodes
+> (offset for
+> visbility)
+> Si -side
+> nodes
+> interface nodes
+> 'Si ='Oxide
+> connected by topological
+> edges, allowing message
+> passing across materials
+
+Object Stored quantities 
+
+Node (!
+
+> position, doping, permittivity, node volume,
+> material id, is contact
+
+Edge )!" unit direction, edge length, couple length, edge 
+
+> type
+
+Field *!     
+
+> potential ., log electron density log 2,
+> log hole density log 3
+
+Conditioning contact mask, contact biases,        
+
+> physics parameters 4,5#,6$%& ,7,8…
+> Fig. 5. Mesh-native PyG representation for TCAD data. Finite-volume simulation outputs are stored directly on graph nodes and edges, with feature schemas for geometry, material, contact, field, and conditioning information. Multi-region devices preserve region-specific interface nodes and add masked topological interface edges for message passing across material regions.
+
+Following an identical derivation for the hole transport equa-tions, the SG hole flux Jp,ij factors as: 
+
+Jp,ij ∝ piB(ηij ) [1 − exp(Φ p)] (23) where Φp = ln(10)∆ ij log p + ηij .This factorization reveals the core mathematical structure of the SG scheme: the actual driving force dictating the direction and relative magnitude of the local carrier flux is governed entirely by the 1 − exp(Φ) term. During the early stages of generative diffusion, evaluat-ing the full SG current is numerically perilous. The pref-actors—specifically exp( ηij ) and B(ηij )—span extreme dy-namic ranges. While traditional numerical solvers evaluate these terms safely using conservative FP64 precision on CPUs, PCGD relies on highly parallel GPU training using reduced-precision arithmetic (FP32). When the predicted potential differences ( ηij ) are noisy, feeding them into these exponential prefactors immediately causes numerical overflow. By analytically extracting and penalizing only the linear arguments Φn and Φp (LG), PCGD directly regularizes the fundamental thermodynamic driving forces. This matches quasi-Fermi driving-force differences without exponentiation, providing a numerically stable local transport prior during high-noise generation stages. APPENDIX CMESH FEATURE AND INTERFACE -E DGE SCHEMA 
+
+The explicit feature representation for native finite-volume meshes is summarized in Fig. 5. To safely handle the complex-ity of multi-region devices, specialized adaptations are applied to the graph topology. To preserve material-specific degrees of freedom (e.g., abrupt jumps in carrier concentration across a heterojunction or an oxide-semiconductor boundary), PCGD duplicates co-located mesh nodes at material interfaces, assigning each to its respective material region. To enable spatial information sharing across these hard boundaries, we introduce topological interface edges . These edges possess a strict geometric length vector of zero and hold no conventional finite-volume flux interpretation. A dedicated feature mask identifies them within the edge schema so that the processor blocks can utilize them exclusively for topological neural message passing, while the exact physical evaluations (quasi-Fermi gradients and PDE residual operators) safely mask them out to avoid singularity divisions. APPENDIX DGPU-A CCELERATED GRAPH OPERATORS FOR DISCRETE 
+
+PDE R ESIDUALS 
+
+To evaluate the physics-regularization objective LP without external solver latency, PCGD implements discrete finite-volume method (FVM) residuals as GPU-native scatter-gather operations on the mesh graph G = ( V, E ). This formulation bypasses traditional sequential element loops by mapping FVM calculus directly onto synchronous parallel graph prim-itives. 
+
+A. Mapping FVM Calculus to Scatter-Gather Primitives 
+
+The structural discretization utilizes node features XV for control volumes ( Vi) and edge features XE for cross-sectional coupling areas ( Aij ) and internode distances ( Lij ). Given a directed edge (j, i ) ∈ E representing flux from neighbor j
+
+to target node i, the residual evaluation executes a two-phase tensor routing: edge-wise flux gathering followed by node-wise divergence scattering. 12 PCGD field Ground truth PCGD - GT Residual heatmap 
+
+log n
+
+log p
+
+> 0.2
+> 0.0
+> 0.2
+> 0.2
+> 0.0
+> 0.2
+> 0.004
+> 0.002
+> 0.000
+> 0.002
+> 0.004
+> 3
+> 2
+> log 10  |R |
+> 5
+> 10
+> 5
+> 10
+> 0.05
+> 0.00
+> 0.05
+> 15
+> 10
+> 5
+> log 10  |Rn|
+> 10
+> 15
+> 10
+> 15
+> 0.05
+> 0.00
+> 0.05
+> 12.5
+> 10.0
+> 7.5
+> 5.0
+> 2.5
+> log 10  |Rp|
+> Validation PN diode #198, step 5: bot=+0.089, top=0 V
+> avg RelL2 0.479% | residual error 0.01
+
+Fig. 6. PN-diode coupled-field reconstruction and residual localization for Diffusion+Phys+Flux. The layout matches Fig. 3: rows correspond to ψ, log n,and log p, while columns show PCGD, ground truth, signed difference, and log 10 |R| residual heatmaps on the native mesh. 
+
+The discrete Poisson residual Rψ,i at node i is formulated globally as: 
+
+Rψ,i = X 
+
+> j∈N (i)
+
+εij 
+
+Aij 
+
+Lij 
+
+(ψi − ψj ) − qV i
+
+ε0
+
+(pi − ni + Nnet ,i ) (24) where N (i) excludes zero-length interface edges. Symmetri-cally, the electron continuity residual Rn,i is evaluated over the graph topology as: 
+
+Rn,i = qU SRH ,i Vi − X 
+
+> j∈N (i)
+
+Jn,ji (25) where Jn,ji is the directed Scharfetter-Gummel electron flux along edge j → i, and USRH ,i is the Shockley-Read-Hall generation-recombination rate. For nodes residing within in-sulator regions, carrier concentrations and recombination rates are naturally assigned to zero. In the GPU implementation, these domain-specific con-straints are efficiently vectorized into branchless tensor op-erations using boolean node masks ( Msemi ,i ) and interface edge masks ( Mintf ,ij ). This eliminates conditional branching on heterogeneous hardware. 
+
+B. Numerical Safety and Vectorization 
+
+To prevent numerical instability under FP32 GPU con-straints, the Scharfetter-Gummel Bernoulli function B(x) = 
+
+x/ (exp( x) − 1) is guarded via a localized Taylor expansion (1 − x/ 2 + x2/12 ) for |x| < 10 −4 to avoid NaN generation. Additionally, precision truncation during mass-action law eval-uations ( n2 
+
+> i
+
+) is neutralized by isolating equilibrium carrier cal-culations ( neq , p eq ) in FP64 precision before downcasting back to the core FP32 neural network backpropagation pipeline.
