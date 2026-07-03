@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-07-03 <!--dpr-date:20260703-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/03/2607.01617v1-3dls-a-3d-logic-stacked-architecture-for-disaggregated-llm-serving" data-sidebar-item="{&quot;title&quot;: &quot;3DLS: A 3D Logic-Stacked Architecture for Disaggregated LLM Serving&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.01617v1-3dls-a-3d-logic-stacked-architecture-for-disaggregated-llm-serving&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;用于LLM服务的3D堆叠芯片架构，解决互连争用&quot;}">3DLS: A 3D Logic-Stacked Architecture for Disaggregated LLM Serving</a>
   * 2026-07-01 <!--dpr-date:20260701-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/01/2606.29272v1-pcgd-physics-guided-conditional-graph-diffusion-for-tcad-device-simulation" data-sidebar-item="{&quot;title&quot;: &quot;PCGD: Physics-Guided Conditional Graph Diffusion for TCAD Device Simulation&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.29272v1-pcgd-physics-guided-conditional-graph-diffusion-for-tcad-device-simulation&quot;, &quot;score&quot;: &quot;8.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;物理引导的图扩散用于TCAD器件模拟，直接应用机器学习于半导体建模&quot;}">PCGD: Physics-Guided Conditional Graph Diffusion for TCAD Device Simulation</a>
