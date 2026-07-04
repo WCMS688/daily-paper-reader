@@ -6,24 +6,26 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-03
-- 运行时间：2026-07-03 21:14:58 UTC
+- 最新运行日期：2026-07-04
+- 运行时间：2026-07-04 19:59:56 UTC
 - 运行状态：成功
 - 本次总论文数：1
-- 精读区：0
-- 速读区：1
+- 精读区：1
+- 速读区：0
 
 ### 今日简报（AI）
-今日速读1篇论文，聚焦3D逻辑堆叠架构优化LLM服务解耦设计。最值得关注的是这种架构通过堆叠逻辑芯片降低数据搬运开销，有望缓解大模型推理瓶颈。下一步建议结合现有LLM服务系统（如vLLM）对比其能耗与延迟优势。
-- 详情：[/202607/03/README](/202607/03/README)
+1) 今日精读一篇8.0高分论文，聚焦先进封装热翘曲预测的两阶段物理信息神经网络方法。
+2) 值得关注的方向：将PINN分阶段用于热-力耦合预测，在封装翘曲建模中展现高精度与数据效率。
+3) 建议跟进该方法在多层封装或材料参数逆向识别中的扩展应用。
+- 详情：[/202607/04/README](/202607/04/README)
 
 ### 精读区论文标签
-- 本次无精读推荐。
+1. [WarpagePINN: Thermal Warpage Prediction in Advanced Packaging via a Two-Stage Physics-Informed Neural Networks](/202607/04/2607.00364v1-warpagepinn-thermal-warpage-prediction-in-advanced-packaging-via-a-two-stage-physics-informed-neural-networks)  
+   标签：评分：8.0/10、query:si-pi
+   evidence：使用PINN预测芯片封装热翘曲
 
 ### 速读区论文标签
-1. [3DLS: A 3D Logic-Stacked Architecture for Disaggregated LLM Serving](/202607/03/2607.01617v1-3dls-a-3d-logic-stacked-architecture-for-disaggregated-llm-serving)  
-   标签：评分：7.0/10、query:si-pi
-   evidence：用于LLM服务的3D堆叠芯片架构，解决互连争用
+- 本次无速读推荐。
 
 
 <div class="dpr-home-promo-card">
