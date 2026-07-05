@@ -6,23 +6,19 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-04
-- 运行时间：2026-07-04 19:59:56 UTC
+- 最新运行日期：2026-07-05
+- 运行时间：2026-07-05 20:04:16 UTC
 - 运行状态：成功
-- 本次总论文数：1
-- 精读区：1
+- 本次总论文数：0
+- 精读区：0
 - 速读区：0
 
 ### 今日简报（AI）
-1) 今日精读一篇8.0高分论文，聚焦先进封装热翘曲预测的两阶段物理信息神经网络方法。
-2) 值得关注的方向：将PINN分阶段用于热-力耦合预测，在封装翘曲建模中展现高精度与数据效率。
-3) 建议跟进该方法在多层封装或材料参数逆向识别中的扩展应用。
-- 详情：[/202607/04/README](/202607/04/README)
+> 今日无新推荐，系统未产出可展示论文。
+- 详情：[/202607/05/README](/202607/05/README)
 
 ### 精读区论文标签
-1. [WarpagePINN: Thermal Warpage Prediction in Advanced Packaging via a Two-Stage Physics-Informed Neural Networks](/202607/04/2607.00364v1-warpagepinn-thermal-warpage-prediction-in-advanced-packaging-via-a-two-stage-physics-informed-neural-networks)  
-   标签：评分：8.0/10、query:si-pi
-   evidence：使用PINN预测芯片封装热翘曲
+- 本次无精读推荐。
 
 ### 速读区论文标签
 - 本次无速读推荐。
