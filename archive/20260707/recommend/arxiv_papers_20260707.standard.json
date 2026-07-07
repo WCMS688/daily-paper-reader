@@ -1,0 +1,99 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-07T22:04:42.381607+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2607.02610v1",
+      "source": "arxiv",
+      "title": "FAPlace: Joint Optimization of Chiplet Placement and Interposer Footprint for 2.5D Systems",
+      "abstract": "The placement of chiplets on a silicon interposer is a pivotal step in 2.5D system integration, yet existing placement approaches typically assume a pre-defined interposer footprint. This creates a circular dependency: the optimal footprint cannot be known without first solving the placement, while the placement itself is constrained by the given dimensions. An undersized interposer may exclude feasible placements, while an oversized one yields unnecessarily sparse solutions. Moreover, even when the footprint area is minimized, few existing approaches explicitly control the interposer's aspect ratio. To jointly address these challenges, we propose FAPlace, a footprint aware mask guided sequential placement framework. FAPlace operates on a sufficiently large canvas, eliminating the circular dependency by allowing the optimal interposer footprint to emerge as an output of the optimization rather than a pre-specified input. At its core is a novel footprint mask that fuses area compactness with an aspect ratio penalty into a unified spatial cost map. Integrated with wirelength and thermal guidance masks, FAPlace delivers holistic multi-physics optimization in a deterministic, single pass process. Experimental results demonstrate that FAPlace reduces wirelength and footprint area while achieving near-unity aspect ratios, without compromising on thermal performance.",
+      "authors": [
+        "Yubo Hou",
+        "Sezin Kircali Ata",
+        "Gen Liang Lim",
+        "Richard Chang",
+        "Mihai Dragos Rotaru",
+        "Rahul Dutta",
+        "Ashish James"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR"
+      ],
+      "published": "2026-07-01T15:08:21+00:00",
+      "link": "https://arxiv.org/pdf/2607.02610v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "joint optimization of chiplet placement and interposer footprint for 2.5D systems",
+      "llm_evidence_cn": "2.5D系统中芯粒布局与中介层面积的联合优化",
+      "llm_evidence": "2.5D系统中芯粒布局与中介层面积的联合优化",
+      "canonical_evidence": "2.5D系统中芯粒布局与中介层面积的联合优化",
+      "llm_tldr_en": "FAPlace jointly optimizes chiplet placement and interposer footprint for 2.5D systems, addressing circular dependency between placement and footprint definition using a mask-guided sequential framework.",
+      "llm_tldr_cn": "针对2.5D系统集成中芯粒布局与中介层尺寸相互制约的问题，本文提出FAPlace框架，通过掩码引导的顺序布局方法，联合优化芯粒摆放位置和中介层面积。实验表明，该方法能有效减小中介层尺寸并控制长宽比，显著提升2.5D封装的集成效率，为先进封装设计提供了有力工具。",
+      "llm_tldr": "针对2.5D系统集成中芯粒布局与中介层尺寸相互制约的问题，本文提出FAPlace框架，通过掩码引导的顺序布局方法，联合优化芯粒摆放位置和中介层面积。实验表明，该方法能有效减小中介层尺寸并控制长宽比，显著提升2.5D封装的集成效率，为先进封装设计提供了有力工具。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "SI/PI analysis for 2.5D 3D and Chiplet packaging",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.03588v1",
+      "source": "arxiv",
+      "title": "Beyond the Parasitic Limit: A Nanoprobing Framework for De-embedding Intrinsic Ferroelectric Properties at the Deep Sub-Micrometer Scale",
+      "abstract": "The continued scaling of ferroelectric devices is critical for next-generation computing architectures, yet it is fundamentally challenged by a metrological bottleneck: at the deep sub-micrometer scale, intrinsic material properties are heavily masked by extrinsic parasitic impedances and geometric fringing fields. Here, we introduce a quantitative, in-situ nanoprobing framework capable of resolving the true electrical response of ferroelectric capacitors down to 165 nm in diameter without the need for lithographic bond pads. Using 20 nm thick AlScN as a model system, we establish a non-linear 'Screened Power Law' model to decouple attofarad-level device capacitances from massive near-field probe interactions. Furthermore, we demonstrate that the apparent degradation of dielectric loss at the nanoscale is a geometric dilution artifact, which we overcome through a conductance scaling analysis. Finally, we apply this framework to large-signal characterization, utilizing leakage-compensation and noise filtering protocols to extract pristine intrinsic hysteresis (C-V and J-E) loops in the discrete few-grain limit. These findings provide a universal analytical toolkit required to overcome the measurement limits of deep-submicron ferroelectrics.",
+      "authors": [
+        "Niklas Kyoushi",
+        "Georg Schönweger",
+        "Ole Gronenberg",
+        "Dirk Meyners",
+        "Adrian Petraru",
+        "Fabian Lofink",
+        "Simon Fichtner"
+      ],
+      "primary_category": "cond-mat.mtrl-sci",
+      "categories": [
+        "cond-mat.mtrl-sci"
+      ],
+      "published": "2026-07-03T20:12:59+00:00",
+      "link": "https://arxiv.org/pdf/2607.03588v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "parasitic de-embedding framework for ultra-small capacitors, applicable to PDN impedance modeling",
+      "llm_evidence_cn": "寄生参数去嵌入框架，可用于PDN阻抗建模",
+      "llm_evidence": "寄生参数去嵌入框架，可用于PDN阻抗建模",
+      "canonical_evidence": "寄生参数去嵌入框架，可用于PDN阻抗建模",
+      "llm_tldr_en": "Proposes a nanoprobing framework with a Screened Power Law model to decouple intrinsic ferroelectric properties from parasitic impedances at deep sub-micrometer scale; directly relevant to PDN parasitic extraction and decoupling capacitor modeling.",
+      "llm_tldr_cn": "本文针对深亚微米尺度下铁电体固有特性被寄生阻抗掩盖的计量瓶颈，提出了一种原位纳米探针框架。通过建立非线性“屏蔽幂律”模型，成功将165nm直径AlScN电容的attofarad级本征电容与近场寄生效应解耦。该方法无需光刻焊盘即可准确提取本征响应，为PDN建模中高频去耦电容的精确寄生参数提取提供了可迁移的技术路径。",
+      "llm_tldr": "本文针对深亚微米尺度下铁电体固有特性被寄生阻抗掩盖的计量瓶颈，提出了一种原位纳米探针框架。通过建立非线性“屏蔽幂律”模型，成功将165nm直径AlScN电容的attofarad级本征电容与近场寄生效应解耦。该方法无需光刻焊盘即可准确提取本征响应，为PDN建模中高频去耦电容的精确寄生参数提取提供了可迁移的技术路径。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "PDN impedance modeling and decoupling capacitor design",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

@@ -1,0 +1,485 @@
+Title: FAPlace: Joint Optimization of Chiplet Placement and Interposer Footprint for 2.5D Systems
+
+URL Source: https://arxiv.org/pdf/2607.02610v1
+
+Published Time: Tue, 07 Jul 2026 00:03:53 GMT
+
+Number of Pages: 6
+
+Markdown Content:
+# FAPlace: Joint Optimization of Chiplet Placement and Interposer Footprint for 2.5D Systems 
+
+## Yubo Hou 
+
+Institute for Infocomm Research, Agency for Science, Technology and Research (A*STAR) Singapore, Singapore Hou_Yubo@a-star.edu.sg 
+
+## Sezin Kircali Ata 
+
+Institute for Infocomm Research, Agency for Science, Technology and Research (A*STAR) Singapore, Singapore Ata_Kircali_Sezin@a-star.edu.sg 
+
+## Gen Liang Lim 
+
+Institute for Infocomm Research, Agency for Science, Technology and Research (A*STAR) Singapore, Singapore lim_gen_liang@a-star.edu.sg 
+
+## Richard Chang 
+
+Institute for Infocomm Research, Agency for Science, Technology and Research (A*STAR) Singapore, Singapore Richard_Chang@a-star.edu.sg 
+
+## Mihai Dragos Rotaru 
+
+Institute of Microelectronics, Agency for Science, Technology and Research (A*STAR) Singapore, Singapore Mihai_Dragos_Rotaru@a-star.edu.sg 
+
+## Rahul Dutta 
+
+Institute of Microelectronics, Agency for Science, Technology and Research (A*STAR) Singapore, Singapore duttar@a-star.edu.sg 
+
+## Ashish James 
+
+Institute for Infocomm Research, Agency for Science, Technology and Research (A*STAR) Singapore, Singapore ashish_james@a-star.edu.sg 
+
+Abstract 
+
+The placement of chiplets on a silicon interposer is a pivotal step in 2.5D system integration, yet existing placement approaches typi-cally assume a pre-defined interposer footprint. This creates a cir-cular dependency: the optimal footprint cannot be known without first solving the placement, while the placement itself is constrained by the given dimensions. An undersized interposer may exclude fea-sible placements, while an oversized one yields unnecessarily sparse solutions. Moreover, even when the footprint area is minimized, few existing approaches explicitly control the interposer’s aspect ratio. To jointly address these challenges, we propose FAPlace, a foot-print aware mask guided sequential placement framework. FAPlace operates on a sufficiently large canvas, eliminating the circular de-pendency by allowing the optimal interposer footprint to emerge as an output of the optimization rather than a pre-specified input. At its core is a novel footprint mask that fuses area compactness with an aspect ratio penalty into a unified spatial cost map. Integrated with wirelength and thermal guidance masks, FAPlace delivers holistic multi-physics optimization in a deterministic, single pass process. Experimental results demonstrate that FAPlace reduces wirelength and footprint area while achieving near-unity aspect ratios, without compromising on thermal performance.  
+
+> This work is licensed under a Creative Commons Attribution 4.0 International License.
+> GLSVLSI ’26, Canandaigua, NY, USA
+> ©2026 Copyright held by the owner/author(s). ACM ISBN 979-8-4007-2431-2/2026/06 https://doi.org/10.1145/3787109.3815298
+
+CCS Concepts 
+
+• Hardware → Physical design (EDA) ; Electronic design automa-tion .
+
+Keywords 
+
+2.5D System, Chiplet Placement, Aspect Ratio, Interposer Footprint, Multi-physics Optimization. 
+
+ACM Reference Format: 
+
+Yubo Hou, Sezin Kircali Ata, Gen Liang Lim, Richard Chang, Mihai Dragos Rotaru, Rahul Dutta, and Ashish James. 2026. FAPlace: Joint Optimization of Chiplet Placement and Interposer Footprint for 2.5D Systems. In Great Lakes Symposium on VLSI 2026 (GLSVLSI ’26), June 22–24, 2026, Canandaigua, NY, USA. ACM, New York, NY, USA, 6 pages. https://doi.org/10.1145/3787109. 3815298 
+
+1 Introduction 
+
+The growing demand for heterogeneous, high-performance com-puting has propelled 2.5D chiplet integration to the forefront of advanced packaging [ 7]. By assembling pre-verified chiplets on a silicon interposer, 2.5D systems deliver superior performance and design reusability at a fraction of the monolithic development cost [ 12 ]. However, the physical placement of chiplets on the inter-poser is a multi-faceted optimization problem that must simultane-ously address wirelength and peak temperature [3]. A diverse set of methodologies has been proposed to tackle this challenge, including simulated annealing [ 8 , 11 ], sequence-pair-based methods [ 1], analytical formulations [ 13 , 14 ], and reinforce-ment learning [ 2, 4 ]. Despite their diversity in optimization strategy, these methods share a common and fundamental limitation in that they all require a pre-defined interposer footprint as input.          
+
+> arXiv:2607.02610v1 [cs.AR] 1 Jul 2026 GLSVLSI ’26, June 22–24, 2026, Canandaigua, NY, USA Yubo Hou, Sezin Kircali Ata, Gen Liang Lim, Richard Chang, Mihai Dragos Rotaru, Rahul Dutta, and Ashish James
+> 𝑐 1𝑐 6
+> 𝑐 4
+> 𝑐 5
+> 𝑐 3
+> 𝑐 2
+> Feasible placements excluded
+> (a) Existing approaches: pre-defined undersized footprint
+> 𝑐 1
+> 𝑐 2
+> 𝑐 3
+> 𝑐 4
+> 𝑐 5
+> 𝑐 6
+> Sparse placement
+> +extreme AR
+> (b) Existing approaches: pre-defined oversized footprint
+> canvas
+> 𝑐 1𝑐 6𝑐 5
+> 𝑐 3𝑐 4𝑐 2Compact placement
+> +near-unity AR
+> (c) FAPlace: sufficiently large canvas, optimized footprint
+
+Figure 1: Motivation of FAPlace. Existing approaches are bottlenecked by pre-defined interposer dimensions, where (a) an undersized footprint limits feasibility and (b) an oversized one leads to sparse placements and extreme aspect ratios (AR). (c) FAPlace paradigm shifts to a sufficiently large canvas, utilizing a footprint mask to output a compact, near-square layout without requiring a predefined layout. 
+
+This requirement creates a circular dependency in the design flow. The optimal footprint cannot be known without first solving the placement, while the placement itself is constrained by the given dimensions. As shown in Figure 1, an undersized interposer may exclude feasible placements, while an oversized one yields unnecessarily sparse solutions. In practice, designers resort to man-ual trial-and-error or coarse parameter sweeps over canvas sizes, neither of which can efficiently explore the joint space of interposer dimensions and chiplet configurations. We advocate a paradigm shift in which the interposer footprint becomes an output of the placement optimization rather than an input. Moreover, even when footprint area is minimized on an oversized interposer, an equally important geometric property neglected by all prior works, is the aspect ratio (AR) of the interposer. In prac-tice, industry standard 2.5D packages almost universally adopt near-square interposer form factors [ 10 ]. Furthermore, large area interposers are known to suffer from warpage due to CTE mis-match [ 9 ], which an elongated geometry may exacerbate along its longer axis. However, minimizing area alone does not control the layout shape and may yield impractical geometries with extreme aspect ratios. To jointly address these challenges, we propose FAPlace, a foot-print aware mask guided sequential placement framework for 2.5D systems. FAPlace operates on a sufficiently large canvas and em-ploys a novel footprint mask that fuses area compactness with an aspect ratio penalty into a unified spatial cost map. This mask si-multaneously drives chiplets toward tight packing and steers the bounding box geometry toward a target shape. Integrated with wire-length and thermal masks, FAPlace delivers holistic multi-physics optimization in a deterministic, single pass procedure. The specific contributions of this work are: 
+
+• We introduce FAPlace, which eliminates the circular depen-dency by allowing the optimal interposer footprint to emerge as an output of the optimization rather than a pre-defined input. 
+
+• We are the first to incorporate interposer aspect ratio as an explicit optimization objective in 2.5D chiplet placement. 
+
+• We propose the footprint mask, a unified spatial cost map that jointly minimizes footprint area and penalizes aspect ratio deviation, enabling simultaneous area compactness and shape compliance. 
+
+• Experiments demonstrate that FAPlace reduces wirelength and footprint area while achieving near-unity aspect ratios, without compromising thermal performance. 
+
+2 Problem Formulation 
+
+Given a set of chiplets C = {𝑐 1, . . . , 𝑐 𝑁 }, where each chiplet 𝑐 𝑖 is characterized by its width 𝑤 𝑖 , height ℎ𝑖 , and thermal design power 
+
+𝑝 𝑖 , along with a netlist N encoding the logical connectivity and a set of pin clumps K, the goal is to determine placement coordinates 
+
+X = {( 𝑥 𝑖 , 𝑦 𝑖 )} 𝑁 𝑖 =1 and orientations Θ = {𝜃 𝑖 }𝑁 𝑖 =1, 𝜃 𝑖 ∈ { 0◦, 90 ◦ }, that jointly optimize the following objectives. 
+
+Wirelength. Adopting the flow-based formulation of [ 8], we define a variable set F where 𝑓 𝑛 𝑖𝑙 𝑗𝑘 quantifies the connections of net 
+
+𝑛 routed from pin clump 𝑙 on chiplet 𝑖 to pin clump 𝑘 on chiplet 𝑗 .The total wirelength is computed as 
+
+𝑊 𝐿 (X , F ) =∑︁  
+
+> 𝑖,𝑗 ∈ C
+
+∑︁ 𝑙,𝑘 ∈ K ∑︁ 𝑛 ∈ N 
+
+𝑑 𝑖𝑙 𝑗𝑘 (X) · 𝑓 𝑛 𝑖𝑙 𝑗𝑘 , (1) where 𝑑 𝑖𝑙 𝑗𝑘 is the Manhattan distance between the corresponding pin clumps. 
+
+Peak Temperature. Let 𝑇 (X , P) be the steady-state thermal distribution under placement X and power profile P. The thermal objective minimizes the peak temperature 
+
+𝑇 𝑝 (X) = max  𝑇 (X , P) . (2) 
+
+Interposer Footprint. Distinct from prior formulations that ignore the footprint, we define a composite footprint objective that captures both the footprint area and the aspect ratio. Specifically, the footprint area is 
+
+𝐴 (X) = 𝑊 𝑏𝑏 × 𝐻 𝑏𝑏 , (3) where 𝑊 𝑏𝑏 and 𝐻 𝑏𝑏 denote the bounding box width and height. The aspect ratio is defined as 
+
+𝐴𝑅 (X) = max 
+
+𝑊 𝑏𝑏 
+
+𝐻 𝑏𝑏 
+
+, 𝐻 𝑏𝑏 
+
+𝑊 𝑏𝑏 
+
+
+
+. (4) The goal is to minimize footprint area while keeping 𝐴𝑅 close to a target value 𝐴𝑅 tgt (e.g., 𝐴𝑅 tgt = 1 for a square). The concrete real-ization of this bi-objective as a unified spatial cost map is detailed in Section 3.3. 
+
+3 The FAPlace Framework 
+
+FAPlace is a sequential, mask guided placement framework that de-termines chiplet locations sequentially on a sufficiently large canvas. As illustrated in Fig. 2, the framework consists of five components: (1) a connectivity-driven ordering strategy, (2) a multi-mask guid-ance system featuring the novel footprint mask, (3) a unified mask synthesis with greedy selection, (4) footprint extraction, and (5) an adaptive thermal-spacing mechanism to satisfy thermal constraints. FAPlace: Joint Optimization of Chiplet Placement and Interposer Footprint for 2.5D Systems GLSVLSI ’26, June 22–24, 2026, Canandaigua, NY, USA Unplaced Set    
+
+> (Cupl )
+> cnx
+> Next Chiplet
+> Placed Set
+> (Cpl )
+> Select
+> cnx
+> Weighted
+> Fusion Unified Mask
+> Connectivity-Driven Ordering
+> Multi-Mask Guidance System
+> Greedy Selection & Placement
+> cnx
+> cnx  cnx
+> Thermal Mask
+> Wire Mask
+> Position Mask
+> Footprint Mask
+> ATS
+> weight tuning
+> argmin(Cost)
+> rotation or not
+> Repeat for next chiplet until all chiplets are placed
+> Area Cost AR Penalty
+> Footprint Extraction
+
+Figure 2: Overview of the FAPlace framework. Chiplets are sequentially placed on a sufficiently large canvas guided by a unified mask synthesized from wirelength, thermal, and the proposed footprint masks. 
+
+3.1 Placement on a Large Canvas 
+
+Unlike conventional methods that confine placement within a pre-specified interposer boundary, FAPlace initializes on a deliberately oversized canvas. The rationale is twofold: first, a large canvas elim-inates the infeasibility issues caused by an undersized interposer; second, it decouples the placement quality from the canvas spec-ification, allowing the actual footprint to be determined entirely by the mask-guided optimization. After all chiplets are placed, the layout is shrunk to a tight bounding box and thermally re-evaluated under the compact dimensions. The canvas discretization follows a uniform 𝐺 × 𝐺 grid, and 2𝐺 2 candidate locations are evaluated at each step to account for both standard and 90 ◦-rotated orientations. 
+
+3.2 Connectivity-Driven Ordering 
+
+We employ a connectivity-driven strategy: the chiplet with the largest area is selected as the seed. Subsequently, at each iteration, the unplaced chiplet with the strongest total connection to the already-placed set is selected: 
+
+𝑐 nx = arg max  
+
+> 𝑐 𝑖 ∈ C upl
+
+∑︁ 𝑐 𝑗 ∈ C pl 
+
+𝜆 𝑖 𝑗 , (5) where 𝜆 𝑖 𝑗 is the connection weight between chiplets 𝑐 𝑖 and 𝑐 𝑗 , Cpl 
+
+and Cupl are the placed and unplaced sets, respectively. Ties are broken by selecting the candidate with the larger area. 
+
+3.3 Footprint Mask 
+
+The footprint mask is the central technical contribution of this work. It encodes a spatial inductive bias that jointly drives chiplets toward compact configurations with a well-proportioned bounding box. For each candidate grid cell (𝑖, 𝑗 ), the mask evaluates the geometric consequence of placing the next chiplet 𝑐 nx at that location. 
+
+3.3.1 Area Cost. Let 𝐴 curr denote the bounding box area of the already placed chiplets. When 𝑐 nx is centered at (𝑖, 𝑗 ), the new bounding box becomes: 
+
+𝑊 new (𝑖, 𝑗 ) = max (𝑥 max , 𝑖 + 𝑤 nx  
+
+> 2
+
+) − min (𝑥 min , 𝑖 − 𝑤 nx  
+
+> 2
+
+),𝐻 new (𝑖, 𝑗 ) = max (𝑦 max , 𝑗 + ℎnx  
+
+> 2
+
+) − min (𝑦 min , 𝑗 − ℎnx  
+
+> 2
+
+), (6) where (𝑥 min , 𝑥 max , 𝑦 min , 𝑦 max ) are the current bounding box extremes. The normalized area expansion cost is: 
+
+𝑅 𝐴 (𝑖, 𝑗 ) = 𝑊 new · 𝐻 new − 𝐴 curr 
+
+𝑤 nx · ℎnx 
+
+. (7) 
+
+3.3.2 Aspect Ratio Penalty. The AR penalty quantifies how much the prospective bounding box deviates from the target shape: 
+
+𝑅 𝐴𝑅 (𝑖, 𝑗 ) =
+
+
+
+max 
+
+𝑊 new 
+
+𝐻 new 
+
+, 𝐻 new 
+
+𝑊 new 
+
+
+
+− 𝐴𝑅 tgt 
+
+2
+
+. (8) The quadratic form imposes a mild penalty near the target and an increasingly severe one for extreme deviations, reflecting the practical impact of AR on manufacturability. t 
+
+> large canvas
+> c1
+> c2 c3
+> bounding box
+
+Figure 3: Illustration of the bounding box. 
+
+3.3.3 Mask Fusion. Both cost components are independently nor-malized to [0, 1] and fused into the footprint mask: 
+
+M𝐹 (𝑖, 𝑗 ) = (1 − 𝜂 ) · ˆ𝑅 𝐴 (𝑖, 𝑗 ) + 𝜂 · ˆ𝑅 𝐴𝑅 (𝑖, 𝑗 ), (9) where ˆ· denotes min-max normalization and spatial bias weight 
+
+𝜂 ∈ [ 0, 1] controls the trade-off between area compactness and AR compliance. 
+
+3.4 Wire Mask and Thermal Mask 
+
+To guide wirelength and thermal optimization, FAPlace employs two additional masks, inspired by Maskplace [6]. 
+
+3.4.1 Wire Mask. For the next chiplet 𝑐 nx , the Wire Mask approx-imates the routing cost at each candidate location based on the Manhattan distance to connected, already placed chiplets: 
+
+M𝑊 𝐿 (𝑖, 𝑗 ) =∑︁  
+
+> 𝑐 𝑘 ∈ C pl
+
+𝜆 (𝑐 nx , 𝑐 𝑘 ) · (| 𝑖 − 𝑥 𝑘 | + | 𝑗 − 𝑦 𝑘 |) , (10) GLSVLSI ’26, June 22–24, 2026, Canandaigua, NY, USA Yubo Hou, Sezin Kircali Ata, Gen Liang Lim, Richard Chang, Mihai Dragos Rotaru, Rahul Dutta, and Ashish James 
+
+where (𝑥 𝑘 , 𝑦 𝑘 ) are the coordinates of placed chiplet 𝑐 𝑘 and 𝜆 (· , ·) 
+
+denotes the connection weight. 
+
+3.4.2 Thermal Mask. For high-power chiplets (those exceeding a power threshold 𝑝 th ), the Thermal Mask leverages the steady-state temperature distribution 𝑇 (X , P) computed by HotSpot [ 15 ] for the currently placed chiplets: 
+
+M𝑇 (𝑖, 𝑗 ) =
+
+(
+
+𝑇 (𝑖, 𝑗 ), if 𝑝 (𝑐 nx ) > 𝑝 th 
+
+0, otherwise (11) This selectively activates thermal guidance only when placing high power chiplets, avoiding unnecessary constraints on low-power ones. 
+
+3.5 Unified Mask and Greedy Selection 
+
+The individual masks are normalized and synthesized into a Unified Mask: 
+
+Muni = (1 − 𝛽 ) · 𝛼 · ˆM𝑊 𝐿 + 𝛽 · ˆM𝑇 + ( 1 − 𝛽 ) · 𝛾 · ˆM𝐹 , (12) where 𝛼 = 𝛾 = 0.5.To ensure physical validity, a Position Mask Mpos is applied to filter out infeasible locations, including overlaps or boundary violations: 
+
+Mpos (𝑖, 𝑗 ) =
+
+(
+
+0, if (𝑖, 𝑗 ) ∈ Ω
+
++∞ , otherwise (13) where Ω is the set of feasible positions. The greedy selection then identifies the globally optimal position and orientation: 
+
+(𝑥 ∗ 
+
+> 𝑡
+
+, 𝜃 ∗ 
+
+> 𝑡
+
+) = arg min    
+
+> 𝑥 𝑡 , 𝜃 ∈ { 0◦,90 ◦}
+
+ Muni (𝑥 𝑡 , 𝜃 ) + M pos (𝑥 𝑡 , 𝜃 ) . (14) This deterministic, single pass procedure places all 𝑁 chiplets in exactly 𝑁 steps. 
+
+3.6 Footprint Extraction 
+
+Once all chiplets have been placed on the sufficiently large canvas, the interposer footprint is extracted and the layout is thermally evaluated under realistic dimensions. After the last chiplet 𝑐 𝑁 is placed, the final bounding box dimen-sions 𝑊 new and 𝐻 new are obtained following Eq. (6) . The interposer size is then set to 
+
+𝐿 intp =
+
+ max (𝑊 new , 𝐻 new )
+
+𝑔 
+
+
+
+· 𝑔, (15) where 𝑔 is the grid granularity and the ceiling operation ensures alignment with the discretization. All chiplet coordinates are shifted to re-center the layout within this compact 𝐿 intp × 𝐿 intp region. This step converts the placement on the oversized canvas into a concrete, fabrication-ready interposer specification. 
+
+3.7 Adaptive Thermal-Spacing 
+
+To guarantee compliance with a peak temperature limit 𝑇 limit , FAPlace employs an adaptive thermal-spacing (ATS) mechanism. ATS treats the thermal weight 𝛽 as a tunable parameter and wraps around the placement and tight canvas evaluation pipeline: at each iteration, the full sequential placement is executed with the current 𝛽 , fol-lowed by footprint extraction. A binary search is then performed to identify the minimum 𝛽 ∗ that satisfies the constraint: 
+
+𝛽 ∗ = min 𝛽 ∈ [ 0, 1] 𝑇 𝑝 (𝛽 ) ≤ 𝑇 limit . (16) A lower 𝛽 prioritizes compact placement at the expense of higher temperature; ATS efficiently identifies the tightest packing that remains thermally safe. 
+
+4 Experiments 4.1 Experimental Setup 
+
+We evaluate FAPlace on a benchmark suite comprising two real-world industry architectures, MultiGPU [ 8 ] (Sys 1) and CPU-DRAM [ 5](Sys 2), along with three additional synthetic systems of increas-ing complexity, as summarized in Table 1. We compare against TAP-2.5D [ 8 ], a representative SA-based thermal-aware placement method. 
+
+Table 1: Benchmark Design Statistics Design # Chiplets # Nets Avg. Deg. Max Deg. 
+
+Sys 1 6 6 2.00 3Sys 2 8 8 2.00 3Sys 3 20 20 2.00 3Sys 4 28 34 2.43 5Sys 5 36 42 2.33 5Wirelength is computed using a multi-commodity flow formula-tion solved via MILP with IBM ILOG CPLEX v12.8. Peak temper-ature is obtained from HotSpot v6.0 [ 15 ]. All metrics, including wirelength, peak temperature, footprint area, and AR, are reported on the tight bounding box canvas after footprint extraction. FAPlace operates on a sufficiently large canvas without any footprint specification, and the interposer footprint emerges as an output. For baseline methods that require a pre-defined canvas, we use the interposer size produced by FAPlace. This represents a favorable setting for the baselines, as they are given a near-optimal canvas derived from FAPlace’s own optimization. The target AR is set to 𝐴𝑅 tgt = 1.0 (square). The spatial bias weight 𝜂 = 0.4 for Sys 1 and 𝜂 = 0.2 for the rest of designs. 
+
+4.2 Main Results 
+
+We exclude other prior methods from comparison as their imple-mentations are not publicly available. Table 2 presents the com-parison between TAP-2.5D and FAPlace. Recall that TAP-2.5D is given FAPlace’s output footprint as its input canvas, representing a favorable scenario for the baseline. Despite this advantage, FAPlace achieves superior results across all key metrics. FAPlace reduces wirelength by approximately 2× on average across all benchmarks, with particularly pronounced improvements on Sys 3 and Sys 5. Both methods achieve comparable thermal profiles, with TAP-2.5D averaging only 1.02 × higher peak temperature, confirming that FAPlace’s compact placements do not sacrifice thermal quality. Meanwhile, FAPlace is approximately 4× faster than TAP-2.5D, as its deterministic single pass mask-guided greedy selection avoids the iterative stochastic search inherent to SA. Figure 4 visualizes the thermal layouts for Sys 2 and Sys 5. While TAP-2.5D suffers from localized heating due to clustered or uni-formly scattered placements, FAPlace strategically separates heat sources. FAPlace effectively mitigates peak temperatures and facili-tates heat dissipation across the interposer. FAPlace: Joint Optimization of Chiplet Placement and Interposer Footprint for 2.5D Systems GLSVLSI ’26, June 22–24, 2026, Canandaigua, NY, USA 
+
+Table 2: Performance Comparison: TAP-2.5D vs. FAPlace. 
+
+𝑅𝑇 denotes the runtime and 𝐿 intp is the side length of the smallest square interposer that encloses the placement. TAP-2.5D is given FAPlace’s output 𝐿 intp as its input canvas. 
+
+Design 𝐿 intp 
+
+(mm) TAP-2.5D FAPlace 
+
+𝑅𝑇 
+
+(h) 
+
+𝑇 𝑝 
+
+(◦C)
+
+𝑊 𝐿 
+
+(m) 
+
+𝑅𝑇 
+
+(h) 
+
+𝑇 𝑝 
+
+(◦C)
+
+𝑊 𝐿 
+
+(m) Sys 1 56 1.1 90.6 122 0.2 90.6 95 Sys 2 43 1.4 98.7 242 0.2 95.9 130 Sys 3 64 2.3 89.1 276 0.3 88.3 79 Sys 4 39 3.1 73.9 40 1.2 73.8 39 Sys 5 34 3.5 72.9 43 1.1 70.2 19 Avg. 3.99 × 1.02 × 1.99 × 1× 1× 1×       
+
+> (a) TAP-2.5D, Sys 2 (b) FAPlace, Sys 2 (c) TAP-2.5D, Sys 5 (d) FAPlace, Sys 5
+
+Figure 4: Thermal maps with chiplet placement overlays for different methods. 
+
+4.3 Evaluation on a Large Canvas 
+
+The main comparison in Table 2 provides TAP-2.5D with FAPlace’s optimized 𝐿 intp as its input canvas, effectively supplying a geomet-ric prior that removes the need for TAP-2.5D to determine the interposer footprint on its own. To eliminate this advantage and establish a level playing field, we run TAP-2.5D on the same suffi-ciently large canvas used by FAPlace, using Sys 1 as a case study. For a fair comparison, we select a TAP-2.5D placement whose peak temperature closely matches that of FAPlace, ensuring that differ-ences in wirelength, bounding box area, and aspect ratio are not artifacts of differing thermal budgets. As shown in Table 3, without the geometric prior, TAP-2.5D exhibits significant degradation across all metrics. These results demonstrate that TAP-2.5D relies heavily on a well-specified inter-poser footprint to produce compact, well-proportioned placements. In contrast, FAPlace, guided by the footprint mask, autonomously converges to a tight and near-square layout without requiring any pre-defined boundary specification. 
+
+Table 3: Performance comparison on a sufficiently large can-vas for Sys 1. 
+
+Method 𝑇 𝑝 
+
+(◦C)
+
+𝑊 𝐿 
+
+(m) 
+
+𝐴 
+
+(cm 2) 𝐴𝑅 
+
+TAP-2.5D 90.3 339 106 1.40 FAPlace 90.6 95 29 1.12 
+
+4.4 Ablation Study 
+
+Table 4 shows the effect of the footprint mask. Without it, the place-ment can still achieve comparable wirelength and peak temperature, yet the overall layout quality degrades significantly. Specifically, the average aspect ratio increases by 1.80 ×, and the interposer side length grows by 1.40 ×. This demonstrates that the footprint mask serves as an effective shape constraint without compromising electrical or thermal performance. The necessity of both mask components is further highlighted by specific design cases. On Sys 1, removing the mask actually yields a smaller bounding box area, yet the aspect ratio surges from 1.12 to 3.07. This elongation forces the layout onto an 85 mm interposer instead of a 56 mm one. Such an elongated shape cannot be efficiently accommodated on a square interposer, entirely negating the apparent area savings. Conversely, on Sys 2, although the aspect ratio remains unaffected without the mask, the bounding box area nearly doubles from 15 to 28 cm 2, expanding the required interposer from 43 mm to 58 mm. These cases illustrate that both the area cost and the aspect ratio penalty are essential for the footprint mask to enforce a compact and manufacturable outline. 
+
+Table 4: Ablation Study: Effect of the Footprint Mask. 𝐴 de-notes the bounding box area of the placement, and 𝐿 intp is the side length of the smallest square interposer that encloses it.                                                                 
+
+> Design w/o Footprint Mask FAPlace
+> 𝑇 𝑝
+> (◦C)
+> 𝑊 𝐿
+> (m)
+> 𝐴
+> (cm 2)
+> 𝐿 intp
+> (mm) 𝐴𝑅 𝑇 𝑝
+> (◦C)
+> 𝑊 𝐿
+> (m)
+> 𝐴
+> (cm 2)
+> 𝐿 intp
+> (mm) 𝐴𝑅
+> Sys 1 90.5 91 24 85 3.07 90.6 95 29 56 1.12 Sys 2 96.3 142 28 58 1.23 95.9 130 15 43 1.23 Sys 3 88.3 73 54 98 1.80 88.3 79 36 64 1.12 Sys 4 73.7 38 14 48 1.69 73.8 39 11 39 1.16 Sys 5 70.5 19 947 2.47 70.2 19 10 34 1.13 Avg. 1.00 ×0.99 ×1.27 ×1.40 ×1.80 ×1×1×1×1×1×
+
+4.5 Impact of Area Cost and AR Penalty 
+
+We conduct a sensitivity analysis to examine the individual contri-butions of the area cost and AR penalty within the footprint mask. Specifically, we vary the weighting coefficient 𝜂 and report the resulting bounding box area and aspect ratio on Sys 1 in Figure 5. Figure 6 shows the corresponding layout visualizations. When the AR penalty is entirely disabled ( 𝜂 = 0), the placement is driven predominantly by bounding box area optimization. Although this configuration achieves the absolute minimum bounding box area, it results in an extreme aspect ratio of approximately 4.5. Visu-ally, this manifests as an elongated, quasi-one-dimensional chain of chiplets, which is highly impractical for real-world manufacturing. As 𝜂 increases, the AR penalty effectively regularizes the layout geometry. We observe a sharp decline in the AR, which converges to the target value of approximately 1.0 (i.e., a square footprint) once 𝜂 ≥ 0.4.
+
+4.6 Impact of Adaptive Thermal-Spacing 
+
+To validate the responsiveness of the ATS mechanism, we tracked both the performance in Figure 7 and the corresponding spatial layout in Figure 8 during the placement of Sys 2, targeting a peak temperature limit of 96 ◦C. Driven by the ATS, the layout dynami-cally evolves to resolve thermal violations. Initially, a low thermal weight forces a dense core, which minimizes wirelength but causes a severe thermal violation. As ATS dynamically increases thermal weight to penalize localized heating, the layout expands, dropping the temperature to 100 ◦C at the expense of increased wirelength. GLSVLSI ’26, June 22–24, 2026, Canandaigua, NY, USA Yubo Hou, Sezin Kircali Ata, Gen Liang Lim, Richard Chang, Mihai Dragos Rotaru, Rahul Dutta, and Ashish James 0.0 0.2 0.4 0.6 0.8 1.0 
+
+> Spatial Bias Weight
+> 1750
+> 2000
+> 2250
+> 2500
+> 2750
+> 3000
+> 3250
+> Bounding Box Area
+> 1
+> 2
+> 3
+> 4
+> Aspect Ratio
+
+Figure 5: Quantitative trade-off analysis between area cost and aspect ratio penalty. 
+
+(a) 𝜂 =0 (b) 𝜂 =0.4 (c) 𝜂 =0.8
+
+Figure 6: Placement layouts under varying spatial bias weights for Sys 1 on a large canvas. 
+
+By Epoch 3, ATS converges on the optimal weight. The layout transforms into a dispersed, U-shaped perimeter configuration, suc-cessfully satisfying the rigorous 96 ◦C limit while establishing the minimal acceptable wirelength for this specific thermal constraint. 1 2 3
+
+> Epoch
+> 90
+> 100
+> 110
+> 120
+> 130
+> Wire Length
+> 100
+> 105
+> 110
+> Peak Temperature
+
+Figure 7: Convergence of wirelength and peak temperature under the ATS mechanism on Sys 2. 
+
+Epoch 1 Epoch 2 Epoch 3 
+
+Figure 8: Evolution of placement layouts driven by the ATS mechanism for Sys 2 on a large canvas. 
+
+5 Conclusion 
+
+In this paper, we presented FAPlace, a footprint-aware mask-guided sequential placement framework that eliminates the circular depen-dency between chiplet placement and interposer footprint specifi-cation in 2.5D systems. By operating on a sufficiently large canvas and introducing a novel footprint mask that fuses area compactness with an aspect ratio penalty, FAPlace allows the optimal inter-poser footprint to emerge naturally as an output of the optimiza-tion. Integrated with wirelength and thermal guidance masks, the framework achieves holistic multi-physics optimization through a deterministic, single pass process. Experimental results across diverse benchmarks demonstrate that FAPlace reduces wirelength and footprint area while achieving near-unity aspect ratios, without compromising thermal performance. 
+
+Acknowledgments 
+
+This research is supported by the Agency for Science, Technology and Research (A*STAR) under its MTC Programmatic Funds (Grant No. M23M3b0064). 
+
+References 
+
+[1] Hong-Wen Chiou, Jia-Hao Jiang, Yu-Teng Chang, Yu-Min Lee, and Chi-Wen Pan. 2023. Chiplet Placement for 2.5D IC with Sequence Pair Based Tree and Thermal Consideration. In 2023 28th Asia and South Pacific Design Automation Conference (ASP-DAC) . 7–12. [2] Yuanyuan Duan, Xingchen Liu, Zhiping Yu, Hanming Wu, Leilai Shao, and Xiaolei Zhu. 2024. RLPlanner: Reinforcement Learning Based Floorplanning for Chiplets with Fast Thermal Analysis. In 2024 Design, Automation & Test in Europe Conference & Exhibition (DATE) . 1–2. [3] Pete Ehrett, Todd Austin, and Valeria Bertacco. 2021. Chopin: Composing Cost-Effective Custom Chips with Algorithmic Chiplets. In 2021 IEEE 39th International Conference on Computer Design (ICCD) . 395–399. [4] Yubo Hou, Furen Zhuang, Partha Pratim Kundu, Sezin Ata Kircali, Jie Wang, Mihai Dragos Rotaru, Dutta Rahul, and Ashish James. 2025. TDPNavigator-Placer: Thermal- and Wirelength-Aware Chiplet Placement in 2.5D Systems Through Multi-Agent Reinforcement Learning. In 2025 IEEE 27th Electronics Packaging Technology Conference (EPTC) . 1–5. [5] Ajaykumar Kannan, Natalie Enright Jerger, and Gabriel H Loh. 2015. Enabling interposer-based disintegration of multi-core processors. In Proceedings of the 48th international symposium on Microarchitecture . 546–558. [6] Yao Lai, Yao Mu, and Ping Luo. 2022. Maskplace: Fast chip placement via rein-forced visual representation learning. Advances in Neural Information Processing Systems 35 (2022), 24019–24030. [7] Gabriel H. Loh and Raja Swaminathan. 2023. The Next Era for Chiplet Innovation. In 2023 Design, Automation & Test in Europe Conference & Exhibition (DATE) . 1–6. [8] Yenai Ma, Leila Delshadtehrani, Cansu Demirkiran, José L. Abellan, and Aiav Joshi. 2021. TAP-2.5D: A Thermally-Aware Chiplet Placement Methodology for 2.5D Systems. In 2021 Design, Automation & Test in Europe Conference & Exhibition (DATE) . 1246–1251. [9] Kei Murayama, Mitsuhiro Aizawa, Koji Hara, Masahiro Sunohara, Ken Miyairi, Kenichi Mori, Jean Charbonnier, Myriam Assous, Jean-Philippe Bally, Gilles Simon, and Mitsutoshi Higashi. 2013. Warpage control of silicon interposer for 2.5D package application. In 2013 IEEE 63rd Electronic Components and Technology Conference . 879–884. [10] Soohyun Nam, Younglyong Kim, Aeni Jang, Inhyo Hwang, Sungwoo Park, Su-Chang Lee, and Dae-Woo Kim. 2021. The Extremely Large 2.5D Molded Interposer on Substrate (MIoS) Package Integration - Warpage and Reliability. In 2021 IEEE 71st Electronic Components and Technology Conference (ECTC) . 1998–2002. [11] Varun Darshana Parekh, Zachary Wyatt Hazenstab, Srivatsa Rangachar Srinivasa, Krishnendu Chakrabarty, Kai Ni, and Vijaykrishnan Narayanan. 2025. STAMP-2.5D: Structural and Thermal Aware Methodology for Placement in 2.5D Integra-tion. In 2025 IEEE 43rd International Conference on Computer Design (ICCD) . IEEE Computer Society, 159–166. [12] Alberto Sangiovanni-Vincentelli, Zheng Liang, Zhe Zhou, and Jiaxi Zhang. 2023. Automated design of chiplets. In Proceedings of the 2023 International Symposium on Physical Design . 1–8. [13] Qipan Wang, Xueqing Li, Tianyu Jia, Yibo Lin, Runsheng Wang, and Ru Huang. 2025. ATPlace2.5D: Analytical Thermal-Aware Chiplet Placement Framework for Large-Scale 2.5D-IC. In Proceedings of the 43rd IEEE/ACM International Conference on Computer-Aided Design .[14] Shan Yu, Haiyang Liu, Xinming Wei, Bizhao Shi, and Guojie Luo. 2025. TAC-Place: Ultrafast Thermal-Aware Chiplet Placement with Feasibility Seeking. In 
+
+Proceedings of the Great Lakes Symposium on VLSI 2025 . 600–605. [15] Runjie Zhang, Mircea R Stan, and Kevin Skadron. 2015. Hotspot 6.0: Validation, acceleration and extension. University of Virginia, Tech. Rep (2015).

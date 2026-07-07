@@ -1,0 +1,39 @@
+{
+  "label": "2026-07-07",
+  "date": "2026-07-07",
+  "generated_at": "2026-07-07T22:06:56",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202607/07/2607.02610v1-faplace-joint-optimization-of-chiplet-placement-and-interposer-footprint-for-25d-systems",
+      "section": "deep",
+      "title_en": "FAPlace: Joint Optimization of Chiplet Placement and Interposer Footprint for 2.5D Systems",
+      "authors": "Yubo Hou, Sezin Kircali Ata, Gen Liang Lim, Richard Chang, Mihai Dragos Rotaru, Rahul Dutta, Ashish James",
+      "date": "2026-07-01",
+      "pdf": "https://arxiv.org/pdf/2607.02610v1",
+      "score": "9.0",
+      "evidence": "2.5D系统中芯粒布局与中介层面积的联合优化",
+      "tldr": "针对2.5D系统中芯片放置与中介层尺寸的循环依赖问题，提出FAPlace框架。在足够大的画布上通过足迹感知掩码联合优化放置与足迹，融合面积紧凑度与宽高比惩罚。实验在减小线长和面积的同时实现接近1的宽高比，不牺牲热性能。",
+      "tags": "query:si-pi",
+      "abstract_en": "The placement of chiplets on a silicon interposer is a pivotal step in 2.5D system integration, yet existing placement approaches typically assume a pre-defined interposer footprint. This creates a circular dependency: the optimal footprint cannot be known without first solving the placement, while the placement itself is constrained by the given dimensions. An undersized interposer may exclude feasible placements, while an oversized one yields unnecessarily sparse solutions. Moreover, even when the footprint area is minimized, few existing approaches explicitly control the interposer's aspect ratio. To jointly address these challenges, we propose FAPlace, a footprint aware mask guided sequential placement framework. FAPlace operates on a sufficiently large canvas, eliminating the circular dependency by allowing the optimal interposer footprint to emerge as an output of the optimization rather than a pre-specified input. At its core is a novel footprint mask that fuses area compactness with an aspect ratio penalty into a unified spatial cost map. Integrated with wirelength and thermal guidance masks, FAPlace delivers holistic multi-physics optimization in a deterministic, single pass process. Experimental results demonstrate that FAPlace reduces wirelength and footprint area while achieving near-unity aspect ratios, without compromising on thermal performance.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/07/2607.03588v1-beyond-the-parasitic-limit-a-nanoprobing-framework-for-de-embedding-intrinsic-ferroelectric-properties-at-the-deep-sub-micrometer-scale",
+      "section": "quick",
+      "title_en": "Beyond the Parasitic Limit: A Nanoprobing Framework for De-embedding Intrinsic Ferroelectric Properties at the Deep Sub-Micrometer Scale",
+      "authors": "Niklas Kyoushi, Georg Schönweger, Ole Gronenberg, Dirk Meyners, Adrian Petraru, Fabian Lofink, Simon Fichtner",
+      "date": "2026-07-03",
+      "pdf": "https://arxiv.org/pdf/2607.03588v1",
+      "score": "6.0",
+      "evidence": "寄生参数去嵌入框架，可用于PDN阻抗建模",
+      "tldr": "深亚微米铁电器件的本征特性被寄生阻抗和边缘场严重掩盖。本文提出原位纳米探针框架，通过非线性屏蔽幂律模型解耦atto法拉级器件电容与探针相互作用，并利用电导缩放分析消除几何稀释伪影。成功提取165 nm直径AlScN电容的本征C-V和J-E回线。该框架提供了克服深亚微米铁电测量极限的通用分析工具包。",
+      "tags": "query:si-pi",
+      "abstract_en": "The continued scaling of ferroelectric devices is critical for next-generation computing architectures, yet it is fundamentally challenged by a metrological bottleneck: at the deep sub-micrometer scale, intrinsic material properties are heavily masked by extrinsic parasitic impedances and geometric fringing fields. Here, we introduce a quantitative, in-situ nanoprobing framework capable of resolving the true electrical response of ferroelectric capacitors down to 165 nm in diameter without the need for lithographic bond pads. Using 20 nm thick AlScN as a model system, we establish a non-linear 'Screened Power Law' model to decouple attofarad-level device capacitances from massive near-field probe interactions. Furthermore, we demonstrate that the apparent degradation of dielectric loss at the nanoscale is a geometric dilution artifact, which we overcome through a conductance scaling analysis. Finally, we apply this framework to large-signal characterization, utilizing leakage-compensation and noise filtering protocols to extract pristine intrinsic hysteresis (C-V and J-E) loops in the discrete few-grain limit. These findings provide a universal analytical toolkit required to overcome the measurement limits of deep-submicron ferroelectrics.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
