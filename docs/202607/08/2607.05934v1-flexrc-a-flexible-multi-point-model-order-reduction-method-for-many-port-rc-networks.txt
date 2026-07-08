@@ -1,0 +1,1669 @@
+Title: FlexRC: A Flexible Multi-Point Model Order Reduction Method for Many-Port RC Networks
+
+URL Source: https://arxiv.org/pdf/2607.05934v1
+
+Published Time: Wed, 08 Jul 2026 00:38:09 GMT
+
+Number of Pages: 14
+
+Markdown Content:
+> 1
+
+# FlexRC: A Flexible Multi-Point Model Order Reduction Method for Many-Port RC Networks 
+
+Yuncheng Xu, Siyuan Yin, Lin Liu, Fan Yang, Member, IEEE , Xuan Zeng, Senior Member, IEEE , Chengtao An, and Yangfeng Su 
+
+Abstract —Efficient model order reduction for many-port resistor-capacitor (RC) networks is essential in post-layout circuit simulation. Existing high-accuracy elimination-based methods have certain limitations, such as fixed frequency points, large reduced-order models, or high reduction cost. This paper pro-poses FlexRC, a flexible multi-point model order reduction method for many-port RC networks. FlexRC starts from the same elimination step as previous methods, and then constructs a nonorthogonal projection basis by a modified block rational Arnoldi process to generate a sparse banded reduced model. FlexRC features three adjustable components: user-specified frequency points, a tolerance-controlled port-reduction technique for the internal subsystem, and an optional sparsity-control strat-egy. We discuss passivity under port-reduction perturbations, analyze moment matching, and provide a conservative error estimate for port reduction. Numerical experiments on industrial RC examples and IBM power-grid examples demonstrate the effectiveness of FlexRC in terms of reduction time and transient simulation time. 
+
+Index Terms —Many-port RC networks, model order reduc-tion, multi-point moment matching, Krylov subspace methods, port reduction. 
+
+I. I NTRODUCTION 
+
+In modern IC design, interconnect effects have become a dominant factor in determining whole-chip performance [1]–[3]. Massive parasitic models, especially resistor-capacitor (RC) networks, are extracted and connected to nonlinear devices for post-layout simulation. The large numbers of nodes and ports in RC parasitic networks make direct nonlinear simulation computationally prohibitive and time-consuming. Model order reduction (MOR) is frequently used to speed up the simulation of interconnect circuits. MOR methods applied directly to the full nonlinear system, such as proper orthogonal decomposition (POD) [4]–[6], are computationally expensive. Therefore, RC reduction (RCR), which reduces the linear time-invariant RC networks before nonlinear simulation, has become the mainstream approach. An ideal RC reduction technique should yield accurate reduced-order models while preserving essential properties such as passivity [7], [8] and input-output structure [9]. The primary challenge in RCR lies in the large number of ports connecting the RC network to nonlinear devices. The input-output structure associated with 
+
+> Yuncheng Xu, Siyuan Yin, and Yangfeng Su are with the School of Mathematical Sciences, Fudan University, Shanghai, China. Lin Liu and Chengtao An are with Empyrean, China. Fan Yang and Xuan Zeng are with the State Key Laboratory of Integrated Chips and Systems, College of Integrated Circuits and Micro-Nano Electron-ics, Fudan University, Shanghai, China. Corresponding authors: Chengtao An (e-mail: ancht@empyrean.com.cn) and Yangfeng Su (e-mail: yfsu@fudan.edu.cn).
+
+these ports must be preserved during the reduction process to ensure that the reduced-order model can still be connected to the nonlinear devices for further analysis. High-accuracy MOR methods are difficult to apply to many-port RC networks. TBR-like methods [10]–[12] are limited by slowly decaying Hankel singular values and the high cost of Lyapunov equations [13], while factor division algorithms [14], [15] become impractical when both node and port counts are large. Traditional Krylov subspace methods, notably PRIMA [7], [8], are widely used but become inefficient for many-port networks because the dense projection matrix often produces dense reduced models [16]. Port-compression methods such as SVDMOR [17], ESVDMOR [18], and RECMOR [19] rely on port correlations that are often weak in practical networks [20]. Furthermore, these methods do not preserve the input-output structure. Alternative approaches such as SPRIM [21] and RLCSYN [9] preserve this structure, but suffer from increased model orders. State-of-the-art RC reduction methods primarily rely on elimination-based methods such as PACT [22], TICER [23], and SIP [24]. Instead of constructing an explicit projection matrix, these methods use sparse Gaussian elimination to generate reduced-order models that naturally preserve the original input-output structure. Enhanced by the partition strategy in SparseRC [25], these techniques often work well. However, they typically match only two DC moments, which may be insufficient for high-accuracy applications [24]. While multi-point matching was introduced in [24], it may result in singular reduced matrices. TurboMOR-RC [26] extends SIP to higher-order moment matching and generates banded sparse reduced-order models that can be solved efficiently, but its frequency point is fixed at s0 = 0 . SMP-RCR [27] proposes a sparse multi-point moment-matching method, but it requires the explicit generation of large dense intermediate blocks, which impairs its practicality for large-scale cases. This paper proposes FlexRC, a flexible multi-point model order reduction method for many-port RC networks. Starting from the standard port-preserving elimination step, FlexRC ap-plies a port-reduction technique to the coupling block between port nodes and internal nodes, thereby reducing the port num-ber of the internal subsystem. A block rational Arnoldi process with incomplete orthogonalization is then used to construct a nonorthogonal basis for the projection space. This construc-tion allows FlexRC to generate sparse banded reduced-order models similar to those of TurboMOR-RC. FlexRC is also compatible with the sparsity-control strategy used in SMP-RCR. Thus FlexRC combines user-specified frequency points arXiv:2607.05934v1 [eess.SY] 7 Jul 2026 2
+
+with a TurboMOR-RC-like sparse block structure, without explicitly constructing the dense intermediate blocks required in SMP-RCR. The flexibility of FlexRC comes from three adjustable components. First, the frequency points can be specified by the user to improve accuracy for the target transient response. Second, the port-reduction tolerance tol controls the error introduced by the port reduction and provides a practical trade-off between accuracy and reduced order. With suitable choices, FlexRC can significantly reduce the order with only a small loss of accuracy. Even in the conservative case tol = 0 , the re-sulting reduced models have simulation efficiency comparable to that of TurboMOR-RC. Third, the sparsity-control variant retains more nodes during elimination to generate a sparser reduced model and avoid overly dense reduced matrices. These mechanisms are especially useful for reducing the subsequent simulation time. In addition to the proposed reduction framework, we discuss passivity under port-reduction perturbations. For the exact reduction, passivity follows from the congruence structure of the construction. When port reduction is applied, the reduced capacitance matrix is symmetrically perturbed, and passivity is preserved if this perturbation is sufficiently small. We also analyze moment matching and provide a conservative error estimate for port reduction. Beyond the standard moment-matching analysis, we also consider RC networks with singular conductance matrices and prove a Laurent moment matching result for elimination-based RC reduction methods. To the best of our knowledge, this is the first treatment of this case for elimination-based RC reduction methods. Numerical experiments on industrial RC examples and IBM power-grid examples demonstrate the effectiveness of FlexRC in terms of reduction time and simulation time. The results also show the benefits of the three adjustable components in our flexible framework. The rest of this paper is organized as follows. In Section II, we describe the RC reduction problem and review projection-based and elimination-based methods. In Section III, we present the FlexRC method and its implementation details. In Section IV, we analyze the passivity, moment-matching prop-erties, and port-reduction error bound. Numerical experiments are reported in Section V. Finally, conclusions are drawn in Section VI, and some mathematical proofs are provided in the Appendix. II. RC REDUCTION AND PREVIOUS METHODS 
+
+This section introduces the basic notation for RC reduction and the concept of moment matching, followed by a review of projection-based Krylov subspace methods and elimination-based methods for RC reduction. 
+
+A. RC reduction and moment matching 
+
+Using modified nodal analysis [28], an RC network with 
+
+N nodes and p ports can be described by the following differential-algebraic equations 
+
+(C ˙x(t) + Gx (t) = Bu (t),y(t) = B⊤x(t), (1) where the input vector u collects all port currents, the output vector y collects all port voltages, and the vector x contains all nodal voltages. Matrices G, C ∈ RN ×N represent the conductance and capacitance matrices, respectively, and both are symmetric positive semidefinite. The incidence matrix 
+
+B ∈ RN ×p relates the input sources to the corresponding nodes. In this paper, we assume that the nodes have been permuted such that the port nodes are ordered first and the internal nodes follow. In this ordering, B can be written as 
+
+B =
+
+ Ip
+
+0(N −p)×p
+
+
+
+.
+
+Thus the first p nodal variables correspond exactly to the port nodes. The objective of RC reduction (RCR) is to approximate (1) with a reduced-order model of order r ≪ N ,
+
+( ˜C ˙˜x(t) + ˜G˜x(t) = ˜Bu (t),
+
+˜y(t) = ˜B⊤ ˜x(t), (2) where ˜G, ˜C ∈ Rr×r and ˜B ∈ Rr×p. In addition to accuracy, the reduced matrices ˜G and ˜C must remain symmetric positive semidefinite to ensure symmetry, stability, and passivity [11], [24], [25]. Furthermore, the primary challenge in RCR stems from the large number of ports connecting the parasitic RC network to nonlinear devices. The input-output structure must be preserved so that the reduced model can be synthesized into a compatible equivalent RC netlist for further analysis [9], [25]. Consequently, the reduced incidence matrix ˜B should retain the form 
+
+˜B =
+
+ Ip
+
+0(r−p)×p
+
+
+
+.
+
+A standard approach to ensuring approximation accuracy is through moment matching. The transfer functions of the original model (1) and the reduced-order model (2) are given by H(s) = B⊤(G + sC )−1B and ˜H(s) = ˜B⊤( ˜G + s ˜C)−1 ˜B,respectively. Given an expansion point s0 ≥ 0, let A(s0) := 
+
+G+s0C and assume that A(s0) is nonsingular. Then the Taylor expansion of H(s) around s = s0 can be written as 
+
+H(s) = 
+
+> ∞
+
+X
+
+> k=0
+
+Mk(s0)( s − s0)k,
+
+where the k-th order moments Mk(s0) are given by 
+
+Mk(s0) := ( −1) kB⊤(A(s0)−1C)kA(s0)−1B. 
+
+Similarly, ˜Mk(s0) can be defined for the reduced-order model. The reduced system is said to match the first m moments around s = s0 if 
+
+˜Mk(s0) = Mk(s0), k = 0 , 1, . . . , m − 1.
+
+For RC reduction, a particularly important expansion point is 
+
+s0 = 0 , which corresponds to the DC moments [7]. 3
+
+B. Projection-based methods 
+
+Projection-based Krylov subspace methods provide astandard way to achieve moment matching. The order-
+
+q block Krylov subspace is defined as Kq (A, B ) := colspan B, AB, . . . , A q−1B . PRIMA [7], [8] is a classical and widely used Krylov-subspace MOR method in circuit simulation. In PRIMA, a block Arnoldi process is performed to generate an orthogonal matrix V whose columns span the Krylov subspace Kq (A(s0)−1C, A (s0)−1B). The reduced-order model is subsequently obtained by the congruence transformations 
+
+˜C = V ⊤CV, ˜G = V ⊤GV, ˜B = V ⊤B. 
+
+The following standard result from [29] shows that the re-sulting reduced model matches the first 2q moments of the original system around s = s0.
+
+Theorem II.1. Suppose G + s0C and ˜G + s0 ˜C are both non-singular. If the subspace colspan {V } contains the Krylov sub-space Kq (( G + s0C)−1C, (G + s0C)−1B), then the reduced-order system matches the first 2q moments around s = s0.
+
+The reduced-order model generated by PRIMA is passive, but it does not maintain the specific input-output structure required for RC networks. To address this limitation, methods such as SPRIM [21] and RLCSYN [9] partition the matrix V
+
+into two blocks denoted by Vp and Vi
+
+V =
+
+Vp
+
+Vi
+
+
+
+, Vp ∈ Rp×r , Vi ∈ R(N −p)×r .
+
+The projection matrix is then constructed as 
+
+VR =
+
+Ip
+
+orth( Vi)
+
+
+
+,
+
+where orth( Vi) denotes the orthogonalization of the submatrix 
+
+Vi. The moment-matching property remains satisfied by the reduced-order model, but the reduced order increases by p,and the orthogonalization of Vi can be expensive. 
+
+C. Elimination-based methods 
+
+The reduced matrices ˜G and ˜C generated by projection-based subspace methods are typically dense, so solving the reduced-order model can still be computationally expensive. To address this issue, elimination-based methods [24]–[26] have been proposed. These methods naturally preserve the port nodes and the original input-output structure during elimination. SIP [24] performs projections implicitly through Gaussian elimination. The circuit equations (1) are partitioned into port nodes and internal nodes as follows 
+
+ Gp G⊤
+
+> c
+
+Gc Gi
+
+
+
++ s
+
+Cp C⊤
+
+> c
+
+Cc Ci
+
+  xp
+
+xi
+
+
+
+=
+
+Ip
+
+0
+
+
+
+u, (3) where Gp, C p ∈ Rp×p represent the contributions between port nodes; Gi, C i ∈ R(N −p)×(N −p) represent the contri-butions between internal nodes; and Gc, C c ∈ R(N −p)×p
+
+describe the coupling between internal and port nodes. For the DC expansion point s0 = 0 , assume that Gi is nonsingular and define V1 = G−1i Gc. SIP constructs the transformation matrix 
+
+M =
+
+ Ip 0
+
+−V1 IN −p
+
+
+
+,
+
+and applies congruence transformations with M to the original system (1), yielding 
+
+M ⊤GM =
+
+ ˜Gp 00 Gi
+
+
+
+, M ⊤CM =
+
+ ˜Cp ˜C⊤
+
+> c
+
+˜Cc Ci
+
+
+
+. (4) This congruence transformation eliminates the coupling block 
+
+Gc in the conductance matrix and can be implemented by Gaussian elimination. During this process, the internal sub-matrices Gi, C i and the incidence matrix B remain invariant. The reduced-order model is then obtained by eliminating the internal nodes: 
+
+˜G = ˜Gp, ˜C = ˜Cp, ˜B = Ip.
+
+The reduced-order system generated by SIP is passive and matches the first two moments around s = 0 .TurboMOR-RC [26] extends SIP to match 2q moments at 
+
+s = 0 . Starting with (4), TurboMOR-RC first normalizes Gi to 
+
+IN −p using the Cholesky factor L of Gi. The coupling matrix is then decomposed by Householder QR as 
+
+L−1 ˜Cc = Q(2) 
+
+R(2) 
+
+0
+
+
+
+,
+
+where Q(2) ∈ R(N −p)×(N −p) is the product of a series of Householder reflections, and R(2) ∈ Rp×p is upper triangular. After the corresponding congruence transformation, the orig-inal system can be partitioned as 
+
+G(2) =
+
+
+
+˜Gp
+
+Ip
+
+IN −2p
+
+ ,C(2) =
+
+
+
+˜Cp
+
+ R(2) ⊤ 0
+
+R(2) C(2) p
+
+
+
+C(2) c
+
+⊤
+
+0 C(2) c C(2) i
+
+ .
+
+Repeating this procedure for another q − 2 stages and retain-ing the first qp variables yields the reduced-order model of TurboMOR-RC. The resulting reduced matrices have a banded structure, with both lower and upper bandwidths equal to p,so the reduced-order model can be solved more efficiently. In practical implementation, the matrices that are not re-tained in the final reduced-order model need not be explicitly generated. For example, for q = 2, the discarded blocks 
+
+C(2) c and C(2) i are not needed and therefore need not be generated. This is important because these discarded blocks can be very large and dense, so explicitly forming them can require substantial computation time and memory. SMP-RCR [27] is a multi-point moment-matching method. Unlike TurboMOR-RC, whose frequency point is fixed at 
+
+s0 = 0 , SMP-RCR allows the frequency sequence to be chosen freely to improve accuracy. It also applies a deflation strategy and sparsity-control technique to improve the efficiency of the reduced-order model. However, SMP-RCR must explicitly 4
+
+generate the intermediate discarded blocks that are not retained in the final reduced-order model. Since these blocks can be very large and dense, the reduction time and memory cost can become prohibitive for large-scale cases. III. P ROPOSED METHOD 
+
+In this section, we present FlexRC, a multi-point moment-matching reduction method for RC networks. Let 
+
+S := [ s1, s 2, . . . , s q ]
+
+denote the prescribed sequence of frequency points, where 
+
+s1, s 2, . . . , s q are nonnegative real numbers. For RC reduction, the first frequency point is chosen to be s1 = 0 to match the DC moments. To make the construction clear, we first describe the two-point case and then extend it to q ≥ 3. The corresponding moment-matching property and error estimates are analyzed in the next section. 
+
+A. Two-point case 
+
+We first describe the reduction procedure for the two-point case with frequency sequence [s1 = 0 , s 2]. Starting from (4), the conductance coupling between the port variables and the internal variables has been eliminated, while the remaining interaction is carried by the capacitive block ˜Cc. Similar to TurboMOR-RC, FlexRC keeps the effect of the internal subsystem and reduces the following internal subsystem at the additional frequency point: 
+
+Σi :
+
+(Ci ˙xi + Gixi = ˜Ccui,yi = ˜C⊤ 
+
+> c
+
+xi. (5) Before reduction, we first perform port reduction on the internal coupling matrix ˜Cc. Instead of performing a full QR decomposition in TurboMOR-RC or SMP-RCR, we compute an economic QR decomposition 
+
+˜Cc = QR, 
+
+where Q ∈ R(N −p)×p has orthonormal columns and R ∈
+
+Rp×p is upper triangular. The subsequent port reduction is performed by row norms. Let 
+
+ρj := ∥R(j, :) ∥2 , j = 1 , . . . , p, 
+
+and let π be a permutation such that ρπ1 ≤ · · · ≤ ρπp . Given a prescribed port-reduction tolerance tol , we choose the largest integer m ∈ { 0, 1, . . . , p } such that 
+
+pρ2 
+
+> π1
+
++ · · · + ρ2
+
+> πm
+
+∥R∥F
+
+≤ tol .
+
+The rows indexed by 
+
+J := {π1, . . . , π m}
+
+are discarded, and the remaining rows 
+
+I := {1, . . . , p } \ J 
+
+are retained. Set pi = |I| and define 
+
+Bi = Q(: , I), Ri = R(I, :) .
+
+After discarding these rows, we obtain the low-rank approxi-mation 
+
+˜Cc ≈ BiRi.
+
+Since Q has orthonormal columns, the truncation error satisfies 
+
+˜Cc − BiRi F
+
+˜Cc F
+
+= ∥Q(: , J )R(J , :) ∥F
+
+∥QR ∥F
+
+= ∥R(J , :) ∥F
+
+∥R∥F
+
+≤ tol .
+
+Define 
+
+∆ := BiRi − ˜Cc.
+
+Thus the port reduction step can be interpreted as a relative backward perturbation of the internal coupling matrix: 
+
+∥∆∥F / ˜Cc F
+
+≤ tol .
+
+The corresponding perturbed internal subsystem is given by 
+
+Σ∆i :
+
+((Gi + sC i)xi = ( BiRi)ui,yi = ( BiRi)⊤xi. (6) The following reduction is applied to this perturbed subsystem. Since only the pi columns of Bi are used to generate the internal basis, the dimension of the reduced-order model is reduced accordingly. For the second frequency point s2, we apply a Krylov-subspace projection to the perturbed internal subsystem. To preserve the sparsity inherited from Ri, however, we do not construct an orthonormal block basis. First, we compute the 
+
+0-th moment block by 
+
+ˆV2D = ( Gi + s2Ci)−1Bi,
+
+where D is a nonsingular diagonal matrix induced by column normalization. In practice, ˆV2 is obtained by normalizing each column of (Gi + s2Ci)−1Bi separately. This step is only a column scaling to improve numerical stability, so ˆV2 is not an orthonormal basis in general. Let 
+
+T2 = B⊤ 
+
+> i
+
+ˆV2.
+
+Note that 
+
+T2 = B⊤ 
+
+> i
+
+(Gi + s2Ci)−1BiD−1.
+
+The matrix Gi + s2Ci is symmetric positive definite, Bi has full column rank, and D is nonsingular. Therefore, the matrix 
+
+T2 is nonsingular. We then apply the small change of basis 
+
+V2 = ˆV2T −12 .
+
+After this basis change, it holds that 
+
+V ⊤ 
+
+> 2
+
+Bi = Ipi .
+
+Projecting the perturbed subsystem (6) with V2 gives 
+
+˜Gi = V ⊤ 
+
+> 2
+
+GiV2, ˜Ci = V ⊤ 
+
+> 2
+
+CiV2, ˜Bi = V ⊤ 
+
+> 2
+
+BiRi.
+
+With V ⊤ 
+
+> 2
+
+Bi = Ipi , the reduced coupling matrix is exactly 
+
+˜Bi = Ri.5
+
+Thus the sparsity obtained from the truncated coefficient matrix Ri is inherited directly by the reduced coupling block. Since s1 = 0 , the final reduced-order model is 
+
+˜G =
+
+ ˜Gp 00 ˜Gi
+
+
+
+, ˜C =
+
+ ˜Cp R⊤
+
+> i
+
+Ri ˜Ci
+
+
+
+, ˜B =
+
+Ip
+
+0
+
+
+
+.
+
+In practical implementation, we do not explicitly form V2 =ˆV2T −12 . Instead, we first project the internal matrices using ˆV2,and then apply the small transformation induced by T2 to the reduced matrices. More precisely, if 
+
+ˆGi = ˆV ⊤ 
+
+> 2
+
+Gi ˆV2, ˆCi = ˆV ⊤ 
+
+> 2
+
+Ci ˆV2,
+
+then 
+
+˜Gi = T −⊤  
+
+> 2
+
+ˆGiT −12 , ˜Ci = T −⊤  
+
+> 2
+
+ˆCiT −12 , ˜Bi = Ri.
+
+The resulting computational procedure is summarized in Al-gorithm 1. 
+
+Algorithm 1 Two-point FlexRC reduction 
+
+Input: G, C ∈ RN ×N , B ∈ RN ×p; frequency points [0 , s 2];port-reduction tolerance tol .
+
+Output: Reduced matrices ˜G, ˜C, and ˜B. 
+
+> 1:
+
+Apply elimination as in (4) to obtain ˜Gp, ˜Cp, and ˜Cc. 
+
+> 2:
+
+Compute an economic QR decomposition ˜Cc = QR . 
+
+> 3:
+
+Compute row norms ρj = ∥R(j, :) ∥2 for j = 1 , . . . , p . 
+
+> 4:
+
+Sort the row indices so that ρπ1 ≤ · · · ≤ ρπp . 
+
+> 5:
+
+Choose the largest m ∈ { 0, 1, . . . , p } such that 
+
+q
+
+ρ2 
+
+> π1
+
++ · · · + ρ2 
+
+> πm
+
+/ ∥R∥F ≤ tol . 
+
+> 6:
+
+Set J = {π1, . . . , π m}, I = {1, . . . , p } \ J , and pi = |I| . 
+
+> 7:
+
+Set Bi = Q(: , I) and Ri = R(I, :) . 
+
+> 8:
+
+Solve (Gi + s2Ci)X = Bi, and normalize each column of 
+
+X to obtain ˆV2 and D satisfying ˆV2D = X. 
+
+> 9:
+
+Compute T2 = B⊤ 
+
+> i
+
+ˆV2. 
+
+> 10:
+
+Compute ˆGi = ˆV ⊤ 
+
+> 2
+
+Gi ˆV2 and ˆCi = ˆV ⊤ 
+
+> 2
+
+Ci ˆV2. 
+
+> 11:
+
+Set ˜Gi = T −⊤  
+
+> 2
+
+ˆGiT −12 , ˜Ci = T −⊤  
+
+> 2
+
+ˆCiT −12 , and ˜Bi = Ri. 
+
+> 12:
+
+Assemble the final reduced model: 
+
+˜G =
+
+ ˜Gp 00 ˜Gi
+
+
+
+, ˜C =
+
+ ˜Cp R⊤
+
+> i
+
+Ri ˜Ci
+
+
+
+, ˜B =
+
+Ip
+
+0
+
+
+
+.
+
+B. More frequency points 
+
+When more than two frequency points are used, FlexRC projects the perturbed internal subsystem onto the rational Krylov subspace [30] associated with the frequency sequence 
+
+[s2, . . . , s q ]. Unlike the standard rational Arnoldi process in [30], FlexRC uses incomplete orthogonalization and constructs a nonorthogonal projection basis. This modification preserves the sparse coupling structure induced by Ri.The first block V2 has already been constructed in the two-point case. Starting from V2, we construct the orthonormal blocks V3, . . . , V q one at a time, so that [V2, V 3, . . . , V q ] spans the rational Krylov subspace associated with [s2, . . . , s q ]. For 
+
+k = 3 , . . . , q , in the iteration associated with sk, we first form the candidate block 
+
+Wk = ( Gi + skCi)−1CiVk−1.
+
+Since V2 is not orthonormal in general, its contribution is removed using the orthogonal projector onto colspan {V2}:
+
+Wk ← Wk − V2(V ⊤ 
+
+> 2
+
+V2)−1(V ⊤ 
+
+> 2
+
+Wk).
+
+The block Wk is then orthogonalized against the previously generated blocks V3, . . . , V k−1 by Gram–Schmidt. Finally, as in the port-reduction step, an economic QR decomposition with deflation tolerance tol is applied to discard nearly de-pendent columns. The surviving columns form Vk, and the basis generated by the incomplete orthogonalization process is 
+
+Vi = [ V2, V 3, . . . , V q ] .
+
+Thus the columns in V3, . . . , V q are orthonormal and orthog-onal to colspan {V2}, while V2 itself is not orthonormal in general. This is why the process is described as incomplete orthogonalization. The procedure is summarized in Algorithm 2. 
+
+Algorithm 2 Block rational Arnoldi process with incomplete orthogonalization 
+
+Input: Gi, C i ∈ R(N −p)×(N −p); internal block V2; frequency points s3, . . . , s q ; deflation tolerance tol .
+
+Output: Basis Vi = [ V2, V 3, . . . , V q ]. 
+
+> 1:
+
+Set Vi = V2. 
+
+> 2:
+
+for k = 3 , . . . , q do  
+
+> 3:
+
+Compute W = ( Gi + skCi)−1CiVk−1. 
+
+> 4:
+
+Remove the component in V2:
+
+W ← W − V2(V ⊤ 
+
+> 2
+
+V2)−1(V ⊤ 
+
+> 2
+
+W ). 
+
+> 5:
+
+for j = 3 , . . . , k − 1 do  
+
+> 6:
+
+Orthogonalize against the previous block: 
+
+W ← W − Vj (V ⊤ 
+
+> j
+
+W ). 
+
+> 7:
+
+Compute an economic QR decomposition W = QR ,and let nk be the number of columns of Q. 
+
+> 8:
+
+Compute row norms ρj = ∥R(j, :) ∥2 for j =1, . . . , n k. 
+
+> 9:
+
+Sort the row indices so that ρπ1 ≤ · · · ≤ ρπnk . 
+
+> 10:
+
+Choose the largest mk ∈ { 0, 1, . . . , n k} such that 
+
+q
+
+ρ2 
+
+> π1
+
++ · · · + ρ2
+
+> πmk
+
+/ ∥R∥F ≤ tol . 
+
+> 11:
+
+Set Jk = {π1, . . . , π mk } and Ik = {1, . . . , n k} \ J k. 
+
+> 12:
+
+Set Vk = Q(: , Ik). 
+
+> 13:
+
+if Vk is empty then  
+
+> 14:
+
+Stop.  
+
+> 15:
+
+Append Vk to Vi: Vi ← [Vi, V k].We next apply a change of basis so that the reduced coupling matrix has the desired sparse block form. Write Vi = [ V2 |
+
+Vtail ] and compute 
+
+Ttail = B⊤ 
+
+> i
+
+Vtail .
+
+Since B⊤ 
+
+> i
+
+V2 = Ipi , replacing the tail block by 
+
+˜Vtail = Vtail − V2Ttail 
+
+removes its component seen by Bi:
+
+B⊤ 
+
+> i
+
+˜Vtail = B⊤ 
+
+> i
+
+Vtail − B⊤ 
+
+> i
+
+V2Ttail = Ttail − Ttail = 0 .6
+
+Therefore, with the new basis 
+
+˜Vi = [ V2 | ˜Vtail ],
+
+it holds that 
+
+˜V ⊤ 
+
+> i
+
+Bi =
+
+Ipi
+
+0
+
+
+
+.
+
+After this change of basis, we project the perturbed internal subsystem (6) with ˜Vi. The internal reduced matrices are 
+
+˜Gi = ˜V ⊤ 
+
+> i
+
+Gi ˜Vi, ˜Ci = ˜V ⊤ 
+
+> i
+
+Ci ˜Vi.
+
+The corresponding reduced coupling matrix is 
+
+˜Bi = ˜V ⊤ 
+
+> i
+
+BiRi =
+
+Ri
+
+0
+
+
+
+.
+
+Thus only the first pi reduced internal coordinates are directly coupled to the port variables. In practical implementation, neither the scaled block V2 =ˆV2T −12 nor the equivalent basis ˜Vi is formed explicitly. The incomplete Arnoldi process is carried out with the normal-ized block ˆV2, which spans the same subspace as V2. After projecting with the computed basis ˆVi = [ ˆV2 | Vtail ], the transformations induced by T2 and Ttail are applied only to the reduced matrices. More precisely, let 
+
+Ti =
+
+T −12 −T −12 Ttail 
+
+0 I
+
+
+
+.
+
+Denote ˆGi = ˆV ⊤ 
+
+> i
+
+Gi ˆVi and ˆCi = ˆV ⊤ 
+
+> i
+
+Ci ˆVi. Then 
+
+˜Gi = T ⊤ 
+
+> i
+
+ˆGiTi, ˜Ci = T ⊤ 
+
+> i
+
+ˆCiTi.
+
+With respect to ˜Vi = [ V2 | ˜Vtail ], we can write 
+
+˜Gi =
+
+ ˜G2,2 ˜G⊤
+
+> tail ,2
+
+˜Gtail ,2 ˜Gtail ,tail 
+
+
+
+, ˜Ci =
+
+ ˜C2,2 ˜C⊤
+
+> tail ,2
+
+˜Ctail ,2 ˜Ctail ,tail 
+
+
+
+,
+
+where the blocks ˜G2,2 and ˜C2,2 have size pi × pi. The following proposition shows that ˜Gtail ,2 and ˜Ctail ,2 are linearly dependent. 
+
+Proposition III.1. The off-diagonal blocks satisfy 
+
+˜Gtail ,2 = −s2 ˜Ctail ,2.
+
+The proof is given in Appendix A-A. Since ˜Gtail ,2 is a scalar multiple of ˜Ctail ,2, a QR factorization of ˜Ctail ,2 can be used to sparsify both off-diagonal blocks. We compute a full QR decomposition 
+
+˜Ctail ,2 = Qtail Rtail ,2
+
+where Qtail is a square orthogonal matrix, and Rtail ,2 has zeros below its main diagonal. We then apply the block diagonal congruence transformation induced by 
+
+Ptail =
+
+Ipi 00 Qtail 
+
+
+
+to the internal reduced matrices. For notational simplicity, the transformed tail diagonal blocks are still denoted by ˜Gtail ,tail 
+
+and ˜Ctail ,tail . The transformed internal reduced matrices are 
+
+˜Gi =
+
+ ˜G2,2 −s2R⊤
+
+> tail ,2
+
+−s2Rtail ,2 ˜Gtail ,tail 
+
+
+
+,
+
+˜Ci =
+
+ ˜C2,2 R⊤
+
+> tail ,2
+
+Rtail ,2 ˜Ctail ,tail 
+
+
+
+.
+
+The reduced coupling matrix remains unchanged under this transformation: 
+
+˜Bi = P ⊤
+
+> tail
+
+Ri
+
+0
+
+
+
+=
+
+Ri
+
+0
+
+
+
+.
+
+For q ≥ 4, similar sparsification operations can be further applied to the tail blocks ˜Gtail ,tail and ˜Ctail ,tail , but this extension is not pursued because two or three points are usually sufficient in practical applications. Cascading the retained port-node subsystem with the pro-jected internal subsystem gives the final reduced-order model: 
+
+˜G =
+
+
+
+˜Gp 0 00 ˜G2,2 −s2R⊤
+
+> tail ,2
+
+0 −s2Rtail ,2 ˜Gtail ,tail 
+
+ ,
+
+˜C =
+
+
+
+˜Cp R⊤ 
+
+> i
+
+0
+
+Ri ˜C2,2 R⊤
+
+> tail ,2
+
+0 Rtail ,2 ˜Ctail ,tail 
+
+ ,
+
+˜B =
+
+
+
+Ip
+
+00
+
+ .
+
+(7) The complete multi-point FlexRC procedure is summarized in Algorithm 3. 
+
+Algorithm 3 Multi-point FlexRC reduction 
+
+Input: G, C ∈ RN ×N , B ∈ RN ×p; frequency points [s1 =0, s 2, . . . , s q ]; port-reduction tolerance tol .
+
+Output: Reduced matrices ˜G, ˜C, and ˜B. 
+
+> 1:
+
+Apply the elimination and port-reduction steps in Algo-rithm 1 to obtain Gi, Ci, Bi, Ri, ˜Gp, ˜Cp, ˆV2, and T2. 
+
+> 2:
+
+if q ≤ 2 then  
+
+> 3:
+
+Return the reduced model in Algorithm 1.  
+
+> 4:
+
+Apply Algorithm 2 with ˆV2 to obtain ˆVi = [ ˆV2 | Vtail ]. 
+
+> 5:
+
+Project the internal subsystem with ˆVi and apply the change of basis described above to obtain ˜Gi, ˜Ci, and 
+
+˜Bi. 
+
+> 6:
+
+Apply the block sparsification based on Proposition III.1 to obtain Rtail ,2 and the transformed internal blocks.  
+
+> 7:
+
+Assemble ˜G, ˜C, and ˜B as in (7). 
+
+C. Discussion and sparsity control 
+
+The reduction process above generates a reduced model with a banded block structure, consistent with the structure obtained by TurboMOR-RC. Unlike a fixed reduction proce-dure, FlexRC leaves several choices to the user: the sequence of frequency points, the port-reduction tolerance, and the sparsity-control option. These adjustable components are the main source of the flexibility of FlexRC, allowing the reduced model to be tuned for accuracy, reduced order, and simulation efficiency. The first practical choice in FlexRC is the sequence of frequency points S. For RC reduction, the frequency points are usually chosen as nonnegative real numbers, so that each 7
+
+matrix Gi + skCi is real and the whole reduction procedure only involves real arithmetic. The moment-matching effect of the frequency sequence is analyzed in Section IV-B. In our experience, two frequency points are usually sufficient to capture the time-domain behavior of practical RC networks. Using more than three points can substantially increase the reduced order, and the reduced model may even become less efficient than the original system. The second practical choice is the tolerance tol . This param-eter controls the trade-off between the accuracy of the reduced model and its simulation efficiency. In principle, the tolerance for port reduction and the tolerance for Arnoldi deflation can be set independently. In the numerical experiments of this paper, however, we use the same tolerance tol for both steps. The most conservative choice is tol = 0 , for which no direction is discarded in the port-reduction and deflation steps. In this case, if all frequency points are chosen as 0,the resulting FlexRC model differs from the TurboMOR-RC model only by a nonsingular change of basis. By choosing an appropriate tolerance, FlexRC can significantly reduce the reduced order without noticeably affecting accuracy in many practical cases; an error analysis is given in Section IV-C. However, an overly aggressive tolerance may degrade the accuracy. At present, an a priori strategy for selecting tol is not available, and this remains future work. Finally, FlexRC also supports a sparsity-control variant. Eliminating too many local nodes in the first step may in-troduce severe fill-in and make the reduced model too dense. To control this effect, one can preserve more internal nodes in the first elimination step, following the spirit of SMP-RCR [27]. Indeed, if P is the original port-node set, we choose an enlarged retained set Psc with P ⊆ P sc , where the additional nodes are auxiliary retained nodes rather than external ports. This sparsity-control variant keeps more variables before reduction, but it can substantially improve the sparsity of the final matrices by reducing fill-in in the initial elimination. In the port-reduction step, more directions can be discarded, and a sparse QR factorization often produces a sparser factor R. In our implementation, the enlarged retained set usually contains about two times the number of original ports, and a two-point model is often already sufficiently accurate with this strategy. IV. A NALYSIS 
+
+A. Passivity 
+
+The passivity of the RC network is intrinsically linked to the symmetric positive semidefiniteness of the conductance and capacitance matrices. We use the following standard positive-real characterization from [11]. 
+
+Theorem IV.1. Let G, C ∈ RN ×N be symmetric positive semidefinite matrices, and let B ∈ RN ×p. If ker G ∩ ker C =
+
+{0}, then the transfer function H(s) = B⊤(G + sC )−1B
+
+is positive real. Specifically, H(s) satisfies the following conditions: 1) H(s) is analytic in the open right half-plane C+;2) H(s) + H(s)∗ ⪰ 0 for all s ∈ C+.
+
+Apart from port reduction, the overall FlexRC procedure can be summarized by two steps. The first step eliminates the coupling block of the conductance matrix by Gaussian elimination, which is equivalent to the congruence transforma-tion with the matrix M in (4). The second step is projection of the internal subsystem with the nonorthogonal basis ˜Vi,which is equivalent to a congruence-type projection of the transformed system with diag 
+
+n
+
+Ip, ˜Vi
+
+o
+
+. The additional block sparsification in the multi-point case is only an equivalent con-gruence change of basis inside the reduced internal subsystem. Therefore, if port reduction is not applied, the reduced matrices 
+
+˜G and ˜C remain symmetric positive semidefinite. The port-reduction step changes the reduced model only through the replacement of the coupling matrix ˜Cc by BiRi.From the viewpoint of the reduced model obtained above, this replacement introduces a symmetric perturbation to the capacitance matrix ˜C. Such a perturbation may theoretically destroy positive semidefiniteness. In practice, however, the reduced capacitance matrix before port reduction is usually positive definite, and a sufficiently small perturbation preserves positive definiteness by Weyl’s lemma [31]. In our numerical experiments, with the tolerances used for port reduction, no passivity violation has been observed. 
+
+B. Moment matching 
+
+We now discuss the moment-matching properties. The anal-ysis in this subsection assumes the exact case tol = 0 , so that no perturbation is introduced. In this case, the basis ˜Vi
+
+spans the rational Krylov subspace of the internal subsystem associated with the frequency points [s2, . . . , s q ]. The moment matching of the full transfer function then follows from the internal moment matching and the Schur-complement relation. Let H(s) = B⊤(G + sC )−1B and ˜H(s) = ˜B⊤( ˜G +
+
+s ˜C)−1 ˜B denote the transfer functions of the original and reduced systems, respectively. For any s0 ≥ 0, let q(s0)
+
+denote the number of occurrences of s0 in the sequence 
+
+S = [ s1, s 2, . . . , s q ] = [0 , s 2, . . . , s q ]. The following theorem characterizes the moment-matching property of FlexRC. 
+
+Theorem IV.2. Suppose G + s0C and ˜G + s0 ˜C are nonsin-gular. Then, for FlexRC with tol = 0 , ˜H(s) matches the first 
+
+2q(s0) moments of H(s) at s = s0.
+
+In practical RC networks, the conductance matrix G is often singular because some connected components of the resistor network may not contain a grounding resistor. In this case, 
+
+s0 = 0 may become a pole of the transfer function. Such cases have been considered in Lyapunov balancing to obtain a bounded H∞-norm estimate [11], but they have not been addressed in the moment-matching analysis of elimination-based methods. For RC networks with singular G, if ker G ∩
+
+ker C = {0}, then the transfer functions H(s) and ˜H(s) admit the following Laurent expansions [11]: 
+
+H(s) = M−1
+
+s +
+
+> ∞
+
+X
+
+> k=0
+
+Mksk, ˜H(s) = ˜M−1
+
+s +
+
+> ∞
+
+X
+
+> k=0
+
+˜Mksk.
+
+Since s1 = 0 in the sequence S, the number of occurrences 
+
+q(0) ≥ 1. The following theorem gives the Laurent moment matching of FlexRC. 8
+
+Theorem IV.3. Suppose the conductance matrix G is singular and ker G∩ker C = {0}. Then, for exact FlexRC with tol = 0 ,
+
+˜H(s) satisfies 
+
+˜Mk = Mk, k = −1, 0, . . . , 2q(0) − 3.
+
+Proof. We prove Theorem IV.2 and Theorem IV.3 together. Let Hi(s) and ˜Hi(s) be the transfer functions of the internal subsystem before and after reduction, respectively: 
+
+Hi(s) = ˜C⊤ 
+
+> c
+
+(Gi + sC i)−1 ˜Cc,
+
+˜Hi(s) = ˜B⊤ 
+
+> i
+
+( ˜Gi + s ˜Ci)−1 ˜Bi.
+
+The transfer function of the full system can be written by the Schur complement as 
+
+H(s) = 
+
+ ˜Gp + s ˜Cp − s2Hi(s)
+
+−1
+
+.
+
+Similarly, the reduced model satisfies 
+
+˜H(s) = 
+
+ ˜Gp + s ˜Cp − s2 ˜Hi(s)
+
+−1
+
+.
+
+Therefore, 
+
+H(s) − ˜H(s) = H(s)
+
+h
+
+s2 Hi(s) − ˜Hi(s)i ˜H(s).
+
+Since tol = 0 , the basis ˜Vi spans the rational Krylov subspace of the internal subsystem. By Theorem II.1, if s0 appears k
+
+times in the internal frequency sequence [s2, . . . , s q ], then the internal transfer functions satisfy 
+
+Hi(s) − ˜Hi(s) = O(( s − s0)2k).
+
+We first consider the non-pole case in Theorem IV.2. If s0 =0, then the frequency point s0 is used once by the elimination step and appears q(0) −1 times in [s2, . . . , s q ]. Hence Hi(s)−
+
+˜Hi(s) = O(s2q(0) −2), and 
+
+H(s) − ˜H(s) = O(s2) · O(1) · O(s2q(0) −2) · O(1) = O(s2q(0) ).
+
+If s0̸ = 0 , then s0 appears q(s0) times in [s2, . . . , s q ]. Since 
+
+s2 = s20 + O(s − s0) with s20̸ = 0 , we obtain 
+
+H(s) − ˜H(s) = O(1) · O(1) · O (s − s0)2q(s0) · O(1) = O (s − s0)2q(s0).
+
+Thus ˜H(s) matches the first 2q(s0) moments of H(s) at s =
+
+s0.We now consider the pole case in Theorem IV.3. The same internal moment matching gives Hi(s)− ˜Hi(s) = O(s2q(0) −2).From the Laurent expansions, H(s) = O(s−1) and ˜H(s) = 
+
+O(s−1). Therefore 
+
+H(s) − ˜H(s) = O(s2) · O(s−1) · O(s2q(0) −2) · O(s−1)= O(s2q(0) −2).
+
+Comparing Laurent coefficients gives ˜Mk = Mk for k =
+
+−1, 0, . . . , 2q(0) − 3.The result in Theorem IV.3 is not restricted to FlexRC. The same argument also applies to existing elimination-based RC reduction methods. Unlike the Lyapunov balancing methods in [11], which explicitly compute M−1 to enforce Laurent moment matching, elimination-based methods obtain Laurent moment matching automatically through the elimination pro-cess. 
+
+C. Error analysis of port reduction 
+
+This subsection discusses how port reduction affects the accuracy of reduced models. The port-reduction step replaces the internal coupling matrix ˜Cc by a low-rank approximation 
+
+BiRi, which gives the perturbed internal subsystem 
+
+Σ∆i :
+
+((Gi + sC i)xi = ( ˜Cc + ∆) ui,yi = ( ˜Cc + ∆) ⊤xi.
+
+where the perturbation 
+
+∆ := BiRi − ˜Cc, ∥∆∥F / ˜Cc F
+
+≤ tol .
+
+To quantify the error between the original and perturbed internal subsystems, let Hi(ıω ) and H∆i (ıω ) be the transfer functions of Σi and Σ∆i at ıω (ω ∈ R), respectively: 
+
+Hi(ıω ) = ˜C⊤ 
+
+> c
+
+(Gi + ıωC i)−1 ˜Cc,H∆i (ıω ) = ( ˜Cc + ∆) ⊤(Gi + ıωC i)−1( ˜Cc + ∆) ,
+
+and define the relative error as 
+
+δi(ıω ) := Hi(ıω ) − H∆i (ıω ) F
+
+∥Hi(ıω )∥F
+
+.
+
+The following theorem gives a conservative error estimate for this relative error. 
+
+Theorem IV.4. If ∥∆∥F ≤ ϵ ˜Cc F
+
+, then 
+
+δi(ıω ) ≤ √p ∥Gi + ıωC i∥22
+
+λmin (Gi)2 ϵ(2 + ϵ), ω ∈ R.
+
+The proof is given in Appendix A-B. Since the port-reduction criterion gives ∥∆∥F ≤ tol ˜Cc F
+
+,the theorem implies that, for sufficiently small tol , the inter-nal transfer-function perturbation satisfies δi(ıω ) = O(tol) .This is only an error estimate for the internal subsystem; the perturbation of the internal transfer function is further propagated to the full transfer function. The estimate here is conservative and should mainly be interpreted as a qualita-tive perturbation estimate controlled by tol . Therefore, this inequality does not provide an a priori criterion for selecting 
+
+tol . Moreover, this bound estimates the internal transfer-function perturbation, while RC reduced models are usually used for transient simulation. In practice, the error in the subsequent transient simulation is usually much smaller than this inequality suggests. V. N UMERICAL EXPERIMENTS 
+
+In this section, we evaluate FlexRC on practical RC net-works in terms of reduction time, transient simulation time, frequency-point selection, and sparsity control. All experi-ments are run on one CPU core of a cluster node with an Intel Xeon Gold 6226R @2.90 GHz processor and 700 GB memory, and all algorithms are implemented in MATLAB R2020b. 9                                                                                                   
+
+> TABLE I ORIGINAL RC NETWORK INFORMATION .Case Nodes Ports Resistors Capacitors nnz( G+C)κ(G)κ(Gi)
+> AAADC_net64 11070 419 30065 4958 71200 5.98 ×10 17 4.70 ×10 7
+> AAADC_net76 10989 420 29897 4999 70783 6.10 ×10 17 4.68 ×10 7
+> DAC_net99 57959 467 84658 18238 227275 7.58 ×10 19 1.01 ×10 7
+> DLL_net90 75452 697 103381 31321 282212 5.00 ×10 76.99 ×10 6
+> ADC_10bit_net220 94816 554 165883 3626 426582 1.36 ×10 18 4.95 ×10 7
+> PLLM_ANA_net4 46746 500 77488 9509 201722 4.53 ×10 19 3.11 ×10 8
+> ibmpg1t 25272 250 40801 10774 95934 2.14 ×10 18 3.37 ×10 5
+> ibmpg2t 163787 1200 245163 36838 617035 1.15 ×10 19 3.71 ×10 5
+
+Table I summarizes the test cases. The first six examples are provided by our industrial partners, and the last two are IBM power-grid benchmarks from [3]. The condition numbers are estimated by MATLAB condest . Except for DLL_net90 ,the full conductance matrices G are singular or nearly sin-gular in floating-point arithmetic. However, elimination-based methods only require the internal conductance block Gi in the first elimination step, and Table I shows that Gi is much better conditioned. FlexRC is compared with PRIMA [7], SPRIM [21], and TurboMOR-RC [26]. PRIMA and SPRIM are implemented in MATLAB. For TurboMOR-RC, we follow the implementation strategy of [26]: the algorithm is driven from MATLAB, while the key Householder operations in the QR decomposition and the products with Householder matrices are implemented in C and called through MEX files. For transient simulations, the industrial examples provide only the extracted G and C matrices, so we use a synthetic sinusoidal input with frequency 10 8 Hz. Although post-layout nonlinear simulation is the target application, the nonlinear device models and complete netlists are unavailable; linear transient simulations of the extracted RC networks are suf-ficient for evaluating the efficiency of the reduced models. The IBM power-grid examples are connected to 1.8 V power supplies and driven by switching current sources. For all test cases, the simulation interval is [0 , 10 −8] s, the time step is 10 −11 s, and the sparse linear systems are solved by CHOLMOD [32] from SuiteSparse [33]. The reported relative error is defined as 
+
+εrel := max 
+
+> i
+
+∥yi − ˜yi∥2
+
+∥yi∥2
+
+,
+
+where yi and ˜yi are the time-domain waveforms of the i-th output of the full and reduced systems. 
+
+A. Reduction time and reduced model order 
+
+This subsection compares the model reduction time and reduced order. Here q denotes the number of frequency points, and the frequency sequence of FlexRC is set to 
+
+S = [ s1, . . . , s q ] = [0 , . . . , 0] . Since PRIMA and SPRIM require a nonsingular matrix G+s0C, their expansion point is set to s0 = 1 . For FlexRC, port reduction and Arnoldi deflation use the same tolerance, with default values tol = 10 −3 for 
+
+q = 2 and tol = 5 × 10 −5 for q = 3 , and with slight case-dependent adjustments. Table II reports the model reduction time and the result-ing reduced order. The reduction-time speedup is measured relative to PRIMA. For q = 1 , PRIMA, TurboMOR-RC, and FlexRC have the same reduced order because only the first moment block is retained. For q = 2 and q = 3 , FlexRC usually produces smaller reduced models on the examples. For instance, when q = 2 , the reduced orders of FlexRC are 777 , 1095 , 872 , and 729 for DAC_net99 , DLL_net90 ,
+
+ADC_10bit_net220 , and PLLM_ANA_net4 , respectively, compared with 934 , 1394 , 1108 , and 1000 for PRIMA and TurboMOR-RC. This reduction is due to the low-rank approx-imation of ˜Cc in the port-reduction step, which reduces the reduced order after the first elimination step. Except for SPRIM, the reduction times of the other three methods are of the same order. FlexRC is faster than PRIMA and TurboMOR-RC in the two-point case on all examples in this table, and remains comparable overall in the three-point case. 
+
+B. Simulation time 
+
+This subsection shows that the reduced models generated by FlexRC are efficient in subsequent transient simulation. Table III reports the transient simulation time, speedup, and relative error of the reduced models. The speedup here is computed with respect to the full-order transient simulation. The simulation results show the main benefit of FlexRC. In the two-point case, FlexRC gives the fastest transient simulations on the four industrial examples in this ta-ble, with speedups of 1.28 ×, 1.21 ×, 3.44 ×, and 1.96 ×
+
+on DAC_net99 , DLL_net90 , ADC_10bit_net220 , and 
+
+PLLM_ANA_net4 , respectively. These speedups are higher than those of PRIMA, SPRIM, and TurboMOR-RC, while the relative errors remain acceptable. In the three-point case, the larger reduced models are slower than the full-order simulation for three of the four examples. For the two IBM power-grid examples, using three points is still beneficial because the errors of the one-point and two-point models are relatively large. The accuracy of PRIMA and SPRIM may be affected by the ill-conditioning of the shifted linear systems on some examples. For q = 2 , FlexRC gives errors close to those of TurboMOR-RC, while producing reduced models that are faster to simulate on the examples. For q = 3 , FlexRC can lead to slightly larger errors than TurboMOR-RC in some cases, but these errors are nevertheless sufficient for the tran-sient simulations considered here. Meanwhile, the additional accuracy of the three-point models is not always useful for improving transient simulation efficiency, because the larger 10 
+
+TABLE II REDUCTION TIME AND REDUCED MODEL ORDER FOR THE DIFFERENT METHODS . A LL TIMES ARE IN SECONDS .Case q PRIMA SPRIM TurboMOR-RC FlexRC Time Order Time Order Speedup Time Order Speedup Time Order Speedup 
+
+DAC_net99 
+
+1 2.386 467 2.870 934 0.83 × 0.855 467 2.79 × 1.004 467 2.38 ×
+
+2 3.843 934 6.054 1401 0.63 × 3.179 934 1.21 × 2.534 777 1.52 ×
+
+3 6.609 1401 10.24 1868 0.65 × 6.595 1401 1.00 × 6.842 1351 0.97 ×
+
+DLL_net90 
+
+1 4.695 697 7.525 1394 0.62 × 2.051 697 2.29 × 2.507 697 1.87 ×
+
+2 10.65 1394 16.50 2091 0.65 × 8.158 1394 1.31 × 6.780 1095 1.57 ×
+
+3 17.93 2091 25.63 2788 0.70 × 17.06 2091 1.05 × 18.86 1877 0.95 ×
+
+ADC_10bit_net220 
+
+1 4.586 554 7.611 1108 0.60 × 2.397 554 1.91 × 3.319 554 1.38 ×
+
+2 10.93 1108 16.56 1662 0.66 × 9.051 1108 1.21 × 6.919 872 1.58 ×
+
+3 18.10 1662 27.15 2216 0.67 × 18.69 1662 0.97 × 19.79 1390 0.91 ×
+
+PLLM_ANA_net4 
+
+1 1.508 500 2.647 1000 0.57 × 0.893 500 1.69 × 0.953 500 1.58 ×
+
+2 4.158 1000 6.330 1500 0.66 × 3.680 1000 1.13 × 2.074 729 2.01 ×
+
+3 7.092 1500 10.18 2000 0.70 × 7.514 1500 0.94 × 7.178 1320 0.99 ×
+
+ibmpg1t 
+
+1 0.434 250 0.637 500 0.68 × 0.260 250 1.67 × 0.294 250 1.48 ×
+
+2 0.942 500 1.282 750 0.73 × 0.815 500 1.16 × 0.739 500 1.27 ×
+
+3 1.483 750 2.131 1000 0.70 × 1.597 750 0.93 × 1.505 750 0.99 ×
+
+ibmpg2t 
+
+1 30.86 1200 42.44 2400 0.73 × 22.62 1200 1.36 × 25.39 1200 1.22 ×
+
+2 70.36 2400 92.76 3600 0.76 × 77.25 2400 0.91 × 58.95 2400 1.19 ×
+
+3 116.2 3600 154.0 4800 0.75 × 138.8 3600 0.84 × 124.0 2870 0.94 ×
+
+TABLE III SIMULATION TIME AND RELATIVE ERROR FOR THE REDUCED MODELS OBTAINED WITH THE DIFFERENT METHODS . A LL TIMES ARE IN SECONDS .Case Full time q PRIMA SPRIM TurboMOR-RC FlexRC Time Speedup Error Time Speedup Error Time Speedup Error Time Speedup Error 
+
+DAC_net99 31.49 1 8.999 3.50 × 1.29e-02 128.0 0.25 × 1.21e-02 9.931 3.17 × 1.29e-02 9.660 3.26 × 1.29e-02 2 48.77 0.65 × 1.21e-06 306.8 0.10 × 1.05e-06 36.99 0.85 × 1.35e-06 24.57 1.28 × 4.79e-06 3 116.5 0.27 × 1.83e-07 323.4 0.10 × 5.96e-08 70.66 0.45 × 8.08e-10 66.82 0.47 × 3.68e-08 
+
+DLL_net90 47.42 1 22.46 2.11 × 8.88e-02 376.0 0.13 × 7.74e-02 14.57 3.26 × 8.88e-02 14.82 3.20 × 8.88e-02 2 99.21 0.48 × 1.13e-04 900.5 0.05 × 1.10e-04 70.88 0.67 × 1.14e-04 39.14 1.21 × 1.47e-04 3 375.4 0.13 × 6.80e-07 1067.3 0.04 × 6.46e-07 166.0 0.29 × 9.84e-07 135.9 0.35 × 2.47e-06 
+
+ADC_10bit_net220 103.3 1 14.87 6.95 × 2.54e-02 201.9 0.51 × 2.45e-02 13.39 7.72 × 2.54e-02 13.24 7.81 × 2.54e-02 2 69.14 1.49 × 2.80e-05 471.5 0.22 × 1.61e-05 50.71 2.04 × 2.76e-05 30.08 3.44 × 2.41e-05 3 185.8 0.56 × 1.18e-05 605.4 0.17 × 2.60e-06 91.59 1.13 × 7.48e-08 67.00 1.54 × 7.60e-08 
+
+PLLM_ANA_net4 39.50 1 10.99 3.60 × 4.75e-03 148.5 0.27 × 1.39e-03 10.05 3.93 × 2.44e-03 10.65 3.71 × 2.44e-03 2 55.61 0.71 × 7.72e-06 343.8 0.11 × 4.77e-06 42.09 0.94 × 3.04e-07 20.17 1.96 × 5.05e-07 3 133.8 0.30 × 3.79e-06 389.4 0.10 × 3.11e-06 73.72 0.54 × 7.66e-10 66.70 0.59 × 1.50e-09 
+
+ibmpg1t 18.86 1 0.989 19.07 × 7.83e-01 16.62 1.14 × 6.76e-01 0.962 19.61 × 7.83e-01 1.032 18.27 × 7.83e-01 2 3.326 5.67 × 3.11e-01 58.39 0.32 × 2.97e-01 5.079 3.71 × 3.11e-01 3.806 4.96 × 3.11e-01 3 6.989 2.70 × 1.10e-02 79.58 0.24 × 1.10e-02 9.587 1.97 × 1.10e-02 8.128 2.32 × 1.10e-02 
+
+ibmpg2t 367.6 1 31.89 11.53 × 6.87e-01 803.2 0.46 × 5.76e-01 28.96 12.69 × 6.87e-01 29.88 12.30 × 6.87e-01 2 150.9 2.44 × 6.55e-02 1504.8 0.24 × 6.20e-02 208.9 1.76 × 6.55e-02 159.2 2.31 × 6.55e-02 3 372.9 0.99 × 1.66e-03 3051.7 0.12 × 1.49e-04 394.6 0.93 × 3.10e-04 225.8 1.63 × 3.10e-04 
+
+reduced models may become more expensive to solve than the original systems. These results illustrate the benefit of port reduction. Com-pared with TurboMOR-RC, FlexRC applies a low-rank ap-proximation to ˜Cc to reduce the reduced order, which improves the efficiency of the subsequent transient simulation. The tol-erance therefore provides a practical way to balance accuracy and simulation cost. To give a more direct view of the transient behavior, Figure 1 compares the output waveform of the original ibmpg2t 
+
+model against those of TurboMOR-RC and FlexRC. The right panel plots the error y1(t) − ˜y1(t). The two reduced models capture the dominant waveform accurately, and the error plot shows that the remaining discrepancy is small compared with the signal magnitude over the full transient interval. 
+
+C. Frequency points 
+
+This subsection examines the effect of different frequency points. The goal is to verify that choosing suitable frequency points can improve transient accuracy without noticeably changing the reduced order or simulation time. In the previous experiments, the frequency sequence of FlexRC is set to 
+
+S = [0 , . . . , 0] . Unlike TurboMOR-RC, whose frequency points are fixed at s = 0 , FlexRC can use other frequency points in the reduction framework to improve accuracy. The results for ibmpg1t and ibmpg2t are reported in Table IV and Table V, respectively. The results show that choosing suitable frequency points can effectively improve accuracy, while the reduction time and simulation time remain almost unchanged. For ibmpg1t ,replacing [0 , 0, 0] by [0 , 10 10 , 10 10 ] reduces the three-point relative error from 1.10 ×10 −2 to 6.38 ×10 −4. For ibmpg2t ,the corresponding error is reduced from 3.10 × 10 −4 to 
+
+3.53 × 10 −6. These results illustrate the main advantage of multi-point moment matching: the first frequency point s1 = 0 
+
+preserves the DC behavior, while additional nonzero points can be selected to improve transient accuracy without noticeably increasing the simulation time. 11 0 2 4 6 8 10 
+
+Time [ns] 
+
+> 1.78 1.785 1.79 1.795 1.8
+> Voltage [V]
+
+Response      
+
+> Original TurboMOR-RC Proposed 0246810
+
+Time [ns]  
+
+> -2 -1 0123
+> Error [V]
+> #10 -6
+
+Error 
+
+> TurboMOR-RC Proposed
+
+Fig. 1. Transient response and signed error for the first output of ibmpg2t with p = 1200 . The left panel compares the original system, TurboMOR-RC, and FlexRC, while the right panel shows y1(t) − ˜y1(t) for the reduced models. The reduced models are constructed with the frequency points [0 , 0, 0] .TABLE IV COMPARISON OF DIFFERENT FREQUENCY POINTS FOR I B M P G 1T . A LL TIMES ARE IN SECONDS .Points Frequency points Model order Reduction time Simulation time Relative error 2 [0 , 0] 500 0.739 3.806 3.11e-01 2 [0 , 10 9] 500 0.753 3.788 1.38e-01 2 [0 , 10 10 ] 500 0.753 3.812 1.31e-02 3 [0 , 0, 0] 750 1.505 8.128 1.10e-02 3 [0 , 10 9, 10 9] 750 1.544 7.966 1.37e-03 3 [0 , 10 10 , 10 10 ] 750 1.554 7.965 6.38e-04 TABLE V COMPARISON OF DIFFERENT FREQUENCY POINTS FOR I B M P G 2T . A LL TIMES ARE IN SECONDS .Points Frequency points Model order Reduction time Simulation time Relative error 2 [0 , 0] 2400 58.95 159.2 6.55e-02 2 [0 , 10 9] 2400 61.10 160.8 2.70e-02 2 [0 , 10 10 ] 2400 61.78 162.8 3.78e-03 3 [0 , 0, 0] 2870 124.0 225.8 3.10e-04 3 [0 , 10 9, 10 9] 2872 126.4 223.9 5.34e-05 3 [0 , 10 10 , 10 10 ] 2874 122.9 227.4 3.53e-06 
+
+D. Sparsity control 
+
+The last experiment focuses on the sparsity-control variant of FlexRC discussed in Section III-C. The purpose is to show that sparsity control can generate sparser reduced models for transient simulation. Compared with the previously considered six examples, AAADC_net64 and AAADC_net76 have a larger fraction of port nodes among all nodes. For these cases, the reduced models generated by the previous methods can become inefficient in transient simulation. FlexRC can address this issue by sparsity control, and the resulting variant is denoted by “FlexRC-SC”. Table VI reports the reduction time and reduced order, and Table VII reports the corresponding transient simulation time. FlexRC-SC generates a larger reduced model and requires a slightly longer reduction time, but it can significantly reduce the transient simulation time. For q = 2 , the simulation time decreases from 12 .75 s to 3.088 s on AAADC_net64 , and from 13 .29 s to 3.358 s on AAADC_net76 . The relative error is also reduced from 4.20 × 10 −2 to 1.80 × 10 −5 on 
+
+AAADC_net64 , and from 1.13 × 10 −1 to 1.62 × 10 −7 on 
+
+AAADC_net76 . With sparsity control, the two-point model is already sufficiently accurate for these two examples. Figure 2 and Figure 3 compare the sparsity patterns of 
+
+˜G + ˜C for the default FlexRC models and FlexRC-SC in the two-point case. The default reduced matrices are dense, while the matrices with sparsity control are much sparser. The number of nonzeros decreases from 300682 to 
+
+47692 for AAADC_net64 , and from 297312 to 48603 for 
+
+AAADC_net76 , which explains the faster transient simulation observed in Table VII. With sparsity control, less fill-in is introduced in the elim-ination step. However, if TurboMOR-RC is applied directly, the reduced model can have a large order, and the blocks other than the upper-left Schur-complement block can still be dense. The port-reduction step in FlexRC can not only reduce the extra order introduced by sparsity control but also preserve the sparsity. As a result, FlexRC-SC generates a reduced model that is more efficient in the subsequent transient simulation. 12 
+
+TABLE VI REDUCTION TIME AND REDUCED MODEL ORDER FOR THE SPARSITY -CONTROL EXPERIMENT . A LL TIMES ARE IN SECONDS .Case q PRIMA SPRIM TurboMOR-RC FlexRC FlexRC-SC Time Order Time Order Speedup Time Order Speedup Time Order Speedup Time Order Speedup 
+
+AAADC_net64 
+
+1 0.318 419 0.490 838 0.65 × 0.162 419 1.97 × 0.179 419 1.77 × 0.270 838 1.18 ×
+
+2 0.637 838 0.995 1257 0.64 × 0.515 838 1.24 × 0.523 814 1.22 × 1.074 1256 0.59 ×
+
+3 1.071 1257 1.482 1676 0.72 × 1.024 1257 1.05 × 1.000 867 1.07 × 1.538 1266 0.70 ×
+
+AAADC_net76 
+
+1 0.289 420 0.479 840 0.60 × 0.151 420 1.91 × 0.164 420 1.76 × 0.272 840 1.06 ×
+
+2 0.649 840 0.967 1260 0.67 × 0.513 840 1.27 × 0.494 811 1.31 × 1.121 1285 0.58 ×
+
+3 1.078 1260 1.485 1680 0.73 × 1.008 1260 1.07 × 0.944 853 1.14 × 1.677 1540 0.64 ×
+
+TABLE VII SIMULATION TIME AND RELATIVE ERROR FOR THE SPARSITY -CONTROL EXPERIMENT . A LL TIMES ARE IN SECONDS .Case Full time q PRIMA SPRIM TurboMOR-RC FlexRC FlexRC-SC Time Spd. Error Time Spd. Error Time Spd. Error Time Spd. Error Time Spd. Error 
+
+AAADC_net64 5.705 1 5.851 0.97 × 4.78e+00 84.68 0.07 × 4.78e+00 2.977 1.92 × 4.78e+00 2.819 2.02 × 4.78e+00 1.058 5.39 × 1.02e-01 2 29.95 0.19 × 2.62e-01 221.7 0.03 × 2.13e-01 15.55 0.37 × 6.14e-02 12.75 0.45 × 4.20e-02 3.088 1.85 × 1.80e-05 
+
+3 65.57 0.09 × 8.90e-04 360.1 0.02 × 3.19e-04 35.11 0.16 × 1.14e-05 14.71 0.39 × 2.02e-05 3.126 1.83 × 5.72e-08 
+
+AAADC_net76 5.683 1 6.196 0.92 × 4.80e+00 91.06 0.06 × 4.80e+00 3.128 1.82 × 4.80e+00 3.149 1.80 × 4.80e+00 1.133 5.02 × 5.31e-03 2 27.86 0.20 × 3.50e-01 241.3 0.02 × 4.18e-01 18.36 0.31 × 3.30e-02 13.29 0.43 × 1.13e-01 3.358 1.69 × 1.62e-07 
+
+3 67.23 0.08 × 3.16e-04 374.5 0.02 × 1.44e-04 36.60 0.16 × 2.41e-06 14.73 0.39 × 3.04e-04 15.70 0.36 × 1.26e-08 0 200 400 600 800 1000 1200 
+
+nz = 47692 
+
+> 0200 400 600 800 1000 1200
+
+With sparsity control 
+
+Fig. 2. Sparsity patterns of ˜G + ˜C for the two-point reduced models of AAADC_net64 . The left panel shows the default FlexRC model with 300682 
+
+nonzeros, and the right panel shows FlexRC-SC with 47692 nonzeros. 
+
+VI. C ONCLUSION 
+
+In this paper, we proposed FlexRC, a flexible multi-point model order reduction method for large-scale RC networks with many ports. FlexRC allows the user to specify the frequency points to improve accuracy for the target response. A key novelty of FlexRC is the port-reduction technique: by adjusting the port-reduction tolerance, FlexRC can reduce the model order and improve the efficiency of subsequent transient simulation with only a slight accuracy loss. We discussed passivity under port-reduction perturbations. For the exact reduction, passivity follows from the congruence structure of the construction. When port reduction is applied, the reduced capacitance matrix is symmetrically perturbed, and passivity is preserved if this perturbation is sufficiently small. We also analyzed moment matching and provided a conservative error estimate for port reduction. Beyond the standard moment-matching analysis, we also considered the case where the conductance matrix is singular and proved a Laurent moment matching result. Numerical experiments on industrial RC examples and IBM power-grid examples show that the flexible framework of FlexRC can produce reduced models with favorable transient simulation efficiency. The experiments also demonstrate the benefits of the sparsity-control variant. ACKNOWLEDGMENTS 
+
+We sincerely acknowledge the data support and other technical assistance provided by Huada Empyrean Software Company Ltd. We used ChatGPT as an AI writing aid to refine the manuscript and enhance its readability. All technical content, theoretical analysis, and conclusions were developed and verified by the authors without AI assistance. 13 0 200 400 600 800 1000 1200 
+
+nz = 48603 
+
+> 0200 400 600 800 1000 1200
+
+With sparsity control 
+
+Fig. 3. Sparsity patterns of ˜G + ˜C for the two-point reduced models of AAADC_net76 . The left panel shows the default FlexRC model with 297312 
+
+nonzeros, and the right panel shows FlexRC-SC with 48603 nonzeros. 
+
+APPENDIX APROOFS 
+
+A. Proof of Proposition III.1 Proof. From the construction of V2, we have 
+
+ˆV2D = ( Gi + s2Ci)−1 Bi, V2 = ˆV2T −12 .
+
+Hence 
+
+(Gi + s2Ci) V2 = BiD−1T −12 .
+
+Thus colspan {(Gi + s2Ci) V2} ⊆ colspan {Bi}. The equiv-alent tail basis satisfies ˜V ⊤
+
+> tail
+
+Bi = 0 . Therefore, the above inclusion gives 
+
+˜V ⊤ 
+
+> tail
+
+(Gi + s2Ci) V2 = 0 ,
+
+or equivalently 
+
+˜V ⊤
+
+> tail
+
+GiV2 + s2 ˜V ⊤
+
+> tail
+
+CiV2 = 0 .
+
+By the block definitions, these two terms are the lower-left coupling blocks ˜Gtail ,2 and ˜Ctail ,2. Hence ˜Gtail ,2 =
+
+−s2 ˜Ctail ,2.
+
+B. Proof of Theorem IV.4 Proof. Let Aω := Gi + ıωC i. Since 
+
+H∆i (ıω ) − Hi(ıω ) = ∆ ⊤A−1 
+
+> ω
+
+˜Cc + ˜C⊤ 
+
+> c
+
+A−1 
+
+> ω
+
+∆ + ∆ ⊤A−1 
+
+> ω
+
+∆,
+
+we have 
+
+H∆i (ıω ) − Hi(ıω ) F
+
+≤ A−1  
+
+> ω2
+
+∥∆∥F
+
+
+
+2 ˜Cc F
+
++ ∥∆∥F
+
+
+
+.
+
+Moreover, for any nonzero x ∈ CN −p,
+
+∥Aω x∥2 ∥x∥2 ≥ | x∗Aω x| ≥ Re ( x∗Aω x)= x∗Gix ≥ λmin (Gi) ∥x∥22 ,
+
+Hence ∥Aω x∥2 ≥ λmin (Gi) ∥x∥2 for any nonzero x. This gives 
+
+A−1  
+
+> ω2
+
+≤ 1
+
+λmin (Gi) .
+
+Therefore, 
+
+H∆i (ıω ) − Hi(ıω ) F
+
+≤ 1
+
+λmin (Gi) ∥∆∥F
+
+
+
+2 ˜Cc F
+
++ ∥∆∥F
+
+
+
+.
+
+Let cj be the jth column of ˜Cc. Since cj is real and 
+
+Re  A−1
+
+> ω
+
+ = A−1 
+
+> ω
+
++ A−∗ 
+
+> ω
+
+2= A−∗  
+
+> ω
+
+GiA−1 
+
+> ω
+
+,
+
+we obtain 
+
+c⊤ 
+
+> j
+
+A−1 
+
+> ω
+
+cj ≥ Re  c⊤ 
+
+> j
+
+A−1 
+
+> ω
+
+cj
+
+
+
+=  A−1 
+
+> ω
+
+cj
+
+∗ Gi
+
+ A−1 
+
+> ω
+
+cj
+
+
+
+≥ λmin (Gi) A−1 
+
+> ω
+
+cj
+
+> 22
+
+≥ λmin (Gi)
+
+∥Aω ∥22
+
+∥cj ∥22 .
+
+The last inequality follows from ∥cj ∥2 = Aω A−1 
+
+> ω
+
+cj 2 ≤∥Aω ∥2 A−1 
+
+> ω
+
+cj 2. Therefore, 
+
+∥Hi(ıω )∥F ≥
+
+vuut
+
+> p
+
+X
+
+> j=1
+
+c⊤ 
+
+> j
+
+A−1 
+
+> ω
+
+cj
+
+> 2
+
+≥ λmin (Gi)
+
+∥Aω ∥22
+
+vuut
+
+> p
+
+X
+
+> j=1
+
+∥cj ∥42
+
+≥ λmin (Gi)
+
+√p ∥Aω ∥22
+
+˜Cc
+
+> 2F
+
+.14 
+
+Hence, 
+
+δi(ıω ) ≤ √p ∥Aω ∥22
+
+λmin (Gi)2
+
+∥∆∥F
+
+˜Cc F
+
+2 + ∥∆∥F
+
+˜Cc F
+
+
+
+≤ √p ∥Aω ∥22
+
+λmin (Gi)2 ϵ(2 + ϵ).
+
+This completes the proof. REFERENCES [1] H. Chen and J. Neely, “Interconnect and circuit modeling techniques for full-chip power supply noise analysis,” IEEE Trans. Compon., Packag., Manuf. Technol. B , vol. 21, no. 3, pp. 209–215, 1998. [2] J. M. S. Silva and L. M. Silveira, Issues in Model Reduction of Power Grids . New York, NY, USA: Springer US, 2007, pp. 127–144. [3] S. R. Nassif, “Power grid analysis benchmarks,” in 2008 Asia and South Pacific Design Automation Conference . New York, NY, USA: IEEE, Jan. 2008. [4] J. A. Atwell and B. B. King, “Reduced order controllers for spatially distributed systems via proper orthogonal decomposition,” SIAM J. Sci. Comput. , vol. 26, no. 1, pp. 128–151, Jan. 2004. [5] M. Rathinam and L. R. Petzold, “A new look at proper orthogonal decomposition,” SIAM J. Numer. Anal. , vol. 41, no. 5, pp. 1893–1925, Jan. 2003. [6] R. Pinnau, Model Reduction via Proper Orthogonal Decomposition .Berlin, Heidelberg, Germany: Springer-Verlag, 2008, pp. 95–109. [7] A. Odabasioglu, M. Celik, and L. Pileggi, “PRIMA: passive reduced-order interconnect macromodeling algorithm,” IEEE Trans. Comput. Aided Design Integrat. Circuits Syst. , vol. 17, no. 8, pp. 645–654, 1998. [8] ——, “Practical considerations for passive reduction of RLC circuits,” in 
+
+1999 IEEE/ACM International Conference on Computer-Aided Design. Digest of Technical Papers (Cat. No.99CH37051) . IEEE, 1999, pp. 214–219. [9] F. Yang, X. Zeng, Y. Su, and D. Zhou, “RLCSYN: Rlc equivalent circuit synthesis for structure-preserved reduced-order model of interconnect,” in 2007 IEEE International Symposium on Circuits and Systems . New York, NY, USA: IEEE, May 2007, pp. 2710–2713. [10] T. Reis and T. Stykel, “PABTEC: Passivity-preserving balanced trunca-tion for electrical circuits,” IEEE Trans. Comput. Aided Design Integrat. Circuits Syst. , vol. 29, no. 9, pp. 1354–1367, Sep. 2010. [11] ——, “Lyapunov balancing for passivity-preserving model reduction of RC circuits,” SIAM J. Appl. Dyn. Syst. , vol. 10, no. 1, pp. 1–34, Jan. 2011. [12] J. Phillips and L. Silveira, “Poor man’s TBR: a simple model reduc-tion scheme,” in Proceedings Design, Automation and Test in Europe Conference and Exhibition . New York, NY, USA: IEEE, 2004, pp. 938–943. [13] L. M. Silveira and J. R. Phillips, “Exploiting input information in a model reduction algorithm for massively coupled parasitic networks,” in 
+
+Proceedings of the 41st annual Design Automation Conference . ACM, Jun. 2004, pp. 385–388. [14] A. K. Prajapati and R. Prasad, “Model order reduction by using the balanced truncation and factor division methods,” IETE J. Res. , vol. 65, no. 6, pp. 827–842, Jun. 2018. [15] ——, “A new model order reduction method for the design of compen-sator by using moment matching algorithm,” Trans. Inst. Meas. Control ,vol. 42, no. 3, pp. 472–484, Sep. 2019. [16] J. M. S. Silva, J. F. Villena, P. Flores, and L. M. Silveira, Outstanding Issues in Model Order Reduction . Berlin, Heidelberg, Germany: Spring-er-Verlag, 2007, pp. 139–152. [17] P. Feldmann, “Model order reduction techniques for linear systems with large numbers of terminals,” in Proc. Conf. Design Autom. Test Europe .Paris, France: IEEE, 2004, pp. 944–947. [18] P. Liu, S. X.-D. Tan, B. Yan, and B. McGaughy, “An efficient terminal and model order reduction algorithm,” Integr. VLSI J. , vol. 41, no. 2, pp. 210–218, Feb. 2008. [19] P. Feldmann and F. Liu, “Sparse and efficient reduced order modeling of linear subcircuits with large number of terminals,” in Proc. IEEE/ACM Int. Conf. Comput.-Aided Design . San Jose, CA, USA: IEEE, 2004, pp. 88–92. [20] B. Yan, S. X.-D. Tan, L. Zhou, J. Chen, and R. Shen, “Decentralized and passive model order reduction of linear networks with massive ports,” 
+
+IEEE Trans. Very Large Scale Integr. (VLSI) Syst. , vol. 20, no. 5, pp. 865–877, May 2012. [21] R. Freund, “SPRIM: structure-preserving reduced-order interconnect macromodeling,” in IEEE/ACM International Conference on Computer Aided Design, 2004. ICCAD-2004. , ser. ICCAD-04. IEEE, 2004, pp. 80–87. [22] K. Kerns and A. Yang, “Stable and efficient reduction of large, multiport RC networks by pole analysis via congruence transformations,” in 
+
+Proceedings of the 33rd Design Automation Conference, 1996 . New York, NY, USA: ACM, 1996, pp. 280–285. [23] B. Sheehan, “TICER: Realizable reduction of extracted RC circuits,” in Proc. IEEE/ACM Int. Conf. Comput.-Aided Design . San Jose, CA, USA: IEEE, 1999, pp. 200–203. [24] Z. Ye, D. Vasilyev, Z. Zhu, and J. R. Phillips, “Sparse implicit projec-tion (SIP) for reduction of general many-terminal networks,” in Proc. IEEE/ACM Int. Conf. Comput.-Aided Design . IEEE, Nov. 2008. [25] R. Ionutiu, J. Rommes, and W. H. A. Schilders, “SparseRC: Sparsity preserving model reduction for RC circuits with many terminals,” IEEE Trans. Comput. Aided Design Integrat. Circuits Syst. , vol. 30, no. 12, pp. 1828–1841, Dec. 2011. [26] D. Oyaro and P. Triverio, “TurboMOR-RC: An efficient model order reduction technique for RC networks with many ports,” IEEE Trans. Comput. Aided Design Integrat. Circuits Syst. , vol. 35, no. 10, pp. 1695– 1706, Oct. 2016. [27] S. Yin, Y. Xu, L. Liu, F. Yang, X. Zeng, C. An, and Y. Su, “SMP-RCR: A sparse multipoint moment matching method for RC reduction,” 2025. [Online]. Available: https://arxiv.org/abs/2510.16550 [28] C.-W. Ho, A. Ruehli, and P. Brennan, “The modified nodal approach to network analysis,” IEEE Trans. Circuits Syst. , vol. 22, pp. 504–509, 1975. [29] B. Lohmann and B. Salimbahrami, “Krylov subspace methods in linear model order reduction: Introduction and invariance properties,” Institute of Automation, University of Bremen, Tech. Rep., 2012. [Online]. Available: http://www.rt.mw.tum.de/salimbahrami/Invariance.pdf [30] A. Ruhe, “Rational Krylov: A practical algorithm for large sparse nonsymmetric matrix pencils,” SIAM J. Sci. Comput. , vol. 19, no. 5, pp. 1535–1551, Sep. 1998. [31] G. H. Golub and C. F. Van Loan, Matrix Computations , 4th ed. Baltimore, MD, USA: Johns Hopkins University Press, 2013. [32] Y. Chen, T. A. Davis, W. W. Hager, and S. Rajamanickam, “Algo-rithm 887: CHOLMOD, supernodal sparse Cholesky factorization and update/downdate,” ACM Trans. Math. Software , vol. 35, no. 3, pp. 1–14, Oct. 2008. [33] T. A. Davis, Direct Methods for Sparse Linear Systems . Philadelphia, PA, USA: SIAM, 2006.

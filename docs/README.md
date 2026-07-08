@@ -6,26 +6,27 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-07
-- 运行时间：2026-07-07 22:06:50 UTC
+- 最新运行日期：2026-07-08
+- 运行时间：2026-07-08 21:25:31 UTC
 - 运行状态：成功
 - 本次总论文数：2
-- 精读区：1
-- 速读区：1
+- 精读区：2
+- 速读区：0
 
 ### 今日简报（AI）
-今日精读一篇高分论文，速读一篇；重点推荐《FAPlace》关于2.5D芯片放置与中介层联合优化的思路；可进一步关注其互连设计与布局方案。
-- 详情：[/202607/07/README](/202607/07/README)
+今日精读两篇高分论文，聚焦3D IC电源网络分析与多端口RC网络模型降阶。最值得关注的是GPU加速电阻分析和柔性多点降阶技术，均大幅提升大规模电路仿真效率。下一步建议读者关注这些方法在实际芯片设计中的加速效果与可扩展性。
+- 详情：[/202607/08/README](/202607/08/README)
 
 ### 精读区论文标签
-1. [FAPlace: Joint Optimization of Chiplet Placement and Interposer Footprint for 2.5D Systems](/202607/07/2607.02610v1-faplace-joint-optimization-of-chiplet-placement-and-interposer-footprint-for-25d-systems)  
+1. [GPU-Accelerated Effective Resistance Analysis for 3D IC Power Delivery Network](/202607/08/2607.05818v1-gpu-accelerated-effective-resistance-analysis-for-3d-ic-power-delivery-network)  
    标签：评分：9.0/10、query:si-pi
-   evidence：2.5D系统中芯粒布局与中介层面积的联合优化
+   evidence：针对3D IC电源分配网络的GPU加速有效电阻分析
+2. [FlexRC: A Flexible Multi-Point Model Order Reduction Method for Many-Port RC Networks](/202607/08/2607.05934v1-flexrc-a-flexible-multi-point-model-order-reduction-method-for-many-port-rc-networks)  
+   标签：评分：9.0/10、query:si-pi
+   evidence：面向多端口RC网络的灵活多点模型降阶，支持高效后布局SI/PI仿真。
 
 ### 速读区论文标签
-1. [Beyond the Parasitic Limit: A Nanoprobing Framework for De-embedding Intrinsic Ferroelectric Properties at the Deep Sub-Micrometer Scale](/202607/07/2607.03588v1-beyond-the-parasitic-limit-a-nanoprobing-framework-for-de-embedding-intrinsic-ferroelectric-properties-at-the-deep-sub-micrometer-scale)  
-   标签：评分：6.0/10、query:si-pi
-   evidence：寄生参数去嵌入框架，可用于PDN阻抗建模
+- 本次无速读推荐。
 
 
 <div class="dpr-home-promo-card">

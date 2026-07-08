@@ -1,0 +1,578 @@
+Title: GPU-Accelerated Effective Resistance Analysis for 3D IC Power Delivery Network
+
+URL Source: https://arxiv.org/pdf/2607.05818v1
+
+Published Time: Wed, 08 Jul 2026 00:27:52 GMT
+
+Number of Pages: 7
+
+Markdown Content:
+# GPU-Accelerated Effective Resistance Analysis for 3D IC Power Delivery Network 
+
+Jingchao Hu, Cheng Zhuo, Zhou Jin 
+
+College of Integrated Circuit, Zhejiang University 
+
+Abstract —Three-dimensional (3D) integration is a critical tech-nique for enhancing transistor density, improving power efficiency, and reducing interconnect delays. However, as current demands and design complexity increase, power deliver networks (PDNs) are facing growing challenges. Careful planning of through-silicon vias (TSVs) is essential for ensuring reliable PDNs, where effective resistance serves as a vital metric for the reliability. Ill-planned TSVs often cause 3D IC with unevenly distributed effective resistance and consequently severer IR Drop. In this paper, we propose a GPU-accelerated framework on accurate effective resistance analysis for early stage 3D IC PDNs. The proposed framework achieves a speedup of 5 to 6 orders of magnitude compared to the conventional direct solver, while maintaining negligible deviations in both maximum and average relative errors. 
+
+I. I NTRODUCTION 
+
+As the semiconductor industry continues to push the bound-aries of Moore’s Law, three-dimensional (3D) integration has emerged as a vital technology for increasing transistor density in integrated circuits (ICs). By utilizing through-silicon vias (TSVs) to vertically stack multiple dies, 3D integration provides several key advantages, such as increased bandwidth, reduced footprint, lower interconnect delay, and improved energy effi-ciency [1]. However, the implementation of 3D ICs introduces substantial challenges, particularly in the design and verification of power delivery networks (PDNs) [2], [3]. Unlike traditional two-dimensional (2D) ICs, where each die has an independent PDN, 3D ICs employ a shared PDN that connects multiple dies through TSVs. This shared PDN architecture significantly increases design complexity, exacerbating issues such as power supply noise (PSN) and thermal hotspots. As a result, the risk of excessive IR drop becomes a critical concern, complicating the reliable design of 3D IC PDNs [4]. In 3D ICs, maintaining stable voltage levels across all dies is critical, and this stability is heavily influenced by the placement and grouping of TSVs [5]. TSV placement is often determined early in the design process due to its implications for both packaging and manufacturing. Once fixed, these TSVs define the current paths within the PDN, making it crucial to ensure that their placement supports the reliability and performance of 3D ICs. Effective resistance plays a key role in evaluating current flow through the PDN and the distribution of voltage drops [6], [7]. Uneven resistance distribution can lead to local-ized IR drops that degrade performance or cause chip failure, which are difficult to resolve in later design stages. Thus, fast and accurate effective resistance analysis is crucial during the early stages of 3D IC design .Effective resistance analysis has traditionally been ap-proached as part of power integrity verification or PSN sign-off using standard PSN analysis methods [8]–[18]. However, 
+
+most existing methods were developed for 2D PDNs and do not fully leverage the structural properties of 3D PDNs, potentially resulting in inefficient computations when applied to 3D ICs. 
+
+Moreover, early-stage PDN design requires the ability to rapidly evaluate various design options [19]. As the number of stacked dies increases, the number of possible effective resistance paths from the IPs/modules on the bottom tier to the bumps on the top tier also increases exponentially, making traditional methods for analyzing effective resistance computationally expensive and slow. At the early design stage, there exist tens to hundreds of thousands of effective resistance paths from bumps, through TSVs, to the current loads (defined at IPs or modules) in 3D ICs. Although some approaches have explored parallel acceler-ation techniques for general PDN analysis, these methods are 
+
+not optimized for effective resistance calculations, particularly for the unique structure of 3D ICs .To address these challenges, this paper introduces an ad-vanced GPU-accelerated framework tailored for early-stage ef-fective resistance analysis in 3D IC PDNs. The proposed frame-work enhances the computation of effective resistance across various bump-load configurations by employing a divide-and-conquer strategy that partitions the 3D PDN into multiple 2D sub-networks. This decomposition not only enables efficient GPU-accelerated analysis but also significantly reduces com-putational complexity, thereby enhancing scalability for larger 3D IC designs. The contributions are summarized as follows:  
+
+> •
+
+We introduce a divide-and-conquer strategy that de-composes the 3D PDN into multiple 2D sub-problems, which can be analyzed independently and in parallel to improve the scalability.  
+
+> •
+
+We reformulate the original PDN system conductance matrix —initially intended for voltage drop analysis—into a specialized formulation optimized for effective resistance computation, thereby reducing the problem size.  
+
+> •
+
+The proposed framework is highly compatible with GPU-acceleration platforms , enabling concurrent com-putation of effective resistance across multiple bump-load pairs, thus further accelerating the analysis process. The experimental results demonstrate that the proposed frame-work significantly outperforms the prior works in both effi-ciency and scalability. For large-scale 3D IC designs, our frame-work was able to compute effective resistances for millions of bump-load pairs in a matter of seconds, a task that would be nearly infeasible using a golden direct solver [17] or a most recently published effective resistance solver [18]. The results arXiv:2607.05818v1 [cs.AR] 7 Jul 2026 also highlight the scalability of the proposed framework, with runtimes that increase linearly with the total number of nodes and bump-load pairs, making it well-suited for modern 3D PDN designs. Finally, our framework allows designers to explore and optimize TSV planning, facilitating better current distribution or significant routing area saving in practical scenarios. II. B ACKGROUND 
+
+A. Formulation of DC analysis for PDN 
+
+Power grid analysis is essential for evaluating voltage drops across nodes in the PDN. In DC analysis, the power grid is modeled as a resistive network, represented by the following linear system using modified nodal analysis (MNA): 
+
+GV = I (1) where G is the conductance matrix, V is the vector of node voltages, and I is the vector of current sources. Given that G is sparse, symmetric, and positive definite, direct solution methods typically utilize Cholesky factorization with forward/backward substitution to solve this system [17], [20]. DC analysis is routinely performed to compute the voltages of all PDN nodes, from early-stage checks to sign-off verification [17], [19]. 
+
+B. Effective resistance of PDN 
+
+In a PDN, the effective resistance between two nodes, a
+
+and b, can be defined as the absolute value of the voltage difference between them when a unit current is injected into 
+
+a and extracted from b, as shown in Fig. 1 [21]. Let G be a graph representing the PDN with its Laplacian matrix LG. The effective resistance between a and b is: 
+
+R(a, b ) = ( ea − eb)T L†
+
+> G
+
+(ea − eb) (2) where L† 
+
+> G
+
+is the pseudo-inverse of LG, and ea denotes the 
+
+ath column of the identity matrix. As this expression suggests, computing effective resistance in general is computationally expensive due to the matrix inversion involved. For early stage, it is critical to find out the effective resistance from bumps to current loads for TSV or bump planning. There are a few prior works focusing on simplifying the above formulation from the definition. For example, for an early-stage 2D uniform PDN with M ×N nodes, [10] proposed to calculate the effective resistance across (x1, y 1) and (x2, y 2) as:                                   
+
+> R=rN|x1−x2|+sM|y1−y2|+2
+> M N
+> M−1X
+> m=1
+> N−1X
+> n=1
+> [cos (x1+12)θmcos (y1+12)ϕn−cos (x2+12)θmcos (y2+12)ϕn]2
+> r−1(1 −cosθ m) + s−1(1 −cosϕ n)(3)
+
+where r and s are the unit resistance for the horizontally- and vertically routed PDN wires, θm = mπ M and ϕn = nπ N .With the computed effective resistance, designers can easily compute the voltage at critical nodes, which is more impor-tant at early design stage than obtaining the voltages at all nodes [14], [19]. For instance, as shown in [14], if the bump node nbump is connected to an ideal voltage vbump and nload  
+
+> Fig. 1. Definition of effective resistance [21].
+
+nodes are connected to current loads with the kth load carrying 
+
+Iload (k), the node voltage vj at node nj is expressed by: 
+
+vj = vbump − 12
+
+> nload
+
+X
+
+> k=1
+
+[Iload (k) × (Rnbump ,n j
+
++Rnbump ,n load (k) − Rnj ,n load (k) )] 
+
+(4) where Rnbump ,n j , Rnbump ,n load (k) , and Rnj ,n load (k) are the ef-fective resistances between nbump and nj , nbump and nload (k),and nj and nload (k), respectively. III. P ROPOSED FRAMEWORK 
+
+A. Overview 
+
+In the conventional design flow, PDN is typically finalized during the placement and routing stage. Thus, at the early design stage, designers synthesize the PDN using a few critical physical parameters, such as wire width and pitch for each layer, TSV size, pitch, and density, bump pitch, and density, 
+
+etc. , to generate a synthetic layout, as shown in Fig. 2(a). This layout is then extracted to build the equivalent resistor network model of the PDN (Fig. 2(b)). Although early-stage PDNs often exhibit uniform mesh structures that can be exploited to expedite analysis, the sheer size and complexity of 3D ICs make even these simplified PDNs computationally challenging to analyze. To overcome these challenges, the proposed frame-work computes the effective resistance through the following:  
+
+> •
+
+We employ a divide-and-conquer strategy to simplify 3D PDN analysis by decomposing it into multiple 2D PDNs, each corresponding to a single die (Fig. 2(c)). TSVs are modeled as current sources, enabling independent analysis of each 2D PDN (Fig. 2(d)).  
+
+> •
+
+Subsequently, the proposed framework computes the intra-die effective resistance between specified points within each 2D PDN . These intra-die results are essential for capturing the local resistive behavior within each die.  
+
+> •
+
+Finally, after completing the intra-die analysis, the frame-work calculates the inter-die effective resistances , specif-ically from bumps to loads. By employing the above flow, the proposed framework is inherently well-suited for GPU acceleration, enabling rapid evaluation of various design alternatives to ensure that effective resistance is consistently balanced throughout the 3D IC. 
+
+B. Synthesis and Extraction 
+
+In the early stages of 3D IC PDN design, the focus is on efficiently capturing critical layout features, such as topology and bump/TSV planning, rather than replicating the final tape-out design [19]. Common assumptions for early-stage 3D IC PDN design include: (1) Bumps connected to the top-tier die are modeled as ideal independent voltage sources, while loads are modeled as ideal independent current sources; (2) The 3D (a) Synthesized layout of 3D IC PDN (b) Equivalent circuit model extraction (c) Divide-and-conquer strategy (d) TSV current merging Fig. 2. Key steps of the proposed framework for effective resistance analysis of 3D PDN. TABLE I NOTATIONS USED IN SEC . III.                                          
+
+> Name Description
+> mNumber of nodes connecting to voltage sources
+> nNumber of nodes connecting to current loads
+> dNumber of stacked dies
+> pNumber of TSVs
+> tijIntersection node of T SV jand the ith tier die i
+> si(Virtual) supply node of the ith tier die i
+> VijVoltage of tij
+> VisVoltage of si
+> Ii,i +1
+> kInter-die TSV current between die iand die i+1 for T SV k
+> Rt i,i +1
+> kInter-die resistance between die iand die i+1 for T SV k
+> Rij,k Intra-die effective resistance between tijand tik
+> Ris,k Intra-die effective resistance between siand tik
+
+IC PDN is formed by interconnecting multiple 2D PDNs using TSVs. To synthesize the PDN, synthesis algorithms generate the layout based on interconnect specifications predetermined by process technology, metal properties, and design constraints. After synthesis, the initial grid is legalized to ensure compliance with design rules regarding width and pitch. Finally, layout-dependent parasitics, such as resistance, are extracted using standard extraction flows or library-based models [19]. 
+
+C. Effective Resistance Calculation for A Specific Bump-Load Pair 
+
+The most accurate method to compute the effective resistance between a bump and a load in a 3D IC is to inject a unit current ( e.g. , 1A) and measure the resulting voltage difference between the two nodes, as illustrated in Fig. 2(c). This voltage difference directly represents the effective resistance. However, computing this for a 3D IC involves solving for the voltages of all nodes, making it computationally expensive to evaluate effective resistances for all bump-load combinations. To facilitate the analysis, a few notations are introduced in Table I. While the actual bumps are placed on the top tier, we can still designate a supply node si on the ith tier die i. For a given bump-load pair, let bump and load nodes be s1 and sd,respectively. The effective resistance can then be expressed as: 
+
+R = V 1 
+
+> s
+
+− V ds =
+
+> d−1
+
+X
+
+> i=1
+
+(V is − V i+1  
+
+> s
+
+). (5) This indicates that the effective resistance of a bump-load pair in a 3D PDN can be decomposed into several components, each corresponding to the voltage difference between the supply nodes of two adjacent dies, i.e. , V is − V i+1  
+
+> s
+
+.Based on Sec. II, the voltage at any intersection node tij
+
+between the jth TSV and the ith die can be derived using Eq. (4) 1.
+
+V ij = V is − 12
+
+> p
+
+X
+
+> k=1
+
+(Ii,i +1  
+
+> k
+
+− Ii−1,i k )( Ris,j + Ris,k − Rij,k ), (6) where j = 1 , 2, . . . , p for p TSVs. Since the voltages at the intersection nodes of a TSV ( i.e ., the endpoints of a TSV segment) between two tiers must obey Ohm’s law, V ij −V i+1  
+
+> j
+
+=
+
+Ii,i +1  
+
+> j
+
+Ri,i +1  
+
+> t
+
+, we can subtract the expression for die i+1 from that for die i, for i = 1 , 2, . . . , d − 1:
+
+Ii,i +1  
+
+> j
+
+Rt i,i +1  
+
+> j
+
+= ( V is − V i+1  
+
+> s
+
+) −
+
+> p
+
+X
+
+> k=1
+
+Ii,i +1  
+
+> k
+
+(ais,j,k + ai+1 
+
+> s,j,k
+
+)+
+
+> p
+
+X
+
+> k=1
+
+Ii−1,i k ais,j,k +
+
+> p
+
+X
+
+> k=1
+
+Ii+1 ,i +2  
+
+> k
+
+ai+1 
+
+> s,j,k
+
+,
+
+(7) where j = 1 , 2, . . . , p and ais,j,k = ( Ris,j + Ris,k − Rij,k )/2. In Eq. (7), only the voltage difference V is −V i+1  
+
+> s
+
+and the inter-die TSV currents Ii,i +1  
+
+> j
+
+are unknown, since ais,j,k can be easily computed using Eq. (3). In addition, as previously assumed, a unit current is injected for effective resistance computation. Thus, the following condition always holds for inter-die TSV currents at different tiers: 
+
+> p
+
+X
+
+> j=1
+
+Ii,i +1  
+
+> j
+
+= 1 , i = 1 , 2, . . . , d − 1. (8) With the above derivations, Eq. (7) and (8) can be further rewritten in matrix form: 
+
+A + D BBT 0
+
+  IV
+
+
+
+=
+
+01
+
+
+
+, (9) where the sub-matrices A, B and D are: 
+
+A =
+
+            
+
+> A1+A2−A20... 0
+> −A2A2+A3−A3... 00−A3A3+A4... 0
+
+... ... ... ... ...    
+
+> 000... Ad−1+Ad
+
+ , (10)        
+
+> 1I0,1and Id,d +1 are zero due to the absence of die 0and die d+1 .×
+> ipp
+
+A
+
+> xvTxv
+> Tp1
+> ++
+> Txvxv
+> p
+
+1Apip×      
+
+> Txvxv
+> RT & CT Final matrix Original matrix RT CT ()iTppM×
+> ipp
+
+M ×
+
+Apip× 
+
+> Tp1Fig. 3. An illustrative example of row transformation.
+
+B =
+
+
+
+1p . . . 0
+
+... . . . ...
+
+0 . . . 1p
+
+ , (11) 
+
+D = diag ([ Rt 1,21 , . . . , Rt 1,2 
+
+> p
+
+, . . . , Rt d−1,d  
+
+> 1
+
+, . . . , Rt d−1,d p ]) ,
+
+(12) 
+
+Ai =
+
+
+
+ais, 1,1 . . . ais, 1,p 
+
+... . . . ...
+
+ais,p, 1 . . . ais,p,p 
+
+ , (13) and diag (.) converts a vector to a diagonal matrix. 1p is an 
+
+p-dimensional column vector of ones. I and V are: 
+
+I =
+
+h
+
+I1,21 . . . I1,2 
+
+> p
+
+. . . Id−1,d  
+
+> 1
+
+. . . Id−1,d p
+
+iT
+
+, (14) 
+
+V = −(V 1 
+
+> s
+
+− V 2 
+
+> s
+
+) . . . −(V d−1 
+
+> s
+
+− V ds )T . (15) Thus, the effective resistance for a particular bump/load pair can be rigorously obtained using Eqs. (5) and (9)-(15). It is noted that the dimension of the coefficient matrix in Eq. (9) 
+
+is (p+1) ×(d−1) , approximately corresponding to the number of TSVs multiplied by the number of dies, which is significantly smaller than the system conductance matrix that must be solved in the traditional method, with dimensions equivalent to the total number of nodes. 
+
+D. Fast Computation of Effective Resistances for Arbitrary Bump-Load Combinations 
+
+Eq. (9) defines the relationship between intra-die and inter-die effective resistance for a specific bump-load pair. However, a major challenge arises: changing either the bump or load node requires recomputing the coefficient matrix, 
+
+[A+D B; BT 0] , in Eq. (9). This significantly impedes the efficient computation of effective resistances across numerous bump-load pairs, as the matrix decomposition cannot be reused. The root cause is the dependency on terms like Ris,j , which vary with the specific bump and load nodes. To address this, we apply row and column transformations to the matrix, eliminating dependencies on specific bump-load combinations and producing a reusable coefficient matrix for effective resistance computation. Specifically, the matrix Ai can be expressed as the sum of three components: ˜Ai+M i+( M i)T ,where 
+
+M i = Ris, 11p Ris, 21p . . . Ris,p 1p
+
+ , (16) 
+
+˜Ai = − 12
+
+
+
+0 Ri 
+
+> 1,2
+
+. . . Ri
+
+> 1,p
+
+Ri 
+
+> 2,1
+
+0 . . . Ri
+
+> 2,p
+
+... ... . . . ...
+
+Rip, 1 Rip, 2 . . . 0
+
+ . (17) Importantly, only ˜Ai is independent of the bump-load com-bination. For each Ai, we can identify a column vx and a row vTx that align with 1p, as shown in Fig. 3. By performing row transformations (RTs) and column transformations (CTs), we effectively eliminate the contributions of M i and (M i)T ,resulting in a simplified and reusable coefficient matrix. Due to the symmetry of the problem, these transformations are applied symmetrically. After the transformations, the struc-ture of the linear system in Eq. (9) is modified, particularly altering the solution vector. The transformed system can be expressed as:  ˜A + D BBT 0
+
+  I˜V
+
+
+
+= b, (18) where b is: 
+
+ − 12 R1             
+
+> s, 1... −12R1
+> s,p 0−12Rds, 1... −12Rds,p 1Tp
+
+T ; (19) 
+
+˜V is a vector of ˜vi with its ith component as: 
+
+˜vi = − (V is − V i+1  
+
+> s
+
+) + 
+
+> d−1
+
+X
+
+> j=1
+
+(Ris,j + Ri+1  
+
+> s,j
+
+)Ii,i +1 
+
+> j
+
+−
+
+> d−1
+
+X
+
+> j=1
+
+Ris,j Ii−1,i j −
+
+> d−1
+
+X
+
+> j=1
+
+Ri+1  
+
+> s,j
+
+Ii+1 ,i +2  
+
+> j
+
+.
+
+(20) Similarly, we can define R0 
+
+> s,j
+
+and Rd+1  
+
+> s,j
+
+as zero, and ˜A is analogous to A but with Ai replaced by ˜Ai:Eq. (18) can be written as Cx = b, where the target effective resistance Ref f is elegantly expressed as Ref f = −xT b.Importantly, the coefficient matrix C is independent of the specific bump and load nodes, depending only on geometric and physical parameters of 3D IC. This property ensures a unique coefficient matrix, requiring only one decomposition .For m bump nodes and n load nodes, there are m×n bump-load combinations, which would normally require solving m ×
+
+n linear systems based on Eq. (18). However, leveraging the linearity of the system, this number is reduced to m + n, as the vector b can be split into two components: 
+
+b = − 12
+
+R1 
+
+> s, 1
+
+. . . R1 
+
+> s,p
+
+0 −1Tp
+
+T
+
+− 12
+
+0 Rds, 1 . . . Rds,p −1Tp
+
+T .
+
+(21) Let b = b1 + bd, where b1 and bd depend only on the endpoints in die 1 and die d, respectively. For m bump nodes in die 1 and n load nodes in die d, their corresponding vectors are b1 
+
+> i
+
+(i = 1 , 2, . . . , m ) and bdj (j = 1 , 2, . . . , n ). Taking these vectors as constants and C as the coefficient matrix, we can solve m + n linear systems, yielding solution vectors x1 
+
+> i
+
+(i = 1 , 2, . . . , m ) and xdj (j = 1 , 2, . . . , n ). The effective resistance between the i-th bump in die 1 and the j-th load in die d is then computed as: 
+
+Ref f (i, j ) = −(x1 
+
+> i
+
++ xdj )T (b1 
+
+> i
+
++ bdj ). (22) Fig. 4. GPU acceleration of the proposed framework for effective resistance (effR) computation.  
+
+> Fig. 5. GPU thread/memory management for effective resistance computing.
+
+In summary, to compute m × n effective resistances between bump and load nodes, we solve m + n linear systems using a small coefficient matrix with a size proportional to the number of dies and TSVs. Constructing these systems requires intra-die effective resistance and TSV segment resistance, both amenable to parallel computation, as shown in Eq. (3). After decomposing the coefficient matrix, all m + n systems can be solved simultaneously, with matrix operations like dot products and additions significantly accelerated. Advanced parallel com-puting platforms further enhance the framework’s efficiency. 
+
+E. GPU Acceleration 
+
+While GPUs provide immense parallel computing capabil-ities with significant potential for effective resistance compu-tation, achieving tangible performance improvements requires a comprehensive GPU-oriented redesign [22]. The proposed framework is specifically engineered to leverage this princi-ple, as summarized in Fig. 4. In Fig. 4, TSV-TSV effective resistances (effR) represent the resistances between TSV nodes and are stored in a 3D array of dimensions d × p × p. Bump-TSV and Load-TSV effective resistances are stored in two separate arrays of dimensions m × p and n × p, respectively. These arrays collectively contain all required intra-die effective resistances and are used to construct the unique coefficient matrix and constant vectors. After the coefficient matrix is decomposed, solution vectors are computed using substitution. The bump-load effective resistances are then calculated using vector addition and dot products, utilizing both the constant and solution vectors. The results are organized into an array of dimensions m × n and transferred back to the CPU host. As shown in Fig. 4, the GPU handles the bulk of the computation, while the CPU manages input and output tasks. This division of labor maximizes the GPU’s parallel processing capabilities while minimizing data transfer overhead between the CPU and GPU. To further optimize performance, we reformulate Eq. (3) and refine the GPU thread configuration to avoid redundant computations and reduce floating-point operations. For thread allocation, taking the computation of TSV-TSV effective resistances as an example (illustrated in Fig. 5), a straightforward scheme is to allocate d × p × p
+
+threads. Each thread, indexed by (i, j, k ), computes the effective resistance Rij,k between the jth and kth TSV nodes within die i
+
+using Eq. (3). The results are stored in a GPU array of size 
+
+d × p × p. However, since Rij,k = Rik,j , allocating p × p threads is unnecessary. Instead, only p × (p − 1) /2 threads are needed, as the results of threads indexed by (i, j, k ) and (i, k, j ) are identical, which reduces redundant thread execution. Additionally, directly computing intra-die effective resistance using Eq. (3) introduces significant redundancy. To alleviate the GPU’s computational burden, we partition Eq. (3) into several smaller components. Each component is computed in parallel on the GPU, and the partial results are summed up afterward. Finally, to further optimize performance, a recursive form of the multiple-angle formula is employed for the cosine terms in Eq. (3). This approach minimizes the use of expensive cosine operations on the GPU, replacing them with multiplication op-erations, which require significantly fewer floating-point com-putations. Since many operations in Fig. 4 are matrix-centric, established GPU-accelerated libraries such as CuPy [23] can be utilized to improve the implementation efficiency. IV. E XPERIMENTAL RESULTS 
+
+All experiments are conducted on an Ubuntu 22.04 host with an Intel Xeon Platinum 8475B (48 cores, 503 GB RAM) and an NVIDIA A100 GPU (80 GB). In addition to a most recent pseudo-inverse-based solver [18], a conventional CHOLMOD-based direct solver [17] is used as the golden reference. 
+
+A. Evaluation of Accuracy and Speed 
+
+Table II summarizes the parameters of 9 early-stage 3D IC industrial benchmarks based on 14nm technology [24]– [26]. Columns 2-7 detail the number of dies (#Die), footprint (mm 2), number of PDN nodes (#Node), TSVs (#TSV), bumps (#Bump), and loads (#Load). For early-stage design, bumps and TSVs are assumed to be uniformly distributed. Columns 8-10 show the runtime for the golden solver [17] 1, the pseudo-inverse-based solver [18] 2, and the proposed framework.                                                                                                                                   
+
+> 1The golden solver cannot complete D9 due to memory limitations.
+> 2The solver [18] trades accuracy for speed using pseudo-inverse methods. TABLE II COMPARISON ON ACCURACY AND SPEED FOR EFFECTIVE RESISTANCE CALCULATION USING THE PROPOSED FRAMEWORK ,A GOLDEN DIRECT SOLVER [17], AND A RECENT PSEUDO -INVERSE -BASED SOLVER [18] ON DIFFERENT EARLY -STAGE 3D IC PDN BENCHMARKS .Design #Die Footprint ( mm 2)#Nodes #TSV #Bump #Load Runtime (sec.) Speedup ARE MRE Golden [17] Pseudo [18] Ours D1 45.5 ×7.3 4.4e6 1.8e4 432 1e4 3.4e6 31.0 13.3 2.6e5X \2.3X 5.0e-9 5.1e-9 D2 55.5 ×7.3 5.5e6 2.2e4 432 1e4 4.3e6 38.7 14.1 3.0e5X \2.7X 5.6e-9 5.7e-9 D3 65.5 ×7.3 6.6e6 2.7e4 432 1e4 5.6e6 46.6 15.1 3.7e5X \3.1X 6.1e-9 6.2e-9 D4 47.8 ×11.9 1.0e7 2.2e4 1040 1e4 2.2e7 72.5 17.1 1.3e6X \4.2X 8.2e-9 8.3e-9 D5 57.8 ×11.9 1.3e7 2.8e4 1040 1e4 2.8e7 95.0 18.9 1.5e6X \5.0X 8.2e-9 8.2e-9 D6 67.8 ×11.9 1.5e7 3.4e4 1040 1e4 3.4e7 110.3 20.8 1.6e6X \5.3X 8.8e-9 8.9e-9 D7 411.0 ×11.0 1.3e7 2.6e4 1369 1e4 4.1e7 103.2 25.8 1.6e6X \4.0X 9.4e-08 9.5e-08 D8 511.0 ×11.0 1.7e7 3.3e4 1369 1e4 4.9e7 126.3 28.5 1.7e6X \4.4X 1.7e-08 1.8e-08 D9 611.0 ×11.0 2.0e7 4.0e4 1369 1e4 NA 149.6 31.5 NA \4.7X NA NA
+> (a) Runtime v.s. #Nodes. (b) Runtime v.s. #TSVs/Die.
+> (c) Runtime v.s. #Bump-load pairs. (d) Effective resistance distribution. Fig. 6. Comparison of (a) runtime v.s. #Node; (b) runtime v.s. #TSVs/Die; (c) runtime v.s. #Bump-load pairs for cases D2, D5 and D7; (d) Contour of effective resistance distribution.
+
+Both solvers in [17], [18] are serial, with runtimes propor-tional to the number of bump-load pairs. The pseudo-inverse-based solver [18] achieves speedups at the cost of accuracy, while the proposed framework is unaffected by bump and TSV topology, delivering 5-6 orders of magnitude speedup over the golden solver and 2-5 × speedup over [18], as shown in Column 11. The last two columns list the average and maximum relative errors (denoted as ARE and MRE) compared to the golden solver [17], which are around the orders of 10 −9-
+
+10 −8 and hence negligible. Thus, unlike the prior works [17], [18], the proposed framework achieves both high accuracy and speed .To evaluate the scalability of our framework, we selected three key parameters, the total number of nodes, the number of TSVs per die, and the number of bump-load pairs, and then varied each parameter using ‘D2,’ ‘D5,’ and ‘D8’ as baselines while keeping all other parameters constant. The relationships between runtime and these parameters are summarized in Fig. 6(a) to 6(c). It is worth noting that while the runtime increases linearly with those key parameters, the growth rate of the runtime is significantly smaller compared to the growth rate of these parameters . This again demonstrates the efficiency and scalability of the proposed framework in handling large-scale 3D PDN benchmarks. 
+
+> (a) Band-like placement and its current distribution
+> (b) Uniformly-distributed placement and its current distribution Fig. 7. Through-bump current distributions for different TSV planning options: (a) Band-like placement; (b) Uniformly-distributed placement.
+
+B. TSV Planning Using the Proposed Framework 
+
+The proposed framework can be readily used to facilitate evaluations of different design options at the early design stage. For example, designers can examine the contour of the effective resistance distribution in Fig. 6(d) to select the most suitable TSV planning option. Fig. 7(a) and (b) illustrate the impact of different TSV planning strategies, both of which are based on practical design guidelines. Fig. 7(a) (left) places all TSVs in a centrally clustered configuration to enable a band-like connection, a setup commonly used in mainstream HBM products, whereas Fig. 7(b) (left) distributes TSVs uniformly across the entire die to facilitate better current and thermal distribution. The through-bump currents are demonstrated and compared for the two scenarios. For the same four functional blocks, each occupying 2.35 × 1.18 mm 2 with a current density of 220 A/cm 2, the band-like connection in Fig. 7(a) results in 23.4% of the total bumps carrying approximately 95% of the total current, while also contributing to significant routing area savings. In contrast, the uniformly distributed connection in Fig. 7(b) results in 53.2% of the total bumps carrying 95% of the total current. These insights allow designers to make informed trade-offs between different application scenarios to select the optimal TSV planning strategy. V. C ONCLUSION 
+
+The proposed framework presents a highly efficient and scal-able solution for effective resistance analysis in the early design stages of 3D IC PDNs. By leveraging the parallel processing capabilities of GPUs, the method achieves substantial speedup compared to traditional approaches, making it feasible to handle large-scale 3D PDN designs with millions to billions of nodes. The results show that our approach not only provides fast and accurate resistance computation but also facilitates efficient design options exploration in 3D IC development. REFERENCES [1] B. Black, M. Annavaram, N. Brekelbaum, J. DeVale, L. Jiang, G. H. Loh, D. McCaule, P. Morrow, D. W. Nelson, D. Pantuso, P. Reed, J. Rupley, S. Shankar, J. Shen, and C. Webb, “Die stacking (3d) microarchitecture,” in 2006 39th Annual IEEE/ACM International Symposium on Microar-chitecture (MICRO’06) , 2006, pp. 469–479. [2] S.-C. Hung and K. Chakrabarty, “Design of a reliable power delivery network for monolithic 3d ics,” in 2020 Design, Automation & Test in Europe Conference & Exhibition (DATE) , 2020, pp. 1746–1751. [3] N. H. Khan, S. M. Alam, and S. Hassoun, “System-level comparison of power delivery design for 2d and 3d ics,” in 2009 IEEE International Conference on 3D System Integration , 2009, pp. 1–7. [4] A. Ajami, K. Banerjee, A. Mehrotra, and M. Pedram, “Analysis of ir-drop scaling with implications for deep submicron p/g network designs,” in Fourth International Symposium on Quality Electronic Design, 2003. Proceedings. , 2003, pp. 35–40. [5] T. Lu, C. Serafy, Z. Yang, S. K. Samal, S. K. Lim, and A. Srivastava, “Tsv-based 3-d ics: Design methods and tools,” IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems , vol. 36, no. 10, pp. 1593–1619, 2017. [6] C.-H. Pao, A.-Y. Su, and Y.-M. Lee, “Xgbir: An xgboost-based ir drop predictor for power delivery network,” in 2020 Design, Automation & Test in Europe Conference & Exhibition (DATE) , 2020, pp. 1307–1310. [7] C.-T. Ho and A. B. Kahng, “Incpird: Fast learning-based prediction of incremental ir drop,” in 2019 IEEE/ACM International Conference on Computer-Aided Design (ICCAD) , 2019, pp. 1–8. [8] H. Qian, S. Nassif, and S. Sapatnekar, “Random walks in a supply network,” in Proceedings 2003. Design Automation Conference (IEEE Cat. No.03CH37451) , 2003, pp. 93–98. [9] J. Kozhaya, S. Nassif, and F. Najm, “Multigrid-like technique for power grid analysis,” in 2001 IEEE/ACM International Conference on Computer-Aided Design (ICCAD) , 2001, pp. 480–487. [10] F. Y. Wu, “Theory of resistor networks: the two-point resistance,” Journal of Physics A: Mathematical and General , vol. 37, no. 26, p. 6653–6673, Jul. 2004. [11] M. Zhao, R. Panda, S. Sapatnekar, and D. Blaauw, “Hierarchical analysis of power distribution networks,” IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems , vol. 21, no. 2, pp. 159–168, 2002. [12] R. Bairamkulov and E. G. Friedman, “Effective resistance of finite two-dimensional grids based on infinity mirror technique,” IEEE Transactions on Circuits and Systems I: Regular Papers , vol. 67, no. 9, pp. 3224–3233, 2020. [13] S. Kose and E. G. Friedman, “Effective resistance of a two layer mesh,” 
+
+IEEE Transactions on Circuits and Systems II: Express Briefs , vol. 58, no. 11, pp. 739–743, 2011. [14] S. K¨ ose and E. G. Friedman, “Fast algorithms for power grid analysis based on effective resistance,” in Proceedings of 2010 IEEE International Symposium on Circuits and Systems , 2010, pp. 3661–3664. [15] E.-X. Liu, J. R. Cubillo, E.-P. Li, H. Zhao, Z. Z. Oo, and H. M. Lee, “Effective resistance approach for dc analysis of power grid on through-silicon interposer (tsi),” in 2012 IEEE Electrical Design of Advanced Packaging and Systems Symposium (EDAPS) , 2012, pp. 1–4. [16] Z. Feng, X. Zhao, and Z. Zeng, “Robust parallel preconditioned power grid simulation on gpu with adaptive runtime performance modeling and optimization,” IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems , vol. 30, no. 4, pp. 562–573, 2011. [17] Y. Chen, T. A. Davis, W. W. Hager, and S. Rajamanickam, “Algo-rithm 887: Cholmod, supernodal sparse cholesky factorization and up-date/downdate,” ACM Transactions on Mathematical Software (TOMS) ,vol. 35, no. 3, pp. 1–14, 2008. [18] Z. Liu and W. Yu, “Computing effective resistances on large graphs based on approximate inverse of cholesky factor,” in 2023 Design, Automation & Test in Europe Conference & Exhibition (DATE) , 2023, pp. 1–6. [19] C. Zhuo, H. Gan, and W.-K. Shih, “Early-stage power grid design: Extraction, modeling and optimization,” in 2014 51st ACM/EDAC/IEEE Design Automation Conference (DAC) , 2014, pp. 1–6. [20] Q. He, W. Au, A. Korobkov, and S. Venkateswaran, “Parallel power grid analysis using distributed direct linear solver,” in 2014 IEEE International Symposium on Electromagnetic Compatibility (EMC) , 2014, pp. 866–871. [21] A. Ghosh, S. Boyd, and A. Saberi, “Minimizing effective resistance of a graph,” SIAM Review , vol. 50, no. 1, pp. 37–66, 2008. [Online]. Available: http://www.jstor.org/stable/20454062 [22] Z. Feng, Z. Zeng, and P. Li, “Parallel on-chip power distribution network analysis on multi-core-multi-gpu platforms,” IEEE Transactions on Very Large Scale Integration (VLSI) Systems , vol. 19, no. 10, pp. 1823–1836, 2011. [23] R. Nishino and S. H. C. Loomis, “Cupy: A numpy-compatible library for nvidia gpu calculations,” 31st confernce on neural information processing systems , vol. 151, no. 7, 2017. [24] M. B. Healy and S. K. Lim, “Power delivery system architecture for many-tier 3d systems,” in 2010 Proceedings 60th Electronic Components and Technology Conference (ECTC) , 2010, pp. 1682–1688. [25] P.-W. Luo, C. Zhang, Y.-T. Chang, L.-C. Cheng, H.-H. Lee, B.-L. Sheu, Y.-S. Su, D.-M. Kwai, and Y. Shi, “Benchmarking for research in power delivery networks of three-dimensional integrated circuits,” in Proceedings of the 2013 ACM International symposium on Physical Design . Stateline Nevada USA: ACM, Mar. 2013, p. 17–24. [26] J. Park, S. Kim, K. Son, H. Kim, H. Kim, H. Kim, S. Choi, J. Kim, and J. Kim, “Design and analysis of an irregular-shaped power distribution network (pdn) for high bandwidth memory (hbm) interposer,” in 2023 IEEE 32nd Conference on Electrical Performance of Electronic Packag-ing and Systems (EPEPS) , 2023, pp. 1–3.

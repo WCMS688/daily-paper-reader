@@ -1,0 +1,39 @@
+{
+  "label": "2026-07-08",
+  "date": "2026-07-08",
+  "generated_at": "2026-07-08T21:25:37",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202607/08/2607.05818v1-gpu-accelerated-effective-resistance-analysis-for-3d-ic-power-delivery-network",
+      "section": "deep",
+      "title_en": "GPU-Accelerated Effective Resistance Analysis for 3D IC Power Delivery Network",
+      "authors": "Jingchao Hu, Cheng Zhuo, Zhou Jin",
+      "date": "2026-07-07",
+      "pdf": "https://arxiv.org/pdf/2607.05818v1",
+      "score": "9.0",
+      "evidence": "针对3D IC电源分配网络的GPU加速有效电阻分析",
+      "tldr": "3D IC中TSV规划不当会导致供电网络有效电阻分布不均，引发严重IR Drop。本文提出GPU加速的精确有效电阻分析框架，相比传统直接求解器实现5到6个数量级的加速，同时最大和平均相对误差均保持极低水平，为早期3D IC供电网络可靠性评估提供了高效工具。",
+      "tags": "query:si-pi",
+      "abstract_en": "Three-dimensional (3D) integration is a critical technique for enhancing transistor density, improving power efficiency, and reducing interconnect delays. However, as current demands and design complexity increase, power deliver networks (PDNs) are facing growing challenges.Careful planning of through-silicon vias (TSVs) is essential for ensuring reliable PDNs, where effective resistance serves as a vital metric for the reliability. Ill-planned TSVs often cause 3D IC with unevenly distributed effective resistance and consequently severer IR Drop.In this paper, we propose a GPU-accelerated framework on accurate effective resistance analysis for early stage 3D IC PDNs. The proposed framework achieves a speedup of 5 to 6 orders of magnitude compared to the conventional direct solver, while maintaining negligible deviations in both maximum and average relative errors.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/08/2607.05934v1-flexrc-a-flexible-multi-point-model-order-reduction-method-for-many-port-rc-networks",
+      "section": "deep",
+      "title_en": "FlexRC: A Flexible Multi-Point Model Order Reduction Method for Many-Port RC Networks",
+      "authors": "Yuncheng Xu, Siyuan Yin, Lin Liu, Fan Yang, Xuan Zeng, Chengtao An, Yangfeng Su",
+      "date": "2026-07-07",
+      "pdf": "https://arxiv.org/pdf/2607.05934v1",
+      "score": "9.0",
+      "evidence": "面向多端口RC网络的灵活多点模型降阶，支持高效后布局SI/PI仿真。",
+      "tldr": "多端口RC网络降阶在版图后仿真中至关重要，但现有高精度消去法存在频率点固定、模型过大或成本高的问题。FlexRC采用改进的块有理Arnoldi过程构造非正交投影基，结合用户指定频点、端口缩减和稀疏控制，生成稀疏带状降阶模型。在工业RC和IBM电源网格实例上，缩减时间和瞬态仿真时间均显著减少。该方法兼顾灵活性与效率，推动大规模多端口RC网络快速分析。",
+      "tags": "query:si-pi",
+      "abstract_en": "Efficient model order reduction for many-port resistor-capacitor (RC) networks is essential in post-layout circuit simulation. Existing high-accuracy elimination-based methods have certain limitations, such as fixed frequency points, large reduced-order models, or high reduction cost. This paper proposes FlexRC, a flexible multi-point model order reduction method for many-port RC networks. FlexRC starts from the same elimination step as previous methods, and then constructs a nonorthogonal projection basis by a modified block rational Arnoldi process to generate a sparse banded reduced model. FlexRC features three adjustable components: user-specified frequency points, a tolerance-controlled port-reduction technique for the internal subsystem, and an optional sparsity-control strategy. We discuss passivity under port-reduction perturbations, analyze moment matching, and provide a conservative error estimate for port reduction. Numerical experiments on industrial RC examples and IBM power-grid examples demonstrate the effectiveness of FlexRC in terms of reduction time and transient simulation time.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
