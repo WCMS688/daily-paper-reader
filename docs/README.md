@@ -6,22 +6,26 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-09
-- 运行时间：2026-07-09 21:01:49 UTC
+- 最新运行日期：2026-07-10
+- 运行时间：2026-07-10 21:31:22 UTC
 - 运行状态：成功
-- 本次总论文数：0
+- 本次总论文数：1
 - 精读区：0
-- 速读区：0
+- 速读区：1
 
 ### 今日简报（AI）
-> 今日无新推荐，系统未产出可展示论文。
-- 详情：[/202607/09/README](/202607/09/README)
+1) 今日推荐一篇工业级模拟电路优化论文，探索NDA安全的闭环LLM框架。
+2) 核心亮点：用LLM实现EDA流程中的模拟电路闭环优化，并保障NDA数据安全。
+3) 建议关注LLM在芯片设计领域的落地潜力，尤其是工业场景的隐私约束与自动化权衡。
+- 详情：[/202607/10/README](/202607/10/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-- 本次无速读推荐。
+1. [SABLE: An NDA-Safe Closed-Loop LLM Framework for Analog Circuit Optimization in Industrial EDA Flows](/202607/10/2607.03701v1-sable-an-nda-safe-closed-loop-llm-framework-for-analog-circuit-optimization-in-industrial-eda-flows)  
+   标签：评分：6.0/10、query:si-pi
+   evidence：面向模拟电路优化的LLM框架，可迁移至SI/PI机器学习方法
 
 
 <div class="dpr-home-promo-card">

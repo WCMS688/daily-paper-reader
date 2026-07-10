@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-07-10 <!--dpr-date:20260710-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/10/2607.03701v1-sable-an-nda-safe-closed-loop-llm-framework-for-analog-circuit-optimization-in-industrial-eda-flows" data-sidebar-item="{&quot;title&quot;: &quot;SABLE: An NDA-Safe Closed-Loop LLM Framework for Analog Circuit Optimization in Industrial EDA Flows&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.03701v1-sable-an-nda-safe-closed-loop-llm-framework-for-analog-circuit-optimization-in-industrial-eda-flows&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;面向模拟电路优化的LLM框架，可迁移至SI/PI机器学习方法&quot;}">SABLE: An NDA-Safe Closed-Loop LLM Framework for Analog Circuit Optimization in Industrial EDA Flows</a>
   * 2026-07-08 <!--dpr-date:20260708-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/08/2607.05818v1-gpu-accelerated-effective-resistance-analysis-for-3d-ic-power-delivery-network" data-sidebar-item="{&quot;title&quot;: &quot;GPU-Accelerated Effective Resistance Analysis for 3D IC Power Delivery Network&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.05818v1-gpu-accelerated-effective-resistance-analysis-for-3d-ic-power-delivery-network&quot;, &quot;score&quot;: &quot;9.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;针对3D IC电源分配网络的GPU加速有效电阻分析&quot;}">GPU-Accelerated Effective Resistance Analysis for 3D IC Power Delivery Network</a>
