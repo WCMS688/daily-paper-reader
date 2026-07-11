@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-07-11 <!--dpr-date:20260711-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/11/2607.07523v1-a-physics-informed-neural-network-for-small-signal-stability-in-multi-inverter-power-systems" data-sidebar-item="{&quot;title&quot;: &quot;A Physics-Informed Neural Network for Small-Signal Stability in Multi-Inverter Power Systems&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.07523v1-a-physics-informed-neural-network-for-small-signal-stability-in-multi-inverter-power-systems&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;物理信息神经网络用于阻抗建模与小信号稳定性，可迁移至PDN分析&quot;}">A Physics-Informed Neural Network for Small-Signal Stability in Multi-Inverter Power Systems</a>
   * 2026-07-10 <!--dpr-date:20260710-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/10/2607.03701v1-sable-an-nda-safe-closed-loop-llm-framework-for-analog-circuit-optimization-in-industrial-eda-flows" data-sidebar-item="{&quot;title&quot;: &quot;SABLE: An NDA-Safe Closed-Loop LLM Framework for Analog Circuit Optimization in Industrial EDA Flows&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.03701v1-sable-an-nda-safe-closed-loop-llm-framework-for-analog-circuit-optimization-in-industrial-eda-flows&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;面向模拟电路优化的LLM框架，可迁移至SI/PI机器学习方法&quot;}">SABLE: An NDA-Safe Closed-Loop LLM Framework for Analog Circuit Optimization in Industrial EDA Flows</a>
