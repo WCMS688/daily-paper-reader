@@ -1,0 +1,60 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-15T21:21:21.605633+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2607.12788v1",
+      "source": "arxiv",
+      "title": "CLIP-3D: Closed-Loop Evaluation of Performance and Physical Constraints for 3D ICs",
+      "abstract": "3D integration packs more power into a smaller footprint, so a candidate design's actual throughput depends on its layout: which macro sits on which tier, where the hot spot lands, and how cache geometry maps to access cycles. Architectural simulators like gem5 report IPC under idealized timing. They do not produce the per-block power map, the cache cycle counts, or the 3D layout that decide the realized billion-instructions-per-second (BIPS), so early-stage 3D-IC exploration selects designs without accounting for the effects that decide whether they throttle on silicon. We present CLIP-3D, a shift-left flow that exposes 3D layout-driven thermal, wire, and cache effects to early-stage architectural exploration before any sign-off tool is invoked. The first stage lifts an architectural configuration into a physical block representation: McPAT for per-block dynamic and leakage power, CACTI for cache geometry and access cycles, and a HotSpot-compatible 3D stack discretization. The second stage runs an analytical 3D thermal-aware floorplanner over that representation. The floorplanner objective embeds a closed-form sustained-frequency expression derived from the linearity of HotSpot's steady-state operator and the standard CMOS power-frequency decomposition. Cross-tier macro assignment and in-plane placement are co-optimized for the realized BIPS rather than for a half-perimeter wirelength (HPWL)-plus-temperature surrogate with hand-tuned weights.",
+      "authors": [
+        "Shuo Ren",
+        "Libo Shen",
+        "Yaohui Han",
+        "Leilei Jin",
+        "Chenghan Wang",
+        "Zhen Zhuang",
+        "Rongliang Fu",
+        "Bei Yu",
+        "Tsung-Yi Ho"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR"
+      ],
+      "published": "2026-07-14T14:02:22+00:00",
+      "link": "https://arxiv.org/pdf/2607.12788v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Closed-loop evaluation of physical constraints for 3D ICs, including thermal and wire effects",
+      "llm_evidence_cn": "针对3D IC的物理约束闭环评估，包含热和互连线效应",
+      "llm_evidence": "针对3D IC的物理约束闭环评估，包含热和互连线效应",
+      "canonical_evidence": "针对3D IC的物理约束闭环评估，包含热和互连线效应",
+      "llm_tldr_en": "CLIP-3D provides a shift-left flow that evaluates 3D layout-driven thermal, wire, and cache effects for early-stage 3D-IC design exploration, enabling closed-loop performance and physical constraint analysis.",
+      "llm_tldr_cn": "现有3D IC架构模拟器（如gem5）未考虑布局驱动的热、互连及缓存效应，导致早期设计无法预测实际性能瓶颈。CLIP-3D提出一种左移设计流程，在签核前将3D布局的热效应、互连延迟和缓存周期集成到架构探索中。该方法通过闭环评估揭示布局选择对实际吞吐量的影响，从而避免设计在硅片上触发降频。该框架为3D IC的电源/信号完整性早期分析提供了关键物理约束建模手段。",
+      "llm_tldr": "现有3D IC架构模拟器（如gem5）未考虑布局驱动的热、互连及缓存效应，导致早期设计无法预测实际性能瓶颈。CLIP-3D提出一种左移设计流程，在签核前将3D布局的热效应、互连延迟和缓存周期集成到架构探索中。该方法通过闭环评估揭示布局选择对实际吞吐量的影响，从而避免设计在硅片上触发降频。该框架为3D IC的电源/信号完整性早期分析提供了关键物理约束建模手段。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "SI/PI analysis for 2.5D 3D and Chiplet packaging",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "label": "2026-07-15",
+  "date": "2026-07-15",
+  "generated_at": "2026-07-15T21:22:21",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202607/15/2607.12788v1-clip-3d-closed-loop-evaluation-of-performance-and-physical-constraints-for-3d-ics",
+      "section": "quick",
+      "title_en": "CLIP-3D: Closed-Loop Evaluation of Performance and Physical Constraints for 3D ICs",
+      "authors": "Shuo Ren, Libo Shen, Yaohui Han, Leilei Jin, Chenghan Wang, Zhen Zhuang, Rongliang Fu, Bei Yu, Tsung-Yi Ho",
+      "date": "2026-07-14",
+      "pdf": "https://arxiv.org/pdf/2607.12788v1",
+      "score": "6.0",
+      "evidence": "针对3D IC的物理约束闭环评估，包含热和互连线效应",
+      "tldr": "3D IC的早期架构探索常忽略布局引起的热、线长和缓存效应，导致所选设计在硅片上性能受限。CLIP-3D提出一种左移流程，首先将架构配置转化为包含McPAT功耗、CACTI缓存时序和HotSpot热模型的物理块表示，然后运行解析3D热感知布局规划器，协同优化跨层宏分配与平面布局，目标函数嵌入由HotSpot稳态算子线性可解性和CMOS功率-频率分解推导的持续频率表达式，直接优化实际执行效率而非传统HPWL加温度代理。实验表明该方法能早发现性能瓶颈，提升早期评估准确性，减少设计迭代次数。",
+      "tags": "query:si-pi",
+      "abstract_en": "3D integration packs more power into a smaller footprint, so a candidate design's actual throughput depends on its layout: which macro sits on which tier, where the hot spot lands, and how cache geometry maps to access cycles. Architectural simulators like gem5 report IPC under idealized timing. They do not produce the per-block power map, the cache cycle counts, or the 3D layout that decide the realized billion-instructions-per-second (BIPS), so early-stage 3D-IC exploration selects designs without accounting for the effects that decide whether they throttle on silicon. We present CLIP-3D, a shift-left flow that exposes 3D layout-driven thermal, wire, and cache effects to early-stage architectural exploration before any sign-off tool is invoked. The first stage lifts an architectural configuration into a physical block representation: McPAT for per-block dynamic and leakage power, CACTI for cache geometry and access cycles, and a HotSpot-compatible 3D stack discretization. The second stage runs an analytical 3D thermal-aware floorplanner over that representation. The floorplanner objective embeds a closed-form sustained-frequency expression derived from the linearity of HotSpot's steady-state operator and the standard CMOS power-frequency decomposition. Cross-tier macro assignment and in-plane placement are co-optimized for the realized BIPS rather than for a half-perimeter wirelength (HPWL)-plus-temperature surrogate with hand-tuned weights.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
