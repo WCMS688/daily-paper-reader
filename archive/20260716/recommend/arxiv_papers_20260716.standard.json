@@ -1,0 +1,55 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-16T21:18:58.320423+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 0,
+    "quick_skim_target": 11,
+    "quick_selected": 0
+  },
+  "deep_dive": [
+    {
+      "id": "2607.13700v1",
+      "source": "arxiv",
+      "title": "CSCO: A Backside-PDN-Aware Clock-Signal Co-Optimization Framework for Improved PPA",
+      "abstract": "Backside power delivery networks (BSPDN) have emerged as a promising technology for advanced logic nodes to address IR-drop and PPA challenges. While BSPDN introduces additional routing resources on the backside, these resources are limited and must be carefully partitioned between clock and signal nets, creating a critical resource allocation tradeoff. Prior work either moves only the clock network or assumes a fixed clock tree and optimizes only signal nets, failing to explore the tradeoff space of backside resource allocation. Moreover, lacking frontside power-ground shielding, BSPDN introduces severe signal integrity (SI) degradation. We propose CSCO, a data-driven BSPDN-aware co-optimization framework that jointly allocates limited backside resources between clock and signal nets across frontside/backside layers. CSCO employs efficient search strategies to identify critical nets for backside routing without repeated evaluation, navigating the clock-signal allocation tradeoff to balance IR-drop, routing congestion, and PPA. The framework also leverages backside routing to mitigate coupling noise and crosstalk-induced SI issues. Experiments demonstrate improved WNS/TNS, frequency, and SI robustness without additional shielding overhead.",
+      "authors": [
+        "Zixiao Wang",
+        "Leilei Jin",
+        "Zhen Zhuang",
+        "Rongmei Chen",
+        "Bei Yu"
+      ],
+      "primary_category": "cs.CE",
+      "categories": [
+        "cs.CE"
+      ],
+      "published": "2026-07-15T11:01:21+00:00",
+      "link": "https://arxiv.org/pdf/2607.13700v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "backside PDN and signal integrity co-optimization",
+      "llm_evidence_cn": "背面PDN与信号完整性协同优化",
+      "llm_evidence": "背面PDN与信号完整性协同优化",
+      "canonical_evidence": "背面PDN与信号完整性协同优化",
+      "llm_tldr_en": "Proposes CSCO, a data-driven framework for backside PDN-aware clock-signal co-optimization that improves PPA and addresses signal integrity degradation due to lack of frontside shielding.",
+      "llm_tldr_cn": "针对先进工艺节点中背面供电网络（BSPDN）带来的信号完整性退化问题，提出CSCO框架，通过数据驱动方法协同分配有限背面资源给时钟和信号网络，同时采用权衡策略优化SI。实验表明该方法有效改善了PPA并缓解了SI退化，为BSPDN设计提供了新思路。",
+      "llm_tldr": "针对先进工艺节点中背面供电网络（BSPDN）带来的信号完整性退化问题，提出CSCO框架，通过数据驱动方法协同分配有限背面资源给时钟和信号网络，同时采用权衡策略优化SI。实验表明该方法有效改善了PPA并缓解了SI退化，为BSPDN设计提供了新思路。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Power integrity and PDN modeling optimization",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": []
+}

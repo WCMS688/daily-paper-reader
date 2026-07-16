@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-07-16 <!--dpr-date:20260716-->
+    * 精读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/16/2607.13700v1-csco-a-backside-pdn-aware-clock-signal-co-optimization-framework-for-improved-ppa" data-sidebar-item="{&quot;title&quot;: &quot;CSCO: A Backside-PDN-Aware Clock-Signal Co-Optimization Framework for Improved PPA&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.13700v1-csco-a-backside-pdn-aware-clock-signal-co-optimization-framework-for-improved-ppa&quot;, &quot;score&quot;: &quot;9.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;背面PDN与信号完整性协同优化&quot;}">CSCO: A Backside-PDN-Aware Clock-Signal Co-Optimization Framework for Improved PPA</a>
   * 2026-07-15 <!--dpr-date:20260715-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/15/2607.12788v1-clip-3d-closed-loop-evaluation-of-performance-and-physical-constraints-for-3d-ics" data-sidebar-item="{&quot;title&quot;: &quot;CLIP-3D: Closed-Loop Evaluation of Performance and Physical Constraints for 3D ICs&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.12788v1-clip-3d-closed-loop-evaluation-of-performance-and-physical-constraints-for-3d-ics&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;针对3D IC的物理约束闭环评估，包含热和互连线效应&quot;}">CLIP-3D: Closed-Loop Evaluation of Performance and Physical Constraints for 3D ICs</a>

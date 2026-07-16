@@ -1,0 +1,24 @@
+{
+  "label": "2026-07-16",
+  "date": "2026-07-16",
+  "generated_at": "2026-07-16T21:19:59",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202607/16/2607.13700v1-csco-a-backside-pdn-aware-clock-signal-co-optimization-framework-for-improved-ppa",
+      "section": "deep",
+      "title_en": "CSCO: A Backside-PDN-Aware Clock-Signal Co-Optimization Framework for Improved PPA",
+      "authors": "Zixiao Wang, Leilei Jin, Zhen Zhuang, Rongmei Chen, Bei Yu",
+      "date": "2026-07-15",
+      "pdf": "https://arxiv.org/pdf/2607.13700v1",
+      "score": "9.0",
+      "evidence": "背面PDN与信号完整性协同优化",
+      "tldr": "背面供电网络（BSPDN）在先进节点中提升IR-drop和PPA，但背面资源有限且需在时钟和信号线间分配，同时前侧无电源地屏蔽导致信号完整性（SI）退化。现有工作未充分探索该权衡。本文提出CSCO框架，基于数据驱动协同优化时钟与信号线的背面资源分配，并利用背面布线缓解耦合噪声。实验表明，CSCO改善了最差负时序裕量（WNS）、总负时序裕量（TNS）、频率和SI鲁棒性，且无需额外屏蔽开销，有效平衡了IR-drop、拥塞与PPA。",
+      "tags": "query:si-pi",
+      "abstract_en": "Backside power delivery networks (BSPDN) have emerged as a promising technology for advanced logic nodes to address IR-drop and PPA challenges. While BSPDN introduces additional routing resources on the backside, these resources are limited and must be carefully partitioned between clock and signal nets, creating a critical resource allocation tradeoff. Prior work either moves only the clock network or assumes a fixed clock tree and optimizes only signal nets, failing to explore the tradeoff space of backside resource allocation. Moreover, lacking frontside power-ground shielding, BSPDN introduces severe signal integrity (SI) degradation. We propose CSCO, a data-driven BSPDN-aware co-optimization framework that jointly allocates limited backside resources between clock and signal nets across frontside/backside layers. CSCO employs efficient search strategies to identify critical nets for backside routing without repeated evaluation, navigating the clock-signal allocation tradeoff to balance IR-drop, routing congestion, and PPA. The framework also leverages backside routing to mitigate coupling noise and crosstalk-induced SI issues. Experiments demonstrate improved WNS/TNS, frequency, and SI robustness without additional shielding overhead.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
