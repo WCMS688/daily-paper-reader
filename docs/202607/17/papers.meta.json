@@ -1,0 +1,39 @@
+{
+  "label": "2026-07-17",
+  "date": "2026-07-17",
+  "generated_at": "2026-07-17T20:58:12",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202607/17/2607.15005v1-differentiable-routability-driven-package-floorplanning-with-pin-assignment",
+      "section": "deep",
+      "title_en": "Differentiable Routability-Driven Package Floorplanning with Pin Assignment",
+      "authors": "Yiqi Huang, Zepeng Li, Zhen Zhuang, Kehao Chen, Genggeng Liu, Tsung-Yi Ho",
+      "date": "2026-07-16",
+      "pdf": "https://arxiv.org/pdf/2607.15005v1",
+      "score": "9.0",
+      "evidence": "针对先进封装考虑PDN约束的可微分布线驱动布局规划与引脚分配",
+      "tldr": "先进封装中RDL互连密度增加，PDN预留扇入区迫使信号走扇出区，现有均匀网格模型无法准确刻画扇出拥塞。提出可微分布图规划与引脚分配算法：可微分线长最小化直接建模离散芯片朝向；交叉感知引脚分配引入多策略DPSO和GPU并行；可微分可布线性最大化构建扇出拥塞模型并反向传播位置梯度。实验实现100%可布线性，线长比领先方法最多减少23%。首次将可微分优化用于扇出路由拥塞驱动布图规划。",
+      "tags": "query:si-pi",
+      "abstract_en": "As advanced packaging technology evolves, increasing interconnect density in redistribution layers (RDLs) makes routability critical to package floorplanning. Meanwhile, power integrity requirements often reserve fan-in regions for the power delivery network (PDN), forcing signal nets through fan-out regions and complicating routability estimation. Existing uniform grid-based congestion models cannot accurately characterize fan-out congestion, while previous pin assignment methods struggle to evaluate net crossings. We propose a differentiable routability-driven floorplanning and pin assignment algorithm for advanced packaging with fan-out routing. First, a differentiable wirelength minimization method directly models discrete chip orientations and back-propagates wirelength gradients to chip locations and orientations. It reduces wirelength under fixed pin selection while avoiding the bias of continuous-angle modeling. Second, a crossing-aware pin assignment method incorporates net-crossing cost into a multi-strategy DPSO algorithm and uses GPU-parallel cost evaluation to reduce wirelength efficiently. Finally, a differentiable routability maximization method constructs a congestion model tailored to fan-out routing and establishes a back-propagation path from congestion information to chip locations, thereby guiding routability optimization. Experimental results show that our method achieves 100% routability on all benchmarks. For cases successfully routed by the baselines, it reduces wirelength by up to approximately 23% compared with a leading floorplanning method equipped with our pin assignment flow.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/17/2607.12152v1-osnrgsnr-prediction-in-brownfield-links-via-a-dlm-anchored-hybrid-physicsml-model",
+      "section": "quick",
+      "title_en": "OSNR/GSNR Prediction in Brownfield Links via a DLM-Anchored Hybrid Physics/ML Model",
+      "authors": "Agastya Raj, Venkata Virajit Garbhapu, Hiroyuki Ishihara, Peyman Pahlevanzadeh, Hideki Nishizawa, Takeo Sasai, Daniel C. Kilper, Marco Ruffini",
+      "date": "2026-07-13",
+      "pdf": "https://arxiv.org/pdf/2607.12152v1",
+      "score": "6.0",
+      "evidence": "混合物理/机器学习模型用于信号质量预测",
+      "tldr": "棕地光链路中设备参数不确定性导致OSNR/GSNR预测困难。本文提出以数字线路模型(DLM)为锚点的混合物理/机器学习框架，通过校准跨段和在线放大器边界提升预测精度。在单通道和OSaaS场景下，OSNR/GSNR预测误差分别不超过0.39/0.43 dB。该方案无需完整光层信息，适用于实际运营部署。",
+      "tags": "query:si-pi",
+      "abstract_en": "We present a DLM-anchored hybrid physics/ML framework for brownfield optical links that accurately predicts per-channel power, OSNR, and GSNR. Calibrating span/ILA boundaries via DLM yields OSNR/GSNR errors of no more than 0.39/0.43 dB across single-channel and OSaaS provisioning.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

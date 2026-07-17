@@ -1,0 +1,1905 @@
+Title: Differentiable Routability-Driven Package Floorplanning with Pin Assignment
+
+URL Source: https://arxiv.org/pdf/2607.15005v1
+
+Published Time: Fri, 17 Jul 2026 01:38:41 GMT
+
+Number of Pages: 31
+
+Markdown Content:
+# Differentiable Routability-Driven Package Floorplanning with Pin Assignment 
+
+## YIQI HUANG, Fuzhou University, China 
+
+## ZEPENG LI, Fuzhou University, China 
+
+## ZHEN ZHUANG, The Chinese University of Hong Kong, Hong Kong SAR 
+
+## KEHAO CHEN, Fuzhou University, China 
+
+## GENGGENG LIU ∗, Fuzhou University, China 
+
+## TSUNG-YI HO, The Chinese University of Hong Kong, Hong Kong SAR 
+
+As advanced packaging technology evolves, the increasing interconnect density of signal nets in redistribution layers (RDLs) makes routability critical for package floorplanning. On the other hand, power integrity requirements often reserve fan-in regions for the power delivery network (PDN), leaving signal nets to be routed through fan-out regions. This makes fan-in regions unavailable to signal nets and makes routability estimation during package floorplanning particularly challenging. Existing uniform grid-based congestion models cannot accurately characterize fan-out region congestion, and previous pin assignment methods have difficulty in evaluating net crossings. To address these issues, we propose a differentiable routability-driven floorplanning with pin assignment algorithm for advanced packaging under the fan-out routing style. First, we propose a differentiable wirelength minimization method that directly models discrete chip orientations and back-propagates wirelength gradients to chip locations and orientations, reducing wirelength under fixed pin selection while avoiding the bias of continuous-angle modeling. In addition, we propose a crossing-aware pin assignment method that incorporates net-crossing cost into a multi-strategy DPSO optimization algorithm and adopts GPU-parallel cost evaluation, effectively reducing wirelength within a short runtime. Finally, we propose a differentiable routability maximization method that constructs a congestion estimation model tailored to the fan-out routing style and establishes a back-propagation path from congestion information to chip locations, thereby guiding routability optimization. Experimental results show that the proposed method achieves 100% routability on all benchmarks. For cases successfully routed by the baselines, it reduces wirelength by a maximum of approximately 23% compared with a leading floorplanning method equipped with the proposed pin assignment flow. CCS Concepts: • Hardware → Electronic design automation ; Physical design (EDA) ; Partitioning and floorplanning .Additional Key Words and Phrases: Advanced Package, Floorplanning, Differentiable Optimization, Routability, Fan-out Routing Style 
+
+ACM Reference Format: 
+
+Yiqi Huang, Zepeng Li, Zhen Zhuang, Kehao Chen, Genggeng Liu, and Tsung-Yi Ho. 2018. Differentiable Routability-Driven Package Floorplanning with Pin Assignment. 1, 1 (July 2018), 31 pages. https://doi.org/XXXXXXX.XXXXXXX 
+
+> ∗
+
+Corresponding author: Genggeng Liu. Authors’ Contact Information: Yiqi Huang, huang170825@126.com, Fuzhou University, Fuzhou, Fujian, China; Zepeng Li, li_zepeng@yeah.net, Fuzhou University, Fuzhou, Fujian, China; Zhen Zhuang, zhuangzhen1995@gmail.com, The Chinese University of Hong Kong, Hong Kong SAR; Kehao Chen, zeroeeau@gmail.com, Fuzhou University, Fuzhou, Fujian, China; Genggeng Liu, liugenggeng@fzu.edu.cn, Fuzhou University, Fuzhou, Fujian, China; Tsung-Yi Ho, tyho@cse.cuhk.edu.hk, The Chinese University of Hong Kong, Hong Kong SAR. Permission to make digital or hard copies of all or part of this work for personal or classroom use is granted without fee provided that copies are not made or distributed for profit or commercial advantage and that copies bear this notice and the full citation on the first page. Copyrights for components of this work owned by others than the author(s) must be honored. Abstracting with credit is permitted. To copy otherwise, or republish, to post on servers or to redistribute to lists, requires prior specific permission and/or a fee. Request permissions from permissions@acm.org. 
+
+© 2018 Copyright held by the owner/author(s). Publication rights licensed to ACM. Manuscript submitted to ACM Manuscript submitted to ACM 1arXiv:2607.15005v1 [cs.AR] 16 Jul 2026 2 Y. Q. Huang, et al. Substrate 
+
+Chip 1 
+
+Bump 
+
+## RDLs 
+
+I/O Pad 
+
+Chip 2 
+
+Via 
+
+Wire 
+
+Chip 3 Power Pad 
+
+## Substrate 
+
+Chip 1 
+
+Bump 
+
+## RDLs 
+
+I/O Pad 
+
+Chip 2 
+
+Via 
+
+Wire 
+
+Chip 3 Power Pad 
+
+> (a)
+
+Reserved space for PDN 
+
+> Chip 3
+> Chip 1
+> Chip 2
+
+Reserved space for PDN  
+
+> Chip 3
+> Chip 1
+> Chip 2 (b) Fig. 1. Typical structure of an FOWLP. (a) Cross-sectional view. (b) Top view.
+
+1 Introduction 
+
+As advanced technology node approaches physical limits, sustaining Moore’s Law has become increasingly difficult [ 1, 2 ]. The economic benefit of adding more transistors to a single chip has diminished, leaving few wafer fabs able to absorb the associated manufacturing costs [ 3]. To meet demands for high performance while reducing manufacturing cost, manufacturers such as TSMC, Samsung, and Intel are investing heavily in advanced packaging [ 3]. As one of the representative advanced packaging technologies, fan-out wafer-level packaging (FOWLP) has shown great promise [ 4 –6 ]. FOWLP improves I/O density, energy efficiency [ 7–10 ], and thermal performance [ 11 , 12 ], making it a key technology for high-performance computing and artificial intelligence systems. Figure 1(a) shows a typical cross section of an FOWLP. Multiple heterogeneous chips are placed on the top side of the package. Beneath these chips, multiple redistribution layers are deployed to redistribute signal connections. These RDLs consist of stacked via layers and metal layers. Wires are routed on the metal layers, while vias are utilized to connect wires across different metal layers. At the bottom of the package, the RDLs are further connected to the package substrate through bump. In RDLs, minimizing chip-to-chip connection length is critical because it directly affects package-level performance. Package floorplanning must therefore place chips in routability relative positions, allowing signal nets to use shorter redistribution-layer routes. In addition, the distribution of routing resources across different regions of the RDL must be considered to ensure the routability of the final floorplanning result. Figure 1(b) illustrates the fan-out routing style considered in this work. The region under a chip projection is treated as the fan-in region, whereas the region outside the chip projection is treated as the fan-out region. I/O pads are distributed along the fan-in boundaries, with signal nets escaping from the chip toward the fan-out region for chip-to-chip connections. To ensure reliable power delivery, the power delivery network (PDN) often needs to traverse the limited fan-in region, where power pads are located, using wider wires to support high current density and reduce IR drop [ 13 , 14 ]. Therefore, Li et al. [ 15 ] guide signal nets through fan-out regions to reduce fan-in usage. This makes it necessary for package floorplanning to explicitly distinguish fan-in and fan-out regions when estimating routability. Existing routability-driven floorplanning flows usually consist of two stages. They first perform wirelength-driven floorplanning to obtain a legal solution with short wirelength, and then apply routability optimization to enlarge critical routing channels so that the final layout can be successfully routed. Figure 2 illustrates the process from a wirelength-optimized solution to the routed result after routability optimization. In previous flows, chip translation and rotation are optimized to obtain a short-wirelength legal solution. Based on this solution, congestion is typically estimated using a uniform-grid-based model, and routability optimization is then performed according to the estimated 
+
+> Manuscript submitted to ACM
+
+Differentiable Routability-Driven Package Floorplanning with Pin Assignment 3Flightline Flightline Esitimated C ritical Channel Fan -in Region Fan -in Region I/O pad I/O pad Unused I/O pad Unused I/O pad Illegal Path Illegal Path Wire (Layer 1/2) Wire (Layer 1/2) Flightline Esitimated C ritical Channel Fan -in Region I/O pad Unused I/O pad Illegal Path Wire (Layer 1/2) Chip 1 
+
+Chip 2 
+
+Chip 3  
+
+> 1
+> 12
+> 3
+> 2
+> 4
+> 3
+> 4
+> 5
+> 6
+> 7
+> 7
+> 8
+> 9
+
+Chip 1 
+
+Chip 2 
+
+Chip 3 
+
+Chip 1 
+
+Chip 2 
+
+Chip 3 
+
+Chip 1 
+
+Chip 2 
+
+Chip 3  
+
+> 1
+> 12
+> 3
+> 2
+> 4
+> 3
+> 4
+> 5
+> 6
+> 7
+> 7
+> 8
+> 9
+
+Chip 1 
+
+Chip 2 
+
+Chip 3 
+
+(a) Chip 1 
+
+> Chip 2
+> Chip 3
+> Chip 1
+> Chip 2
+> Chip 3
+
+Chip 1 
+
+Chip 2 
+
+Chip 3  
+
+> 1
+> 12
+> 3
+> 2
+> 4
+> 3
+> 4
+> 5
+> 6
+> 7
+> 7
+> 8
+> 9
+
+Chip 1 
+
+Chip 2 
+
+Chip 3  
+
+> 1
+> 12
+> 3
+> 2
+> 4
+> 3
+> 4
+> 5
+> 6
+> 7
+> 7
+> 8
+> 9
+> Chip 1
+> Chip 2
+> Chip 3
+
+Chip 1 
+
+Chip 2 
+
+Chip 3   
+
+> 1
+> 12
+> 3
+> 2
+> 4
+> 3
+> 4
+> 5
+> 6
+> 7
+> 7
+> 8
+> 9
+
+(b) Chip 1 
+
+> Chip 2
+> Chip 3
+> Chip 1
+> Chip 2
+> Chip 3
+
+Chip 1 
+
+Chip 2 
+
+Chip 3 
+
+Chip 1 
+
+Chip 2 
+
+Chip 3    
+
+> 1
+> 1
+> 33
+> 22
+> 4
+> 4
+> 77
+
+Chip 1 
+
+Chip 2 
+
+Chip 3    
+
+> 1
+> 1
+> 33
+> 22
+> 4
+> 4
+> 77
+
+Chip 1 
+
+Chip 2 
+
+Chip 3    
+
+> 1
+> 1
+> 33
+> 22
+> 4
+> 4
+> 77
+> Chip 1
+> Chip 2
+> Chip 3
+
+Chip 1 
+
+Chip 2 
+
+Chip 3     
+
+> 1
+> 1
+> 33
+> 22
+> 4
+> 4
+> 77
+
+(c) Fig. 2. Comparison of routability optimization flows. (a) The existing flow uses uniform-grid-based congestion estimation, which may treat unavailable fan-in regions as routing resources and lead to underestimated congestion and routing failure. (b) The proposed fan-out-aware congestion estimation model explicitly distinguishes fan-in and fan-out regions, enabling critical channels to be enlarged for better routability. (c) Based on (b), pin assignment is further introduced to assign the pins of each net to closer locations, thereby further reducing wirelength while maintaining routability. 
+
+congestion. However, such methods do not explicitly distinguish fan-in and fan-out regions, and may treat fan-in regions as available routing resources. Therefore, when the RDL router tends to guide signal nets through fan-out regions, these methods may produce unreliable congestion estimates. As shown in Figure 2(a), the available routing resources estimated by the uniform-grid-based model include a large portion of unavailable fan-in regions. As a result, the subsequent routability optimization may incorrectly assume that sufficient routing resources exist in this region and fail to effectively enlarge the critical routing channel, leaving no feasible routing path for some nets on that layer. In contrast, as shown in Figure 2(b), the proposed fan-out-aware congestion estimation model explicitly distinguishes fan-in and fan-out regions, allowing the optimizer to accurately identify congested fan-out channels and enlarge critical routing channels for better routability. On this basis, we further introduce pin assignment to reduce wirelength. As shown in Figure 2(c), by assigning nets to more appropriate pins, the flow incorporating pin assignment can obtain a solution with shorter wirelength. The major contributions of this work are summarized as follows. 
+
+> Manuscript submitted to ACM
+
+4 Y. Q. Huang, et al. (1) To the best of our knowledge, this paper is the first to formulate the routability-driven package floorplanning problem under the fan-out routing style. To address this problem, we propose a GPU-friendly three-stage framework that aims to improve routability while reducing wirelength. (2) We propose a differentiable wirelength minimization method that directly models legal discrete chip orientations and back-propagates wirelength gradients to chip locations and orientations, thereby avoiding the dependence on the initialization of continuous rotation angles in indirect orientation modeling and reducing wirelength under fixed pin selection. (3) We propose a crossing-aware pin assignment method that incorporates potential net-crossing cost into a multi-strategy DPSO algorithm and uses GPU-parallel cost evaluation, efficiently generating pin assignment solutions with lower HPWL within a short runtime. (4) We propose a differentiable routability maximization method based on a fan-out-aware congestion estimation model. By partitioning fan-out routing regions and estimating local routing demand with a Top-K path algorithm, this model characterizes congestion in fan-out regions. The estimated congestion is then formulated as a differentiable congestion loss. The gradients of this loss are back-propagated through the routing-channel lengths to the chip locations, guiding the optimizer to enlarge critical routing channels and improve RDL routability. (5) Experimental results show that the proposed method achieves 100% routability on all benchmarks. Moreover, on fully routable cases, it reduces routed wirelength by a maximum of approximately 23% compared with a leading floorplanning method equipped with the proposed pin assignment flow. The remainder of this article is organized as follows. Section 2 reviews related work. Section 3 presents the problem formulation and related definitions. Section 4 describes the design and implementation of the proposed algorithm. Section 5 reports the experimental results. Section 6 concludes this article. 
+
+2 Related Work 
+
+The studies most relevant to this work can be divided into two categories: package floorplanning and pin assignment. Although pin assignment methods are not always developed specifically for package floorplanning, their problem formulations and solution strategies are closely related to the pin assignment stage considered in this work. Therefore, this section reviews prior studies from these two perspectives. 
+
+Package floorplanning: Existing studies on package floorplanning mainly focus on determining multi-chip locations, optimizing chip orientations, and reducing package-level interconnect cost. Liu et al. [ 18 ] used sequence pairs to represent the relative positions of dies, enumerated legal die locations, and selected the optimal layout based on HPWL to reduce the total wirelength at the interposer/PCB level. Seemuth et al. [ 19 ] applied simulated annealing to die placement and flexible I/O pin assignment, and further optimized pin assignment using ILP, effectively reducing wirelength. Seemuth et al. [ 20 ] reduced the required number of interposer layers through pin assignment. Starting from an initial pin assignment, they performed ILP-based routing to identify congested regions and then reassigned nets in those regions until no congestion remained. For EMIB packaging, Lee et al. [ 21 ] combined TCG and B*-tree into a hybrid layout representation and solved the resulting problem using simulated annealing, thereby optimizing package wirelength while satisfying EMIB constraints. Lin et al. [ 22 ] proposed a routability-driven and orientation-aware placement method. They indirectly modeled legal chip orientations by introducing a continuous orientation variable and mapping it onto the four legal orientations through a softmax-based formulation during analytical optimization. They also constructed a congestion model supporting 0◦, 90 ◦, 180 ◦, and 270 ◦ routing, enabling simultaneous optimization of wirelength and routability. 
+
+> Manuscript submitted to ACM
+
+Differentiable Routability-Driven Package Floorplanning with Pin Assignment 5Existing package floorplanning methods mainly focus on wirelength optimization or general routability modeling, but they do not sufficiently consider how the fan-out routing style affects congestion distribution in FOWLP. As a result, the congestion estimated during floorplanning may deviate from the actual routing bottlenecks encountered in subsequent RDL routing. 
+
+Pin assignment: For pin assignment, related studies usually formulate the problem as endpoint mapping and propose exact or heuristic methods for different design scenarios. Kuo et al. [ 23 ] proposed an SLR-aware pin assignment method for multi-2.5D FPGA systems. Their method uses ILP-based iterative optimization to assign cross-FPGA signals to appropriate physical wires and SLR combinations, thereby improving subsequent routing and timing quality. Li et al. [ 24 ] formulated P/G pin assignment in large-scale packages as a multi-objective combinatorial optimization problem considering both PI and SI. They used customized simulated annealing to search the legal pin-swap space and combined objective normalization, initial-solution optimization, and static-template acceleration to generate high-quality pin assignment solutions within a short runtime. Zhuang et al. [ 25 ] performed pin assignment using an MIS-based method. In each iteration, candidate optimal pins are generated for unassigned nets, and conflicting candidate assignments are modeled as a conflict graph. A set of mutually non-conflicting nets is then selected for assignment first, while the remaining nets are reserved for further optimization in subsequent iterations. Although existing pin assignment methods can effectively reduce wirelength, they usually do not consider potential net crossings and their impact on subsequent routing. For inter-chip signal nets, pin-assignment solutions with the same HPWL may lead to different routing quality, and solutions with many potential crossings often result in longer routed wirelength. 
+
+3 Preliminaries 
+
+In this section, we first define the terminology and notations used in this article. We then present the considered advanced packaging design rules. Finally, we formulate the routability-driven package floorplanning problem with pin assignment. 
+
+3.1 Terminology and Notations 
+
+The terminology, notations, and corresponding descriptions used in this article are as follows: 
+
+• 𝐶 = {𝑐 𝑖 | 1 ≤ 𝑖 ≤ | 𝐶 |} : the set of chips. 
+
+• 𝑃 = {𝑝 𝑖 | 1 ≤ 𝑖 ≤ | 𝑃 |} : the set of I/O pads belonging to inter-chip routing nets. 
+
+• 𝑁 = {𝑛 𝑖 | 1 ≤ 𝑖 ≤ | 𝑁 |} : the set of nets, where the two terminals of each net are two I/O pads. 
+
+• Θ = 𝜃 𝑗 | 𝜃 𝑗 = 𝑗𝜋  
+
+> 2
+
+, 𝑗 = 0, 1, 2, 3 : the set of legal chip orientations. 
+
+• 𝑤 𝑐 : The minimum spacing required between any two chips. 
+
+• 𝑤 𝑝 : The minimum spacing required between each chip and the package boundary. 
+
+3.2 Design Rules 
+
+To ensure physical feasibility and manufacturability, the following advanced packaging design rules are considered. 
+
+Minimum Spacing Rule: The chip-to-chip spacing and chip-to-boundary spacing must be no smaller than the technology-dependent parameters 𝑤 𝑐 and 𝑤 𝑝 , respectively. 
+
+Rotation Rule: Each chip can only be rotated to an orientation selected from the legal orientation set Θ.
+
+> Manuscript submitted to ACM
+
+6 Y. Q. Huang, et al. Chip Set, Netlist, and Design Rules 
+
+Floorplanning and Pin Assignment Solution 
+
+Crossing -Aware Pin Assignment 
+
+Encoding for Pin Assignement Solution 
+
+Crossing -Aware Solution Evaluation 
+
+Reach Iteration? 
+
+DPSO -Based Pin Optimization 
+
+Differentiable Routability Maximization 
+
+Fan -Out Congestion Estimation 
+
+Gradient -Based Routability Optimization 
+
+Differentiable Wirelength Minimization 
+
+Rotation -Aware Smooth HPWL Formulation 
+
+Gradient -Based Wirelength Optimization 
+
+ILP -Based Legalization 
+
+Density Formulation 
+
+N
+
+Y
+
+> Chip 1 Chip 1
+> Chip 2 Chip 2
+> Chip 3 Chip 3
+> Chip 1
+> Chip 2
+> Chip 3
+> Chip 1
+> Chip 2
+> Chip 3
+> Chip 1
+> Chip 2
+> Chip 3
+> Chip 1
+> Chip 2
+> Chip 3
+> Chip 1
+> Chip 2
+> Chip 3
+> Chip 1
+> Chip 2
+> Chip 3
+> Chip 1
+> Chip 2
+> Chip 3
+
+Chip Set, Netlist, and Design Rules 
+
+Floorplanning and Pin Assignment Solution 
+
+Crossing -Aware Pin Assignment 
+
+Encoding for Pin Assignement Solution 
+
+Crossing -Aware Solution Evaluation 
+
+Reach Iteration? 
+
+DPSO -Based Pin Optimization 
+
+Differentiable Routability Maximization 
+
+Fan -Out Congestion Estimation 
+
+Gradient -Based Routability Optimization 
+
+Differentiable Wirelength Minimization 
+
+Rotation -Aware Smooth HPWL Formulation 
+
+Gradient -Based Wirelength Optimization 
+
+ILP -Based Legalization 
+
+Density Formulation 
+
+N
+
+Y
+
+> Chip 1
+> Chip 2
+> Chip 3
+> Chip 1
+> Chip 2
+> Chip 3
+> Chip 1
+> Chip 2
+> Chip 3
+> Chip 1
+> Chip 2
+> Chip 3
+
+Fig. 3. The flow of the proposed algorithm. 
+
+Signal Connection Rule: Each terminal of a signal net must be assigned to a candidate I/O pad on its corresponding chip. A terminal must not be assigned to a pad on another chip, and each physical I/O pad can be assigned to at most one net. 
+
+Fan-Out Routing Style: Signal nets are not allowed to use fan-in regions as routing resources and must be routed through fan-out regions. Accordingly, routability estimation should explicitly distinguish fan-in regions from fan-out regions. 
+
+3.3 Problem Formulation 
+
+Based on the above definitions and design rules, the routability-driven package floorplanning problem with pin assignment is formulated as follows: 
+
+Given a set of chips 𝐶 , a set of candidate I/O pads 𝑃 for inter-chip nets, a netlist 𝑁 , a fixed outline of RDL, along with design rules, the objective is to find a floorplanning and pin-assignment solution that improves the routability of subsequent RDL routing while minimizing inter-chip routing wirelength. 
+
+Manuscript submitted to ACM Differentiable Routability-Driven Package Floorplanning with Pin Assignment 7
+
+4 The Details of the Proposed Algorithm 
+
+Figure 3 illustrates the overall flow of the proposed differentiable routability-driven package floorplanning algorithm. The entire flow consists of three main stages, as follows. 
+
+Differentiable Wirelength Minimization: This stage jointly optimizes chip locations and orientations to obtain a low-HPWL floorplanning solution, providing a high-quality initial layout for the subsequent differentiable routability maximization. First, a rotation-aware smooth HPWL model is constructed to capture the impact of chip orientations on I/O pad locations while maintaining differentiability. Then, gradient-based optimization is performed to update chip locations and orientation variables for wirelength reduction. Finally, an ILP-based legalization step is applied to remove overlaps and satisfy design constraints, producing a legal low-HPWL floorplanning solution for the next stage. 
+
+Crossing-Aware Pin Assignment: Starting from the output of the previous stage, the crossing-aware pin assignment optimizes the pin selection for each net to reduce HPWL and potential net crossings. In the pin assignment encoding step, each pin assignment solution is represented as a particle. In the crossing-aware fitness evaluation step, a fitness function is defined to evaluate each particle by jointly considering HPWL and potential net-crossing cost. Based on this evaluation, the DPSO-based pin optimization step searches for a high-quality pin assignment solution. After this stage, the framework checks whether the specified iteration number has been reached. If not, it returns to the previous stage and continues the iterative optimization to further improve the floorplanning and pin assignment solution. 
+
+Differentiable Routability Maximization: This stage takes the solution generated by the iterative execution of the previous two stages as input, which has short HPWL and few potential net crossings. Based on this solution, the stage expands the available spacing of critical routing channels through differentiable routability optimization, thereby improving RDL routability from an initial solution with short wirelength. In the fan-out congestion estimation, fan-out routing resources are extracted, and local routing demand is estimated using the Top-K candidate paths of signal nets. Based on this estimation, the subsequent gradient-based routability optimization converts the demand-capacity mismatch into a differentiable congestion cost, which is back-propagated to chip locations to guide chip movement and enlarge congested routing channels. 
+
+4.1 Differentiable Wirelength Minimization 
+
+To obtain an initial legal floorplanning solution with short interconnect length, the proposed framework first performs differentiable wirelength minimization. Since chip rotation changes the coordinates of I/O pads, the impact of chip orientation is explicitly incorporated into the wirelength estimation model, i.e., HPWL. However, the original two-terminal HPWL contains non-differentiable absolute-value operations and is therefore not suitable for gradient-based optimization. To address this issue, a smooth HPWL objective is constructed using the log-sum-exp approximation. In addition, a density regularization term is introduced to discourage chips from clustering during optimization. By incorporating smoothed HPWL and density regularization into a unified differentiable objective, the proposed formulation enables chip locations and orientations to be optimized through gradient-based updates. After optimization, an ILP-based legalization step is applied to enforce design constraints and generate a legal low-HPWL floorplanning solution for the subsequent stages. 
+
+4.1.1 Rotation-Aware Smooth HPWL Formulation. Let the center location of chip 𝑖 be 𝑐 𝑖 = (𝑥 𝑖 , 𝑦 𝑖 ). The 𝑗 -th pin of chip 
+
+𝑖 is denoted as 𝑝 𝑖,𝑗 , and its local offset with respect to the chip center is given by (Δ𝑥 𝑗 , Δ𝑦 𝑗 ). When chip rotation is not 
+
+> Manuscript submitted to ACM
+
+8 Y. Q. Huang, et al. considered, the global coordinate of pin 𝑣 can be written as 
+
+𝑝 𝑣 = (𝑥 𝑖 + Δ𝑥 𝑗 , 𝑦 𝑖 + Δ𝑦 𝑗 ). (1) As shown in equation (1) , the coordinate of a pin is jointly determined by the chip center location and the local pin offset. We then consider chip rotation. When the rotation angle is 𝜃 𝑗 ∈ Θ, the pin location should be rotated accordingly. Thus, the coordinate of pin 𝑣 under orientation 𝜃 𝑗 is 
+
+𝑝 𝜃 𝑗  
+
+> 𝑣
+
+=  𝑥 𝑖 + Δ𝑥 𝑣 cos 𝜃 𝑗 − Δ𝑦 𝑣 sin 𝜃 𝑗 , 𝑦 𝑖 + Δ𝑥 𝑣 sin 𝜃 𝑗 + Δ𝑦 𝑣 cos 𝜃 𝑗 
+
+ . (2) Since 𝜃 𝑗 is discrete, it cannot be directly optimized by gradient-based algorithms. Therefore, for chip 𝑖 , we introduce a learnable parameter 𝛼 𝑖 𝑗 for each legal orientation to indicate the tendency of chip 𝑖 to select orientation 𝜃 𝑗 . To obtain differentiable orientation-selection weights, Gumbel-Softmax [ 26 ] is used to relax the discrete orientation selection into a continuous form. Let 𝑔 𝑖 𝑗 ∼ Gumbel (0, 1) denote the Gumbel noise. The relaxed weight for selecting orientation 𝜃 𝑗 is defined as 
+
+𝑦 𝑖 𝑗 = exp  (𝛼 𝑖 𝑗 + 𝑔 𝑖 𝑗 )/ 𝜏 Í3 
+
+> 𝑘 =0
+
+exp (( 𝛼 𝑖𝑘 + 𝑔 𝑖𝑘 )/ 𝜏 ) , (3) where 𝜏 is the temperature parameter that controls the smoothness of orientation selection. When 𝜏 is large, the orientation weights are smoother, and multiple orientations may have comparable weights. As 𝜏 decreases, the relaxed orientation selection gradually approaches a one-hot form and tends to select a single legal orientation. Based on the above orientation-selection weights, the relaxed coordinate of pin 𝑣 used for wirelength calculation is defined as 
+
+˜𝑝 𝑣 =
+
+> 3
+
+∑︁ 
+
+> 𝑗 =0
+
+𝑦 𝑖 𝑗 𝑝 𝜃 𝑗  
+
+> 𝑣
+
+= ( ˜𝑥 𝑣 , ˜𝑦 𝑣 ). (4) This formulation avoids the dependence on the initialization of continuous rotation angles in indirect orientation modeling, leading to a more stable optimization process. For wirelength estimation, HPWL is used to model wirelength in floorplanning. For net 𝑛 , let the relaxed coordinates of its two terminals be ˜𝑝 1 = ( ˜𝑥 1, ˜𝑦 1) and ˜𝑝 2 = ( ˜𝑥 2, ˜𝑦 2). The HPWL of net 𝑛 is 
+
+HPWL = | ˜𝑥 1 − ˜𝑥 2 | + | ˜𝑦 1 − ˜𝑦 2 | . (5) Although HPWL provides a simple wirelength estimate, the absolute-value operation in equation (5) is nondiffer-entiable when its input equals zero. Specifically, | ˜𝑥 1 − ˜𝑥 2 | is non-differentiable when ˜𝑥 1 = ˜𝑥 2, and the same problem also exists for the 𝑦 -direction term. This may lead to unstable gradients during continuous floorplanning optimization. Therefore, the original HPWL is not suitable for direct use in gradient-based optimization. To improve differentiability, the log-sum-exp approximation is used to smooth the HPWL function. The smoothed HPWL of net 𝑛 is defined as 
+
+HPWL LSE (𝑛 ) = 𝛾 log 
+
+
+
+𝑒 ˜𝑥 1/𝛾 + 𝑒 ˜𝑥 2/𝛾 
+
++ 𝛾 log 
+
+
+
+𝑒 − ˜𝑥 1/𝛾 + 𝑒 − ˜𝑥 2/𝛾 
+
++ 𝛾 log 
+
+
+
+𝑒 ˜𝑦 1/𝛾 + 𝑒 ˜𝑦 2/𝛾 
+
++ 𝛾 log 
+
+
+
+𝑒 − ˜𝑦 1/𝛾 + 𝑒 − ˜𝑦 2/𝛾 
+
+,
+
+(6) where 𝛾 is the smoothing parameter. A smaller 𝛾 makes the approximation closer to the original HPWL but may cause sharper gradient changes. A larger 𝛾 provides smoother gradients but increases the approximation error. Therefore, 𝛾 
+
+should be properly set according to convergence stability and approximation accuracy. The HPWL loss over all signal 
+
+> Manuscript submitted to ACM
+
+Differentiable Routability-Driven Package Floorplanning with Pin Assignment 9nets is then obtained by accumulating the smoothed HPWL of each net: 
+
+LHPWL =∑︁ 
+
+> 𝑛 ∈𝑁
+
+HPWL LSE (𝑛 ), (7) 
+
+4.1.2 Density Formulation. Although LHPWL provides differentiable guidance for reducing inter-chip wirelength, optimizing wirelength alone may cause chips to cluster in a small local region of the package. Such clustering leads to an uneven spatial distribution and may require large displacements in the subsequent legalization step. Therefore, we introduce a differentiable density term as another objective in the wirelength minimization stage. Let the package region be divided into 𝑅 ×𝐶 bins, and let 𝐾 = 𝑅𝐶 denote the total number of bins. The center of bin 𝑘 
+
+is denoted as p𝑘 = (𝑢 𝑘 , 𝑣 𝑘 ). To compute the soft occupancy of chips over these bins, we first determine the axis-aligned footprint of each chip under the relaxed orientation. It should be noted that chip rotation does not change the physical size of a chip. However, when a rectangular chip is rotated by 90 ◦ or 270 ◦, its width and height with respect to the global 𝑥 - and 𝑦 -axes are exchanged. Let the original physical size of chip 𝑖 be 𝑤 𝑖 × ℎ𝑖 . The axis-aligned footprint width and height of chip 𝑖 under orientation 𝜃 𝑗 are defined as 
+
+(𝑤 𝜃 𝑗  
+
+> 𝑖
+
+, ℎ 𝜃 𝑗  
+
+> 𝑖
+
+) =
+
+
+
+(𝑤 𝑖 , ℎ 𝑖 ), 𝜃 𝑗 = 0◦ or 180 ◦,
+
+(ℎ𝑖 , 𝑤 𝑖 ), 𝜃 𝑗 = 90 ◦ or 270 ◦.
+
+(8) Here, 𝑤 𝜃 𝑗  
+
+> 𝑖
+
+and ℎ𝜃 𝑗  
+
+> 𝑖
+
+denote the axis-aligned footprint width and height of chip 𝑖 under orientation 𝜃 𝑗 , rather than changes in the physical chip size. Based on the orientation-selection weights 𝑦 𝑖 𝑗 defined in equation (3) , the relaxed footprint width and height of chip 
+
+𝑖 are computed as 
+
+˜𝑤 𝑖 =
+
+> 3
+
+∑︁ 
+
+> 𝑗 =0
+
+𝑦 𝑖 𝑗 𝑤 𝜃 𝑗  
+
+> 𝑖
+
+, ˜ℎ𝑖 =
+
+> 3
+
+∑︁ 
+
+> 𝑗 =0
+
+𝑦 𝑖 𝑗 ℎ𝜃 𝑗  
+
+> 𝑖
+
+. (9) The relaxed axis-aligned boundaries of chip 𝑖 are then defined as 
+
+𝑙 𝑖 = 𝑥 𝑖 − ˜𝑤 𝑖 
+
+2 , 𝑟 𝑖 = 𝑥 𝑖 + ˜𝑤 𝑖 
+
+2 , 𝑏 𝑖 = 𝑦 𝑖 − ˜ℎ𝑖 
+
+2 , 𝑡 𝑖 = 𝑦 𝑖 + ˜ℎ𝑖 
+
+2 . (10) Instead of using a hard binary indicator to determine whether bin 𝑘 is covered by chip 𝑖 , we first compute one-dimensional soft inside scores along the 𝑥 - and 𝑦 -directions: 
+
+
+
+𝑠 𝑥 𝑘,𝑖 = sigmoid 
+
+𝑢 𝑘 − 𝑙 𝑖 
+
+𝜏 𝑥 
+
+
+
+· sigmoid 
+
+ 𝑟 𝑖 − 𝑢 𝑘 
+
+𝜏 𝑥 
+
+
+
+,𝑠 𝑦 𝑘,𝑖 = sigmoid 
+
+ 𝑣 𝑘 − 𝑏 𝑖 
+
+𝜏 𝑦 
+
+
+
+· sigmoid 
+
+ 𝑡 𝑖 − 𝑣 𝑘 
+
+𝜏 𝑦 
+
+
+
+.
+
+(11) where 𝜏 𝑥 and 𝜏 𝑦 are smoothing parameters. Here, 𝑠 𝑥 𝑘,𝑖 measures whether the bin-center coordinate 𝑢 𝑘 lies within the relaxed horizontal span [𝑙 𝑖 , 𝑟 𝑖 ] of chip 𝑖 , while 𝑠 𝑦 𝑘,𝑖 measures whether 𝑣 𝑘 lies within the relaxed vertical span [𝑏 𝑖 , 𝑡 𝑖 ]. If the bin center lies inside the corresponding span, the score approaches 1; otherwise, it smoothly decreases toward 0.Therefore, the two-dimensional soft occupancy contribution of chip 𝑖 to bin 𝑘 is defined as 
+
+𝑜 𝑘,𝑖 = 𝑠 𝑥 𝑘,𝑖 𝑠 𝑦 𝑘,𝑖 . (12) The total soft occupancy of bin 𝑘 is obtained by accumulating the contributions from all chips: 
+
+𝑜 𝑘 =∑︁ 
+
+> 𝑖
+
+𝑜 𝑘,𝑖 . (13) 
+
+> Manuscript submitted to ACM
+
+10 Y. Q. Huang, et al. The density loss is defined as the variance of bin occupancies: 
+
+Ldensity = 1
+
+𝐾 
+
+> 𝐾
+
+∑︁ 
+
+> 𝑘 =1
+
+(𝑜 𝑘 − ¯𝑜 )2, ¯𝑜 = 1
+
+𝐾 
+
+> 𝐾
+
+∑︁ 
+
+> 𝑘 =1
+
+𝑜 𝑘 . (14) This term penalizes uneven chip distribution. When multiple chips are concentrated in a small region, some bins have much higher occupancy than others, increasing the occupancy variance and thus Ldensity . In contrast, when chips are distributed more uniformly across the package region, the bin occupancies become closer to their average value, reducing the density loss. 
+
+4.1.3 Gradient-Based Wirelength Optimization. The differentiable objective of this stage is defined by combining the smoothed HPWL term and the density regularization term: 
+
+L1 = LHPWL + 𝜆 Ldensity , (15) where 𝜆 controls the relative importance of the density regularization term. Based on the rotation-aware smooth HPWL formulation and the density formulation defined above, chip locations and orientations are jointly optimized by minimizing L1. The relaxed orientation weights 𝑦 𝑖 𝑗 in equation (3) are used in two differentiable paths. First, they determine the relaxed pin coordinates in equation (4) , which are then used to compute the smoothed HPWL objective in equation (7) . Second, they determine the relaxed chip footprint in equation (9) , which further defines the relaxed chip boundaries and the soft bin occupancies used in the density loss in equation (14) . Therefore, both terms in L1
+
+can be back-propagated to the chip center locations (𝑥 𝑖 , 𝑦 𝑖 ) and the orientation-selection parameters 𝛼 𝑖 𝑗 , enabling gradient-based optimization of chip placement and orientation. After continuous optimization, the orientation with the largest weight is selected as the legal orientation of each chip. For chip 𝑖 , the orientation with the maximum weight is selected as its final orientation: 
+
+
+
+𝑗 𝑖 = arg max   
+
+> 𝑗 ∈ { 0,1,2,3}
+
+𝑦 𝑖 𝑗 ,𝜃 final  
+
+> 𝑖
+
+= 𝜃 𝑗 𝑖 .
+
+(16) Since the final orientation is selected from the legal orientation set Θ, the output orientation always satisfies the discrete orientation constraint. 
+
+4.1.4 ILP-based Legalization. After gradient-based wirelength optimization, the obtained chip locations may still violate the spacing rule. Therefore, in this step, ILP-based legalization is applied to adjust the chip center locations. Let 
+
+( ˆ𝑥 𝑖 , ˆ𝑦 𝑖 ) denote the optimized center location of chip 𝑖 obtained from gradient-based wirelength optimization, and let 
+
+(𝑥 𝑖 , 𝑦 𝑖 ) denote its legalized center location. The objective of ILP-based legalization is to minimize the total displacement between the optimized and legalized chip locations: 
+
+min ∑︁ 
+
+> 𝑖
+
+ 𝑑 𝑥 𝑖 + 𝑑 𝑦 𝑖 
+
+ , (17) subject to the following constraints. 
+
+> Manuscript submitted to ACM
+
+Differentiable Routability-Driven Package Floorplanning with Pin Assignment 11 First, the auxiliary variables 𝑑 𝑥 𝑖 and 𝑑 𝑦 𝑖 linearize the absolute displacement in the 𝑥 and 𝑦 directions, respectively: 
+
+
+
+𝑑 𝑥 𝑖 ≥ 𝑥 𝑖 − ˆ𝑥 𝑖 ,𝑑 𝑥 𝑖 ≥ ˆ𝑥 𝑖 − 𝑥 𝑖 ,𝑑 𝑦 𝑖 ≥ 𝑦 𝑖 − ˆ𝑦 𝑖 ,𝑑 𝑦 𝑖 ≥ ˆ𝑦 𝑖 − 𝑦 𝑖 .
+
+(18) Second, the ILP uses spacing-inflated rectangles to encode the minimum chip-to-chip spacing rule. Let 𝑤 𝑓 𝑖𝑛𝑎𝑙 𝑖 and 
+
+ℎ𝑓 𝑖𝑛𝑎𝑙 𝑖 denote the width and height of chip 𝑖 under its final discrete orientation 𝜃 final  
+
+> 𝑖
+
+. The inflated dimensions used in the ILP are defined as 
+
+𝑤 𝑖 = 𝑤 𝑓 𝑖𝑛𝑎𝑙 𝑖 + 𝑤 𝑐 , ℎ𝑖 = ℎ𝑓 𝑖𝑛𝑎𝑙 𝑖 + 𝑤 𝑐 , (19) where 𝑤 𝑐 denotes the chip-size inflation amount derived from the chip-to-chip spacing rule. Each spacing-inflated chip rectangle must be contained in the package outline while maintaining a package-boundary clearance 𝑤 𝑝 . Here, 𝑊 pkg 
+
+and 𝐻 pkg denote the width and height of the package outline, respectively. The boundary constraints are formulated as 
+
+
+
+𝑤 𝑝 + 𝑤 final 
+
+> 𝑖
+
+2 ≤ 𝑥 𝑖 ≤ 𝑊 pkg − 𝑤 𝑝 − 𝑤 final 
+
+> 𝑖
+
+2 ,𝑤 𝑝 + ℎfinal 
+
+> 𝑖
+
+2 ≤ 𝑦 𝑖 ≤ 𝐻 pkg − 𝑤 𝑝 − ℎfinal 
+
+> 𝑖
+
+2 .
+
+(20) Third, for any pair of spacing-inflated chip rectangles 𝑖 and 𝑗 , at least one valid relative-position relationship must hold. Specifically, chip 𝑖 should be either to the left of, to the right of, below, or above chip 𝑗 . To model this disjunctive constraint, four binary variables 𝑙 𝑖 𝑗 , 𝑟 𝑖 𝑗 , 𝑏 𝑖 𝑗 , and 𝑡 𝑖 𝑗 are introduced. The non-overlap constraints are formulated as 
+
+
+
+𝑥 𝑖 + 𝑤 𝑖  
+
+> 2
+
+≤ 𝑥 𝑗 − 𝑤 𝑗  
+
+> 2
+
++ 𝑀 (1 − 𝑙 𝑖 𝑗 ),𝑥 𝑗 + 𝑤 𝑗  
+
+> 2
+
+≤ 𝑥 𝑖 − 𝑤 𝑖  
+
+> 2
+
++ 𝑀 (1 − 𝑟 𝑖 𝑗 ),𝑦 𝑖 + ℎ𝑖  
+
+> 2
+
+≤ 𝑦 𝑗 − ℎ𝑗  
+
+> 2
+
++ 𝑀 (1 − 𝑏 𝑖 𝑗 ),𝑦 𝑗 + ℎ𝑗  
+
+> 2
+
+≤ 𝑦 𝑖 − ℎ𝑖  
+
+> 2
+
++ 𝑀 (1 − 𝑡 𝑖 𝑗 ),𝑙 𝑖 𝑗 + 𝑟 𝑖 𝑗 + 𝑏 𝑖 𝑗 + 𝑡 𝑖 𝑗 ≥ 1, 𝑙 𝑖 𝑗 , 𝑟 𝑖 𝑗 , 𝑏 𝑖 𝑗 , 𝑡 𝑖 𝑗 ∈ { 0, 1}.
+
+(21) where 𝑀 is a sufficiently large constant. Here, 𝑙 𝑖 𝑗 = 1 indicates that chip 𝑖 is placed to the left of chip 𝑗 , 𝑟 𝑖 𝑗 = 1 indicates that chip 𝑖 is placed to the right of chip 𝑗 , 𝑏 𝑖 𝑗 = 1 indicates that chip 𝑖 is placed below chip 𝑗 , and 𝑡 𝑖 𝑗 = 1 indicates that chip 𝑖 is placed above chip 𝑗 .After solving the ILP, the legalized chip locations and fixed legal orientations form a floorplanning solution in which the spacing-inflated chip rectangles are non-overlapping and maintain the package-boundary clearance 𝑤 𝑝 . Therefore, the corresponding physical chips satisfy the original package-boundary, non-overlap, and minimum-spacing design rules. The legalized floorplanning solution is then passed to the crossing-aware pin assignment stage. 
+
+4.2 Crossing-Aware Pin Assignment 
+
+Based on the result obtained from the differentiable wirelength minimization stage, this stage further optimizes the pins at both ends of each signal net to reduce potential net crossings and the estimated wirelength, i.e., HPWL. To achieve this goal, we develop a DPSO-based pin assignment algorithm that incorporates multiple search strategies and is accelerated through GPU-based parallel computation. 
+
+> Manuscript submitted to ACM
+
+12 Y. Q. Huang, et al. 0 0 1
+
+Chip1 
+
+Chip2 
+
+2 3 4 0 5 0
+
+2 1 0 0 0 5 0 4 3
+
+P3 P4 P5 P8 P1 P2 P6 P7 P9 P3 P4 P5 P8 P1 P2 P6 P7 P9 
+
+P3 P4 P5 P8 P1 P2 P6 P7 P9 P3 P4 P5 P8 P1 P2 P6 P7 P9 
+
+0 0 1
+
+Chip1 
+
+Chip2 
+
+2 3 4 0 5 0
+
+2 1 0 0 0 5 0 4 3
+
+P3 P4 P5 P8 P1 P2 P6 P7 P9 
+
+P3 P4 P5 P8 P1 P2 P6 P7 P9       
+
+> P2 P3 P1
+> P9
+> P8
+> P6 P7
+> P4
+> P5
+> P9
+> P8
+> P1 P2
+> P7
+> P4
+> P5
+> P3
+> P6
+> Chip1 Chip2
+> 1
+> 2
+> 3
+> 4
+> 5
+> P2 P3 P1
+> P9
+> P8
+> P6 P7
+> P4
+> P5
+> P9
+> P8
+> P1 P2
+> P7
+> P4
+> P5
+> P3
+> P6
+> Chip1 Chip2
+> 1
+> 2
+> 3
+> 4
+> 5
+
+0 0 1
+
+Chip1 
+
+Chip2 
+
+2 3 4 0 5 0
+
+2 1 0 0 0 5 0 4 3
+
+P3 P4 P5 P8 P1 P2 P6 P7 P9 
+
+P3 P4 P5 P8 P1 P2 P6 P7 P9    
+
+> P2 P3 P1
+> P9
+> P8
+> P6 P7
+> P4
+> P5
+> P9
+> P8
+> P1 P2
+> P7
+> P4
+> P5
+> P3
+> P6
+> Chip1 Chip2
+> 1
+> 2
+> 3
+> 4
+> 5I/O Pad
+> Fan -in
+> Region
+> Net
+> Unused
+> I/O Pad
+> Fig. 4. Encoding of a pin assignment solution. Each chip is represented by an ordered pin vector, where a filled entry stores the net assigned to the corresponding pin.
+
+The proposed algorithm begins with the encoding and evaluation of pin assignment solutions. Each feasible pin assignment is represented by a unique position code, which corresponds to a particle in the swarm, and its quality is measured by a fitness function. To avoid highly similar initial solutions, a uniform sampling strategy is employed to distribute particles across the solution space. During the iterative search, particles are divided into several subgroups according to their fitness values, and different update strategies are applied based on the relative quality of particles within each subgroup. 
+
+4.2.1 Encoding for Pin Assignment Solutions. In our problem, a package typically integrates multiple chips, and each chip contains a set of available pins for signal nets. For chip 𝑥 , let 𝑃 𝑥 = {𝑝 𝑥, 1, 𝑝 𝑥, 2, . . . , 𝑝 𝑥,𝑦 𝑥 } denote its ordered candidate-pin set, and let 𝑁 𝑥 denote the set of signal nets that have one terminal on chip 𝑥 . Since each terminal must be assigned to exactly one physical pin on its corresponding chip, the pin assignment problem can be represented by a chip-wise discrete vector. Therefore, a pin assignment solution 𝑝 𝑖 can be encoded as 
+
+𝑝 𝑖 =  𝑐 (1, 1), 𝑐 (1, 2), · · · , 𝑐 (1, 𝑦 1), · · · , 𝑐 (𝑥, 1), 𝑐 (𝑥, 2), · · · , 𝑐 (𝑥, 𝑦 𝑥 ), · · · , 𝑐 (𝑀, 𝑦 𝑀 ), 1 ≤ 𝑥 ≤ 𝑀. (22) For a multi-chip system containing 𝑀 chips, 𝑐 (𝑥, 𝑘 ) = 𝑛 indicates that the 𝑘 -th candidate pin on chip 𝑥 is assigned to net 𝑛 , while 𝑐 (𝑥, 𝑘 ) = 0 indicates that this candidate pin is not selected by any signal net. The value of each component is constrained by 
+
+𝑐 (𝑥, 𝑘 ) ∈ 𝑁 𝑥 ∪ { 0}, 1 ≤ 𝑥 ≤ 𝑀, 1 ≤ 𝑘 ≤ 𝑦 𝑥 . (23) Moreover, each net terminal on a chip must appear once and only once in the vector of that chip: 
+
+> 𝑦 𝑥
+
+∑︁ 
+
+> 𝑘 =1
+
+I 𝑐 (𝑥, 𝑘 ) = 𝑛  = 1, ∀𝑛 ∈ 𝑁 𝑥 , 1 ≤ 𝑥 ≤ 𝑀. (24) This constraint prevents two pins on the same chip from being assigned to the same signal net, while also ensuring that every required net terminal is assigned to one feasible candidate pin. Figure 4 illustrates the proposed positional encoding with a simple example. For Chip 1, Nets 1–5 are assigned to pins 𝑃 3, 𝑃 4, 𝑃 5, 𝑃 6, and 𝑃 8, respectively. For Chip 2, the same nets are assigned to pins 𝑃 2, 𝑃 1, 𝑃 9, 𝑃 8, and 𝑃 6,respectively. The remaining pins on both chips are left unused and set to 0. The complete particle is then obtained by concatenating the ordered assignment vectors of all chips. With this representation, each particle corresponds to a feasible pin assignment candidate. 
+
+4.2.2 Crossing-Aware Solution Evaluation. Next, we define the evaluation metric for pin assignment solutions. Given fixed chip locations and orientations, a pin assignment determines the physical coordinates of all selected net terminals. 
+
+> Manuscript submitted to ACM
+
+Differentiable Routability-Driven Package Floorplanning with Pin Assignment 13 A high-quality assignment should keep the estimated inter-chip wirelength short while avoiding pin configurations that are likely to cause routing competition in later RDL routing. The former effect can be captured by HPWL. For the latter effect, invoking a detailed RDL router for every particle during DPSO optimization would be prohibitively expensive. Therefore, we use flightline collisions as a lightweight early-stage routability proxy. A flightline is defined as the direct line segment connecting the two assigned pins of a net, and a flightline collision occurs when the flightlines of two different nets intersect. Such a collision does not directly represent a detailed routing violation, because the final RDL router may resolve intersecting connections through layer assignment or detours. However, a large number of flightline collisions indicates that many nets are likely to compete for similar routing regions or require additional detours in subsequent RDL routing. Therefore, flightline collisions provide an early-stage routability indication for evaluating pin assignment solutions before detailed routing is performed. Since flightline collisions can be computed directly from assigned pin coordinates, they are also suitable for efficient fitness evaluation during DPSO-based pin optimization. Based on the above analysis, the evaluation function of the pin assignment solution 𝑝 𝑖 is defined as 
+
+𝐹 (𝑝 𝑖 ) = 𝛼 HPWL (𝑝 𝑖 ) + 𝛽 Crossing (𝑝 𝑖 )
+
+𝑇 ref 
+
+. (25) where 𝛼 and 𝛽 are two weighting factors, HPWL (𝑝 𝑖 ) denotes the normalized half-perimeter wirelength of particle 𝑝 𝑖 ,and Crossing (𝑝 𝑖 ) denotes the normalized number of flightline collisions of particle 𝑝 𝑖 . In the implementation, the raw HPWL sum 𝐻 (𝑝 0) and the raw flightline collision count 𝐶 (𝑝 0) of the initial particle 𝑝 0 are used as reference scales: 
+
+HPWL (𝑝 𝑖 ) = 𝐻 (𝑝 𝑖 )
+
+𝐻 (𝑝 0) , Crossing (𝑝 𝑖 ) = 𝐶 (𝑝 𝑖 )
+
+𝐶 (𝑝 0) . (26) The normalization factor 𝑇 ref is the weighted total of the initial particle after applying the same normalization: 
+
+𝑇 ref = 𝛼 HPWL (𝑝 0) + 𝛽 Crossing (𝑝 0). (27) The two terms are normalized before weighted summation to avoid dominance by either metric due to their different numerical scales. Since the optimization objective is to reduce both HPWL and crossings, a particle with a smaller fitness value represents a better pin assignment solution. In the subsequent DPSO-based pin optimization, the fitness values of a large number of particles need to be evaluated in each iteration. For each particle, both HPWL computation and flightline-collision evaluation involve a large number of independent operations over signal nets or flightline pairs. These operations can become a major computational bottleneck as the circuit scale increases. Therefore, it is necessary to accelerate this evaluation process. In this work, we introduce GPU-based parallel computation to evaluate both terms in the fitness function, enabling efficient evaluation of a large number of particles during the optimization process. Algorithm 1 shows the warp-level evaluation procedure for each particle. Each CUDA block contains one warp of 32 threads and is assigned to one particle, so the threads in the warp cooperatively evaluate the cost terms of that particle. For the HPWL term, each thread processes a strided subset of nets, obtains the two assigned endpoints of each net under the current particle assignment, and accumulates the HPWL contribution locally. For the flightline collision term, the same strided net traversal is used, while each selected net is compared only with nets of larger indices. In this way, only the upper-triangular set of net pairs is checked, avoiding repeated collision counting. After the per-thread partial sums are computed, warp-level reduction is applied to obtain the total HPWL term 𝐻 𝑚 and the total flightline collision 
+
+> Manuscript submitted to ACM
+
+14 Y. Q. Huang, et al. 
+
+Algorithm 1: GPU-Parallel Warp-Level Evaluation of Particle Cost 
+
+Input: particle swarm P, number of nets 𝑁 , warp size 𝑤 
+
+Output: particle swarm costs 𝐹 (P)  
+
+> 1
+
+foreach particle 𝑝 𝑚 ∈ P in parallel do  
+
+> 2
+
+foreach thread ℓ ∈ { 0, 1, . . . , 𝑤 − 1} in parallel do  
+
+> 3
+
+ℎℓ ← 0, 𝑐 ℓ ← 0; 
+
+> 4
+
+for 𝑖 = ℓ + 1 to 𝑁 with step 𝑤 do  
+
+> 5
+
+(𝑎 1, 𝑎 2) ← GetEndpoints 𝑝 𝑚 (𝑖 ); 
+
+> 6
+
+ℎℓ ← ℎℓ + CalHPWL (𝑎 1, 𝑎 2); 
+
+> 7
+
+for 𝑗 = 𝑖 + 1 to 𝑁 do  
+
+> 8
+
+(𝑏 1, 𝑏 2) ← GetEndpoints 𝑝 𝑚 ( 𝑗 ); 
+
+> 9
+
+𝑐 ℓ ← 𝑐 ℓ + I  IsIntersect (𝑎 1, 𝑎 2, 𝑏 1, 𝑏 2); 
+
+> 10
+
+end  
+
+> 11
+
+end  
+
+> 12
+
+end  
+
+> 13
+
+𝐻 𝑚 ← WarpReduceSum ({ ℎℓ }𝑤 −1 
+
+> ℓ=0
+
+); 
+
+> 14
+
+𝐶 𝑚 ← WarpReduceSum ({ 𝑐 ℓ }𝑤 −1 
+
+> ℓ=0
+
+); 
+
+> 15
+
+𝐹 (𝑝 𝑚 ) ← CalCost (𝐻 𝑚 , 𝐶 𝑚 ); 
+
+> 16
+
+end  
+
+> 17
+
+return 𝐹 (P) = {𝐹 (𝑝 𝑚 ) | 𝑝 𝑚 ∈ P} ;
+
+Algorithm 2: DPSO-Based Pin Optimization 
+
+Input: particle swarm P, maximum iteration number 𝑇 max 
+
+Output: Best pin assignment solution Gbest  
+
+> 1
+
+𝑃 0 ← ParticleInitialization () ; 
+
+> 2
+
+𝐹 (𝑃 0) ← EvaluationOfParticleCost (𝑃 0); 
+
+> 3
+
+𝑅 0 ← ReferenceParticleSelection (𝑃 0, 𝐹 (𝑃 0)) ; 
+
+> 4
+
+for 𝑡 = 0 to 𝑇 max do  
+
+> 5
+
+if convergence then  
+
+> 6
+
+break ; 
+
+> 7
+
+end  
+
+> 8
+
+𝑃 𝑡 +1 ← ParticleUpdate (𝑃 𝑡 ); 
+
+> 9
+
+𝐹 (𝑃 𝑡 +1) ← EvaluationOfParticleCost (𝑃 𝑡 +1); 
+
+> 10
+
+𝑅 𝑡 +1 ← ReferenceParticleSelection (𝑃 𝑡 +1, 𝐹 (𝑃 𝑡 +1)) ; 
+
+> 11
+
+end  
+
+> 12
+
+return Gbest ∈ 𝑅 𝑡 ;count 𝐶 𝑚 of particle 𝑚 . Finally, one thread writes the reduced values to global memory and evaluates the particle cost using the reference scales defined above. 
+
+4.2.3 DPSO-Based Pin Optimization. After encoding pin assignment solutions as particles and defining the correspond-ing evaluation function, we perform DPSO-based pin optimization to search for a high-quality pin assignment solution. Algorithm 2 summarizes the overall flow of the proposed optimization procedure. After particle initialization, the DPSO loop iteratively performs particle updates and best-solution updates until convergence. 
+
+> Manuscript submitted to ACM
+
+Differentiable Routability-Driven Package Floorplanning with Pin Assignment 15 Particle 1  
+
+> Chip 1
+
+# 3 1 2 4    
+
+> Endpoint 1 Endpoint 2 Endpoint 3 Endpoint 4
+> Particle 2
+> Chip 1
+
+# 2 3 4 1 
+
+> Particle 3
+> Chip 1
+
+# 2 3 1 4 
+
+> Particle 1
+> Chip 1
+
+# 0.7 0.1 0.6 0.5     
+
+> Endpoint 1 Endpoint 2 Endpoint 3 Endpoint 4
+> Particle 2
+> Chip 1
+
+# 0.3 0.8 0.9 0.2  
+
+> Particle 3
+> Chip 1
+
+# 0.4 0.5 0.2 0.7  
+
+> Sort by row
+> Fig. 5. Stratified uniform initialization of pin assignment particles using sorted random keys.
+
+1) Particle Initialization: Before the formal search process starts, the initial particles are generated by a stratified uniform sampling strategy. As shown in Figure 5, for each chip, we consider the net endpoints assigned to this chip across all particles and construct a sampling matrix, where each row corresponds to one particle and each column corresponds to one endpoint dimension. For each dimension, the interval [0, 1] is uniformly divided into 𝑁 𝑝 non-overlapping subintervals according to the number of particles, and one random value is sampled from each subinterval. In this way, the samples of each endpoint dimension are spread over the entire interval rather than concentrated in a small region. After the sampling values of all dimensions are generated, the values in the same row are combined to form the random-key vector of one particle. The endpoints are sorted according to their random-key values to obtain an endpoint ordering. Then, 𝑁 𝐸 pads are randomly selected from the candidate pad set of the chip to form a pad sequence, where 
+
+𝑁 𝐸 is the number of endpoints on this chip. The sorted endpoints are assigned to the selected pads in this sequence, producing a legal chip-wise pin assignment. Since each selected pad is used at most once and each endpoint appears exactly once, the generated particle satisfies the pin assignment legality constraint. 2) Particle Update: To maintain particle diversity during the search process, the proposed algorithm partitions the swarm into four subgroups according to particle fitness values and applies differentiated particle update strategy to different subgroups. This design enhances the search for high-quality pin-assignment solutions while reducing the risk of premature convergence to local optima. At iteration 𝑡 , let 𝑁 𝑝 denote the swarm size. Since a smaller fitness value indicates a better pin assignment solution, all particles are first sorted in ascending order of fitness: 
+
+𝐹 (𝑝 𝑡 𝜋 1 ) ≤ 𝐹 (𝑝 𝑡 𝜋 2 ) ≤ · · · ≤ 𝐹 (𝑝 𝑡 𝜋 𝑁𝑝 ), (28) where 𝜋 𝑘 denotes the index of the 𝑘 -th particle in the sorted order. The sorted particle sequence is then divided into four consecutive subgroups with nearly equal sizes: 
+
+G𝑡 𝑗 = 𝑝 𝑡 𝜋 𝑘 | 𝑏 𝑗 ≤ 𝑘 ≤ 𝑒 𝑗 , 𝑏 𝑗 =
+
+ ( 𝑗 − 1)𝑁 𝑝 
+
+4
+
+
+
++ 1, 𝑒 𝑗 =
+
+ 𝑗𝑁 𝑝 
+
+4
+
+
+
+, 𝑗 = 1, 2, 3, 4. (29) This sorted partition ensures that each subgroup is non-empty when 𝑁 𝑝 ≥ 4, and the subgroup sizes differ by at most one. The subgroups are ordered from high-quality to low-quality particles; thus, G𝑡  
+
+> 1
+
+contains the best particles and G𝑡 
+
+> 4
+
+contains the worst particles. Accordingly, Sbest 𝑡  
+
+> 1
+
+is identical to Gbest 𝑡 .Based on the subgroup partitioning result, the proposed method updates particles with different roles using differenti-ated mechanisms. Specifically, particles are classified into three types: the global-best particle, non-global subgroup-best particles, and ordinary particles. As shown in Figure 6, the global-best particle provides the overall search guidance and selects a reference particle from the non-global subgroup-best particles using roulette-wheel selection. Each non-global 
+
+> Manuscript submitted to ACM
+
+16 Y. Q. Huang, et al. 1t
+
+1t
+
+2
+
+> t
+
+2
+
+> t
+
+3
+
+> t
+
+3
+
+> t
+
+4
+
+> t
+
+4
+
+> t
+
+1t
+
+2
+
+> t
+
+3
+
+> t
+
+4
+
+> t
+
+Subgroup -Best Particle Subgroup -Best Particle Global -Best Particle Global -Best Particle Ordinary Particle Ordinary Particle Subgroup -Best Particle Global -Best Particle Ordinary Particle 
+
+> Fig. 6. Subgroup partitioning and differential particle update strategy.
+
+subgroup-best particle propagates high-quality assignment information within its own subgroup and learns from the adjacent higher-quality subgroup to improve its search direction. Ordinary particles mainly learn from their personal best solutions and the best particle in their corresponding subgroup. Through this role-aware update mechanism, the swarm can strengthen information exchange among particles, maintain search diversity, and improve the probability of escaping local optima. The update of particle 𝑝 𝑡 𝑖 can be generally expressed as 
+
+𝑝 𝑡 +1 
+
+> 𝑖
+
+= 𝐹 3
+
+
+
+𝐹 2
+
+ 𝐹 1 (𝑝 𝑡 𝑖 , 𝜔 𝑡 𝑖 ), 𝑐 11 , 𝑐 12 , 𝑐 13 
+
+, 𝑐 21 , 𝑐 22 , 𝑐 23 
+
+
+
+. (30) where 𝜔 𝑡 𝑖 denotes the inertia weight of the 𝑖 -th particle at iteration 𝑡 , which determines the probability of performing the mutation operation. 𝑐 1𝑥 and 𝑐 2𝑥 (𝑥 = 1, 2, 3) are acceleration coefficients that control the crossover probabilities for the three different types of particles. 𝐹 1 represents the inertial component, which preserves the current search state of the particle. 𝐹 2 represents the individual cognitive component, which guides the particle to learn from its own historical best position. 𝐹 3 represents the social cognitive component, which encourages the particle to learn from elite particles in its current subgroup or from higher-quality subgroup-best particles. The inertial component of a particle is denoted by 𝐹 1, which is implemented through a mutation operation. It is formulated as follows: 
+
+𝑊 𝑡 𝑖 = 𝐹 1
+
+ 𝑝 𝑡 𝑖 , 𝜔 𝑡 𝑖 
+
+ =
+
+
+
+swap (𝑐, 𝑥 𝑎 , 𝑥 𝑏 ), 𝑟 1 < 𝜔 𝑡 𝑖 ,
+
+rep (𝑐, 𝑥 𝑎 ), 𝑟 1 ≥ 𝜔 𝑡 𝑖 ∧ 𝑃 unused  
+
+> 𝑐
+
+≠ ∅,𝑝 𝑡 𝑖 , otherwise .
+
+(31) where 𝑊 𝑡 𝑖 denotes the particle after the inertial update, and 𝑟 1 is a random number uniformly sampled from [0, 1).
+
+𝑃 unused  
+
+> 𝑐
+
+represents the set of unused candidate pads on chip 𝑐 . For the current particle 𝑝 𝑖 , swap (𝑐, 𝑥 𝑎 , 𝑥 𝑏 ) updates the particle by exchanging the net endpoints assigned to two pads 𝑥 𝑎 and 𝑥 𝑏 within the same chip 𝑐 . In contrast, rep (𝑐, 𝑥 𝑎 )
+
+selects one unused candidate pad from 𝑃 unused  
+
+> 𝑐
+
+and moves the net endpoint assigned to pad 𝑥 𝑎 to that pad. Figure 7 illustrates the two discrete operators. In the swap operation shown in Figure 7(a), the assignments of two selected pads on the same chip are exchanged; for example, Nets 3 and 4 swap their assigned pads while the used-pad set remains unchanged. In the replacement operation shown in Figure 7(b), the net assigned to a selected pad is moved 
+
+> Manuscript submitted to ACM
+
+Differentiable Routability-Driven Package Floorplanning with Pin Assignment 17 swap(2,3,4) 
+
+# 1 2 3 41 2 3 43 2 1
+
+# 1 2 4 31 2 4 33 2 1
+
+Chip1 Chip2 
+
+> (a) Swap operator.
+
+rep(2,3) 
+
+# 1 2 3 43 2 1
+
+# 1 2 43 2 1
+
+Chip1 Chip2 
+
+# 3 (b) Replacement operator. Fig. 7. Examples of swap and replacement operators in chip-wise pin assignment. 
+
+to an unused pad on the same chip; for example, Net 3 is reassigned to a new pad and the original pad becomes empty. To balance the global and local exploitation ability of the algorithm, an adaptive inertia weight is further introduced. It is defined as follows: 
+
+𝜔 𝑡 𝑖 =
+
+
+
+𝐹  Sbest 𝑡 
+
+𝐹  𝑝 𝑡 𝑖 
+
+ , 𝑝 𝑡 𝑖 = Gbest 𝑡 ,𝐹 
+
+
+
+Sbest 𝑡 𝑗 −1
+
+
+
+𝐹  𝑝 𝑡 𝑖 
+
+ , 𝑝 𝑡 𝑖 = Sbest 𝑡 𝑗 , 𝑗 = 2, 3, 4,𝐹 
+
+
+
+Sbest 𝑡 𝑆 (𝑖 )
+
+
+
+𝐹  𝑝 𝑡 𝑖 
+
+ , otherwise .
+
+(32) where Gbest 𝑡 denotes the global best particle at iteration 𝑡 , and Sbest 𝑡 𝑗 denotes the best particle in the 𝑗 -th subgroup at iteration 𝑡 . 𝐹 (𝑝 𝑡 𝑖 ) represents the fitness value of the current particle. 𝐹 (Sbest 𝑡 ) denotes the average fitness value of the best particles from all subgroups at iteration 𝑡 . 𝐹 (Sbest 𝑡 𝑗 −1) represents the fitness value of the best particle in the adjacent higher-quality subgroup at iteration 𝑡 . 𝐹 (Sbest 𝑡 𝑆 (𝑖 ) ) denotes the fitness value of the best particle in the subgroup to which the 𝑖 -th particle belongs. With this strategy, each particle obtains an inertia weight according to the elite reference associated with its role: the global-best particle uses the average quality of subgroup-best particles, non-global subgroup-best particles use the adjacent higher-quality subgroup-best, and ordinary particles use the best particle in their own subgroup. Then, the inertia weight is further normalized as follows: 
+
+𝜔 𝑡 ∗ 
+
+> 𝑖
+
+= 0.4 + 0.5 · Φ  𝜔 𝑡 𝑖 
+
+ , (33) where Φ(·) is the cumulative distribution function of the standard normal distribution. After this normalization, all inertia weights are mapped into the interval [0.4, 0.9], which is a commonly used range for inertia weights in PSO variants. In this way, different particles can adaptively adjust their update intensities according to their own search states, thereby improving the overall search efficiency and robustness of the algorithm. The individual cognitive component of a particle is denoted by 𝐹 2, which is implemented through a crossover operation. It is formulated as follows: 
+
+𝐼 𝑡 𝑖 = 𝐹 2
+
+ 𝑊 𝑡 𝑖 , 𝑐 1𝑥 
+
+ =
+
+
+
+𝐶 
+
+
+
+𝑊 𝑡 𝑖 , 𝑝 pbest 
+
+> 𝑖
+
+
+
+, 𝑟 2 < 𝑐 1𝑥 ,𝑊 𝑡 𝑖 , otherwise .
+
+(34) 
+
+> Manuscript submitted to ACM
+
+18 Y. Q. Huang, et al. 1 2 3 43 2 1
+
+# 2 1 4 33 2 1
+
+Chip1 Chip2 
+
+# 1 2 4 33 2 1
+
+Particle p
+
+Reference 
+
+Particle 
+
+Particle p’
+
+> Fig. 8. Discrete crossover operation for pin assignment particles.
+
+where 𝐼 𝑡 𝑖 denotes the particle after the individual cognitive update, and 𝑟 2 is a random number uniformly sampled from [0, 1). 𝑐 1𝑥 (𝑥 = 1, 2, 3) is an acceleration coefficient that controls the probability of applying the crossover operation. Its value is determined according to the particle type, allowing different particles to have different crossover probabilities. 
+
+𝐶 (𝑊 𝑡 𝑖 , 𝑝 pbest  
+
+> 𝑖
+
+) denotes the crossover operation between the particle after the inertial update 𝑊 𝑡 𝑖 and its historical best position 𝑝 pbest  
+
+> 𝑖
+
+, thereby guiding the particle to learn from its own best search experience. In the pin assignment problem, the crossover operation can be regarded as a discrete movement of a particle toward a reference particle. In the individual cognitive component, the reference particle is the individual historical best solution. Specifically, one position that is inconsistent with the reference particle is randomly selected, and the current particle is partially aligned with the reference particle through a swap operation. To preserve the legality of chip-wise pin assignments, this crossover operation is performed within the same chip-wise assignment vector. Let the selected position be 𝑋 , and let the value at the same position in the reference particle be 𝑋 ref . Then, the position whose value is 𝑋 ref is searched for in the current particle and denoted as 𝑌 . By exchanging the values at positions 𝑋 and 𝑌 , the particle is moved one step closer to the reference particle. After each crossover operation, particles of different types approach their individual best solutions with different probabilities. Therefore, during the population evolution process, particles can preserve part of the promising assignment patterns from their historical best solutions. Figure 8 illustrates an example of this crossover operation. In the selected chip-wise vector, the selected position is assigned to Net 3 in the current particle, while the corresponding position in the reference particle is assigned to Net 4. The crossover operation searches for Net 4 in the current particle and swaps the two assignments, so that the selected position is updated from Net 3 to Net 4. The social cognitive component of a particle is denoted by 𝐹 3, which is also implemented through a crossover operation. It is formulated as follows: 
+
+𝐺 𝑡 𝑖 = 𝐹 3
+
+ 𝐼 𝑡 𝑖 , 𝑐 2𝑥 
+
+ =
+
+
+
+𝐶  𝐼 𝑡 𝑖 , 𝑝 ref 
+
+> 𝑖
+
+ , 𝑟 3 < 𝑐 2𝑥 ,𝐼 𝑡 𝑖 , otherwise .
+
+(35) where 𝐺 𝑡 𝑖 denotes the particle after the social cognitive update, and 𝑟 3 is a random number uniformly sampled from 
+
+[0, 1). 𝑐 2𝑥 (𝑥 = 1, 2, 3) is a learning coefficient that controls the probability of applying the crossover operation. When 
+
+𝑟 3 < 𝑐 2𝑥 , particle 𝐼 𝑡 𝑖 performs the crossover operation with its reference particle 𝑝 ref  
+
+> 𝑖
+
+. In this work, particles are divided into three types, and different types of particles select different reference particles during the social cognitive update. 
+
+> Manuscript submitted to ACM
+
+Differentiable Routability-Driven Package Floorplanning with Pin Assignment 19 The reference particle is selected as follows: 
+
+𝑝 ref  
+
+> 𝑖
+
+=
+
+
+
+Roulette  𝐶 𝑡  , 𝑝 𝑡 𝑖 = Gbest 𝑡 ,
+
+Sbest 𝑡 𝑗 −1, 𝑝 𝑡 𝑖 = Sbest 𝑡 𝑗 , 𝑗 = 2, 3, 4,
+
+Sbest 𝑡 𝑆 (𝑖 ) , 𝑝 𝑡 𝑖 = Ordinary .
+
+(36) where 
+
+𝐶 𝑡 = Sbest 𝑡 𝑘 | Sbest 𝑡 𝑘 ≠ Gbest 𝑡 , 𝑘 = 1, 2, 3, 4 (37) denotes the set of subgroup-best particles excluding the global best particle. Sbest 𝑡 𝑗 −1 denotes the best particle in the adjacent higher-quality subgroup at iteration 𝑡 , and Sbest 𝑡 𝑆 (𝑖 ) denotes the best particle in the subgroup to which particle 
+
+𝑖 belongs. That is, ordinary particles learn from the best particle in their own subgroup, non-global subgroup-best particles learn from the best particle in the adjacent higher-quality subgroup, and the global best particle selects its reference particle from the best particles of other subgroups using a roulette-wheel selection strategy. Specifically, for each candidate particle 𝑞 𝑡 𝑘 ∈ 𝐶 𝑡 , its selection weight is constructed using the reciprocal of its fitness value: 
+
+𝜂 𝑡 𝑘 = 1
+
+𝐹 
+
+
+
+𝑞 𝑡 𝑘 
+
+ . (38) The corresponding selection probability is then obtained by normalization: 
+
+𝜌 𝑡 𝑘 = 𝜂 𝑡 𝑘 
+
+Í𝑞 𝑡 𝑗 ∈𝐶 𝑡 𝜂 𝑡 𝑗 
+
+. (39) Next, let 𝑅 𝑡 𝑘 denote the cumulative selection probability of the 𝑘 -th candidate particle at iteration 𝑡 :
+
+𝑅 𝑡 𝑘 =
+
+> 𝑘
+
+∑︁ 
+
+> 𝑗 =1
+
+𝜌 𝑡 𝑗 , (40) where 𝑅 𝑡  
+
+> 0
+
+= 0. A random number 𝑟 ∼ 𝑈 (0, 1) is then generated. If 
+
+𝑅 𝑡 𝑘 −1 < 𝑟 ≤ 𝑅 𝑡 𝑘 , (41) then the 𝑘 -th subgroup-best particle is selected as the reference particle, namely 
+
+𝑝 ref  
+
+> 𝑖
+
+= 𝑞 𝑡 𝑘 . (42) Through this strategy, the global best particle can absorb useful information from other high-quality subgroups while preserving its own advantageous structure, thereby enhancing population diversity and preventing premature convergence. In addition, the crossover operation used in the social cognitive component is the same as that in the individual cognitive component. By repeatedly performing crossover operations, particles can continuously learn promising assignment patterns from the population and gradually move toward the global best solution. 
+
+4.3 Differentiable Routability Maximization 
+
+In this stage, the proposed method improves routability through fan-out congestion estimation and gradient-based routability optimization. In fan-out congestion estimation, we model the actual usage of routing resources under the fan-out routing style by excluding fan-in regions from available routing resources and estimating the potential demand of routing channels. Based on this congestion model, the estimated congestion cost is incorporated into a 
+
+> Manuscript submitted to ACM
+
+20 Y. Q. Huang, et al. Legal Path Illegal Path Congestion Chip Move Fan -in Region Legal Path Illegal Path Congestion Chip Move Fan -in Region Chip 1 
+
+# Chip 2 
+
+# Chip 1 
+
+# Chip 2 
+
+> (a)
+
+# Chip 1 
+
+# Chip 2  (b) Fig. 9. (a) Congestion occurs in the routing channel between Chip 1 and Chip 2. (b) The differentiable optimization algorithm guides chip movement to alleviate the congestion. 
+
+differentiable optimization framework. In gradient-based routability optimization, we update chip positions according to the congestion gradients, guiding the layout toward lower congestion and higher routability. As shown in Figure 9, congestion occurs in the routing channel between Chip 1 and Chip 2. Based on the congestion information, the algorithm guides the movement of chip locations to enlarge the congested routing channel, thereby alleviating the congestion. It should be noted that the routing graph construction and Top-𝐾 path search are performed as discrete congestion-estimation steps. During each gradient-based optimization interval, the estimated routing demand dem (𝑣 )
+
+and the vertex-to-channel association are kept fixed, and the differentiable loss is back-propagated only through the routing channel length 𝑙 𝑣 , which is determined by chip boundaries and chip center locations. When a chip movement changes the routing-region topology, the routing graph and candidate paths are reconstructed to refresh the congestion estimation. 
+
+4.3.1 Fan-Out Congestion Estimation. To better estimate the currently available routing resources, we first partition the routing region into rectangular grids using the method in [ 27 ]. As shown in Figure 10(a), for each fan-in region, four extension lines are generated from its corner points along the four orthogonal directions, i.e., 0◦, 90 ◦, 180 ◦, and 
+
+270 ◦. Each extension line stops when it reaches another fan-in region or the boundary of the routing plane. In this way, the entire routing region is divided into a set of rectangular grids. After the initial partition, to avoid excessive grid fragmentation, we adopt the method proposed by Ho et al. [ 28 ] to merge rectangular grids and then further construct a routing graph. The routing graph is denoted as 𝐺 (𝑉 , 𝐸 ), where 𝑉 
+
+contains the midpoints of the common boundaries shared by adjacent routing grids. For two vertices 𝑣 𝑖 and 𝑣 𝑗 , if the line segment connecting them does not overlap with any grid boundary, an edge 𝑒 𝑖 𝑗 = (𝑣 𝑖 , 𝑣 𝑗 ) is added to 𝐸 . Figure 10(b) shows the construction result of the routing graph. Before path search, each pin is mapped to its nearest graph vertex. As shown in Figure 10(c), several pins may be located inside a fan-in region. During routing graph construction, each pin is mapped to the nearest vertex according to the Euclidean distance between the pin and graph vertices, and a pin mapping table is then constructed. In this 
+
+> Manuscript submitted to ACM
+
+Differentiable Routability-Driven Package Floorplanning with Pin Assignment 21 Routing Graph Vertex Routing Graph Vertex Estimated Routing Path Estimated Routing Path Routing Graph Edge Routing Graph Edge Fan -in Region Fan -in Region I/O pad I/O pad Target Vertex Target Vertex Routing Graph Vertex Estimated Routing Path Routing Graph Edge Fan -in Region I/O pad Target Vertex Chip 1 
+
+Chip 2 
+
+Chip 3 
+
+Chip 1 
+
+Chip 2 
+
+Chip 3 
+
+(a) Chip 1 
+
+Chip 2 
+
+Chip 3 
+
+Chip 1 
+
+Chip 2 
+
+Chip 3 (b) Chip 2 Chip 2 (c) Fig. 10. (a) The layout is partitioned into irregular grids using the method in [ 27 ]. (b) Rectangular grids are merged following Ho et al. [ 28 ], based on which the routing graph is constructed and routing demand is estimated using the Top-𝐾 path algorithm. (c) Pins inside fan-in regions are mapped to their nearest routing-graph vertices. 
+
+way, the original pin-to-pin path search problem is transformed into a vertex-to-vertex path search problem on the routing graph. It should be noted that multiple pins may be mapped to the same vertex. This means that one path search result can be reused for multiple pin selections, thereby reducing the computational cost of congestion estimation. Meanwhile, each pin is only mapped to vertices on the boundary of its own fan-in region. Therefore, during the actual search process, path search only needs to be performed between boundary vertices of fan-in regions. Then, based on Yen’s Top-𝐾 shortest path algorithm [ 29 ], we generate 𝐾 candidate paths between pairs of fan-in boundary vertices. Figure 10(b) shows an example with 𝐾 = 4, where the four generated candidate paths are highlighted in red. After path search, the algorithm counts the weighted number of paths passing through each vertex, denoted as dem (𝑣 ). To avoid underestimating the available routing resources and blindly enlarging the inter-chip spacing, we assign different weights to paths with different ranks. Specifically, for the 𝐾 candidate paths of a net, paths generated earlier are regarded as higher-ranked candidates because they have shorter original or penalized path costs. The routing demand of vertex 𝑣 
+
+is then calculated as 
+
+dem (𝑣 ) =∑︁ 
+
+> 𝑛 ∈𝑁 𝐾
+
+∑︁ 
+
+> 𝑘 =1
+
+𝑤 𝑘 · I
+
+
+
+𝑣 ∈ 𝑃 (𝑘 )
+
+> 𝑛
+
+
+
+, (43) where 𝑁 denotes the set of signal nets, 𝑃 (𝑘 ) 
+
+> 𝑛
+
+denotes the 𝑘 -th diversity-aware candidate path of net 𝑛 , and 𝑤 𝑘 is the normalized weight assigned to that path and the weights satisfy 𝑤 1 ≥ 𝑤 2 ≥ · · · > 𝑤 𝐾 and Í𝐾 𝑘 =1 𝑤 𝑘 = 1. The indicator function I
+
+
+
+𝑣 ∈ 𝑃 (𝑘 )
+
+> 𝑛
+
+
+
+indicates whether vertex 𝑣 is included in the 𝑘 -th candidate path of net 𝑛 , and is defined as 
+
+I
+
+
+
+𝑣 ∈ 𝑃 (𝑘 )
+
+> 𝑛
+
+
+
+=
+
+
+
+1, 𝑣 ∈ 𝑃 (𝑘 ) 
+
+> 𝑛
+
+,
+
+0, 𝑣 ∉ 𝑃 (𝑘 ) 
+
+> 𝑛
+
+.
+
+(44) To estimate the routing capacity of each vertex, we define the routing pitch 𝜌 as the minimum center-to-center distance between two adjacent wires. It is determined by the required wire spacing 𝑠 and the wire width 𝑠 𝑤 , i.e., 
+
+𝜌 = 𝑠 + 𝑠 𝑤 , (45) 
+
+> Manuscript submitted to ACM
+
+22 Y. Q. Huang, et al. where 𝑠 and 𝑠 𝑤 denote the wire spacing and wire width required by the design rules, respectively. Then, the routing capacity of vertex 𝑣 is defined as 
+
+cap (𝑣 ) = 𝑙 𝑣 
+
+𝜌 , (46) where 𝑙 𝑣 denotes the length of the common boundary represented by vertex 𝑣 .Finally, the congestion of vertex 𝑣 is calculated as 
+
+Congestion (𝑣 ) = max (0, dem (𝑣 ) − cap (𝑣 )) . (47) By defining the congestion of vertices in the routing graph, we can clearly characterize the current congestion distribution of the routing resources. 
+
+4.3.2 Gradient-Based Routability Optimization: In this stage, we further construct a congestion propagation path. We map routing congestion to the available routing channels determined by the relative positions of chips and propagate congestion information back to chip center locations through differentiable loss functions. In this way, the optimizer can guide chip movement to release routing resources in critical regions. Specifically, we first define chip boundaries according to the current chip locations and sizes. For chip 𝑐 𝑖 , its left, right, bottom, and top boundaries are respectively defined as 
+
+
+
+𝐿 𝑖 (c) = 𝑥 𝑖 − 𝑤 𝑖 
+
+2 ,𝑅 𝑖 (c) = 𝑥 𝑖 + 𝑤 𝑖 
+
+2 ,𝐵 𝑖 (c) = 𝑦 𝑖 − ℎ𝑖 
+
+2 ,𝑇 𝑖 (c) = 𝑦 𝑖 + ℎ𝑖 
+
+2 .
+
+(48) where (𝑥 𝑖 , 𝑦 𝑖 ) denotes the center location of chip 𝑐 𝑖 , and 𝑤 𝑖 and ℎ𝑖 denote its width and height, respectively. Given the chip boundaries, when a routing-demand vertex 𝑣 lies in a horizontal or vertical routing channel between two chips, the length of the associated routing channel is determined by the distance between the corresponding adjacent chip boundaries. Let 𝑜 𝑣 ∈ { H, V} denote the orientation of the routing channel containing 𝑣 , with 𝑜 𝑣 = H and 
+
+𝑜 𝑣 = V indicating horizontal and vertical routing channels, respectively. The routing-channel length associated with vertex 𝑣 is defined as 
+
+𝑙 𝑣 =
+
+
+
+𝑥 + 
+
+> 𝑣
+
+− 𝑥 − 
+
+> 𝑣
+
+, 𝑜 𝑣 = H,𝑦 + 
+
+> 𝑣
+
+− 𝑦 − 
+
+> 𝑣
+
+, 𝑜 𝑣 = V,
+
+(49) where 𝑥 − 
+
+> 𝑣
+
+and 𝑥 + 
+
+> 𝑣
+
+, or 𝑦 − 
+
+> 𝑣
+
+and 𝑦 + 
+
+> 𝑣
+
+, denote the boundary coordinates of the two ends of the routing channel. A shorter 𝑙 𝑣 
+
+indicates a narrower local routing channel. To impose constraints only on regions with actual routing pressure, we define the set of routing vertices with positive routing demand as 
+
+𝑉 + = {𝑣 ∈ 𝑉 | dem (𝑣 ) > 0}, (50) For these regions, we construct two loss terms according to the congestion severity, which are used to handle severe blockage and regular congestion, respectively. The first term is the zero-capacity loss, which penalizes the case where 
+
+> Manuscript submitted to ACM
+
+Differentiable Routability-Driven Package Floorplanning with Pin Assignment 23 routing demand exists but the corresponding routing channel is too short: 
+
+𝐴 0 =∑︁   
+
+> 𝑣 ∈𝑉 +
+
+
+
+max 
+
+
+
+0, 𝜌 − 𝑙 𝑣 
+
+𝜌 
+
+ 2
+
+, (51) When 𝑙 𝑣 ≥ 𝜌 , vertex 𝑣 has at least a basic routing space, and this loss becomes zero. When 𝑙 𝑣 < 𝜌 , the loss increases as the routing channel length decreases. This term mainly prevents critical routing channels from being compressed to nearly zero width during optimization, thus preserving basic feasible routing space for all demand regions. The second term is the over-capacity loss, which describes regular congestion where the routing channel length is insufficient to accommodate the corresponding routing demand: 
+
+𝐴 1 =∑︁   
+
+> 𝑣 ∈𝑉 +
+
+
+
+max 
+
+
+
+0, dem (𝑣 )𝜌 − 𝑙 𝑣 
+
+𝜌 
+
+ 2
+
+. (52) Different from 𝐴 0, 𝐴 1 explicitly considers the actual routing demand dem (𝑣 ). When the routing demand of a region is high, the required routing channel length should be increased accordingly. When the routing demand is low, excessive spacing does not need to be reserved. Therefore, 𝐴 1 can adaptively adjust the required channel width according to local routing demand, guiding the optimizer to prioritize high-demand regions and alleviate local routing bottlenecks. Finally, the total loss of this stage is defined as 
+
+L2 = 𝛼 0𝐴 0 + 𝛼 1𝐴 1, (53) where 𝛼 0 and 𝛼 1 are the weights of the zero-capacity loss and the over-capacity loss, respectively. The former emphasizes the preservation of basic routing space to avoid complete blockage of critical channels, while the latter emphasizes the matching between routing resources and routing demands, so that high-demand regions can obtain larger available routing channels. To improve the stability of the optimization process, we further adopt a two-stage training strategy. In the first stage, only 𝐴 0 is optimized, ensuring that all vertices with routing demand obtain at least a basic routing channel length. This avoids unstable gradient directions caused by severe blockage at the beginning of optimization. In the second stage, 
+
+𝐴 1 is further optimized based on the first-stage result. The chip locations are continuously adjusted according to the routing demands of different regions, so that high-demand regions can obtain sufficient routing space. Through this coarse-to-fine optimization strategy, the congestion loss can be back-propagated along the differentiable path from routing channel length to chip boundaries and then to chip center coordinates. As a result, the optimizer can adjust chip locations, thereby enlarging the available space of critical routing channels and improving the overall RDL routability. 
+
+5 Experimental Results 5.1 Experimental Setup 
+
+The proposed package floorplanning algorithm is implemented using C++/CUDA and Python. Specifically, the crossing-aware pin assignment module is implemented in C++/CUDA, while the differentiable wirelength minimization and differentiable routability maximization modules are implemented in Python. All experiments are conducted on a workstation equipped with 16 GB of memory, an AMD Ryzen 9 7945HX CPU running at 2.50 GHz, and an NVIDIA GeForce RTX 4060 GPU. We evaluate the proposed method on ten benchmark circuits which were originally introduced in [ 30 ] and have been widely adopted in subsequent RDL routing studies, such as [ 15 , 31 ]. Derived from practical FOWLP applications, these benchmarks exhibit high density and severe congestion, making their complexity comparable to 
+
+> Manuscript submitted to ACM
+
+24 Y. Q. Huang, et al. that of real designs. The detailed benchmark information is reported in Table 1, where Area, |𝐶 |, |𝐿 |, |𝐼 /𝑂 |, and |𝑁 |
+
+denote the routing area per layer, the number of chips, the number of routing layers, the number of I/O pads, and the number of inter-chip nets, respectively. 
+
+> Table 1. Benchmark statistics.
+
+Circuits Area( 𝜇 m×𝜇 m) |𝐶 | |𝐿 | |𝐼 /𝑂 | |𝑁 |
+
+dense1 5000 ×5000 2 2 44 22 dense2 7500 ×7500 3 3 92 46 dense3 6000 ×4000 5 3 164 80 dense4 10000 ×5000 6 3 222 111 dense5 10000 ×10000 9 4 522 261 pkg1 5000 ×5000 3 2 20 10 pkg2 6000 ×6000 4 2 56 28 pkg3 8000 ×8000 7 2 108 54 pkg4 12000 ×6000 12 2 180 90 pkg5 16000 ×12000 20 2 492 246 
+
+5.2 Experimental Results and Analysis 
+
+To evaluate the overall performance of the proposed method, we use the state-of-the-art RDL router [ 15 ] to validate the floorplanning results. For comparison, we reproduce the algorithm proposed in [ 22 ]. To the best of our knowledge, this algorithm is the current state-of-the-art routability-driven package floorplanning algorithm. Based on RUDY [ 32 ], [ 22 ]proposes an X-architecture-oriented congestion model, which accounts for the occupation of diagonal routing grids by 
+
+135 ◦ nets and thus provides a more accurate estimation of routing congestion in SiP designs. However, [ 22 ] does not consider pin assignment. To demonstrate the benefit of jointly considering pin assignment during floorplanning, we further construct a baseline denoted as [ 22 ]+PA, where the proposed pin assignment algorithm is incorporated into the framework of [ 22 ]. Table 2 compares the proposed method with [ 22 ] in terms of HPWL and runtime. Table 3 further reports the routability and routed wirelength after applying the RDL router in [15]. As shown by the normalized HPWL values in Table 2, [ 22 ]+PA has a normalized HPWL Comp. value of 0.76, which is 24% lower than that of the proposed method. This is because the proposed method reserves sufficient fan-out routing channels by increasing the spacing between chips, which in turn ensures complete routability in the subsequent routing stage. In addition, [ 22 ]+PA reduces the normalized HPWL Comp. value from 1.57 to 0.76 compared with [ 22 ], demonstrating the effectiveness of the proposed pin assignment algorithm. Given a fixed floorplanning result, the proposed pin assignment algorithm can significantly reduce HPWL by adjusting the pin locations at both ends of each net. In terms of normalized runtime, compared with [ 22 ], adding the proposed pin-assignment stage increases the Comp. value from 0.57 to 0.65, i.e., an absolute increase of only 0.08 in the normalized runtime metric, indicating that the proposed pin assignment algorithm introduces limited computational overhead. Compared with [ 22 ]+PA, the Comp. value of the proposed method further increases to 1.00, with an absolute increase of 0.35. This is mainly due to the accurate congestion estimation method designed for the fan-out routing style. When a chip moves to the boundary, the routing graph needs to be repartitioned and the related routing paths need to be re-estimated, which introduces additional runtime overhead. 
+
+> Manuscript submitted to ACM
+
+Differentiable Routability-Driven Package Floorplanning with Pin Assignment 25                                                                          
+
+> Table 2. Comparison with work in [22] in HPWL and runtime.
+> Circuits HPWL ( 𝜇 m) Runtime (sec.) Ours Lin [22] Lin [22]+PA Ours Lin [22] Lin [22]+PA dense1 7647.31 66762.70 10060.01 7.14 17.08 17.97 dense2 34063.72 227527.04 35174.13 7.45 13.77 14.53 dense3 117152.30 185895.96 113694.30 24.18 15.00 15.52 dense4 266836.30 311811.05 172586.81 23.78 15.39 17.91 dense5 1060787.56 1232124.39 761853.21 35.26 18.42 24.29 pkg1 1702.24 11179.36 1658.51 16.09 14.03 14.09 pkg2 17364.07 47128.27 5667.16 25.16 14.02 14.63 pkg3 27327.70 83373.90 19729.12 18.61 14.84 15.80 pkg4 44204.90 124631.76 41842.19 72.87 15.77 21.33 pkg5 245396.31 576273.32 227845.02 46.75 18.78 24.22 Comp. 1.00 1.57 0.76 1.00 0.57 0.65
+
+As shown in Table 3, the proposed method achieves 100% routability on all test cases, whereas [ 22 ] achieves full routability only on pkg1, and [ 22 ]+PA achieves full routability only on dense1, dense2, and pkg1. The main reason is that the congestion model in [ 22 ] treats all partitioned routing grids equally, making it difficult to accurately capture the actual congestion of routing channels under the fan-out routing style. Meanwhile, compared with [ 22 ], [ 22 ]+PA shows better routability, indicating that the proposed pin assignment algorithm can select closer pins for signal nets, thereby preventing nets from crossing multiple fan-in regions and reducing the risk of routing conflicts. Finally, we report the routed wirelength obtained after detailed routing. Note that the values in Table 3 are calculated only for successfully routed nets, and the symbol > denotes a lower bound. For pkg1, where all algorithms achieve full routability, the proposed method still obtains the shortest routed wirelength, reducing it by approximately 84% compared with Lin [ 22 ] and by approximately 11% compared with Lin [ 22 ]+PA. For dense1 and dense2, where Lin [ 22 ]+PA also achieves full routability, the proposed method reduces the routed wirelength by 23% and 5%, respectively. These results demonstrate that the proposed congestion estimation model can accurately estimate the required capacity of routing channels and reduce wirelength while ensuring complete routability.                                                                          
+
+> Table 3. Comparison with work in [22] in routability and wirelength.
+> Circuits Routability Wirelength ( 𝜇 m) Ours Lin [22] Lin [22]+PA Ours Lin [22] Lin [22]+PA dense1 1.00 0.77 1.00 7837.64 >59776.80 10211.25 dense2 1.00 0.87 1.00 35604.24 >306291.37 37745.55 dense3 1.00 0.46 0.58 149950.34 >144267.92 >76002.20 dense4 1.00 0.46 0.73 265920.84 >235069.61 >162151.45 dense5 1.00 0.62 0.87 1167257.58 >1284104.67 >1044855.04 pkg1 1.00 1.00 1.00 2328.74 15145.92 2634.28 pkg2 1.00 0.54 0.93 15276.87 >43637.20 >4776.77 pkg3 1.00 0.65 0.98 32884.05 >120744.50 >38233.16 pkg4 1.00 0.61 0.91 59082.14 >127958.80 >60030.62 pkg5 1.00 0.54 0.88 211486.06 >493355.78 >208579.34 Comp. 1.00 0.65 0.89 1.00 --
+> Manuscript submitted to ACM
+
+26 Y. Q. Huang, et al. To evaluate the performance of the proposed pin assignment algorithm, we implement the pin assignment algorithms used in [ 24 ] and [ 25 ]. In particular, the MIS computation is performed using KaMIS [ 33 ]. The method in [ 24 ] adopts a simulated annealing (SA)-based pin assignment algorithm, which significantly reduces runtime by constructing a high-quality initial solution and partitioning large-scale pin arrays into several subregions during the search process. The method in [ 25 ] proposes a maximum independent set (MIS)-based pin assignment algorithm. It first generates multiple candidate pin assignment solutions for each net and then selects a set of non-conflicting assignments through MIS. If some nets remain unassigned, this process is iteratively repeated until a complete solution is obtained.                                                                          
+
+> Table 4. Comparison with SA-based [24] and MIS-based [25] pin assignment methods in HPWL and runtime.
+> Circuits HPWL ( 𝜇 m) Runtime (sec.) Ours SA [24] MIS [25] Ours SA [24] MIS [25] dense1 7647.31 7661.85 7649.25 7.14 7.50 18.63 dense2 34063.72 102576.74 52638.54 7.45 8.85 20.89 dense3 117152.30 184200.77 159322.13 24.18 26.50 35.13 dense4 266836.30 402532.14 286393.01 23.78 27.82 35.91 dense5 1060787.56 1138715.10 1087414.45 35.26 56.62 50.17 pkg1 1702.24 4185.63 1832.04 16.09 16.16 23.57 pkg2 17364.07 22091.34 17002.41 25.16 25.47 35.14 pkg3 27327.70 40455.14 44098.04 18.61 19.21 28.62 pkg4 44204.90 85567.41 64063.57 72.87 74.47 82.39 pkg5 245396.31 221408.37 179984.32 46.75 59.62 57.81 Comp. 1.00 1.21 1.04 1.00 1.16 1.40
+
+The experimental results are shown in Table 4. In terms of runtime, The proposed method achieves the shortest runtime on all benchmarks. Its advantage is relatively modest on small-scale cases but becomes more pronounced on larger designs. For small-scale cases, the runtime overhead of the proposed method mainly comes from the inherent cost of the differentiable optimization framework, such as GPU kernel launches and frequent CPU–GPU data transfer during forward and backward propagation. In contrast, the SA-based algorithm in [ 24 ] can quickly generate feasible solutions with low overhead, and therefore achieves shorter runtime on some small-scale test cases. However, as the circuit scale increases, the computation is gradually dominated by large-scale parallelizable operations, allowing the GPU to better amortize the fixed overhead and fully exploit its parallel computing capability. As a result, the proposed method shows a more significant runtime advantage on larger designs. For example, compared with the result of [ 24 ] on dense5, the proposed method reduces the runtime from 56.62 s to 35.26 s, corresponding to a reduction of approximately 37.72% and a speedup of about 1.61 ×. This demonstrates the good scalability of the proposed method for large-scale multi-chip and multi-layer RDL designs. In terms of HPWL, SA produces 21% higher HPWL than the proposed method. This improvement is mainly because the proposed algorithm maintains particle diversity during the particle update process by dividing particles into multiple subgroups and particle types, thereby avoiding premature convergence to local optima. In addition, the MIS-based method achieves comparable or even better results than the proposed method on dense1, pkg1 and pkg2. This is mainly because pin competition is relatively weak in these test cases, and conflicts among the optimal pin choices of different nets are limited. In each iteration, the MIS-based method attempts to select the best pin assignment for all unassigned nets. However, the optimal pin choices of different nets may conflict with each other. In this case, the algorithm completes the pin assignment for a subset of nets according to their priorities and leaves the remaining 
+
+> Manuscript submitted to ACM
+
+Differentiable Routability-Driven Package Floorplanning with Pin Assignment 27 unassigned nets to the next iteration. Therefore, when conflicts among the optimal pin choices of different nets are rare, the MIS-based method can obtain high-quality solutions. Ideally, if the optimal pin choices of all nets are mutually non-conflicting, the method can directly obtain the optimal assignment. Table 5 reports the results of an ablation study on the flightline-collision cost in the pin assignment stage. Both the proposed method and the variant without the flightline-collision cost achieve complete routability on all benchmarks, indicating that the final routability is mainly guaranteed by the overall floorplanning and routability optimization framework. However, the proposed method consistently obtains shorter routed wirelength on all test cases. Compared with the variant without FC, the routed wirelength is reduced by 4.66% on average, with larger improvements on pkg2, pkg5, dense4, and pkg4. These results show that incorporating the flightline-collision cost does not merely serve as a routability filter, but helps generate pin assignments with fewer potential crossings, thereby reducing routing detours and improving the final routed wirelength.                                                              
+
+> Table 5. Effectiveness of the flightline-collision cost in pin assignment.
+> Circuits Routability Wirelength ( 𝜇 m) w/ FC w/o FC w/ FC w/o FC Ratio (%) dense1 1.00 1.00 7837.64 7845.17 0.10 dense2 1.00 1.00 35604.24 35786.62 0.51 dense3 1.00 1.00 149950.34 152321.99 1.56 dense4 1.00 1.00 265920.84 285139.57 6.74 dense5 1.00 1.00 1167257.58 1221731.14 4.46 pkg1 1.00 1.00 2328.74 2377.48 2.05 pkg2 1.00 1.00 15276.87 17853.30 14.43 pkg3 1.00 1.00 32884.05 33613.63 2.17 pkg4 1.00 1.00 59082.14 62692.43 5.76 pkg5 1.00 1.00 211486.06 231865.96 8.79 Avg. 1.00 1.00 --4.66
+
+In the pin assignment stage, we employ GPU-based parallel computation to accelerate the pin assignment process. To evaluate the effectiveness of the GPU acceleration, we further compare the single-run runtime of the CPU and GPU versions of the proposed pin assignment algorithm. The experimental results are shown in Table 6. The proposed GPU implementation achieves significant speedup on all test cases. As the circuit scale increases, the runtime of the CPU version increases substantially, while the GPU version can better exploit its parallel computing capability. Across all test cases, the runtime of the GPU version remains within 3 seconds. On pkg5, the CPU version requires 470.28 s, whereas the GPU version takes only 2.85 s, achieving a speedup of 165.01 ×. Over all test cases, the GPU version achieves an average speedup of 112.07 ×. These results demonstrate that the proposed pin assignment algorithm has strong parallelism, and GPU-based parallel computation can effectively reduce the runtime, thereby meeting the requirement of fast optimization for large-scale circuits. The proposed method can generate better package floorplanning solutions for the following reasons. 
+
+• Through the proposed pin assignment algorithm, the proposed method can select more appropriate pin combina-tions for signal nets. This not only reduces HPWL but also effectively decreases potential flightline collision, thereby reducing the actual wirelength in the subsequent routing stage. 
+
+• The proposed congestion estimation method can accurately estimate the actual utilization of routing resources under the fan-out routing style. Different from previous coarse-grained congestion estimation methods based 
+
+> Manuscript submitted to ACM
+
+28 Y. Q. Huang, et al. 
+
+> Table 6. Comparison of the single-run runtime of the CPU and GPU implementations for pin assignment.
+
+Circuits Runtime (sec.) Ours (CPU) Ours Speedup dense1 50.97 0.70 72 .81 ×
+
+dense2 86.34 1.18 73 .17 ×
+
+dense3 133.86 1.47 91 .06 ×
+
+dense4 159.21 1.36 117 .07 ×
+
+dense5 270.96 2.82 96 .09 ×
+
+pkg1 67.62 0.75 90 .16 ×
+
+pkg2 99.28 0.92 107 .91 ×
+
+pkg3 177.30 1.28 138 .52 ×
+
+pkg4 322.65 1.91 168 .93 ×
+
+pkg5 470.28 2.85 165 .01 ×
+
+Average - - 112 .07 ×
+
+on net density or bounding boxes, the proposed method directly models the occupation of routing channels according to the practical characteristics of fan-out routing. Therefore, it can more accurately capture local congestion in advanced packaging and provide effective guidance for subsequent gradient-based floorplanning optimization. 
+
+• The congestion in fan-out regions is estimated by the fan-out-aware congestion estimation model and then incorporated into a differentiable congestion loss for gradient-based optimization. In each iteration, the proposed method updates the congestion costs. By back-propagating the gradients through routing-channel lengths, the algorithm optimizes the widths of routing channels and gradually drives the layout toward lower congestion. As a result, the final floorplanning solution can provide sufficient routing resources to achieve complete routability. Overall, different stages of the proposed method are seamlessly connected and efficiently handle different optimization tasks, enabling the routing stage to achieve 100% routability with low routed wirelength. Figure 11(a) and Figure 11(b) show the initial layout and the optimized floorplanning result of dense5, respectively, while Figure 11(c)–Figure 11(f) show the final routing results. Dense5 is a highly congested benchmark case with nine chips, 522 I/O pads, and 261 inter-chip signal nets, which need to be connected within a 10 ,000 𝜇 m × 10 ,000 𝜇 m routing region through multiple RDL layers. In addition, the initial layout of dense5 contains as many as 10,245 flightline collisions, making routing extremely difficult without optimization. After applying the proposed floorplanning algorithm, the number of flightline collision is reduced to 4,111, corresponding to a reduction of 59.87%. As shown in the routing results of Layers 1–4 in Figure 11(c)–Figure 11(f), all routing channels are effectively utilized by the proposed method. Signal nets on each layer are successfully constructed without violating any design rules, demonstrating the effectiveness of the proposed method in improving routability for highly congested advanced packaging designs. 
+
+6 Conclusion 
+
+This paper presented a differentiable routability-driven package floorplanning with pin assignment algorithm for fan-out wafer-level packaging. To address the limited accuracy of conventional uniform-grid congestion models under the fan-out routing style, the proposed method jointly optimizes chip placement, chip orientation, pin assignment, 
+
+> Manuscript submitted to ACM
+
+Differentiable Routability-Driven Package Floorplanning with Pin Assignment 29 0 2000 4000 6000 8000 10000 
+
+> x
+> 0
+> 2000
+> 4000
+> 6000
+> 8000
+> 10000
+> y
+
+(a) Initial Layout 0 2000 4000 6000 8000 10000  
+
+> x
+> 0
+> 2000
+> 4000
+> 6000
+> 8000
+> 10000
+> y
+
+(b) Floorplanning Result 0 2000 4000 6000 8000 10000  
+
+> x
+> 0
+> 2000
+> 4000
+> 6000
+> 8000
+> 10000
+> y
+
+(c) Layer 1 0 2000 4000 6000 8000 10000 
+
+> x
+> 0
+> 2000
+> 4000
+> 6000
+> 8000
+> 10000
+> y
+
+(d) Layer 2 0 2000 4000 6000 8000 10000  
+
+> x
+> 0
+> 2000
+> 4000
+> 6000
+> 8000
+> 10000
+> y
+
+(e) Layer 3 0 2000 4000 6000 8000 10000  
+
+> x
+> 0
+> 2000
+> 4000
+> 6000
+> 8000
+> 10000
+> y
+
+(f) Layer 4 Fig. 11. Floorplanning and routing results of dense5. 
+
+and fan-out routing resources through a three-stage framework. First, a rotation-aware smooth HPWL formulation is used to optimize chip locations and legal orientations while preserving differentiability. Second, a crossing-aware pin assignment algorithm based on discrete particle swarm optimization is introduced to reduce both HPWL and potential flightline collision. Third, a fan-out-aware congestion estimation model is developed by partitioning available routing regions and estimating routing demand using Top-𝐾 candidate paths, enabling congestion information to guide gradient-based floorplanning optimization. Experimental results show that the proposed method achieves 100% routability on all benchmarks. Moreover, on fully routable cases, it reduces routed wirelength by a maximum of approximately 23% compared with a leading floorplanning method equipped with the proposed pin assignment flow. 
+
+Acknowledgments 
+
+This work was partially supported by the National Natural Science Foundation of China under Grant No. 62372109 and the Fujian Natural Science Funds under Grant No. 2023J06017. 
+
+References 
+
+[1] Peter Ramm, Armin Klumpp, Josef Weber, and Maaike MV Taklo. 3d system-on-chip technologies for more than moore systems. Microsystem technologies , 16(7):1051–1055, 2010. Manuscript submitted to ACM 30 Y. Q. Huang, et al. 
+
+[2] Andy Heinig, Manfred Dietrich, Andreas Herkersdorf, Felix Miller, Thomas Wild, Kai Hahn, Armin Grünewald, Rainer Brück, Steffen Kröhnert, and Jochen Reisinger. System integration—the bridge between more than moore and more moore. In 2014 Design, Automation & Test in Europe Conference & Exhibition (DATE) , pages 1–9. IEEE, 2014. [3] Zhen Zhuang, Bei Yu, Kai-Yuan Chao, and Tsung-Yi Ho. Multi-package co-design for chiplet integration. In Proceedings of the 41st IEEE/ACM International Conference on Computer-Aided Design , pages 1–9, 2022. [4] Douglas Yu. A new integration technology platform: Integrated fan-out wafer-level-packaging for mobile applications. In 2015 Symposium on VLSI Technology (VLSI Technology) , pages T46–T47. IEEE, 2015. [5] TY Ouyang, OY Xiovo, RS Cheng, YS Chang, TY Hung, CK Lee, and YM Lin. Fan-out wafer-level packaging process integration for artificial intelligence real dies. In 2023 18th International Microsystems, Packaging, Assembly and Circuits Technology Conference (IMPACT) , pages 290–293. IEEE, 2023. [6] Kai Zoschke, Hermann Oppermann, Michael Schiffer, Ivan Ndip, Karl-Friedrich Becker, Marius Adler, Alexander Gäbler, Uwe Maaß, Gianna Paulin, and Walter Kocon. Key technologies and design aspects for wafer level packaging of high performance computing modules. In 2024 IEEE 74th Electronic Components and Technology Conference (ECTC) , pages 433–440. IEEE, 2024. [7] Siyuan Liang, Zhen Zhuang, Kai-Yuan Chao, Bei Yu, and Tsung-Yi Ho. Multi-layer package power/ground planes synthesis with balanced dc ir drops: A game-theoretic optimization approach. IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems , 2025. [8] Lim Teck Guan, David Ho, Jong Ming Chinq, and Surya Bhattacharya. Fowlp design for hbm applications. In 2017 IEEE 19th Electronics Packaging Technology Conference (EPTC) , pages 1–4. IEEE, 2017. [9] Chuei-Tang Wang and Douglas Yu. Power-performance advantages of info technology for advanced system integration. In 2019 International 3D Systems Integration Conference (3DIC) , pages 1–4. IEEE, 2019. [10] Serine Soh Siew Boon, David Ho Soon Wee, Chia Lai Yee, Norhanani Jaafar, Jacob Soh, Hsiao Hsiang Yao, Sharon Lim Pei Shan, Xu Feng, Ong Poh Kuan, and Chan Kien Teck. Multi-rf chip module through fowlp. In 2024 IEEE 26th Electronics Packaging Technology Conference (EPTC) , pages 172–177. IEEE, 2024. [11] André Cardoso, Mariana Pires, Raquel Pinto, Steffen Kroehnert, and Gusztáv Hantos. Thermally enhanced fowlp-development of a power-ewlb demonstrator. In 2015 European Microelectronics Packaging Conference (EMPC) , pages 1–8. IEEE, 2015. [12] Junghwa Kim, Wool-Chul Na, JungSeob Kim, Sumi Im, Dong-Hwan Lee, Sanghak Lim, and Sang-Kyun Kim. Effective thermal solution via wafer level packaging materials. In 2020 IEEE 70th Electronic Components and Technology Conference (ECTC) , pages 2013–2018. IEEE, 2020. [13] Chien-Pang Lu, Iris Hui-Ru Jiang, Chung-Ching Peng, Mohd Mawardi Mohd Razha, and Alessandro Uber. Power sub-mesh construction in multiple power domain design with ir drop and routability optimization. In Proceedings of the 2024 International Symposium on Physical Design , pages 205–212, 2024. [14] Laurene Yip, Rosa Lin, Charles Lai, and Cooper Peng. Reliability challenges of high-density fan-out packaging for high-performance computing applications. In 2022 IEEE 72nd Electronic Components and Technology Conference (ECTC) , pages 1454–1458. IEEE, 2022. [15] Zepeng Li, Zhen Zhuang, Genggeng Liu, Bentian Jiang, Weihua Sheng, and Tsung-Yi Ho. Redistribution layer routing for fan-out wafer-level packaging considering multiple advanced design rules. IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems , 2026. [16] Zhaohui Chen, Xiaowu Zhang, Sharon Pei Siang Lim, Simon Siak Boon Lim, Boon Long Lau, Yong Han, Ming Chinq Jong, Songlin Liu, Xiaobai Wang, and Yosephine Andriani. Package level warpage simulation of fan-out wafer level package (fowlp) considering viscoelastic material properties. In 2018 IEEE 20th Electronics Packaging Technology Conference (EPTC) , pages 836–842, 2018. [17] Chuan Chen, Meiying Su, Rui Ma, Yunyan Zhou, Jun Li, and Liqiang Cao. Investigation of warpage for multi-die fan-out wafer-level packaging process. Materials , 15(5), 2022. [18] Wen-Hao Liu, Min-Sheng Chang, and Ting-Chi Wang. Floorplanning and signal assignment for silicon interposer-based 3d ics. In Proceedings of the 51st Annual Design Automation Conference , pages 1–6, 2014. [19] Daniel P Seemuth, Azadeh Davoodi, and Katherine Morrow. Automatic die placement and flexible i/o assignment in 2.5 d ic design. In Sixteenth International Symposium on Quality Electronic Design , pages 524–527. IEEE, 2015. [20] Daniel P Seemuth, Azadeh Davoodi, and Katherine Morrow. Flexible interconnect in 2.5 d ics to minimize the interposer’s metal layers. In 2017 22nd Asia and South Pacific Design Automation Conference (ASP-DAC) , pages 372–377. IEEE, 2017. [21] Chung-Chia Lee and Yao-Wen Chang. Floorplanning for embedded multi-die interconnect bridge packages. In 2023 IEEE/ACM International Conference on Computer Aided Design (ICCAD) , pages 1–8. IEEE, 2023. [22] Jai-Ming Lin, Tsung-Chun Tsai, and Rui-Ting Shen. Routability-driven orientation-aware analytical placement for system in package. In 2023 IEEE/ACM International Conference on Computer Aided Design (ICCAD) , pages 1–8. IEEE, 2023. [23] Wan-Sin Kuo, Shi-Han Zhang, Wai-Kei Mak, Richard Sun, and Yoon Kah Leow. Pin assignment optimization for multi-2.5 d fpga-based systems. In 
+
+Proceedings of the 2018 International Symposium on Physical Design , pages 106–113, 2018. [24] Zhuo-Yue Li, Mu-Shui Zhang, and Yunliang Long. Pin assignment optimization for large-scale high-pin-count bga packages using simulated annealing. IEEE Transactions on Components, Packaging and Manufacturing Technology , 6(10):1465–1474, 2016. [25] Zhen Zhuang, Weishiun Hung, MD Arafat Kabir, Yarui Peng, and Tsung-Yi Ho. Adaptive redistribution layer routing for chiplet-package co-design in 2.5 d system. ACM Transactions on Design Automation of Electronic Systems , 31(3):1–18, 2026. [26] Eric Jang, Shixiang Gu, and Ben Poole. Categorical reparameterization with gumbel-softmax. arXiv preprint arXiv:1611.01144 , 2016. Manuscript submitted to ACM Differentiable Routability-Driven Package Floorplanning with Pin Assignment 31 
+
+[27] T Ohtsuki. Gridless routers-new wire routing algorithms based on computational geometry. In Proc. International Conference of Circuits and Systems ,pages 802–809, 1985. [28] Po-Wei Lee, Hsu-Chieh Lee, Yuan-Kai Ho, Yao-Wen Chang, Chen-Feng Chang, I-Jye Lin, and Chin-Fang Shen. Obstacle-avoiding free-assignment routing for flip-chip designs. In Proceedings of the 49th Annual Design Automation Conference , pages 1088–1093, 2012. [29] Jin Y Yen. Finding the k shortest loopless paths in a network. management Science , 17(11):712–716, 1971. [30] Hsiang-Ting Wen, Yu-Jie Cai, Yang Hsu, and Yao-Wen Chang. Via-based redistribution layer routing for info packages with irregular pad structures. 
+
+IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems , 41(12):5554–5567, 2022. [31] Haoyang Xu, Xing Huang, Zhen Zhuang, Zhiwen Yu, Bin Guo, Kai-Yuan Chao, Bei Yu, Tsung-Yi Ho, and Martin DF Wong. Hierarchical partitioning-based inter-chip redistribution layer routing for fan-out wafer-level packaging. IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems , 2025. [32] Peter Spindler and Frank M. Johannes. Fast and accurate routing demand estimation for efficient routability-driven placement. In 2007 Design, Automation & Test in Europe Conference & Exhibition , pages 1–6, 2007. [33] Sebastian Lamm, Peter Sanders, Christian Schulz, Darren Strash, and Renato F. Werneck. Finding near-optimal independent sets at scale. J. Heuristics ,23(4):207–229, 2017. 
+
+Received 20 February 2007; revised 12 March 2009; accepted 5 June 2009 
+
+Manuscript submitted to ACM
