@@ -1,0 +1,39 @@
+{
+  "label": "2026-07-28",
+  "date": "2026-07-28",
+  "generated_at": "2026-07-28T21:39:05",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202607/28/2607.24221v1-dice-detailed-inter-chiplet-end-to-end-phy-modeling-for-accurate-chiplet-simulation",
+      "section": "deep",
+      "title_en": "DICE: Detailed Inter-Chiplet End-to-End PHY Modeling for Accurate Chiplet Simulation",
+      "authors": "Rashid Aligholipour, Stefanos kaxiras, Yuan Yao",
+      "date": "2026-07-27",
+      "pdf": "https://arxiv.org/pdf/2607.24221v1",
+      "score": "9.0",
+      "evidence": "面向芯粒封装信号完整性分析的片间物理层详细建模",
+      "tldr": "单芯片多核受功耗、良率限制，chiplet设计通过物理层互连，但链路逼近信号极限需纠错机制。现有模拟器采用简化固定延迟模型，忽略信道噪声、解码收敛和重传等动态行为，导致IPC等性能指标失真。DICE在gem5中实现端到端PHY建模，包括QC-LDPC编解码、PAM4调制、有损信道和自适应重传。实验表明，精确建模纠正了仿真偏差，为chiplet系统性能评估提供更真实依据。",
+      "tags": "query:si-pi",
+      "abstract_en": "Scaling monolithic multicores is increasingly constrained by power/thermal limits, yield, and rising manufacturing and testing costs. Chiplet designs address these challenges by partitioning large dies into smaller parts (typically multiple core-complex dies and an I/O die) linked via high-bandwidth physical fabrics (PHY). As bandwidth and wiring density scale, however, these short-reach links are pushed closer to their signal-integrity limits, increasing susceptibility to noise, crosstalk, and channel loss, motivating stronger link-level reliability mechanisms such as forward error correction (FEC). Despite this trend, state-of-the-art simulation infrastructures often approximate inter-chiplet links using oversimplified, fixed-latency models. Such abstractions overlook the inherently dynamic, runtime-dependent behavior of the PHY -- including channel conditions (e.g., signal-to-noise ratio shifts, signal crosstalk, clock jitter), iterative decoder convergence and packet retransmissions, and application dynamics (e.g., LLC-misses that travel across chiplet boundaries) -- all of which are hard to determine offline. We show that neglecting these effects distorts inter-chiplet packet-level timing and high-level performance metrics such as IPC, leading to off-trend simulation results. We present DICE, an in-simulation, runtime PHY modeling in gem5 that captures the end-to-end inter-chiplet datapath, including QC-LDPC encoding/decoding, PAM4 modulation, lossy-channel transmission, LLR-based demodulation, adaptive packet re-sending, and PHY-level flow control between chiplets.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/28/2607.23225v1-parasgb-a-graph-benchmark-suite-for-parasitic-estimation-on-ams-circuits",
+      "section": "deep",
+      "title_en": "ParasGB: A Graph Benchmark Suite for Parasitic Estimation on AMS Circuits",
+      "authors": "Jiajun Zou, Jiawei Liu, Ao Liu, Junnong Tian, Yibin Zhang, Chengjie Liu, Yuxi Wang, Shan Shen, Wenhua Gu, Jun Yang, Wenjian Yu",
+      "date": "2026-07-25",
+      "pdf": "https://arxiv.org/pdf/2607.23225v1",
+      "score": "8.0",
+      "evidence": "基于GNN的寄生参数估计基准直接支持SI/PI的机器学习方法",
+      "tldr": "芯片制造进入深亚微米节点后，互连寄生效应主导模拟混合信号电路性能，早期寄生估计至关重要，但缺乏公开高保真基准。为此提出ParasGB，首个开源预布局寄生参数预测基准套件，包含从流片验证设计中用商业EDA提取的大型异构RC网络，并提供统一评估协议。基准测试多种GNN架构，揭示了标签极端不平衡、寄生分布长尾和结构异质性等挑战。该工作为早期寄生预测建立物理驱动标准化平台，推动可复现的电路图学习和寄生感知模型开发。",
+      "tags": "query:si-pi",
+      "abstract_en": "As chip manufacturing processes advance to deep submicron nodes, parasitic interconnect effects increasingly dominate the performance of analog and mixed-signal (AMS) circuits and often lead to costly layout iterations. This makes early-stage estimation of parasitic capacitance and resistance important for parasitic-aware design exploration before full physical implementation. However, progress on GNN-based parasitic modeling has been hindered by the lack of public, high-fidelity RC benchmarks that support reproducible evaluation. To address this gap, we introduce ParasGB, the first open-source benchmark suite for pre-layout parasitic parameter prediction on circuit graphs. ParasGB provides large-scale, heterogeneous RC networks extracted with commercial EDA tools from tape-out-proven designs, together with a unified evaluation protocol covering node-level ground capacitance, edge-level resistance, and edge-level coupling capacitance. Within this framework, we benchmark diverse GNN architectures using a standardized training pipeline and expose challenges such as extreme label imbalance, long-tailed parasitic distributions, and strong structural heterogeneity. By establishing a physically grounded and standardized benchmark for early-stage parasitic prediction, ParasGB provides an open platform for reproducible research on circuit graph learning and parasitic-aware model development. All datasets, preprocessing scripts, and configurations are publicly available in our code repository https://github.com/ShenShan123/ParasGB.git.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

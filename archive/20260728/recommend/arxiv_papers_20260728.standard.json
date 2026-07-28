@@ -1,0 +1,97 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-28T21:36:24.093365+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 0,
+    "quick_skim_target": 11,
+    "quick_selected": 0
+  },
+  "deep_dive": [
+    {
+      "id": "2607.24221v1",
+      "source": "arxiv",
+      "title": "DICE: Detailed Inter-Chiplet End-to-End PHY Modeling for Accurate Chiplet Simulation",
+      "abstract": "Scaling monolithic multicores is increasingly constrained by power/thermal limits, yield, and rising manufacturing and testing costs. Chiplet designs address these challenges by partitioning large dies into smaller parts (typically multiple core-complex dies and an I/O die) linked via high-bandwidth physical fabrics (PHY). As bandwidth and wiring density scale, however, these short-reach links are pushed closer to their signal-integrity limits, increasing susceptibility to noise, crosstalk, and channel loss, motivating stronger link-level reliability mechanisms such as forward error correction (FEC). Despite this trend, state-of-the-art simulation infrastructures often approximate inter-chiplet links using oversimplified, fixed-latency models. Such abstractions overlook the inherently dynamic, runtime-dependent behavior of the PHY -- including channel conditions (e.g., signal-to-noise ratio shifts, signal crosstalk, clock jitter), iterative decoder convergence and packet retransmissions, and application dynamics (e.g., LLC-misses that travel across chiplet boundaries) -- all of which are hard to determine offline. We show that neglecting these effects distorts inter-chiplet packet-level timing and high-level performance metrics such as IPC, leading to off-trend simulation results. We present DICE, an in-simulation, runtime PHY modeling in gem5 that captures the end-to-end inter-chiplet datapath, including QC-LDPC encoding/decoding, PAM4 modulation, lossy-channel transmission, LLR-based demodulation, adaptive packet re-sending, and PHY-level flow control between chiplets.",
+      "authors": [
+        "Rashid Aligholipour",
+        "Stefanos kaxiras",
+        "Yuan Yao"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR"
+      ],
+      "published": "2026-07-27T09:53:10+00:00",
+      "link": "https://arxiv.org/pdf/2607.24221v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "inter-chiplet PHY modeling for signal integrity analysis in chiplet packaging",
+      "llm_evidence_cn": "面向芯粒封装信号完整性分析的片间物理层详细建模",
+      "llm_evidence": "面向芯粒封装信号完整性分析的片间物理层详细建模",
+      "canonical_evidence": "面向芯粒封装信号完整性分析的片间物理层详细建模",
+      "llm_tldr_en": "DICE provides detailed end-to-end inter-chiplet PHY modeling for accurate chiplet simulation, capturing signal-integrity effects like noise, crosstalk, and channel loss to enable realistic system evaluation.",
+      "llm_tldr_cn": "现有芯粒仿真基础设施常使用过于简化的固定延迟模型近似片间链路，忽略了信号完整性问题。本文提出DICE，一个详细的片间端到端物理层建模工具，精确捕捉噪声、串扰和信道损耗等信号完整性效应。实验表明，DICE相比简化模型能更真实地评估系统性能，为芯粒设计中的信号完整性分析和可靠性机制（如前向纠错）提供关键支撑。该工具填补了芯粒仿真中物理层细节缺失的空白。",
+      "llm_tldr": "现有芯粒仿真基础设施常使用过于简化的固定延迟模型近似片间链路，忽略了信号完整性问题。本文提出DICE，一个详细的片间端到端物理层建模工具，精确捕捉噪声、串扰和信道损耗等信号完整性效应。实验表明，DICE相比简化模型能更真实地评估系统性能，为芯粒设计中的信号完整性分析和可靠性机制（如前向纠错）提供关键支撑。该工具填补了芯粒仿真中物理层细节缺失的空白。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "SI/PI analysis for 2.5D 3D and Chiplet packaging",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.23225v1",
+      "source": "arxiv",
+      "title": "ParasGB: A Graph Benchmark Suite for Parasitic Estimation on AMS Circuits",
+      "abstract": "As chip manufacturing processes advance to deep submicron nodes, parasitic interconnect effects increasingly dominate the performance of analog and mixed-signal (AMS) circuits and often lead to costly layout iterations. This makes early-stage estimation of parasitic capacitance and resistance important for parasitic-aware design exploration before full physical implementation. However, progress on GNN-based parasitic modeling has been hindered by the lack of public, high-fidelity RC benchmarks that support reproducible evaluation. To address this gap, we introduce ParasGB, the first open-source benchmark suite for pre-layout parasitic parameter prediction on circuit graphs. ParasGB provides large-scale, heterogeneous RC networks extracted with commercial EDA tools from tape-out-proven designs, together with a unified evaluation protocol covering node-level ground capacitance, edge-level resistance, and edge-level coupling capacitance. Within this framework, we benchmark diverse GNN architectures using a standardized training pipeline and expose challenges such as extreme label imbalance, long-tailed parasitic distributions, and strong structural heterogeneity. By establishing a physically grounded and standardized benchmark for early-stage parasitic prediction, ParasGB provides an open platform for reproducible research on circuit graph learning and parasitic-aware model development. All datasets, preprocessing scripts, and configurations are publicly available in our code repository https://github.com/ShenShan123/ParasGB.git.",
+      "authors": [
+        "Jiajun Zou",
+        "Jiawei Liu",
+        "Ao Liu",
+        "Junnong Tian",
+        "Yibin Zhang",
+        "Chengjie Liu",
+        "Yuxi Wang",
+        "Shan Shen",
+        "Wenhua Gu",
+        "Jun Yang",
+        "Wenjian Yu"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-07-25T14:23:27+00:00",
+      "link": "https://arxiv.org/pdf/2607.23225v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "GNN-based parasitic estimation benchmark directly enables ML for SI/PI",
+      "llm_evidence_cn": "基于GNN的寄生参数估计基准直接支持SI/PI的机器学习方法",
+      "llm_evidence": "基于GNN的寄生参数估计基准直接支持SI/PI的机器学习方法",
+      "canonical_evidence": "基于GNN的寄生参数估计基准直接支持SI/PI的机器学习方法",
+      "llm_tldr_en": "ParasGB provides the first open-source benchmark suite for pre-layout parasitic RC prediction on circuit graphs, enabling reproducible evaluation of GNN-based parasitic modeling for analog and mixed-signal circuits.",
+      "llm_tldr_cn": "该论文针对先进工艺下寄生互连效应主导AMS电路性能的问题，提出了首个开源寄生参数基准套件ParasGB。它提取大规模异构RC网络，支持基于图神经网络的预布局寄生参数预测。ParasGB填补了公开基准缺失的空白，为机器学习在寄生建模中的应用提供了标准化评估平台，对信号完整性分析具有重要意义。",
+      "llm_tldr": "该论文针对先进工艺下寄生互连效应主导AMS电路性能的问题，提出了首个开源寄生参数基准套件ParasGB。它提取大规模异构RC网络，支持基于图神经网络的预布局寄生参数预测。ParasGB填补了公开基准缺失的空白，为机器学习在寄生建模中的应用提供了标准化评估平台，对信号完整性分析具有重要意义。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": []
+}
