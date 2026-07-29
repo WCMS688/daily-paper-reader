@@ -1,0 +1,24 @@
+{
+  "label": "2026-07-29",
+  "date": "2026-07-29",
+  "generated_at": "2026-07-29T21:43:45",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202607/29/2607.24221v2-dice-detailed-inter-chiplet-end-to-end-phy-modeling-for-accurate-chiplet-simulation",
+      "section": "deep",
+      "title_en": "DICE: Detailed Inter-Chiplet End-to-End PHY Modeling for Accurate Chiplet Simulation",
+      "authors": "Rashid Aligholipour, Stefanos kaxiras, Yuan Yao",
+      "date": "2026-07-27",
+      "pdf": "https://arxiv.org/pdf/2607.24221v2",
+      "score": "9.0",
+      "evidence": "片间物理层建模，关注信号完整性和串扰",
+      "tldr": "针对现有Chiplet模拟器采用简化固定延迟模型，忽略物理层动态行为（如信道噪声、迭代解码重传）导致性能评估失准的问题，提出DICE，在gem5中实现运行时端到端PHY建模。该方法精确建模QC-LDPC编解码、PAM4调制、有损信道传输、LLR解调及自适应重传。结果表明，相比固定延迟模型，DICE能准确反映芯片间链路动态对IPC等指标的影响，避免模拟结果偏离趋势。贡献在于为Chiplet系统提供了高保真的物理层时序模拟能力。",
+      "tags": "query:si-pi",
+      "abstract_en": "Scaling monolithic multicores is increasingly constrained by power/thermal limits, yield, and rising manufacturing and testing costs. Chiplet designs address these challenges by partitioning large dies into smaller parts (typically multiple core-complex dies and an I/O die) linked via high-bandwidth physical fabrics (PHY). As bandwidth and wiring density scale, however, these short-reach links are pushed closer to their signal-integrity limits, increasing susceptibility to noise, crosstalk, and channel loss, motivating stronger link-level reliability mechanisms such as forward error correction (FEC). Despite this trend, state-of-the-art simulation infrastructures often approximate inter-chiplet links using oversimplified, fixed-latency models. Such abstractions overlook the inherently dynamic, runtime-dependent behavior of the PHY -- including channel conditions (e.g., signal-to-noise ratio shifts, signal crosstalk, clock jitter), iterative decoder convergence and packet retransmissions, and application dynamics (e.g., LLC-misses that travel across chiplet boundaries) -- all of which are hard to determine offline. We show that neglecting these effects distorts inter-chiplet packet-level timing and high-level performance metrics such as IPC, leading to off-trend simulation results. We present DICE, an in-simulation, runtime PHY modeling in gem5 that captures the end-to-end inter-chiplet datapath, including QC-LDPC encoding/decoding, PAM4 modulation, lossy-channel transmission, LLR-based demodulation, adaptive packet re-sending, and PHY-level flow control between chiplets.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
