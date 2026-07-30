@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-07-30 <!--dpr-date:20260730-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/30/2607.23877v1-flash-cnncap-capacitance-extraction-via-image-mapping" data-sidebar-item="{&quot;title&quot;: &quot;Flash-CNNCap: Capacitance Extraction via Image Mapping&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.23877v1-flash-cnncap-capacitance-extraction-via-image-mapping&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;bga-xtalk&quot;}], &quot;evidence&quot;: &quot;基于CNN的电容提取方法用于互连建模&quot;}">Flash-CNNCap: Capacitance Extraction via Image Mapping</a>
   * 2026-07-29 <!--dpr-date:20260729-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/29/2607.24221v2-dice-detailed-inter-chiplet-end-to-end-phy-modeling-for-accurate-chiplet-simulation" data-sidebar-item="{&quot;title&quot;: &quot;DICE: Detailed Inter-Chiplet End-to-End PHY Modeling for Accurate Chiplet Simulation&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.24221v2-dice-detailed-inter-chiplet-end-to-end-phy-modeling-for-accurate-chiplet-simulation&quot;, &quot;score&quot;: &quot;9.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;片间物理层建模，关注信号完整性和串扰&quot;}">DICE: Detailed Inter-Chiplet End-to-End PHY Modeling for Accurate Chiplet Simulation</a>

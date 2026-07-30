@@ -1,0 +1,24 @@
+{
+  "label": "2026-07-30",
+  "date": "2026-07-30",
+  "generated_at": "2026-07-30T21:44:46",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202607/30/2607.23877v1-flash-cnncap-capacitance-extraction-via-image-mapping",
+      "section": "quick",
+      "title_en": "Flash-CNNCap: Capacitance Extraction via Image Mapping",
+      "authors": "Hector R. Rodriguez, Jiechen Huang, Wenjian Yu",
+      "date": "2026-07-26",
+      "pdf": "https://arxiv.org/pdf/2607.23877v1",
+      "score": "7.0",
+      "evidence": "基于CNN的电容提取方法用于互连建模",
+      "tldr": "针对传统标量CNN电容提取器需O(n²)次前向传播恢复所有成对电容的低效问题，提出Flash-CNNCap，将全矩阵电容预测转化为空间贡献映射的图像到图像回归。通过总数电容模型和主控耦合模型生成密集映射，经掩码聚合后仅需O(n)次即可重建完整矩阵。在CapBench上，U-Net在总数电容上MARE为1.5-3.1%，耦合电容MARE为3.0-4.6%，全矩阵加速17.5倍；完整流程处理1024个窗口仅51.23秒，比OpenRCX快4.4倍。该方法显著提升电容提取效率，适用于大规模版图寄生参数提取。",
+      "tags": "query:bga-xtalk",
+      "abstract_en": "We present Flash-CNNCap, a CNN-based capacitance extractor that reformulates full-matrix capacitance prediction as image-to-image regression over spatial contribution maps. Prior scalar CNN-based extractors require $O(n^2)$ forward passes to recover all pairwise capacitances in a window with $n$ conductors. Flash-CNNCap replaces the scalar target with dense contribution maps: a total-capacitance model and a master-conditioned coupling model each predict a spatial map that is reduced to conductor-level values through mask aggregation, cutting full-matrix reconstruction to $O(n)$ passes. The resulting totals and symmetrized pairwise couplings define the corresponding Maxwell-style capacitance matrix under the standard off-diagonal sign convention. The maps are learned from conductor-level labels without per-pixel supervision. An ablation study over 13 model configurations selects a U-Net that matches ResNet baselines on total capacitance (1.5-3.1% MARE) and achieves the strongest coupling accuracy (3.0-4.6% MARE) across all evaluated CapBench subsets, with a $17.5\\times$ full-matrix speedup on windows containing 134 conductors on average. A deployed pipeline reads Design Exchange Format (DEF) geometry and writes Standard Parasitic Exchange Format (SPEF) output, processing 1,024 windows in 51.23 seconds with a $4.4\\times$ speedup over OpenRCX on the same benchmark. Code and trained models are available at https://github.com/THU-numbda/flash-cnncap.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

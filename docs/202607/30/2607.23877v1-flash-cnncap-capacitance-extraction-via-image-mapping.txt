@@ -1,0 +1,531 @@
+Title: Flash-CNNCap: Capacitance Extraction via Image Mapping
+
+URL Source: https://arxiv.org/pdf/2607.23877v1
+
+Published Time: Tue, 28 Jul 2026 01:22:01 GMT
+
+Number of Pages: 9
+
+Markdown Content:
+# Flash-CNNCap: Capacitance Extraction via Image Mapping 
+
+# Hector R. Rodriguez, Jiechen Huang, Wenjian Yu ∗
+
+Dept. Computer Science & Tech., BNRist, State Key Laboratory of Cryptography and Digital Economy Security, Tsinghua Univ., Beijing, China IC Window Layers 
+
+Single CNN pass 
+
+(a) (b) (c) Contribution Map 
+
+Figure 1: Flash-CNNCap overview: (a) IC structure, (b) single CNN pass on extraction window, and (c) contribution map. 
+
+## Abstract 
+
+We present Flash-CNNCap, a CNN-based capacitance extractor that reformulates full-matrix capacitance prediction as image-to-image regression over spatial contribution maps. Prior scalar CNN-based extractors require 𝑂 (𝑛 2) forward passes to recover all pair-wise capacitances in a window with 𝑛 conductors. Flash-CNNCap replaces the scalar target with dense contribution maps: a total-capacitance model and a master-conditioned coupling model each predict a spatial map that is reduced to conductor-level values through mask aggregation, cutting full-matrix reconstruction to 
+
+𝑂 (𝑛 ) passes. The resulting totals and symmetrized pairwise cou-plings define the corresponding Maxwell-style capacitance ma-trix under the standard off-diagonal sign convention. The maps are learned from conductor-level labels without per-pixel super-vision. An ablation study over 13 model configurations selects a U-Net that matches ResNet baselines on total capacitance (1.5–3.1% MARE) and achieves the strongest coupling accuracy (3.0–4.6% MARE) across all evaluated CapBench subsets, with a 17 .5× full-matrix speedup on windows with 134 conductors on average. A deployed pipeline reads Design Exchange Format (DEF) geome-try and writes Standard Parasitic Exchange Format (SPEF) output, processing 1,024 windows in 51.23 s with a 4.4× speedup over Open-RCX on the same benchmark. Code and trained models are available at https://github.com/THU-numbda/flash-cnncap.   
+
+> This work was supported by National Science and Technology Major Project (2021ZD0114703). ∗Corresponding author.
+> This work is licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
+> ICCAD ’26, San Jose, CA, USA
+> ©2026 Copyright held by the owner/author(s). ACM ISBN 979-8-4007-2873-0/2026/11 https://doi.org/10.1145/3831252.3834176
+
+## CCS Concepts 
+
+• Hardware → Metallic interconnect ; 3D integrated circuits ; •
+
+Computing methodologies → Neural networks .
+
+## Keywords 
+
+capacitance extraction, parasitic extraction, electronic design au-tomation, convolutional neural networks 
+
+ACM Reference Format: 
+
+Hector R. Rodriguez, Jiechen Huang, Wenjian Yu ∗. 2026. Flash-CNNCap: Capacitance Extraction via Image Mapping. In IEEE/ACM International Conference on Computer-Aided Design (ICCAD ’26), November 08–12, 2026, San Jose, CA, USA. ACM, New York, NY, USA, 9 pages. https://doi.org/10. 1145/3831252.3834176 
+
+## 1 Introduction 
+
+Parasitic capacitance between interconnect wires is a key determi-nant of timing, signal integrity, and power in modern integrated circuits [ 1 – 6]. Accurate extraction of the full capacitance matrix across a routed design is therefore a prerequisite for reliable sign-off. Numerical field solvers such as FastCap [ 7], QBEM [ 8] and RW-Cap [ 9 ] deliver high accuracy but are computationally expensive, while rule-based extractors built on analytical models and pattern libraries [ 10 , 11 ] are fast but sacrifice accuracy. OpenRCX [ 12 ] is a practical open-source implementation of this general rule-based ap-proach. Machine-learning extractors can offer near-solver accuracy at near-rule-based speed. However, existing methods have not fully addressed the quadratic cost of reconstructing the full capacitance matrix. CNN-Cap [ 13 ] showed that ResNet models operating on layer-wise rasterized layouts can predict capacitance accurately. However, its image-to-scalar formulation requires 𝑛 + 𝑛 (𝑛 − 1)/ 2 forward passes to reconstruct the full capacitance matrix of a window with 
+
+𝑛 conductors, incurring 𝑂 (𝑛 2) cost that dominates runtime for large windows. Other recent approaches explore different representation arXiv:2607.23877v1 [cs.LG] 26 Jul 2026 ICCAD ’26, November 08–12, 2026, San Jose, CA, USA Hector R. Rodriguez, Jiechen Huang, Wenjian Yu ∗
+
+and preprocessing trade-offs, including graph-based GNN-Cap [ 14 ]and point-cloud-based PCT-Cap [ 15 ], but none of these methods removes the quadratic reconstruction cost while preserving the raster formulation and demonstrating end-to-end deployment. This paper presents Flash-CNNCap, which preserves the raster-based representation used in CNN-Cap but replaces scalar regres-sion with image-to-image prediction of spatial contribution maps. A total-capacitance model predicts one contribution map per window, and a master-conditioned coupling model predicts contributions for all other conductors visible in the window in a single pass, reducing full-matrix reconstruction to 𝑂 (𝑛 ) evaluations. These outputs de-fine the corresponding Maxwell-style capacitance matrix by placing total capacitances on the diagonal and the negatives of the sym-metrized pairwise couplings on the off-diagonal entries. We eval-uate Flash-CNNCap on the CapBench NanGate45 and Sky130HD benchmark subsets [ 16 ], which are built on FreePDK45 [ 17 ] and the SKY130 open PDK [ 18 ], respectively, and compare against ResNet-34 and ResNet-50 baselines [ 19 ] retrained with an updated opti-mization recipe. Our contributions are: (1) An image-to-image reformulation that reduces full-matrix CNN inference from 𝑂 (𝑛 2) to 𝑂 (𝑛 ) passes through dense contribution maps and conductor-mask aggregation. (2) A controlled architecture study across 13 dense-prediction backbones, selecting a U-Net [ 20 ] that achieves the best coupling-accuracy–throughput trade-off. (3) Demonstration that the selected model matches ResNet base-lines on total capacitance, achieves the strongest coupling accuracy on all evaluated CapBench subsets, and delivers a 
+
+17 .5× full-matrix speedup on large windows. (4) A GPU-accelerated DEF-to-SPEF extraction pipeline that processes 1,024 large windows in 51.23 s, 4.4× faster than OpenRCX on the same benchmark. 
+
+## 2 Related Work 
+
+Capacitance extraction methods span a wide accuracy–throughput range. At one extreme, numerical field solvers such as FastCap [ 7]and floating random walk (FRW) solvers such as RWCap [ 9 ] achieve high accuracy but at substantial compute cost. Later FRW refine-ments improve transition efficiency [ 21 –23 ] without fundamentally reducing that cost. At the other extreme, rule-based extractors ap-proximate capacitances with analytical cross-section models and precharacterized pattern libraries [ 10 , 11 ]. OpenRCX [ 12 ] is a prac-tical open-source implementation of this regime. These methods are fast and widely deployable, but their accuracy depends on the fi-delity of the model library and can degrade on geometries or process conditions not covered by it, particularly for coupling capacitance. Several machine-learning approaches have been proposed to bridge the accuracy–throughput gap between field solvers and rule-based extractors. 
+
+CNN-Cap [ 13 ]. This CNN-based extractor rasterizes routed ge-ometry into per-layer density maps , where each pixel stores a con-tinuous value representing the fractional area occupied by con-ductors, and trains a ResNet backbone to predict conductor-level capacitances with high accuracy. However, its image-to-scalar for-mulation requires 𝑛 + 𝑛 (𝑛 − 1)/ 2 forward passes to reconstruct the full capacitance matrix for a window with 𝑛 conductors, resulting in an 𝑂 (𝑛 2) cost that dominates runtime as conductor counts grow. 
+
+GNN-Cap [ 14 ]. This method represents interconnect geometry as a graph of cuboid nodes and uses a graph convolutional network to predict total and coupling capacitance in a single forward pass, avoiding the quadratic pass count. However, the graph construction requires cuboid decomposition, distance-threshold edge construc-tion, and virtual-edge heuristics, adding geometry-preprocessing overhead that grows with layout complexity. GNN-Cap also re-quires per-block capacitance labels from a field solver for each training sample, increasing dataset-construction effort relative to the conductor-level labels used by raster-based methods. 
+
+PCT-Cap [ 15 ]. This method formulates extraction as a point-cloud task and applies a point cloud transformer, also reporting high accuracy. Because the number of sampled points grows rapidly with window size, the quadratic attention cost of the transformer becomes a bottleneck for large windows. PCT-Cap also retains the scalar prediction target, inheriting the same 𝑂 (𝑛 2) reconstruction cost as CNN-Cap for full-matrix extraction. 
+
+Dense prediction in EDA. Dense image-to-image prediction has appeared in related EDA tasks but not yet for capacitance extraction. A WGAN-GP [ 24 , 25 ] regresses finite-element electric-potential maps for back-end-of-line (BEOL) interconnect tiles, from which electric field and time-dependent dielectric breakdown (TDDB) lifetime are derived. The paper reports over 200 × speedup relative to the COMSOL solver on a single synthesized 32 nm layout. However, the training labels still require full COMSOL solves to generate pixel-wise potential maps, and the evaluation is limited to a single layout and one technology. More fundamentally, the 2D per-layer formulation analyzes each metal layer in isolation, so inter-layer coupling capacitance is not captured. Although per-pixel potential maps could in principle be post-processed to obtain capacitance, the missing vertical dimension makes such an extension non-trivial. 
+
+Other approaches. NAS-Cap [ 26 ] extends CNN-Cap with neural architecture search but retains its scalar prediction target. Hybrid flows [ 27 ] select among rule-based, neural-network, and field-solver engines, but remain bounded by the component extractors’ limita-tions. Pre-characterization-based methods [ 28 ] use machine learn-ing within a pattern-driven workflow, tying accuracy to the cover-age of the pattern library. RMLP-Cap [ 29 ] automates acquisition of parasitic-extraction (PEX) windows, feature extraction, and dataset generation with learned per-pattern models, but the per-pattern formulation ties generalization more closely to the characterized pattern space. 
+
+## 3 Methodology 
+
+This section describes the Flash-CNNCap pipeline from layout ras-terization to conductor-level capacitance prediction (Figure 2). We first define the input encoding, then the dense prediction architec-ture, and finally the aggregation and supervision scheme used for training and inference. Flash-CNNCap: Capacitance Extraction via Image Mapping ICCAD ’26, November 08–12, 2026, San Jose, CA, USA (1) Geometry Parsing CPU (C++) 
+
+(2) Density Rasterization GPU (CUDA) 
+
+(4) Sparse Reduction GPU (CUDA) 
+
+> GPU (TRT)
+
+(3) U-Net Inference 
+
+(5) Output Writing CPU (C++)   
+
+> C₁
+> C₂
+> C₃
+> R
+> C
+
+Figure 2: Flash-CNNCap pipeline from routed DEF input to SPEF output. 
+
+## 3.1 Input Encoding 
+
+Flash-CNNCap operates on the same fixed 224 ×224 per-layer raster representation introduced by 3D CNN-Cap [ 13 ] (stages 1–2 in Fig-ure 2). Each extraction window is a square region of side length 
+
+𝑆 whose geometry is rasterized onto this grid, giving a per-pixel resolution of 𝑆 /224 . Table 1 lists the window sizes, resulting pixel resolutions, and minimum wire widths for different PDKs and win-dow sizes. Within each window, geometry is rasterized via a three-pass GPU pipeline into an 𝐿 ×224 ×224 local-ID map 𝑀 𝑤 , where 𝐿 is the number of metal and via layers. First, a CUDA kernel paints each conductor rectangle into the appropriate layer of 𝑀 𝑤 with its local conductor ID. Second, a per-pixel metadata kernel scans 
+
+𝑀 𝑤 to produce an occupancy mask and atomically count occupied pixels per conductor. Third, a scatter kernel records the flat index of each occupied pixel into a per-conductor sparse index table 𝑆 𝑤,ℓ ,which stores the positions in the flattened 𝐿 · 224 · 224 volume that belong to conductor ℓ. These sparse indices are later consumed by the reduction kernel (Section 3.3) without further host–device synchronization. The resulting occupancy maps are encoded as input features. For the total-capacitance model, each pixel is simply 1 if a conductor is present and 0 otherwise. For the coupling model, the selected master conductor is encoded as −1 rather than +1, creating a three-valued encoding. Formally, for each layer 𝜆 and pixel 𝑝 :
+
+𝑥 tot  
+
+> 𝑤,𝜆
+
+(𝑝 ) = 1[𝑚 𝑤,𝜆 (𝑝 ) > 0], (1) 
+
+𝑥 env  
+
+> 𝑤,𝑚,𝜆
+
+(𝑝 ) =
+
+
+
+−1 if 𝑚 𝑤,𝜆 (𝑝 ) = 𝑚, 
+
++1 if 𝑚 𝑤,𝜆 (𝑝 ) > 0 and 𝑚 𝑤,𝜆 (𝑝 ) ≠ 𝑚, 
+
+0 otherwise ,
+
+(2) where 𝑚 𝑤,𝜆 (𝑝 ) is the conductor ID at pixel 𝑝 . This encoding tells the coupling model which conductor acts as the source without removing the surrounding geometry that determines the target distribution. Binary occupancy discards sub-pixel coverage; fractional-density inputs remain compatible and may reduce rasterization loss at coarser physical resolution. 
+
+Table 1: Window size, pixel resolution, and minimum wire width for each evaluated dataset. Dataset PDK Window Min. width Pixel 
+
+(𝜇 m) (nm) (nm) CNN-Cap — 5.0 54 22.3 Small NanGate45 2.0 65 8.9 Sky130HD 4.5 140 20.1 Medium NanGate45 5.0 65 22.3 Sky130HD 10.0 140 44.6 Large NanGate45 10.0 65 44.6 Sky130HD 20.0 140 89.3 
+
+## 3.2 Model Architecture 
+
+The architectural change relative to CNN-Cap is in the prediction target (stage 3 in Figure 2). A total-capacitance model predicts a dense, non-negative contribution tensor of shape 𝐿 ×224 ×224 , pro-ducing one contribution channel per layer. Summing this tensor over all layers and all pixels belonging to each conductor yields total capacitance for every conductor in one pass. A second, master-conditioned coupling model predicts a contribution tensor of the same shape for all remaining conductors, recovering all pairwise couplings from that master in a single evaluation. Full-matrix re-construction therefore requires 1 + 𝑛 forward passes for a window with 𝑛 conductors, compared with the 𝑛 +𝑛 (𝑛 −1)/ 2 = 𝑂 (𝑛 2) passes required by the original image-to-scalar formulation. A dense inter-mediate representation also preserves the spatial support of each conductor until the final reduction, so one forward pass can serve many conductor-level queries within the same window instead of collapsing the geometry into a single scalar too early. Because the output remains spatial, an encoder–decoder back-bone is needed rather than a classification-style network. Flash-CNNCap uses MONAI’s residual 2D U-Net implementation [ 30 ], which builds on the original U-Net architecture [ 20 ]. The model uses GroupNorm [ 31 ], residual connections within each encoder and de-coder block, bilinear upsampling followed by convolution, and 5×5
+
+kernels. The final 1×1 convolution produces 𝐿 channels of raw log-its; an element-wise softplus ( log (1+𝑒 𝑥 )) maps them to strictly posi-tive contribution values. The non-negativity constraint is physically motivated: capacitance contributions are non-negative quantities, and enforcing this in the output space constrains the learned repre-sentation to match the additive structure of the underlying physics. Skip connections allow fine routing geometry and layer-local con-text to bypass the bottleneck and remain available during decoding. This preserves information that would be lost by the global average pooling used in ResNet-based scalar heads. The architecture uses four encoder levels with channel widths (32 , 64 , 128 , 256 , 512 ) and two residual units per block; Section 4.2 evaluates alternatives. As in CNN-Cap, total and coupling capacitance are handled by separate ICCAD ’26, November 08–12, 2026, San Jose, CA, USA Hector R. Rodriguez, Jiechen Huang, Wenjian Yu ∗
+
+model instances trained independently; only the prediction granu-larity changes from scalar to spatial. Figure 3 shows the selected architecture. 
+
+## 3.3 Capacitance Aggregation and Supervision 
+
+Once inference produces a contribution tensor, sparse reduction (stage 4 in Figure 2) aggregates it into conductor-level capacitances. The total-capacitance model predicts a contribution tensor 𝑞 tot  
+
+> 𝑤
+
+∈
+
+R𝐿 ×𝐻 ×𝑊 over the full window, where each element is the softplus-activated output. The coupling model, conditioned on a master conductor 𝑚 , predicts 𝑞 env  
+
+> 𝑤,𝑚
+
+∈ R𝐿 ×𝐻 ×𝑊 over all environmental conductors. Let 𝑚 𝑤 (𝑝 ) denote the local conductor ID at pixel 𝑝 
+
+(with 0 for background), 𝜋 𝑤 (ℓ) the mapping to global net index, and 𝐼 𝑤,ℓ = {𝑝 | 𝑚 𝑤 (𝑝 ) = ℓ } the pixel set for conductor ℓ. No ground-truth pixel maps are required. Algorithm 1 summarizes the inference-time aggregation procedure. On the GPU, the reduction uses the per-conductor sparse index tables 𝑆 𝑤,ℓ built during rasterization. The contribution tensor is flattened to a vector of length 𝐿 · 𝐻 · 𝑊 , and a dedicated CUDA kernel sums the entries at the sparse indices for each conductor in a single pass: 
+
+ˆ𝐶 𝑤,ℓ = 
+
+> |𝑆 𝑤,ℓ |
+
+∑︁ 
+
+> 𝑘 =1
+
+𝑞 𝑤 [𝑆 𝑤,ℓ (𝑘 )] . (3) Each conductor’s reduction is independent and assigned to a sepa-rate GPU thread, yielding 𝑂 (1) kernel launches per window regard-less of conductor count. This avoids materializing the full dense map on the host and eliminates the 𝑂 (𝐿 · 𝐻 · 𝑊 ) per-conductor scan that a naive dense reduction would require. Written at the conductor level, the readout used by both training and inference is 
+
+ˆ𝐶 tot  
+
+> 𝑤,ℓ
+
+=∑︁  
+
+> 𝑝 ∈𝐼 𝑤,ℓ
+
+𝑞 tot  
+
+> 𝑤
+
+(𝑝 ), ˆ𝐶 dir  
+
+> 𝑤,𝑚 →ℓ
+
+=∑︁  
+
+> 𝑝 ∈𝐼 𝑤,ℓ
+
+𝑞 env  
+
+> 𝑤,𝑚
+
+(𝑝 ). (4) with a final symmetrization 
+
+ˆ𝐶 cpl   
+
+> {𝑖,𝑗 }
+
+= 12
+
+ ˆ𝐶 dir  
+
+> 𝑖 →𝑗
+
++ ˆ𝐶 dir 
+
+> 𝑗 →𝑖
+
+
+
+. (5) 
+
+Algorithm 1 GPU-resident capacitance extraction pipeline.  
+
+> 1:
+
+Initialize ˆ𝐶 tot  
+
+> 𝑛
+
+← 0, ˆ𝐶 dir  
+
+> 𝑖 →𝑗
+
+← 0 for all nets 𝑛 , 𝑖 , 𝑗  
+
+> 2:
+
+for each window 𝑤 ∈ W do  
+
+> 3:
+
+Rasterize (GPU): paint rectangles → local-ID map 𝑀 𝑤 ∈
+
+Z𝐿 ×𝐻 ×𝑊 ; build occupancy mask and per-conductor sparse in-dex tables 𝑆 𝑤,ℓ  
+
+> 4:
+
+Total model : 𝑞 tot  
+
+> 𝑤
+
+← softplus (𝑓 𝜃 (1[𝑀 𝑤 > 0]))  
+
+> 5:
+
+Sparse reduce (GPU): for each conductor ℓ, ˆ𝐶 tot    
+
+> 𝜋 𝑤 (ℓ)
+
++=
+
+Í𝑘 𝑞 tot  
+
+> 𝑤
+
+[𝑆 𝑤,ℓ (𝑘 )]  
+
+> 6:
+
+for each visible master conductor 𝑚 ∈ 𝑉 𝑤 do  
+
+> 7:
+
+Build env features: 𝑥 𝑚 ← 1[𝑀 𝑤 > 0] − 2 1[𝑀 𝑤 = 𝑚 ] 
+
+> 8:
+
+𝑞 env  
+
+> 𝑤,𝑚
+
+← softplus (𝑔 𝜙 (𝑥 𝑚 ))  
+
+> 9:
+
+Sparse reduce (GPU): for each target ℓ ≠ 𝑚 ,
+
+ˆ𝐶 dir     
+
+> 𝜋 𝑤 (𝑚 )→ 𝜋 𝑤 (ℓ)
+
++= Í𝑘 𝑞 env  
+
+> 𝑤,𝑚
+
+[𝑆 𝑤,ℓ (𝑘 )]  
+
+> 10:
+
+end for  
+
+> 11:
+
+end for  
+
+> 12:
+
+Symmetrize: ˆ𝐶 cpl   
+
+> {𝑖,𝑗 }
+
+= 12 ( ˆ𝐶 dir  
+
+> 𝑖 →𝑗
+
++ ˆ𝐶 dir  
+
+> 𝑗 →𝑖
+
+) for all 𝑖 ≠ 𝑗 skip connection ×2 upsample Conv · GN · ReLU 
+
+> 128 channels
+> Conv · GN · ReLU
+> +
+> residual skip connection
+
+Input 32 channels 
+
+> Conv · GN · ReLU Conv · GN · ReLU residual
+> +
+> ×2 stride ×2 stride ×2 stride
+
+Bottleneck 
+
+> ×2 upsample ×2 upsample Conv 1×1
+
+Output 64 channels 
+
+> Conv · GN · ReLU Conv · GN · ReLU residual
+> +128 channels
+> Conv · GN · ReLU Conv · GN · ReLU residual
+> +
+> ×2 stride skip connection
+
+Encoder Decoder 
+
+> Conv · GN · ReLU
+> 64 channels
+> Conv · GN · ReLU
+> +
+> residual ×2 upsample Conv · GN · ReLU
+> 32 channels
+> Conv · GN · ReLU
+> +
+> residual
+> 256 channels
+> Conv · GN · ReLU Conv · GN · ReLU residual
+> +
+> Conv · GN · ReLU Conv · GN · ReLU
+> +512 channels
+> residual Conv · GN · ReLU
+> 256 channels
+> Conv · GN · ReLU
+> +
+> residual
+
+Figure 3: Selected D4_D_k5 U-Net architecture with four en-coder/decoder levels, skip connections, and a 512-channel bottleneck. 
+
+Under the standard Maxwell-matrix sign convention, the recon-structed matrix entries are 
+
+ˆ𝑀 𝑖 𝑗 =
+
+( ˆ𝐶 tot  
+
+> 𝑖
+
+if 𝑖 = 𝑗, 
+
+− ˆ𝐶 cpl   
+
+> {𝑖,𝑗 }
+
+if 𝑖 ≠ 𝑗 . (6) Softplus makes predicted totals and couplings non-negative; sym-metrization preserves this, while the Maxwell convention supplies negative off-diagonal signs. For a set of query conductors 𝑄 , train-ing minimizes masked MSRE, 
+
+LMSRE = 1
+
+|𝑄 |∑︁ 𝑗 ∈𝑄 
+
+ˆ𝐶 𝑗 − 𝐶 𝑗 
+
+𝐶 𝑗 + 𝜖 
+
+!2
+
+, (7) which matches the evaluation emphasis on relative rather than absolute error. This objective is especially important for coupling capacitance, where values span a wide dynamic range and small couplings would otherwise be underweighted by an absolute-error loss. Flash-CNNCap: Capacitance Extraction via Image Mapping ICCAD ’26, November 08–12, 2026, San Jose, CA, USA 
+
+Conductor-level supervision suffices because capacitances are conductor-wise and the rasterized ID map defines exact conductor support. The model thus learns a non-unique, non-negative latent decomposition whose masked sums match labeled parasitics. Fig-ure 4 illustrates a representative NanGate45 window. Background pixels receive no gradient because they are excluded from conductor masks; the structured patterns are therefore latent representations, not exact physical field solutions. 
+
+## 4 Results 
+
+This section evaluates Flash-CNNCap under a consistent training and benchmarking protocol. We first summarize the experimental setup and then present the ablation, runtime, accuracy, and end-to-end pipeline results. 
+
+## 4.1 Experimental Setup 
+
+Experiments were run on a server with 2 Intel Xeon Platinum 8488C CPUs (96 cores), 251 GiB RAM, and 8 NVIDIA GeForce RTX 5090 GPUs. All neural inference measurements use one RTX 5090 GPU. OpenRCX is run in its default single-threaded configuration, and RWCap uses 8 CPU cores for the end-to-end timing comparison. All models are trained for 100 epochs with AdamW [ 32 ], learning rate 3×10 −4, weight decay 10 −4, batch size 16, and MSRE loss. We set (𝛽 1, 𝛽 2) = (0.9, 0.999 ), use a 5-epoch linear warmup, decay the learning rate to 10% of the base value with a cosine schedule, and clip gradients at max norm 1.0. The fixed-seed 80/20 split is window-level, not target-level. It is window-disjoint but not design-disjoint: no instance occurs in both sets, although distinct windows from one routed design may. Thus, the results measure window-level generalization within CapBench. All models are evaluated using mean absolute relative error (MARE) as the primary accuracy metric. We additionally report the fraction of predictions exceeding 5% and 10% relative error to characterize the error distribution beyond the mean. 
+
+Table 2: CNN-Cap reproduction (MARE). Target ResNet-34 
+
+Checkpoint Reproduction Proposed Total 0.0112 0.0165 0.0067 Coupling 0.0316 0.0368 0.0121 Table 2 is a protocol check before the dense-model ablation. With the scalar CNN-Cap architecture held fixed at ResNet-34, the pro-posed training recipe improves over both the released checkpoint and a best-effort reproduction from the paper description. 
+
+## 4.2 Ablation Study 
+
+The ablation evaluates 13 dense-prediction backbones on the Nan-Gate45 small split under a fixed training protocol (100 epochs, AdamW, MSRE loss, five random seeds). We sweep MONAI U-Net depth (D3–D5), channel width, residual depth, and kernel size ( 3
+
+vs. 5), and we include an Attention U-Net comparator. The Atten-tion U-Net does not improve over standard U-Nets, indicating that skip connections already provide sufficient long-range context for parasitic layouts. Moving from three to four encoder levels consis-tently reduces MARE, while five-level models show no further gain. Within the four-level family, additional residual depth and larger 
+
+5×5 kernels are both beneficial. Figure 5 and Table 3 show that the useful Pareto frontier is nar-row and is dominated by four-level U-Nets. D4_F_k5 attains the lowest MARE in the sweep, but the absolute gain over D4_D_k5 is only 0.0009 while FLOPs more than double and TensorRT through-put drops from 6.1k to 4.2k samples/s. D4_D_k5 therefore captures most of the accuracy benefit of the larger models without paying their full deployment cost, which is why it is used in the remaining experiments. 
+
+Figure 4: Learned contribution maps on a NanGate45 window. Top: total capacitance; bottom: coupling capacitance, with the master conductor shown in red. Brighter values indicate larger per-pixel contributions. ICCAD ’26, November 08–12, 2026, San Jose, CA, USA Hector R. Rodriguez, Jiechen Huang, Wenjian Yu ∗
+
+Table 3: Ablation on NanGate45 small (5 seeds, 100 epochs). D-series: MONAI 2D U-Net; A4_A: Attention U-Net. Throughput measured with TensorRT at batch 64. Shaded row: selected model. Model Depth Kernel Res. units Channels Params GFLOPs Samp/s Val MARE 
+
+(M) /sample (k) 𝜇 ± 𝜎 
+
+D3_B 3 3 0 (16,32,64,128) 0.16 0.37 38.9 0.0593 ± 0.0011 
+
+D3_C 3 3 1 (16,32,64,128) 0.21 0.59 16.9 0.0595 ± 0.0014 
+
+D4_A 4 3 0 (24,48,96,192,384) 1.49 0.98 11.4 0.0518 ± 0.0006 
+
+D4_B 4 3 0 (32,64,128,256,512) 2.64 1.72 18.0 0.0483 ± 0.0007 
+
+D4_C 4 3 1 (32,64,128,256,512) 3.36 2.86 7.5 0.0463 ± 0.0016 
+
+D4_D 4 3 2 (32,64,128,256,512) 6.50 4.72 9.2 0.0406 ± 0.0015 
+
+D4_E 4 3 1 (48,96,192,384,768) 7.54 6.31 6.7 0.0441 ± 0.0008 
+
+D4_F 4 3 2 (48,96,192,384,768) 14.62 10.49 4.8 0.0377 ± 0.0010 
+
+D4_C_k5 4 5 1 (32,64,128,256,512) 9.08 7.82 8.2 0.0391 ± 0.0011 
+
+D4_D_k5 4 5 2 (32,64,128,256,512) 17.81 12.96 6.1 0.0362 ± 0.0006 
+
+D4_F_k5 4 5 2 (48,96,192,384,768) 40.07 28.86 4.2 0.0353 ± 0.0008 
+
+D5_B 5 3 1 (24,48,96,192,384,768) 7.59 2.03 7.0 0.0481 ± 0.0016 
+
+A4_A 4 3 — (32,64,128,256,512) 7.94 16.41 5.1 0.0460 ± 0.0019 
+
+## 4.3 Inference Time 
+
+Figure 6 reports the full-matrix reconstruction time over 256 win-dows on one RTX 5090 GPU, including GPU forward passes and, for Flash-CNNCap, the sparse reduction over spatial contribution maps. On the small set (15.9 conductors/window on average), Flash-CNNCap takes 0.6 s versus 1.3–1.8 s for the ResNet baselines. On D3_C D4_A D4_C D5_B D4_E D4_F A4_A D4_F_k5 D4_D_k5 D4_C_k5 D4_D D4_B D3_B 0.035 0.040 0.045 0.050 0.055 0.060 Val MARE (lower is better) 5k 10k 20k 40k Throughput (samples/s) D3 D4 D4 k=5 D5 A4 Pareto-optimal Dominated Pareto front 
+
+Figure 5: Accuracy vs. throughput Pareto analysis on Nan-Gate45 small. Error bars show 95% CI across five seeds. Table 4: Inference passes for full-matrix extraction (256 win-dows). Dataset Image-to-scalar Image-to-image Reduction 
+
+Small 39,346 4,316 9.1 ×
+
+Medium 400,556 13,737 29.2 ×
+
+Large 2,401,707 34,540 69.5 ×
+
+the medium set (52.7 conductors/window), the gap widens to 1.9 s versus 13.5–19.5 s. On the large set (133.9 conductors/window), Flash-CNNCap finishes in 4.7 s while ResNet-34 and ResNet-50 require 82.2 s and 117.3 s, yielding a measured 17 .5× same-GPU speedup enabled primarily by the reduction in model evaluations. Each U-Net pass is heavier than a scalar-regression pass, but the pass-count reduction dominates at scale. Table 4 explains the crossover. On the same 256-window evalu-ation, Flash-CNNCap reduces the number of model calls by 9.1×
+
+on small windows, 29 .2× on medium windows, and 69 .5× on large windows. Once conductor counts grow, the pass-count reduction dominates despite the heavier per-pass cost. 
+
+## 4.4 Accuracy Comparisons 
+
+As a setup sanity check on the legacy CNN-Cap task (Table 2), the released ResNet-34 checkpoint yields 1.12%/3.16% MARE for D4_D_k5 ResNet34 ResNet50 0.6s 1.3s 1.8s 1.9s 13.5s 19.5s 4.7s 82.2s 117.3s 025 50 75 100 125 Inference time (s) 
+
+> Small
+> 15.9 conductors
+> Medium
+> 52.7 conductors
+> Large
+> 133.9 conductors Dataset (avg. conductors per window)
+
+Figure 6: Full-matrix inference time over 256 windows on one RTX 5090 GPU. Flash-CNNCap: Capacitance Extraction via Image Mapping ICCAD ’26, November 08–12, 2026, San Jose, CA, USA 
+
+Table 5: Validation MARE and fraction of predictions exceeding 5% and 10% relative error. Bold: best MARE per row. ResNet-34 ResNet-50 D4_D_k5 Dataset PDK Target MARE >5% >10% MARE >5% >10% MARE >5% >10% CNN-Cap — Total 0.0067 0.0022 0.0007 0.0067 0.0022 0.0000 0.0072 0.0096 0.0000 Coupling 0.0121 0.1121 0.0313 0.0248 0.1199 0.0353 0.0278 0.1401 0.0423 Small NanGate45 Total 0.0252 0.0747 0.0114 0.0223 0.0600 0.0100 0.0287 0.1099 0.0301 Coupling 0.0566 0.3908 0.1403 0.0575 0.3784 0.1437 0.0330 0.1950 0.0393 Sky130HD Total 0.0309 0.1233 0.0459 0.0419 0.2137 0.0768 0.0205 0.0766 0.0184 Coupling 0.0564 0.3519 0.1354 0.0619 0.3748 0.1593 0.0363 0.2194 0.0566 Medium NanGate45 Total 0.0207 0.0610 0.0162 0.0172 0.0477 0.0109 0.0171 0.0518 0.0096 Coupling 0.0442 0.2803 0.0861 0.0424 0.2714 0.0778 0.0333 0.2138 0.0405 Sky130HD Total 0.0151 0.0376 0.0054 0.0142 0.0363 0.0054 0.0146 0.0405 0.0066 Coupling 0.0357 0.2342 0.0520 0.0358 0.2345 0.0518 0.0302 0.1840 0.0323 Large NanGate45 Total 0.0277 0.1203 0.0341 0.0246 0.0948 0.0234 0.0294 0.1546 0.0420 Coupling 0.0593 0.3801 0.1510 0.0516 0.3394 0.1150 0.0456 0.3143 0.0900 Sky130HD Total 0.0323 0.1439 0.0430 0.0230 0.1043 0.0232 0.0310 0.1712 0.0506 Coupling 0.0557 0.3852 0.1481 0.0521 0.3638 0.1307 0.0447 0.3143 0.0971 total/coupling on our validation split, consistent with the published figures of 1.10%/3.10%. A best-effort reproduction based on the paper description reaches 1.65%/3.68%, while the updated train-ing recipe from Section 4.1 improves these to 0.67%/1.21%. Since the original training code was not released, we reconstructed the pipeline from the paper; the improvement should therefore be attributed to the training and input recipe rather than to archi-tectural changes. Notably, both the released checkpoint and our reproduction use CNN-Cap’s original per-layer density maps as input, whereas the updated recipe uses binary occupancy masks (Section 3.1). Matching or surpassing the density-map baselines establishes binary occupancy as the submitted operating point, rather than showing that fractional-density inputs are generally unnecessary. On the CapBench subsets (Table 5 and Figure 7), ResNet-50 and D4_D_k5 are competitive on total capacitance across subsets, with all three models remaining in the same accuracy regime. The threshold metrics reinforce this split: the best total-capacitance model depends on the dataset; for coupling capacitance, however, D4_D_k5 achieves the lowest MARE and the lowest fractions above both 5% and 10% relative error on every evaluated CapBench subset. This accuracy trade-off does not require higher training cost: D4_D_k5 training times were consistently lower than or compa-rable to the ResNet baselines (e.g., 16.7–45.7 h vs. 16.6–51.6 h for coupling on small subsets). Val MARE (lower is better) 
+
+Total Coupling 
+
+D4_D_k5 D4_D_k5 ResNet34 ResNet34 ResNet50 ResNet50 0.00 0.01 0.02 0.03 0.04 0.05 0.06 
+
+CNN-Cap 
+
+— Small 
+
+NanGate45 Small 
+
+Sky130HD Medium 
+
+NanGate45 Medium 
+
+Sky130HD Large 
+
+NanGate45 Large 
+
+Sky130HD 
+
+Figure 7: Validation MARE across all benchmarks (100 epochs). ICCAD ’26, November 08–12, 2026, San Jose, CA, USA Hector R. Rodriguez, Jiechen Huang, Wenjian Yu ∗
+
+The contrast between total and coupling accuracy reflects the structure of the prediction task. Because total capacitance integrates over the full conductor support, a scalar backbone captures it ef-fectively once it encodes occupancy, layer context, and conductor extent. Coupling capacitance is more demanding: for a marked master conductor, the model must preserve how the contribution is partitioned across many visible targets. Dense prediction matches that target more naturally because the conductor structure is kept explicit until the final masked reduction. The gain is a systematic tightening of the coupling-error distribution. Since full-matrix reconstruction is dominated by pairwise cou-pling terms, this distinction matters more than a small difference in the total-capacitance results. The dense model’s main advantage is that it is simultaneously the fastest full-matrix extractor and the most reliable coupling predictor across all evaluated CapBench subsets. 
+
+## 4.5 Full Pipeline 
+
+An end-to-end extractor must prepare routed geometry, execute and reduce model predictions, and emit standard parasitic output. Flash-CNNCap uses the same standards-compatible DEF/SPEF interface as OpenRCX [ 12 ]. Python orchestrates C++ geometry parsing and SPEF writing on the CPU; custom CUDA extensions keep rasterization, occupancy construction, TensorRT inference (batch size 24), and sparse reduction device-resident. Each sym-metrized term ˆ𝐶 cpl   
+
+> {𝑖,𝑗 }
+
+is written as a coupling entry, with ˆ𝐶 gnd  
+
+> 𝑖
+
+=
+
+ˆ𝐶 tot  
+
+> 𝑖
+
+− Í𝑗 ≠𝑖 ˆ𝐶 cpl   
+
+> {𝑖,𝑗 }
+
+. Independent total and coupling training does not guarantee a non-negative derived grounded term. Contribution maps remain on the GPU, where the input ID map is reused for conductor-level reduction. Dense outputs increase activation memory; the deployed Ten-sorRT batch size of 24 can be reduced without changing the 𝑂 (𝑛 )
+
+model-evaluation count. Compact GPU-resident buffers and no inner-loop host–device synchronization limit overhead. Fixed win-dows may truncate long-range boundary interactions; overlapping windows with an interior retention margin are a possible, unevalu-ated mitigation. Table 6 breaks down the measured runtime on 1,024 NanGate45 large windows. The combined GPU path accounts for 70.4% of the total 51.23 s; SPEF writing contributes 26.8%. With full-matrix reconstruction reduced to a linear number of model evaluations, end-to-end throughput is governed by the efficiency of the device-side path and output generation, not by neural inference alone. 
+
+Figure 8: End-to-end runtime on 1,024 NanGate45 large win-dows (Flash-CNNCap on 1 RTX 5090 GPU, OpenRCX single-threaded, RWCap on 8 CPU cores). Table 6: Runtime breakdown on 1,024 NanGate45 large win-dows. Stage Backend Time (s) Share (%) 
+
+Initialization Python/C++/TRT 1.31 2.6 DEF parsing CPU (C++) 0.12 0.2 GPU path CUDA/TRT 36.06 70.4 SPEF writing CPU (C++) 13.75 26.8 
+
+Total 51.23 100.0 
+
+Figure 8 compares one-GPU Flash-CNNCap against RWCap [ 9]on 8 CPU cores and single-threaded OpenRCX for the same 1,024 windows: 51.23 s, 104,982.99 s, and 223.79 s, respectively. This het-erogeneous systems reference is not hardware-normalized; the same-GPU scalar-CNN comparison appears in the inference-time evaluation. RWCap primarily supplies accuracy labels, whereas OpenRCX is the practical comparator but solves a broader problem and emits richer RC information. 
+
+## 5 Conclusions 
+
+Flash-CNNCap reformulates CNN-based capacitance extraction as image-to-image regression over spatial contribution maps, re-ducing full-matrix reconstruction from quadratic to linear in the number of conductors while preserving the raster representation that makes CNNs effective on routed IC layouts. The contribution maps are learned as a latent, conductor-mask-aggregated decompo-sition from conductor-level supervision rather than from per-pixel labels. Experimentally, the approach matches scalar ResNet base-lines on total capacitance, delivers the strongest coupling accuracy across all evaluated CapBench subsets, and provides an order-of-magnitude full-matrix speedup that grows with conductor density. An end-to-end DEF-to-SPEF pipeline demonstrates that the speedup survives systems-level overheads and outperforms OpenRCX on the same benchmark. Dense prediction is most valuable where the extractor must preserve a structured distribution over many outputs rather than collapse a window into a single scalar. The same representation that improves target-wise decomposition also eliminates redundant pairwise inference, producing the largest accuracy gains on cou-pling capacitance while sustaining the speedup at the systems level. Finite-window context and the lack of an explicit joint constraint on the derived grounded capacitance remain limitations. The ap-proach may apply to other post-layout learning problems in which pairwise or set-valued parasitics dominate runtime. Flash-CNNCap: Capacitance Extraction via Image Mapping ICCAD ’26, November 08–12, 2026, San Jose, CA, USA 
+
+## References 
+
+[1] H. B. Bakoglu and James D. Meindl. 1985. Optimal Interconnection Circuits for VLSI. IEEE Transactions on Electron Devices 32, 5 (1985), 903–909. doi:10.1109/T-ED.1985.22046 [2] Mark T. Bohr. 1995. Interconnect scaling-the real limiter to high performance ULSI. In Proceedings of IEEE International Electron Devices Meeting (IEDM) . 241– 244. doi:10.1109/IEDM.1995.499187 [3] Wenjian Yu and Zeyi Wang. 2005. Capacitance Extraction. Encyclopedia of RF and Microwave Engineering (2005). doi:10.1002/0471654507.erfme141 [4] Wenjian Yu, Mingye Song, and Ming Yang. 2021. Advancements and Challenges on Parasitic Extraction for Advanced Process Technologies. In Proceedings of the 26th Asia and South Pacific Design Automation Conference . ACM, 841–846. doi:10.1145/3394885.3431626 [5] Wenjian Yu, Qingqing Zhang, Zuochang Ye, and Zuying Luo. 2012. Efficient statistical capacitance extraction of nanometer interconnects considering the on-chip line edge roughness. Microelectronics Reliability 52, 4 (2012), 704–710. [6] Wangyang Zhang, Wenjian Yu, Zeyi Wang, Zhiping Yu, Rong Jiang, and Jinjun Xiong. 2008. An efficient method for chip-level statistical capacitance extraction considering process variations with spatial correlation. In Proceedings of the conference on Design, automation and test in Europe . 580–585. [7] K. Nabors and J. White. 1991. FastCap: A Multipole Accelerated 3-D Capacitance Extraction Program. IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems 10, 11 (1991), 1447–1459. doi:10.1109/43.97624 [8] Wenjian Yu, Zeyi Wang, and Xianlong Hong. 2004. Preconditioned multi-zone boundary element analysis for fast 3D electric simulation. Engineering analysis with boundary elements 28, 9 (2004), 1035–1044. [9] Wenjian Yu, Hao Zhuang, Chao Zhang, Gang Hu, and Zhi Liu. 2013. RWCap: A floating random walk solver for 3-D capacitance extraction of very-large-scale integration interconnects. IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems 32, 3 (2013), 353–366. doi:10.1109/TCAD.2012. 2224346 [10] Umakanta Choudhury and Alberto L. Sangiovanni-Vincentelli. 1995. Automatic Generation of Analytical Models for Interconnect Capacitances. IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems 14, 4 (1995), 470–480. doi:10.1109/43.372374 [11] Jason Cong, Lei He, Andrew B. Kahng, David Noice, Nagesh Shirali, and Steve H.-C. Yen. 1997. Analysis and Justification of a Simple, Practical 2 1/2-D Capacitance Extraction Methodology. In Proceedings of the 34th Annual Design Automation Conference . ACM, 627–632. doi:10.1145/266021.266303 [12] The OpenROAD Project. 2021. OpenRCX: A Parasitics Extraction Tool Within OpenDB. https://github.com/The-OpenROAD-Project/OpenRCX. GitHub repos-itory, archived January 26 2021. [13] Dingcheng Yang, Haoyuan Li, Wenjian Yu, Yuanbo Guo, and Wenjie Liang. 2023. CNN-Cap: Effective Convolutional Neural Network Based Capacitance Models for Interconnect Capacitance Extraction. ACM Transactions on Design Automation of Electronic Systems 28, 4 (2023), 1–22. doi:10.1145/3564931 [14] Lihao Liu, Fan Yang, Li Shang, and Xuan Zeng. 2024. GNN-Cap: Chip-Scale Interconnect Capacitance Extraction Using Graph Neural Network. IEEE Trans-actions on Computer-Aided Design of Integrated Circuits and Systems 43, 4 (2024), 1206–1217. doi:10.1109/TCAD.2023.3331942 [15] Ye Cai, Yuyao Liang, Zhipeng Luo, Biwei Xie, and Xingquan Li. 2024. PCT-Cap: Point Cloud Transformer for Accurate 3D Capacitance Extraction. In Proceedings of the 2024 2nd International Symposium of Electronics Design Automation (ISEDA) .IEEE, 421–426. doi:10.1109/ISEDA62518.2024.10617673 [16] Hector R. Rodriguez, Jiechen Huang, and Wenjian Yu. 2026. CapBench: A Multi-PDK Dataset for Machine-Learning-Based Post-Layout Capacitance Extraction. In Proceedings of the 63rd ACM/IEEE Design Automation Conference . 1–7. [17] North Carolina State University EDA Lab. 2008. FreePDK45: An Open-Source Pre-dictive Process Design Kit. https://www.eda.ncsu.edu/wiki/FreePDK45. Accessed: 2025-05-01. [18] SkyWater Technology Foundry and Google. 2020. SkyWater 130 nm Open PDK. https://github.com/google/skywater-pdk. Accessed: 2025-05-01. [19] Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun. 2016. Deep Residual Learning for Image Recognition. In Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR) . 770–778. doi:10.1109/CVPR.2016.90 [20] Olaf Ronneberger, Philipp Fischer, and Thomas Brox. 2015. U-Net: Convolutional Networks for Biomedical Image Segmentation. In Medical Image Computing and Computer-Assisted Intervention (MICCAI) . Springer, 234–241. doi:10.1007/978-3-319-24574-4_28 [21] Ming Yang and Wenjian Yu. 2020. Floating random walk capacitance solver tackling conformal dielectric with on-the-fly sampling on eight-octant transition cubes. IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems 39, 12 (2020), 4935–4943. doi:10.1109/TCAD.2020.2968544 [22] Jiechen Huang and Wenjian Yu. 2024. Enhancing 3-D Random Walk Capaci-tance Solver with Analytic Surface Green’s Functions of Transition Cubes. In 
+
+Proceedings of the 61st ACM/IEEE Design Automation Conference . 1–6. doi:10.1145/ 3649329.3658263 [23] Hector R. Rodriguez, Jiechen Huang, and Wenjian Yu. 2026. DeepRWCap: Neural-Guided Random-Walk Capacitance Solver for IC Design. Proceedings of the AAAI Conference on Artificial Intelligence 40, 2 (2026), 971–979. doi:10.1609/AAAI.V40I2. 37066 [24] Subed Lamichhane, Shaoyi Peng, Wentian Jin, and Sheldon X.-D. Tan. 2021. Fast Electrostatic Analysis For VLSI Aging based on Generative Learning. In 
+
+Proceedings of the 2021 ACM/IEEE 3rd Workshop on Machine Learning for CAD (MLCAD) . 1–6. doi:10.1109/MLCAD52597.2021.9531320 [25] Ishaan Gulrajani, Faruk Ahmed, Martin Arjovsky, Vincent Dumoulin, and Aaron C. Courville. 2017. Improved Training of Wasserstein GANs. In Advances in Neural Information Processing Systems 30 (NeurIPS) . 5767–5777. [26] Haoyuan Li, Dingcheng Yang, and Wenjian Yu. 2024. Training Better CNN Models for 3-D Capacitance Extraction with Neural Architecture Search. In 2024 Design, Automation & Test in Europe Conference & Exhibition (DATE) . IEEE, 1–2. doi:10.23919/DATE58400.2024.10546811 [27] Mohamed Saleh Abouelyazid, Sherif Hammouda, and Yehea Ismail. 2022. Accuracy-Based Hybrid Parasitic Capacitance Extraction Using Rule-Based, Neural-Networks, and Field-Solver Methods. IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems 41, 12 (2022), 5681–5694. doi:10. 1109/TCAD.2022.3161199 [28] Zhixing Li and Weiping Shi. 2020. Layout Capacitance Extraction Using Auto-matic Pre-Characterization and Machine Learning. In Proceedings of the 2020 21st International Symposium on Quality Electronic Design (ISQED) . IEEE, 457–464. doi:10.1109/ISQED48828.2020.9136970 [29] Xinya Zhou, Jiacheng Zhang, Bin Li, Wenchao Liu, Zhaohui Wu, and Bing Lu. 2026. RMLP-Cap: An End-to-End Parasitic Capacitance Extraction Flow Based on ResMLP. Electronics 15, 1 (2026), 36. doi:10.3390/electronics15010036 [30] M. Jorge Cardoso, Wenqi Li, Richard Brown, Nic Ma, Eric Kerfoot, Yiheng Wang, Benjamin Murrey, Andriy Myronenko, Can Zhao, Dong Yang, et al . 2022. MONAI: An Open-Source Framework for Deep Learning in Healthcare. arXiv preprint arXiv:2211.02701 (2022). doi:10.48550/arXiv.2211.02701 [31] Yuxin Wu and Kaiming He. 2018. Group Normalization. In Proceedings of the European Conference on Computer Vision (ECCV) . 3–19. doi:10.1007/978-3-030-01261-8_1 [32] Ilya Loshchilov and Frank Hutter. 2019. Decoupled Weight Decay Regular-ization. In International Conference on Learning Representations (ICLR) . https: //openreview.net/forum?id=Bkg6RiCqY7

@@ -6,24 +6,24 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-29
-- 运行时间：2026-07-29 21:43:38 UTC
+- 最新运行日期：2026-07-30
+- 运行时间：2026-07-30 21:44:41 UTC
 - 运行状态：成功
 - 本次总论文数：1
-- 精读区：1
-- 速读区：0
+- 精读区：0
+- 速读区：1
 
 ### 今日简报（AI）
-今日精读一篇9.0分论文，聚焦芯片间物理层的高精度端到端建模。值得关注的方向：DICE模型能大幅提升片间互连仿真的准确性与效率。建议芯片设计从业者重点关注该建模方法，以优化异构集成系统的性能预测。
-- 详情：[/202607/29/README](/202607/29/README)
+今日速读一篇电容提取新方法论文，提出利用图像映射技术加速计算。最值得关注的是其将物理问题转化为图像处理任务的创新思路，可能大幅提升VLSI寄生参数提取效率。建议普通读者了解该方向，若涉及芯片设计可尝试用相似思想优化现有工具。
+- 详情：[/202607/30/README](/202607/30/README)
 
 ### 精读区论文标签
-1. [DICE: Detailed Inter-Chiplet End-to-End PHY Modeling for Accurate Chiplet Simulation](/202607/29/2607.24221v2-dice-detailed-inter-chiplet-end-to-end-phy-modeling-for-accurate-chiplet-simulation)  
-   标签：评分：9.0/10、query:si-pi
-   evidence：片间物理层建模，关注信号完整性和串扰
+- 本次无精读推荐。
 
 ### 速读区论文标签
-- 本次无速读推荐。
+1. [Flash-CNNCap: Capacitance Extraction via Image Mapping](/202607/30/2607.23877v1-flash-cnncap-capacitance-extraction-via-image-mapping)  
+   标签：评分：7.0/10、query:bga-xtalk
+   evidence：基于CNN的电容提取方法用于互连建模
 
 
 <div class="dpr-home-promo-card">
