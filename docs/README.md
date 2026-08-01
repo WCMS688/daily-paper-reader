@@ -6,22 +6,24 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-31
-- 运行时间：2026-07-31 21:12:44 UTC
+- 最新运行日期：2026-08-01
+- 运行时间：2026-08-01 20:36:53 UTC
 - 运行状态：成功
-- 本次总论文数：0
+- 本次总论文数：1
 - 精读区：0
-- 速读区：0
+- 速读区：1
 
 ### 今日简报（AI）
-> 今日无新推荐，系统未产出可展示论文。
-- 详情：[/202607/31/README](/202607/31/README)
+今日共速读1篇论文，暂无精读；唯一推荐为《PIKS: Universal Physics-Informed Kernel Methods》（7.0/10）。该文聚焦“物理信息核方法”，核心是提升通用性与求解偏微分方程的效率。建议普通读者优先浏览其方法框架与适用场景即可。
+- 详情：[/202608/01/README](/202608/01/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-- 本次无速读推荐。
+1. [PIKS: Universal Physics-Informed Kernel Methods](/202608/01/2607.27062v1-piks-universal-physics-informed-kernel-methods)  
+   标签：评分：7.0/10、query:si-pi
+   evidence：物理信息核方法提供可迁移至SI/PI建模与优化的PDE约束机器学习框架。
 
 
 <div class="dpr-home-promo-card">

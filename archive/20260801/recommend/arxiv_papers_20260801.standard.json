@@ -1,0 +1,56 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-01T20:34:04.730939+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2607.27062v1",
+      "source": "arxiv",
+      "title": "PIKS: Universal Physics-Informed Kernel Methods",
+      "abstract": "Physics-informed machine learning incorporates physical principles --often expressed via differential operators-- into data-driven models. While physics-informed neural networks (PINNs) dominate empirical applications, the complexity of neural network architectures and optimization landscapes hinders the development of a corresponding learning theory. In turn, kernel methods offer an appealing alternative with closed-form solutions and analytical tractability, yet existing guarantees primarily cover the well-specified setting where the target belongs to the native Reproducing Kernel Hilbert Space (RKHS). This imposes unrealistic regularity assumptions that physical targets often fail to satisfy. In this paper, we introduce and analyze Physics-Informed Kernel methodS (PIKS). We establish the universal consistency of PIKS for linear differential constraints, proving that for universal kernels (such as Gaussian or Matérn), the estimator asymptotically learns the target while satisfying physical constraints. We further derive finite-sample bounds under suitable source conditions. Our analysis is based on extending classical operator-theoretic analysis of kernel methods to physics-informed machine learning. Numerical experiments demonstrate that PIKS can be competitive with PINNs and traditional finite element methods.",
+      "authors": [
+        "Joachim Bona-Pellissier",
+        "Giacomo Meanti",
+        "Matteo Santacesaria",
+        "Lorenzo Rosasco"
+      ],
+      "primary_category": "stat.ML",
+      "categories": [
+        "stat.ML",
+        "cs.LG"
+      ],
+      "published": "2026-07-29T15:53:03+00:00",
+      "link": "https://arxiv.org/pdf/2607.27062v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Physics-informed kernel methods provide a PDE-constrained ML framework transferable to SI/PI modeling and optimization.",
+      "llm_evidence_cn": "物理信息核方法提供可迁移至SI/PI建模与优化的PDE约束机器学习框架。",
+      "llm_evidence": "物理信息核方法提供可迁移至SI/PI建模与优化的PDE约束机器学习框架。",
+      "canonical_evidence": "物理信息核方法提供可迁移至SI/PI建模与优化的PDE约束机器学习框架。",
+      "llm_tldr_en": "PIKS presents a universal physics-informed kernel method that incorporates differential operators into kernel machines with closed-form solutions and theoretical guarantees, offering a more tractable alternative to PINNs for PDE-constrained learning and simulation tasks.",
+      "llm_tldr_cn": "现有物理信息核方法仅在目标属于原生RKHS的适定设定下有理论保证，对实际物理目标的正则性假设过于苛刻。为此本文提出通用物理信息核方法PIKS，将微分算子约束融入核方法并给出系统分析。相比PINNs，PIKS具有闭式解和可解析性，可为物理信息机器学习提供更严谨且高效的替代途径，也可迁移用于SI/PI中PDE约束的建模与优化。",
+      "llm_tldr": "现有物理信息核方法仅在目标属于原生RKHS的适定设定下有理论保证，对实际物理目标的正则性假设过于苛刻。为此本文提出通用物理信息核方法PIKS，将微分算子约束融入核方法并给出系统分析。相比PINNs，PIKS具有闭式解和可解析性，可为物理信息机器学习提供更严谨且高效的替代途径，也可迁移用于SI/PI中PDE约束的建模与优化。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "label": "2026-08-01",
+  "date": "2026-08-01",
+  "generated_at": "2026-08-01T20:36:58",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202608/01/2607.27062v1-piks-universal-physics-informed-kernel-methods",
+      "section": "quick",
+      "title_en": "PIKS: Universal Physics-Informed Kernel Methods",
+      "authors": "Joachim Bona-Pellissier, Giacomo Meanti, Matteo Santacesaria, Lorenzo Rosasco",
+      "date": "2026-07-29",
+      "pdf": "https://arxiv.org/pdf/2607.27062v1",
+      "score": "7.0",
+      "evidence": "物理信息核方法提供可迁移至SI/PI建模与优化的PDE约束机器学习框架。",
+      "tldr": "物理信息机器学习将微分算子表示的物理规律嵌入数据驱动模型，但以PINN为代表的神经网络方法因架构复杂、优化困难而缺乏理论保障。本文提出普适物理信息核方法(PIKS)，利用核方法的闭式解和解析可处理性，将经典算子理论扩展到物理信息学习。证明使用高斯或Matérn等通用核时，PIKS对线性微分约束具有普适一致性，并给出有限样本误差界。实验表明PIKS在精度上可与PINN和传统有限元方法竞争，为物理信息学习提供了可证明的替代方案。",
+      "tags": "query:si-pi",
+      "abstract_en": "Physics-informed machine learning incorporates physical principles --often expressed via differential operators-- into data-driven models. While physics-informed neural networks (PINNs) dominate empirical applications, the complexity of neural network architectures and optimization landscapes hinders the development of a corresponding learning theory. In turn, kernel methods offer an appealing alternative with closed-form solutions and analytical tractability, yet existing guarantees primarily cover the well-specified setting where the target belongs to the native Reproducing Kernel Hilbert Space (RKHS). This imposes unrealistic regularity assumptions that physical targets often fail to satisfy. In this paper, we introduce and analyze Physics-Informed Kernel methodS (PIKS). We establish the universal consistency of PIKS for linear differential constraints, proving that for universal kernels (such as Gaussian or Matérn), the estimator asymptotically learns the target while satisfying physical constraints. We further derive finite-sample bounds under suitable source conditions. Our analysis is based on extending classical operator-theoretic analysis of kernel methods to physics-informed machine learning. Numerical experiments demonstrate that PIKS can be competitive with PINNs and traditional finite element methods.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
