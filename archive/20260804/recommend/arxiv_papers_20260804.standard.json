@@ -1,0 +1,92 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-04T21:55:35.350812+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2607.25330v1",
+      "source": "arxiv",
+      "title": "Physics-Informed Neural Operator for Warm-Starting Background-Decomposed and Preconditioned PSFD: Enabling Scalable 3-D EUV Mask Simulation",
+      "abstract": "We present a physics-informed neural operator (PINO) trained with pseudo-spectral frequency-domain (PSFD) equations for electromagnetic (EM) scattering problems in EUV lithography. The Fourier neural operator is factorized into a two-dimensional lateral ($xy$) branch and a one-dimensional axial ($z$) branch and is trained self-consistently with background decomposition.Thus, the full-vector coupling between the mask and the multilayer response is retained without invoking a finite-order Born approximation. In this way, the computational domain size is significantly reduced, thereby lowering the computational cost. The PINO is trained on approximately 16,000 mask designs from the LithoBench library sampled randomly at each training iteration without using precomputed EM field solutions. The PINO surrogate model yields predictions with a mean absolute error of about $7 \\times 10^{-3}$ for the scattered intensity of held-out mask patterns relative to the reference PSFD solution. Combined with spectral damping, the PINO warm-start initialization accelerates the background-decomposed PSFD solver on finer discretizations.",
+      "authors": [
+        "Doyun Kim",
+        "Werner Gillijns"
+      ],
+      "primary_category": "physics.optics",
+      "categories": [
+        "physics.optics",
+        "cs.AI",
+        "cs.LG",
+        "physics.app-ph"
+      ],
+      "published": "2026-07-28T06:31:21+00:00",
+      "link": "https://arxiv.org/pdf/2607.25330v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Physics-informed neural operator for 3D EM scattering offers a transferable fast solver for SI/PI electromagnetic modeling",
+      "llm_evidence_cn": "面向三维电磁散射的物理信息神经算子为SI/PI电磁建模提供了可迁移的快速求解方法",
+      "llm_evidence": "面向三维电磁散射的物理信息神经算子为SI/PI电磁建模提供了可迁移的快速求解方法",
+      "canonical_evidence": "面向三维电磁散射的物理信息神经算子为SI/PI电磁建模提供了可迁移的快速求解方法",
+      "llm_tldr_en": "Presents a physics-informed neural operator for 3D EUV mask EM scattering, factorizing a Fourier neural operator and using background decomposition to reduce computational cost; the approach is transferable to SI/PI EM modeling.",
+      "llm_tldr_cn": "EUV光刻掩模的三维电磁散射仿真因全矢量耦合和多层结构而计算成本极高，且传统方法依赖有限阶Born近似。本文提出物理信息神经算子(PINO)，将傅里叶神经算子分解为横向xy与轴向z分支，并与背景分解自洽训练，从而保留全矢量耦合并显著减小计算域。在约1.6万个掩模设计上训练后，该算子能大幅降低计算开销，实现可扩展的三维EUV掩模仿真。此类算子化电磁求解方法为高速互连和封装结构的SI/PI快速建模提供了可借鉴的新途径。",
+      "llm_tldr": "EUV光刻掩模的三维电磁散射仿真因全矢量耦合和多层结构而计算成本极高，且传统方法依赖有限阶Born近似。本文提出物理信息神经算子(PINO)，将傅里叶神经算子分解为横向xy与轴向z分支，并与背景分解自洽训练，从而保留全矢量耦合并显著减小计算域。在约1.6万个掩模设计上训练后，该算子能大幅降低计算开销，实现可扩展的三维EUV掩模仿真。此类算子化电磁求解方法为高速互连和封装结构的SI/PI快速建模提供了可借鉴的新途径。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.27251v1",
+      "source": "arxiv",
+      "title": "Recursive transformers for semiconductor thermo-mechanical reliability",
+      "abstract": "Transformer-based surrogate models are increasingly used to replace expensive first-principles simulation in engineering design. But conventional transformer architectures are often over parameterized for the small, low-dimensional datasets typical of engineering design spaces, where large simulation data is expensive to generate. Under these conditions, excess parameter capacity leads to overfitting rather than improved accuracy, while also incurring unnecessary memory and compute overhead. This motivates a shift towards architectures that focus on additional compute rather than additional learnable parameters. This paper presents a hardware-aware evaluation of three recursive transformer paradigms for surrogate thermo-mechanical analysis of advanced packages: a)Tiny Recursive Model, b) our proposed Depth Recursive transformer, c) and a simple recursive transformer. We systematically compare their predictive performance (Recall, Mean Reciprocal Rank), parameter count, computational complexity (FLOPs), providing practical design guidelines for selecting recursive transformer architectures under resource-constrained scenarios. We validate this principle on two low-dimensional engineering prediction tasks: 1) thermo-mechanical reliability analysis of advanced semiconductor packages, where stress and warpage from thermal cycling must be evaluated repeatedly across a design-of-experiments sweep under costly finite element analysis (FEA). 2) Laplace PDE iterative numerical solver for capacitance field. Overall, recursive weight-sharing transformers provide an effective and generalizable trade-off between prediction accuracy, parameter efficiency, and computational cost for small data engineering surrogate modeling.",
+      "authors": [
+        "Kart-leong Lim"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-07-28T13:58:37+00:00",
+      "link": "https://arxiv.org/pdf/2607.27251v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Transformer surrogate modeling for semiconductor reliability, method transferable to SI/PI simulation",
+      "llm_evidence_cn": "面向半导体可靠性的Transformer代理建模方法，可迁移至SI/PI仿真",
+      "llm_evidence": "面向半导体可靠性的Transformer代理建模方法，可迁移至SI/PI仿真",
+      "canonical_evidence": "面向半导体可靠性的Transformer代理建模方法，可迁移至SI/PI仿真",
+      "llm_tldr_en": "This paper evaluates recursive transformer variants as surrogate models for thermo-mechanical reliability of advanced semiconductor packages. It addresses overfitting and compute overhead in small-data engineering design, showing that architectures focusing compute over parameters improve efficiency and accuracy for reliability analysis.",
+      "llm_tldr_cn": "半导体封装的热机械可靠性仿真成本高昂，而传统Transformer在小样本工程数据集上易过拟合且计算开销大。本文面向先进封装，评估了三种递归Transformer范式作为代理模型，在结构设计上以更多计算而非更多参数来提升性能。结果表明这类递归架构在小型数据集上能避免过拟合并节省资源，为封装可靠性快速评估提供了高效替代方案。",
+      "llm_tldr": "半导体封装的热机械可靠性仿真成本高昂，而传统Transformer在小样本工程数据集上易过拟合且计算开销大。本文面向先进封装，评估了三种递归Transformer范式作为代理模型，在结构设计上以更多计算而非更多参数来提升性能。结果表明这类递归架构在小型数据集上能避免过拟合并节省资源，为封装可靠性快速评估提供了高效替代方案。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
