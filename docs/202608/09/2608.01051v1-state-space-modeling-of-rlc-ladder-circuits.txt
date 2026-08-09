@@ -1,0 +1,1234 @@
+Title: State space modeling of RLC ladder circuits
+
+URL Source: https://arxiv.org/pdf/2608.01051v1
+
+Published Time: Tue, 04 Aug 2026 01:09:32 GMT
+
+Number of Pages: 18
+
+Markdown Content:
+# State space modeling of RLC ladder circuits 
+
+## Stephan Scholz 
+
+Large-scale electrical circuits span a wide range of research topics from highly integrated circuits in microelectronics up to power grids for cities and countries. As the complexity increases significantly by each additional component, we find a need to describe large-scale circuits in a manner easy to understand. In this article, we study cascades of simple circuits consisting of resistors, capacitors and inductors, which we call ladder circuits. Such electrical ladders are common in elec-tronics to design filters and they are also used in other disciplines, for example to describe diffusion or wave phenomena. In particular, we derive linear time-invariant state space models for three simple ladder types and we discuss the specific matrix structures of the large-scale second-order differential equations. Furthermore, we exemplify our findings with simulations to unveil the intrinsic dynamical behavior of each ladder type. 
+
+## Introduction       
+
+> RCuy
+> Input Voltage Output Voltage (a) RC Circuit Time Voltage  Input u Output y (b) Charging and Discharging Figure 1: RC Circuit with input voltage
+> uand measured voltage yin (a). Exam-ple of charging and discharging voltage dynamics in (b).
+
+As our modern world relies strongly on electrical systems, from nano-scale circuits up to large-scale power grids, studying and de-signing electrical circuits is a corner stone of our technological de-velopments. Aside explicit engineering application, circuits are also studied to understand and teach fundamental concepts like charging behavior or oscillations in physics, electrical engineering and control theory. For example, circuits with resistors and one capacitor or one inductor (we call them RC and RL circuit) exemplify charging and discharging dynamics as visualized in Fig. 1; while circuits with two (or more) capacitors or inductors show oscillations. In particu-lar, a LC circuit with ideal inductor and capacitor represents a linear, undamped oscillation of current and voltage. These observations are joined to the fact that capacitors and inductors store electric and mag-netic energy and the number of energy storages in a circuit defines the dynamical behavior and accordingly the order of the differential equation describing this dynamics. In other words, a high number of energy storages imply a high order of the describing differential equation. 1 1 The number of capacitors or inductors does not have to be equal to the order of the differential equation because in some cases these storages can be sum-marized, e.g. parallel capacitors or se-rial inductors. 
+
+This relation, number of energy storages and order of differential equation, is also used to study different physical phenomena like heat conduction in solids: RC circuits are well known to represent an analogy to thermal dynamics 2. We find this approach in simple 2 See on Wikipedia https: //en.wikipedia.org/wiki/Thermal_ conductance_and_resistance Section "Analogies and nomenclature". 
+
+models like the one-dimensional heat conduction, see [ 1, p. 62 ] and [2], and in advanced systems like an approximation of heat conduc-tion in a hotplate , see Figure 2.2 in [ 3, p. 19 ]. In electronics research, we find applications of multiple energy storages in form of passive filters, e.g. LC ladders, which are of-ten described in the frequency domain by complex-valued (rational) functions, see the articles [ 4, 5]. On one hand, describing the dynam-ical behavior in the frequency domain is well established in signal arXiv:2608.01051v1 [cs.CE] 2 Aug 2026 state space modeling of rlc ladder circuits 2
+
+processing and control theory for several decades; on the other hand, modern analysis and design methods rather treat and cover time do-main tools like state space models, see the articles [ 6, 7]. Further-more, we find in the literature enhanced tools like modified nodal analysis (abbr. as MNA) 3 to describe the temporal dynamics of large 3 MNA extends the standard nodal analysis of Kirchhoff’s voltage and current law. See wikipedia and this website for further information on MNA: 
+
+> https://lpsa.swarthmore.edu/ Systems/Electrical/mna/MNA1.html
+
+scale circuits via differential-algebraic system of equations (abbr. as DAE), see the book [ 8, p. 27 ff.] and the articles [ 9, 10 , 11 ]. We find such a DAE representation in various fields of mathematical model-ing, see [ 12 ], and scientific computing, e.g. in software toolkits like Modelica, see the documentation [ 13 , Appendix B], and Modeling-Tookit.jl, see the articles [ 14 , 15 ]. However, this general applicability comes with the cost of less simplicity (in contrast to ordinary differ-ential equations) and the need of enhanced numerical solvers, e.g. backward differentiation formula (abbr. as BDF), see [ 12 , 16 ] and the book [ 17 , Chapter VI]. In our article, we apply standard nodal analysis on three types of RLC ladders to build systems of ordinary differential equation (abbr. as ODE). In this manner, we avoid the (rather complicated) DAE modeling for a certain class of potentially large scale circuits and we present state space models with specific matrix structure. One of our RLC ladder types, see Fig. 1 (a), is considered in the article [18 ], to study a machine learning method to compute an unknown state space model from known data. 4 We point out that our RLC 4 Dynamic mode decomposition is used to find an unknown state space model from observed state trajectories. 
+
+ladder types 1 and 2, see Fig. 1 (a) and (b), are closely related to the (spatially approximated) telegraphers equation, which describes transmission lines, e.g. see [ 19 ]. Furthermore, we find a similar model of ladder type 1 in the study of port-Hamiltonian systems, see the articles [ 20 , 21 ] and the example “RCL Ladder Network (ODE)” in the software library PortHamiltonianBenchmarkSystems.jl [22 ]. In Section 1, we apply Kirchhoff’s laws to derive the differential equations for each of the three ladder types. These ODE are formu-lated in a state space formulation in Section 2, where we focus on the embedded matrix shapes. For each ladder, we state an example in Section and further, we assume two types of input signals to sim-ulate the temporal dynamics. Finally, we conclude our findings and give an outlook with future developments. 
+
+## 1 Circuit Modeling 
+
+We begin the modeling with a single circuit of a ladder and demon-strate afterwards how to scale this approach for a specific RLC lad-der. In our modeling approach, we consider nominal electronic com-ponents, i.e. a resistor has only a pure resistance without inductance or capacitance; and we assume a voltage source, which can supply an arbitrary signal. The voltages, currents and the quantities of the electrical components are noted in Table 1.5 The currents and volt- 5 We emphasize that we note the elec-trical coefficients in lower case letters here: r, ℓ, c instead of R, L, C.
+
+ages are functions of time, e.g. u : [ 0, T ] → R with final time T > 0 ,while the quantities rn, ℓn and cn are constant. We summarize the state space modeling of rlc ladder circuits 3
+
+rn ℓn
+
+cn
+
+im,n im,n
+
+is,n
+
+zn zn+1
+
+vn
+
+(a) Type 1: Capacitor as Shunt 
+
+zn zn+1
+
+vn
+
+ℓn cn
+
+rn
+
+(b) Type 2: Resistor as Shunt 
+
+zn zn+1
+
+vn
+
+rn cn
+
+ℓn
+
+(c) Type 3: Inductor as Shunt RLC 
+
+1
+
+RLC 
+
+2
+
+RLC 
+
+N
+
+u z1 z2 zN−1 y = zN
+
+(d) Circuit Ladder     
+
+> Figure 2: Considered types of RLC cir-cuits (a-c) and a ladder of such circuits (d). The voltage at the last shunt is the output, zn=y.
+
+voltages at the shunt as 
+
+z = [ z1, z2, . . . , zN]⊤ (1)and we consider the voltage at the last shunt as the output voltage 
+
+y(t) = zN(t). We consider the currents and voltages to be sufficiently smooth, e.g. twice smoothly differentiable in, vn, zn ∈ C 2([ 0, T ]) , and integrable, e.g. RT0 in(τ)dτ < ∞. According to Kirchhoff’s voltage law, the n-th shunt voltage is identified by 
+
+zn(t) = vn+1(t) + zn+1(t) = 
+
+" NX
+
+> k=n+1
+
+vk(t)
+
+#
+
++ zN (2)and the input voltage in the first circuit is z0 = u(t). As a ladder is a cascade of parallel circuits, the currents split up to the subsequent circuit n + 1 and the shunt as 
+
+im,n(t) = im,n+1(t) + is,n(t) = 
+
+> N
+
+X
+
+> k=n
+
+is,k(t) (3)with the current in the final circuit im,N(t) = is,N(t). We know that the ideal voltage x : [ 0, ∞) → R across the electrical components is 
+
+Sym. Explanation Domain 
+
+u Input voltage [0, T ] → R
+
+y Output voltage [0, T ] → R
+
+vn Voltage at main branch [0, T ] → R
+
+zn Voltage at shunt [0, T ] → R
+
+im,n Current through main branch [0, T ] → R
+
+is,n Current through shunt [0, T ] → R
+
+rn, ℓn, cn Resistor, Inductor, Capacitor R>0 \ { ∞}    
+
+> Table 1:Nomenclature of electrical states and quantities.
+
+state space modeling of rlc ladder circuits 4
+
+stated as Resistor: x(t) = r i (t) ,Inductor: x(t) = ℓ ∂ ti(t) ,Capacitor: x(t) = 1c
+
+Z t0
+
+i(τ)dτ .These identities and compositions according to Eq. ( 2) are modeled as linear operator mappings 
+
+F {i}(t) = a0 i(t) + a1 ∂ti(t) + a2
+
+Z t0
+
+i(τ)dτ 
+
+with coeffients a0, a1, a2 ∈ R≥0 corresponding to our electrical quantities (or its inverse); and we distinguish these mappings for the main branch and the shunt as 
+
+vn(t) = Fm,n {im,n} (t) , zn(t) = Fs,n {is,n} (t). (4)Subsequently, we apply the Kirchhoff laws and the operator map-pings on the considered types of RLC ladders, see Fig. 1, in order to derive the systems of linear ordinary differential equations. 
+
+1.1 Ladder Type 1: Capacitor as Shunt 
+
+In the first case, see Fig. 1 (a), the voltage in the main branch with a resistor and an inductor is stated as 
+
+vn(t) = rnim,n(t) + ℓn∂tim,n(t)= ( rn + ℓn∂t) im,n(t) = Fm,n {im,n} (t) (5)
+
+= [ rn + ℓn∂t]
+
+> N
+
+X
+
+> k=n
+
+is,k(t), (6)and the shunt voltage is noted as 
+
+zn(t) = 1cn
+
+Z t0
+
+is,n(τ)dτ = Fs,n {is,n} (t). (7)We compute the inverse operator mapping of Eq. ( 7) as 
+
+is,n(t) = F −1s,n {zn} (t) = cn∂tzn
+
+and insert it in Eq. ( 6) to yield 
+
+vn(t) = [ rn + ℓn∂t]
+
+> N
+
+X
+
+> k=n
+
+ck ∂tzk(t)=
+
+> N
+
+X
+
+> k=n
+
+h
+
+rn ck ∂t + ℓn ck ∂2t
+
+i
+
+zk(t) (8)We consider Kirchhoff’s voltage law ( 2) with the voltage in main branch ( 8) and so we calculate the shunt voltage for the n-th circuit, 
+
+n ∈ {2, . . . , N} as the differential equation 
+
+0 =
+
+> N
+
+X
+
+> k=n
+
+h
+
+ℓnck ∂2t zk(t) + rnck ∂tzk(t)
+
+i
+
++ zn(t) − zn−1(t). (9)state space modeling of rlc ladder circuits 5
+
+For the first circuit of the ladder, we have u(t) = z0(t) and so we note 
+
+u(t) = 
+
+> N
+
+X
+
+> k=1
+
+h
+
+ℓ1ck ∂2t zk(t) + r1ck ∂tzk(t)
+
+i
+
++ z1(t). (10 )
+
+1.2 Ladder Type 2: Resistor as Shunt 
+
+In the second case, see Fig. 1 (b), we have an inductor and a capacitor in the main branch and a resistor as shunt. Hence, we note the voltages as 
+
+vn(t) = ℓn ∂tim,n(t) + 1cn
+
+Z t0
+
+im,n(τ)dτ 
+
+= Fm,n {im,n} (t) and (11 )
+
+zn(t) = rn is,n(t) = Fs,n {is,n} (t). (12 )We differentiate both sides of Eq. ( 11 ) and we apply Eq. ( 3, ( 12 )) to obtain 
+
+∂tvn(t) = 
+
+
+
+ℓn∂2t + 1cn
+
+
+
+im,n(t)=
+
+
+
+ℓn∂2t + 1cn
+
+ " NX
+
+> k=n
+
+is,k(t)
+
+#
+
+=
+
+
+
+ℓn∂2t + 1cn
+
+ " NX
+
+> k=n
+
+zk(t)
+
+rk
+
+#
+
+.We evaluate the Kirchhoff voltage law ( 2) and we note the differential equation of the n-th circuit for k ∈ {2, . . . , N} as 
+
+0 =
+
+> N
+
+X
+
+> k=n
+
+ ℓn
+
+rk
+
+∂2t zk(t) + zk(t)
+
+rk cn
+
+
+
++ ∂t [zn(t) − zn−1(t)] (13 )for n ∈ {2, . . . , N}, and for n = 1 we have 
+
+∂tu(t) = 
+
+> N
+
+X
+
+> k=1
+
+ ℓ1
+
+rk
+
+∂2t zk(t) + zk(t)
+
+rk c1
+
+
+
++ ∂tz1(t). (14 )
+
+1.3 Ladder Type 3: Inductor as Shunt 
+
+In case of the third circuit type, see Fig. 1 (c), we note the voltages as 
+
+vn(t) = rn im,n(t) + 1cn
+
+Z t0
+
+im,n(τ)dτ , (15 )
+
+zn(t) = ℓn ∂tis,n(t). (16 )We differentiate Eq. ( 15 ) two times and we insert ∂tis,n(t) from Eq. (16 ). Hence, we yield the identity 
+
+∂2t vn(t) = 
+
+
+
+rn ∂t + 1cn
+
+
+
+∂tim,n(t)=
+
+
+
+rn ∂t + 1cn
+
+ " NX
+
+> k=n
+
+zk(t)
+
+ℓk
+
+#
+
+.state space modeling of rlc ladder circuits 6
+
+In a analog way as before, we note the differential equation of the 
+
+n − th circuit as 
+
+0 = ∂2t [zn(t) − zn−1(t)] +
+
+> N
+
+X
+
+> k=n
+
+ rn
+
+ℓk
+
+∂tzk(t) + zk(t)
+
+ℓk cn
+
+
+
+(17 )and for the first circuit, we note 
+
+∂2t u(t) = ∂2t z1(t) + 
+
+> N
+
+X
+
+> k=n
+
+ r1
+
+ℓk
+
+∂tzk(t) + zk(t)
+
+ℓk c1
+
+
+
+. (18 )
+
+## 2 State Space Model 
+
+We arrange our ODE from the Kirchhoff laws in the previous section to form a second-order differential equation with the two noticable matrix shapes and afterwards, we calculate the system matrix of the state-space model for each ladder type in a closed form. 
+
+2.1 Second-Order System 
+
+We collect the equations of the shunt voltages, e.g. Eq. ( 10 , 9), and we arrange them as a system of second-order equations 
+
+M ¨z(t) + D ˙z(t) + S z(t) = G μ(t) (19 )with matrices M, D, S ∈ RN×N, and vectors z as in Eq. (1) and 
+
+G = [ 1, 0, . . . , 0]⊤. The indices of our matrix elements denote a row 
+
+n ∈ {1, . . . , N} and column k ∈ {1, . . . , N}. This index notation refers to the indices in the voltage differential equations, e.g. Eq. ( 9, 10 ) etc. In Eq. ( 19 ), we need to distinguish the input signal for each ladder type as 
+
+μ(t) = 
+
+
+
+u(t) for ladder type 1, see Eq. ( 10 ), 
+
+∂tu(t) for ladder type 2, see Eq. ( 14 ) and 
+
+∂2t u(t) for ladder type 3, see Eq. ( 18 ). (20 )The symbols of these matrices, M, D and S, refer to the mass, damping and stiffness in mechanical systems. Our modeling ap-proach of the second-order systems results in two types of matrices: upper triangular shapes and lower finite difference stencils, see the matrix shapes in Fig. 2.1. The upper triangular matrices have a shape as 
+
+T =
+
+
+
+a1b1 a1b2 · · · a1bN−1 a1bN
+
+0 a2b2 · · · a2bN−1 a2bN
+
+... . . . . . . ... ...
+
+aN−1bN−1 aN−1bN
+
+0 · · · 0 aNbN
+
+
+
+(21 )where our coefficients (an, bk) with n, k ∈ {1, . . . , N} stand for the related electrical coefficients and their reciprocals, see Equations ( 9,state space modeling of rlc ladder circuits 7
+
+## ¨z+ ˙z+ z = 1 u
+
+(a) Capacitor as shunt 
+
+## ¨z+ ˙z+ z = 1 ˙u
+
+(b) Resistor as shunt 
+
+## ¨z+ ˙z+ z = 1 ¨u
+
+(c) Inductor as shunt  
+
+> Figure 3: Illustration of matrix shapes of the second-order differential equa-tions ( 19 ).
+
+10 ), ( 13 , 14 ) and ( 17 ,18 ), and Table 2. The finite difference stencil is 
+
+F =
+
+
+
+1 0 · · · 0
+
+−1 1 0 ...
+
+0 . . . . . . . . .... −1 1 00 · · · 0 −1 1
+
+
+
+. (22 )The matrix entries for each circuit type are noted in Table 2. The tri-angular matrix structure corresponds to a spatially discrete integra-tion and the finite difference shape to a differentiation. We assume, 
+
+rn, ℓn, cn ∈ R>0 \ { ∞} and so the resulting triangular matrices are invertible. Hence, we are able to reformulate the second-order sys-tem via inverse matrix multiplication as first-order system.                          
+
+> Table 2: Triangular Matrix Correspond-ing Values Shunt Matrix anbk
+> Capacitor Mℓnck
+> (Type 1)Drnck
+> Resistor Mℓnr−1k
+> (Type 2)Sc−1nr−1k
+> Inductor Drnℓ−1k
+> (Type 3)Sc−1nℓ−1k
+
+If we have equal component values, i.e. 
+
+r1 = r2 = . . . = rN,
+
+c1 = c2 = . . . = cN and 
+
+ℓ1 = ℓ2 = . . . = ℓN
+
+then we can simplify our modeling approach. The triangular matri-ces for each ladder type, Eq. (21 ), are filled with ones and scaled as 
+
+T = ( a b ) ˜T with ˜T = T|an=1,bn=1 =
+
+
+
+1 . . . 1
+
+. . . ...
+
+1
+
+ .
+
+The multipliers of the scaling a · b are listed in Table 2. Hence, we yield the differential equations 
+
+(ℓ c ) ˜T
+
+| {z } 
+
+> =M
+
+¨z(t) + ( r c ) ˜T
+
+| {z } 
+
+> =D
+
+˙z(t) + F|{z} 
+
+> =S
+
+z(t) = G μ (t) (23 a) for ladder type 1 (capacitor as shunt) with μ(t) = u(t),
+
+ ℓr
+
+
+
+˜T ¨z(t) + F ˙z(t) + 
+
+ 1r c 
+
+
+
+˜T z(t) = G μ (t) (23 b) state space modeling of rlc ladder circuits 8
+
+for ladder type 2 (resistor as shunt) with μ(t) = ∂tu(t) and 
+
+F ¨z(t) + 
+
+ rℓ
+
+ ˜T ˙z(t) + 
+
+ 1ℓ c 
+
+
+
+˜T z(t) = G μ (t) (23 c) for ladder type 3 (inductor as shunt) with μ(t) = ∂2t u(t).
+
+2.2 First-Order System 
+
+Subsequently, we reformulate Eq. ( 19 ) to yield a first-order system in the common state space formulation ˙x(t) = A x(t) + B μ(t)
+
+y(t) = C⊤ x(t)
+
+with states x : [ 0, T ] → R2N , control input signal μ : [ 0, T ] → R,output signal y : [ 0, T ] → R, system matrix A ∈ R2N ×2N , and vectors 
+
+B, C ∈ R2N . Hence, we firstly find ¨z(t) + M−1 D ˙z(t) + M−1 S z(t) = M−1 G μ(t) (24 )where we specify the matrices 
+
+AI = − M−1 S and AII := − M−1 D (25 )and vector ˜G := M−1 G, and we note secondly ¨z(t) = AI z(t) + AII ˙z(t) + ˜G z(t).We introduce the new states x(t) = [ x1(t), x2(t)] with x1(t) = z(t),
+
+x2(t) = ∂tz(t), and we define the voltage at the last shunt as our output signal 
+
+y(t) := zN(t) = 
+
+ 0, . . . , 0
+
+| {z } 
+
+> (N−1)zeros
+
+, 1, 
+
+> Nzeros
+
+z }| { 
+
+0 . . . , 0
+
+ x1
+
+x2
+
+!
+
+= C⊤x(t).
+
+-1
+
+# . = 
+
+> (a) Tridiagonal Matrix L
+
+-1
+
+# . = 
+
+> (b) Diagonal or Triangular Matrix P
+
+-1
+
+# . =         
+
+> (c) Dense Matrix Q
+> Figure 4:Matrix multiplications to yield sub-matrices AIand AII in the state-space model.
+
+So, we formulate the state space as 
+
+˙x1
+
+˙x2
+
+!
+
+= 0 IAI AII 
+
+!
+
+| {z }
+
+> =: A
+
+x1
+
+x2
+
+!
+
++ 0
+
+˜G
+
+!
+
+| {z } 
+
+> =: B
+
+μ(t), (26 a) 
+
+y(t) = C⊤ x(t). (26 b) In Eq. (26 a), in matrix A we assume a zero sub-matrix 0 = 0N×N
+
+and in vector B we mean a row vector 0 = 0N. If matrix M in Eq. (19 ,24 ) is not well conditioned, i.e. M has a large condition number 
+
+κ = max i |λi|  
+
+> min i|λi|
+
+≫ 1 with eigenvalues λi and i ∈ {1, . . . , 2N }, then a numerical computation of sub-matrices AI and AII as in Eq. (25 )might be prone to numerical errors. Hence, we find a inverse matrix 
+
+M−1 and the concluding multiplications, Eq. ( 25 ), in a closed form. We have matrix M either in a triangular shape, see Eq. (21 ), or as a finite difference stencil, see Eq. (22 ). Thus, we have three types of matrix multiplications as sketched in Fig. 4 and we derive them subsequently. state space modeling of rlc ladder circuits 9
+
+Inverse Triangular Matrix 
+
+To compute sub-matrices AI and AII for circuit types (a) and (b), we have matrix M in a triangular form T, see Eq. (21 ). We find the inverse of T as the upper finite difference stencil shape 
+
+T−1 =
+
+   
+
+> 1a1b1
+> −1a2b1
+
+0 · · · 00 1a2 b2 
+
+> −1a3b2
+
+...... . . . . . . . . . 00 1aN−1 bN−1 
+
+> −1aNbN−1
+
+0 · · · 0 1aN bN
+
+
+
+.Here, we distinguish two scenarios: a multiplication of T−1 with a finite difference stencil F, see Eq. ( 22 ), and with triangular matrix 
+
+T. In the first case, we define the resulting matrix as 
+
+L := − T−1 · F (27 )and we see that it is a tridiagonal matrix 6 as 6 Matrix L has the shape of a second-order difference stencil, which approxi-mates the one-dim. Laplace operator. 
+
+L =
+
+
+
+γ1 β1
+
+α2 γ2 β2
+
+. . . . . . . . .
+
+αN−1 γN−1 βN−1
+
+αN −αN
+
+
+
+(28 )with sub-diagonal entries 
+
+αn = 1an bn
+
+, βn = 1an+1 bn
+
+and diagonal elements 
+
+γn = − [ αn + βn] = −1an bn
+
++ −1an+1 bn
+
+for n ∈ {1, . . . , N}. Matrix shape L is portrayed in Fig. 4 (a). In the second case, we have the second upper triangular matrix as 
+
+^T := T|an= ˜an,bn= ˜bn with coefficients ˜ an and ˜ bn for n ∈ {1, . . . , N}.We define the product as 
+
+P := − T−1 · ^T
+
+which has a triangular form again, see Fig. 4 (b), as 
+
+P =
+
+
+
+α1 β1,2 β1,3 . . . β1,N
+
+α2 β2,3 . . . β2,N
+
+. . . ...
+
+αN−1 βN−1,N
+
+αN
+
+
+
+(29 )with entries 
+
+αn = ˜an
+
+an
+
+and βn,k =
+
+ ˜an
+
+an
+
+− ˜an+1
+
+an+1
+
+ ˜bk
+
+bn
+
+. (30 )state space modeling of rlc ladder circuits 10 
+
+In Table 2, we see that the coefficients bn are equal for both triangular matrices and so we have ˜ bk ≡ bk for k ∈ {1, . . . , N}. The coefficients 
+
+an and ˜ an differ in general, but if they are scaled 7 as ˜ an = α a n for 7 We have such a case if all values of the related electrical elements are equals as described in the end of this section. 
+
+all n ∈ {1, . . . , N} with ϵ ∈ R, then we yield a pure diagonal matrix 
+
+P = α I. (31 )with identity matrix I = diag (1, . . . , 1).The input signal μ is scaled by vector B = [ 0, ˜G]⊤ and we find ˜G
+
+as 
+
+˜G = T−1 G = T−1
+
+
+
+10
+
+...
+
+0
+
+ =
+
+ 
+
+> 1a1b1
+
+0
+
+...
+
+0
+
+ (32 )and further, we yield 
+
+B =
+
+
+
+0
+
+...
+
+0 
+
+> 1a1b1
+
+0
+
+...
+
+0
+
+
+
+← (N + 1)-th position .
+
+Inverse Finite Difference Stencil 
+
+In case of ladder type 3, we need to evaluate another matrix multi-plication. Here, we invert the finite difference stencil ˜ F and we obtain a lower triangular matrix 
+
+F−1 =
+
+
+
+1 0 0
+
+... . . . 01 · · · 1
+
+ .We multiply this lower triangular matrix with T as in Eq. ( 21 ) and we define the result as 
+
+Q := − F−1 · T
+
+where Q = [ qn,k] with entries 
+
+qn,k = bk
+
+> min {n,k}
+
+X
+
+> i=1
+
+ai
+
+for n, k ∈ {1, . . . , N}. The resulting matrix shape is illustrated in Fig. 
+
+4 (c). If all values of bk are equal as 
+
+b1 = . . . = bN =: ˜b,state space modeling of rlc ladder circuits 11 
+
+then this matrix multiplication results in a symmetric shape 
+
+Q =
+
+
+
+˜q1 ˜q1 ˜q1 . . . ˜q1 ˜q1
+
+˜q1 ˜q2 ˜q2 . . . ˜q2 ˜q2
+
+˜q2 ˜q3 . . . ˜q3 ˜q3
+
+... ... ... . . .˜q1 ˜q2 ˜q3 ˜qN−1 ˜qN−1
+
+˜q1 ˜q2 ˜q3 ˜qN−1 ˜qN
+
+
+
+(33 )with ˜ qn = ˜b nP
+
+> i=1
+
+ai, see Fig. 5 for illustration. 
+
+# Q =      
+
+> Figure 5: Illustraion of symmetric dense matrix Qwhere common rows and columns have equal entries.
+
+We note the scaling vector B of input signal μ in this case as 
+
+B =
+
+
+
+0
+
+...
+
+011
+
+...
+
+1
+
+
+
+← (N + 1)-th position because we have here ˜G = F−1 G = [ 1, . . . , 1]⊤.
+
+Equal Component Parameters 
+
+We consider equal component values as in the end of Section 2.1,and we formulate the first-order differential equations analog to the second-order formulae, see Eq. (23 ). Hence, we yield for Eq. (28 )and ( 33 ) the matrices L = ( a b ) ˜L and Q = ( a b ) ˜Q with 
+
+˜L =
+
+
+
+−2 11 −2 1
+
+. . . . . . . . .
+
+1 −2 11 −1
+
+
+
+and ˜Q =
+
+
+
+1 1 . . . 1 11 2 . . . 2 2
+
+... ... . . .... ... N − 1 N − 11 2 N − 1 N
+
+
+
+and constant coefficient values a and b. Furthermore, matrix P be-comes a scaled identity matrix, see Eq. ( 29 ) and ( 31 ). In the next step, we formulate the state space as in Eq. ( 26 a). Here, we find the first row for all three circuit types as ˙ x1(t) = x2(t) and the second row as ˙x2(t) = 
+
+ 1ℓ c 
+
+
+
+˜L
+
+| {z }
+
+> =AI
+
+x1(t) + 
+
+ rℓ
+
+
+
+I
+
+| {z } 
+
+> =AII
+
+x2(t) + 1ℓ c 
+
+
+
+10
+
+...
+
+0
+
+ μ(t) (34 a) for ladder type 1 (capacitor as shunt), ˙x2(t) = 
+
+ 1ℓ c 
+
+
+
+I x1(t) + 
+
+ rℓ
+
+ ˜L x2(t) + 
+
+ rℓ
+
+
+
+10
+
+...
+
+0
+
+ μ(t) (34 b) state space modeling of rlc ladder circuits 12 
+
+for ladder type 2 (resistor as shunt) and ˙x2(t) = 
+
+ 1ℓ c 
+
+
+
+˜Q x1(t) + 
+
+ rℓ
+
+ ˜Q x2(t) + 
+
+
+
+11
+
+...
+
+1
+
+ μ(t) (34 c) for ladder type 3 (inductor as shunt). We remind that the system input μ in Eq. ( 34 ) relates for each ladder type to the circuit input u
+
+as described in Eq. ( 20 ). 
+
+## 3 Simulation Examples              
+
+> Table 3: SIMULATION PARAMETERS Val. Description N10 Num. of Circuits
+> r2Resistance in [Ω]
+> c3Capacitance in [F]
+> ℓ5Inductance in [H]
+
+For each proposed ladder type, we assume an example consisting of ten sub-circuits. The resistor, capacitor and inductor values are equal for all sub-circuits, they are listed in Table 3. So, we have the scaling factors 1ℓ c = 115 and rℓ = 25 for Eq. ( 34 ). We demonstrate the dynamical behavior of our ladder systems with two types of input signals. Firstly, we consider a step input and secondly a sweep signal. We remind, that the voltage at the last shunt is our output signal 
+
+y(t) = z10 (t), see Eq. ( 2.2). 
+
+3.1 Step Input Signal 
+
+In the first example, we assume a step input signal 
+
+μ(t) = 
+
+
+
+1 for t ∈ [50 , 1500 ],
+
+0 for t ∈ [0, 50 ) ∪ (1500 , 3000 ] (35 )with time t in [s] and we compute the response for three state space models ( 34 ). 8 The input signal and the simulation results are visu- 8 We remark that the original circuit in-put u(t) is the first and second anti-derivative of this step signal in case of ladder type 2 and 3, resp. 
+
+alized in Fig. 3.1. We find a charging and discharging dynamics in case of ladder type 1 in Fig. 3.1 (b), and oscillations for ladder type 2
+
+and 3 in Fig. 3.1 (c), (d). Comparing the oscillations, we have a long and intensive oscillation for ladder type 2 in the last shunt, while the step response drives quickly to zero for type 3.
+
+3.2 Symmetric Sweep Input Signal 
+
+In this second example, we assume a symmetric sweep signal as circuit input u(t), which starts and terminates at zero Volt. Hence, in case of ladder type 2 and 3, see Fig. 1 (b) and (c), we need to differentiate the input voltage once and twice, see Eq. (20 ). The two-sided chirp signal is constructed in two steps: we assume an oscillation 
+
+f(t, p) = sin (p π g (t, p)) (36 )with an embedded function 
+
+g(t, p) := tanh 
+
+ tp
+
+
+
+,state space modeling of rlc ladder circuits 13 Time t in [s] 0 500 1000 1500 2000 2500 3000 0.0 0.5 1.0 
+
+> Voltage in [ V]
+
+Step Input  
+
+> (a) Step Signal μ
+
+0.0 0.5 1.0 Time t in [s] 0 500 1000 1500 2000 2500 3000 0.0 0.5 1.0 
+
+> Voltage in [ V]
+
+n=2 n=10  
+
+> (b) Type 1: Capacitor as Shunt
+
+-20 -10 010 20 Time t in [s] 0 500 1000 1500 2000 2500 3000 -1 01
+
+> Voltage in [ V] × 10  − 1
+
+n=2 n=10  
+
+> (c) Type 2: Resistor as Shunt
+
+-2000 -1000 01000 2000 Time t in [s] 0 500 1000 1500 2000 2500 3000 -10 -5 0510 
+
+> Voltage in [ V] × 10  − 3
+
+n=2 n=10      
+
+> (d) Type 3: Inductor as Shunt Figure 6:Step input signal in (a) and the resulting voltages at position n
+
+∈  
+
+> {2,10 }of all three ladder types in (b) to (d).
+
+state space modeling of rlc ladder circuits 14 
+
+and we choose parameter p = 100 and time shift t → [t − 700 ] to yield the original voltage signal 
+
+u(t) = f(t − 700 , 100 ).
+
+Next, we formulate the first and second derivative of u(t). So, we differentiate symbolically the oscillation function, Eq. ( 36 ). The first derivative results in 
+
+∂tf(t, p) = π cos (p π g (t, p)) 
+
+h
+
+1 − g(t, p)2i
+
+and the second derivative is 
+
+∂2t f(t, p) = − π2 sin (p π g (t, p)) 
+
+h
+
+1 − g(t, p)2i2
+
+− 2 πp cos (p π g (t, p)) 
+
+h
+
+g(t, p) − g(t, p)3i
+
+.Again, we set p = 100 and the time shift as above for the first and second derivative to yield 
+
+∂tu(t) = ∂tf(t − 700 , 100 ) and ∂2t u(t) = ∂2t f(t − 700 , 100 ).We visualize the two-sided sweep signal in Fig. 3.2 (a), and the re-sulting responses of three sub-circuits, namely voltages z2(t), z6(t)
+
+and z10 (t), in Fig. 3.2 (b) to (d). We remark that the colors of in-put signals and their responses match. The response of ladder type 
+
+1, Fig. 3.2 (b), shows a typical low-pass filter behavior because the (high-frequency) oscillations are reduced from one sub-circuit to the next one. In Fig. 3.2 (c), we notice for z2 a filtering behavior for high-frequency parts. Furthermore, we find vibrations are kicked in z6
+
+and z10 when μ(t) = ∂tu(t) transits from steady (zero) to oscillation and later again for the backward transition. We find a similar behav-ior for this ladder type in the first example, see Fig. 3.1 (c). Hence, such a dynamics seems to be an inherit element of this ladder type. In case of ladder type 3, the shape of input function μ(t) = ∂2t u(t)
+
+occurs in the observed signals in Fig. 3.2 (d), too. Thus, the signal is put through the ladder only less with filtering. In a nutshell, we designed our three ladder types with the same electrical component values and we figured typical dynamics like charging and discharging, see Fig. 3.1 (b), and significant oscillations Fig. 3.1 (c) and Fig. 3.2 (c), (d). However, each ladder type exposes its own specific dynamical behavior and thus, they need to be analyzed in particular. 
+
+## Conclusion and Outlook 
+
+In this article, we describe a state space modeling for three types of electrical ladders. Here, we formulate the system matrix A and its sub-matrices AI and AII for each ladder type and, in particular, for non-uniform coefficients. We present two simulations for our ladder models with step and oscillation input signals to emphasize the dynamical behavior of each ladder type. state space modeling of rlc ladder circuits 15 −1.0 
+
+> −0.5 0.0 0.5 1.0
+> −3.0
+> −1.5 0.0 1.5 3.0
+
+Time t in [s] 0 300 600 900 1200 1500 1800          
+
+> −10
+> −50510
+> Original 𝜇 =u
+> 1. Derivative 𝜇 =u̇
+> 2. Derivative 𝜇 =ü
+
+(a) Input Signals -60 -30 030 60 -30 -15 015 30 Time t in [s] 0 300 600 900 1200 1500 1800 -30 -15 015 30  
+
+> Voltage in [V] × 10  − 2
+> n=2 n=6 n=10
+
+(b) Type 1: Capacitor as Shunt -60 -30 030 60 -20 -10 010 20 Time t in [s] 300 600 900 1200 1500 1800 -20 -10 010 20 
+
+> Voltage in [V] × 10  − 2
+> n=2 n=6 n=10
+
+(c) Type 2: Resistor as Shunt -60 -30 030 60 -20 -10 010 20 Time t in [s] 450 600 750 900 1050 -20 -10 010 20  
+
+> Voltage in [V] × 10  − 2
+> n=2 n=6 n=10
+
+(d) Type 3: Inductor as Shunt Figure 7: Symmetric sweep input signal and its derivatives in (a) and the result-ing voltages at position n ∈ {2, 6, 10 } of all three ladder types in (b) to (d). 
+
+As this article is intended to focus only on the state space model-ing, various related topics are missing. For example, we do not pro-vide here an (in-depth) analysis of the proposed models, i.e. eigen-value and eigenvector analysis. In the sense of control systems, we need to discuss popular matrix-based methods for controllability, observability, system identification and feed-forward and feedback control design. For these points, we need check how to treat our matrix shapes of AI and AII in a smart way to simplify such compu-tations. We also find interesting study cases in the field of scientific machine learning to compute the system models, see again article [18 ]. Moreover, the story of circuit configurations is not complete yet with three ladder types, i.e. we skipped parallel connections in the main branch. Hence, we find several open points need to be discussed in latter contributions. 
+
+## Source Code 
+
+The simulations in Section 3 are implemented with J ulia program-ming [ 23 ]. As part of this research project, the author develops the state space modeling of rlc ladder circuits 16 
+
+Julia package Ellasy.jl 
+
+> https://github.com/stephans3/Ellasy.jl
+
+to build the state space models of electrical ladder systems. The source code of our examples is stored in EllasyExamples.jl 
+
+> https://github.com/stephans3/EllasyExamples.jl
+
+.As part of our simulations, we use the libraries DifferentialEquations.jl 
+
+[24 ] to solve the ODE numerically with Tsit 5 solver [ 25 ], and Makie.jl 
+
+[26 ] to create the figures 3.1 and 3.2.
+
+## Acknowledgments 
+
+This article is inspired by student projects and theses at the Univer-sity of Applied Sciences Ravensburg-Weingarten, which were super-vised by Lothar Berger and S. Scholz. 
+
+## References 
+
+[1] Lienhard IV JH, and Lienhard V JH. A heat transfer textbook .Cambridge MA: Phlogiston Press; 2020 .[2] Berger J, Gasparin S, Dutykh D, Mendes N. On the comparison of three numerical methods applied to building simulation: finite-differences, RC circuit approximation and a spectral method. arXiv preprint arXiv: 1905 .13035 . 2019 .[3] Han Y. Temperature sensing and control in multi-zone semiconductor thermal processing . Doctoral thesis. National University of Singapore, Singapore. 2009 .[4] Chen HX, Yang L. Electrical characteristics of n-ladder network with external load. Indian J. of Physics . 2020 ; 94 (6): 801 –809 . doi: 
+
+10 .1007 /s 12648 -019 -01508 -5.[5] Gerbracht EHA. “On the engineers’ new toolbox” or Analog Circuit Design, using Symbolic Analysis, Computer Algebra, and Elementary Network Transformations. arXiv preprint arXiv: 1101 .0270 . 2010 .[6] Pates, R. Passive and reciprocal networks: From simple models to simple optimal controllers. arXiv preprint arXiv: 2201 .12228 .
+
+2022 .[7] Piotrowska E, Rogowski K. Time-Domain Analysis of Fractional Electrical Circuit Containing Two Ladder Elements. Electronics .
+
+2021 ; 10 (4). doi: 10 .3390 /electronics 10040475 .[8] Najm F N. Circuit simulation . New Jersey: Wiley-IEEE Press; 
+
+2010 . 318 .state space modeling of rlc ladder circuits 17 
+
+[9] Tischendorf C. Topological index-calculation of DAEs in circuit simulation. ZAMM-J. of Applied Mathematics and Mechanics/Zeitschrift für Angewandte Mathematik und Mechanik .
+
+1998 ; 78 (S 3): 1103 –1104 .[10 ] Tischendorf C, Estévez Schwarz D. Mathematical problems in circuit simulation. Mathematical and Computer Modelling of Dynamical Systems . 2001 ; 7(2), 215 –223 .[11 ] März R, Schwarz D E, Feldmann U, Sturtzel S, Tischendorf C. Finding beneficial DAE structures in circuit simulation. In: Jäger W, Krebs HJ, editors. Mathematics—Key Technology for the Future: Joint Projects between Universities and Industry . 1. Heidelberg: Springer Berlin; 2003 . p 413 –428 .[12 ] Campbell S L, et al. Differential-algebraic equations. 
+
+Scholarpedia , 3(8): 2849 . 2008 . doi: 10 .4249 /scholarpedia. 2849 .[13 ] Modelica Association. Modelica Language Specification A Unified Object-Oriented Language for Systems Modeling Version 3.7. 2026 . url: 
+
+> https://specification.modelica.org/maint/3.7/
+
+.[14 ] Ma Y, Gowda S, Anantharaman R, Laughman C, Shah V, Rackauckas C. Modelingtoolkit: A composable graph transformation system for equation-based modeling. arXiv preprint arXiv: 2103 .05244 . 2021 .[15 ] Rackauckas C, et. al. Composing modeling and simulation with machine learning in Julia. Proceedings of 2022 Annual Modeling and Simulation Conference (ANNSIM) . 2022 : 1–17 . IEEE. doi: 10 .23919 /ANNSIM 55834 .2022 .9859453 .[16 ] Gear B. Backward differentiation formulas. Scholarpedia ,
+
+2(8): 3162 . 2007 . doi: 10 .4249 /scholarpedia. 3162 .[17 ] Wanner G, Hairer E. Solving ordinary differential equations II .New York: Springer Berlin Heidelberg; 1996 .[18 ] Peters D, Scholz S, Berger L. Dynamic Mode Decomposition for Cascaded Electrical Circuits. ICoMS ’ 23 : Proceedings of the 
+
+2023 6 th International Conference on Mathematics and Statistics .
+
+2023 : 147 –151 . doi: 10 .1145 /3613347 .3613370 .[19 ] Shanak H, Florea O, Alshaikh N, Asad J. Mathematical and numerical approach for telegrapher equation. Acta Technica Napocensis-Series: Applied Mathematics, Mechanics, and Engineering . 2020 ; 63 (2). [20 ] Polyuga R V, Van der Schaft A. Structure preserving model reduction of port-Hamiltonian systems by moment matching at infinity. Automatica . 2010 ; 46 (4): 665 –672 .doi: 10 .1016 /j.automatica. 2010 .01 .018 .state space modeling of rlc ladder circuits 18 
+
+[21 ] Gugercin S, Polyuga R V, Beattie C, Van der Schaft A. Structure-Preserving Tangential Interpolation for Model Reduction of Port-Hamiltonian Systems. Automatica . 2012 ; 48 (9): 
+
+1963 –1974 . doi: 10 .1016 /j.automatica. 2012 .05 .052 .[22 ] Schwerdtner P, Sabbadini N, Nicodemus J. PortHamiltonianBenchmarkSystems.jl. v 0.2.0. 2025 . url: 
+
+> https://github.com/Algopaul/ PortHamiltonianBenchmarkSystems.jl
+
+.[23 ] Bezanson J, Edelman A, Karpinski S, Shah V B. Julia: A fresh approach to numerical computing. SIAM review . 2017 ; 59 (1): 
+
+65 –98 .[24 ] Rackauckas C, et al., SciML/DifferentialEquations.jl: v 8.0.1.
+
+Zenodo . 2026 . doi: 10 .5281 /zenodo. 20838104 .[25 ] Tsitouras C. Runge-Kutta pairs of order 5(4) satisfying only the first column simplifying assumption. Comput. Math. Appl. 2011 ;
+
+62 (2): 770 –775 . doi: 10 .1016 /j.camwa. 2011 .06 .002 .[26 ] Danisch S, Krumbiegel J. Makie.jl: Flexible high-performance data visualization for Julia. Journal of Open Source Software . 2021 ;
+
+6(65 ): p. 3349 .

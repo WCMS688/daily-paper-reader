@@ -1,0 +1,53 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-09T20:47:24.635548+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2608.01051v1",
+      "source": "arxiv",
+      "title": "State space modeling of RLC ladder circuits",
+      "abstract": "Large-scale electrical circuits span a wide range of research topics from highly integrated circuits in microelectronics up to power grids for cities and countries. As the complexity increases significantly by each additional component, we find a need to describe large-scale circuits in a manner easy to understand. In this article, we study cascades of simple circuits consisting of resistors, capacitors and inductors, which we call ladder circuits. Such electrical ladders are common in electronics to design filters and they are also used in other disciplines, for example to describe diffusion or wave phenomena. In particular, we derive linear time-invariant state space models for three simple ladder types and we discuss the specific matrix structures of the large-scale second-order differential equations. Furthermore, we exemplify our findings with simulations to unveil the intrinsic dynamical behavior of each ladder type.",
+      "authors": [
+        "Stephan Scholz"
+      ],
+      "primary_category": "cs.CE",
+      "categories": [
+        "cs.CE",
+        "eess.SY"
+      ],
+      "published": "2026-08-02T07:35:39+00:00",
+      "link": "https://arxiv.org/pdf/2608.01051v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "State-space models of RLC ladder networks, directly applicable to PDN and interconnect equivalent circuit modeling",
+      "llm_evidence_cn": "对RLC梯形网络建立状态空间模型，可直接用于PDN与互连等效电路建模",
+      "llm_evidence": "对RLC梯形网络建立状态空间模型，可直接用于PDN与互连等效电路建模",
+      "canonical_evidence": "对RLC梯形网络建立状态空间模型，可直接用于PDN与互连等效电路建模",
+      "llm_tldr_en": "Derives LTI state-space models for RLC ladder circuits and analyzes large-scale matrix structures, offering a reusable modeling framework for PDN and interconnect networks.",
+      "llm_tldr_cn": "大规模RLC梯形电路广泛存在于微电子与电力系统中，但缺乏通用的状态空间描述。本文针对三种典型梯形结构推导了线性时不变状态空间模型，并分析了大系统矩阵的特殊结构，便于后续仿真与降阶。该建模框架可迁移应用于电源分配网络（PDN）与互连的等效电路建模和优化。",
+      "llm_tldr": "大规模RLC梯形电路广泛存在于微电子与电力系统中，但缺乏通用的状态空间描述。本文针对三种典型梯形结构推导了线性时不变状态空间模型，并分析了大系统矩阵的特殊结构，便于后续仿真与降阶。该建模框架可迁移应用于电源分配网络（PDN）与互连的等效电路建模和优化。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Power integrity and PDN modeling optimization",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

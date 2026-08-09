@@ -1,0 +1,24 @@
+{
+  "label": "2026-08-09",
+  "date": "2026-08-09",
+  "generated_at": "2026-08-09T20:48:02",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202608/09/2608.01051v1-state-space-modeling-of-rlc-ladder-circuits",
+      "section": "quick",
+      "title_en": "State space modeling of RLC ladder circuits",
+      "authors": "Stephan Scholz",
+      "date": "2026-08-02",
+      "pdf": "https://arxiv.org/pdf/2608.01051v1",
+      "score": "7.0",
+      "evidence": "对RLC梯形网络建立状态空间模型，可直接用于PDN与互连等效电路建模",
+      "tldr": "大规模电路系统因组件众多而复杂，本文研究由电阻、电容和电感级联构成的梯形电路，此类结构在滤波设计及扩散、波动现象建模中常见。作者针对三种简单梯形类型推导了线性时不变状态空间模型，重点分析了其大规模二阶微分方程的特定矩阵结构，并通过仿真揭示各梯形电路的内在动态特性。该工作为理解和描述大型电路提供系统化方法。",
+      "tags": "query:si-pi",
+      "abstract_en": "Large-scale electrical circuits span a wide range of research topics from highly integrated circuits in microelectronics up to power grids for cities and countries. As the complexity increases significantly by each additional component, we find a need to describe large-scale circuits in a manner easy to understand. In this article, we study cascades of simple circuits consisting of resistors, capacitors and inductors, which we call ladder circuits. Such electrical ladders are common in electronics to design filters and they are also used in other disciplines, for example to describe diffusion or wave phenomena. In particular, we derive linear time-invariant state space models for three simple ladder types and we discuss the specific matrix structures of the large-scale second-order differential equations. Furthermore, we exemplify our findings with simulations to unveil the intrinsic dynamical behavior of each ladder type.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

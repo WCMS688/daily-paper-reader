@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-08-09 <!--dpr-date:20260809-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202608/09/2608.01051v1-state-space-modeling-of-rlc-ladder-circuits" data-sidebar-item="{&quot;title&quot;: &quot;State space modeling of RLC ladder circuits&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2608.01051v1-state-space-modeling-of-rlc-ladder-circuits&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;对RLC梯形网络建立状态空间模型，可直接用于PDN与互连等效电路建模&quot;}">State space modeling of RLC ladder circuits</a>
   * 2026-08-07 <!--dpr-date:20260807-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202608/07/2608.05339v1-powerscope-ml-based-intra-cycle-power-estimation" data-sidebar-item="{&quot;title&quot;: &quot;PowerScope: ML-based Intra-Cycle Power Estimation&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2608.05339v1-powerscope-ml-based-intra-cycle-power-estimation&quot;, &quot;score&quot;: &quot;9.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;基于机器学习的周期内功耗估计，支撑PDN设计与电压跌落分析&quot;}">PowerScope: ML-based Intra-Cycle Power Estimation</a>
