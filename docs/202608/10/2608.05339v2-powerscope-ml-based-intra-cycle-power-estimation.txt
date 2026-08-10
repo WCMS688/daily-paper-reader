@@ -1,0 +1,287 @@
+Title: PowerScope: ML-based Intra-Cycle Power Estimation
+
+URL Source: https://arxiv.org/pdf/2608.05339v2
+
+Published Time: Mon, 10 Aug 2026 01:13:18 GMT
+
+Number of Pages: 7
+
+Markdown Content:
+# PowerScope : ML-based Intra-Cycle Power Estimation 
+
+## Jayanth Balasubramanian 
+
+School of ECE, Purdue University West Lafayette, USA jbalasub@purdue.edu 
+
+## Sujay Pandit 
+
+School of ECE, Purdue University West Lafayette, USA pandit8@purdue.edu 
+
+## Radha Vaidya 
+
+Qualcomm Inc., San Diego San Diego, USA rvaidya@qti.qualcomm.com 
+
+## Anand Raghunathan 
+
+School of ECE, Purdue University West Lafayette, USA raghunathan@purdue.edu 
+
+## Abstract 
+
+Power estimation at sub-clock-cycle temporal resolutions is critical for tasks such as power delivery network (PDN) design, dynamic voltage droop analysis, and pre-silicon power side-channel security evaluation. Designers commonly rely on commercial post-layout gate-level power analysis tools for these tasks, but these flows are computationally expensive and scale poorly with design size and workload length. Machine learning (ML)-based power estimation frameworks have shown promise in accelerating power estima-tion, but prior efforts only address average power or per-cycle power estimation. We propose PowerScope , the first ML-based intra-cycle power estimation framework. PowerScope operates purely on RTL simulation traces at inference time, eliminating the need for post-layout gate-level simulation and power analysis per workload. Across a diverse benchmark suite, PowerScope achieves 
+
+5.88% median and 9% mean absolute percentage error compared to commercial post-layout gate-level power estimates while running 
+
+∼80 × faster. We further demonstrate that PowerScope ’s predictions can be reliably used for the downstream task of pre-silicon power side-channel leakage assessment. 
+
+## Keywords 
+
+Power estimation, Intra-cycle Power, Machine Learning 
+
+## 1 Introduction 
+
+Power consumption is a first-order design constraint in integrated circuits. Designers rely on fast and accurate power estimation throughout the design cycle to guide design decisions. Certain critical tasks further demand power estimates at intra-cycle tempo-ral granularity, i.e., at multiple instances within a single clock cycle. Power delivery network (PDN) design, for example, requires detect-ing peak current loads within a cycle to quantify voltage droop [30] and perform timing closure [32]. Similarly, pre-silicon power side-channel analysis relies on input-dependent power signatures [16]. Fine-grained intra-cycle power analysis allows designers to reliably prevent information leakage by localizing where within a cycle the leak originates, allowing targeted mitigation. Existing power analysis tools span multiple levels of abstraction, with each level striking a different trade-off between accuracy, tem-poral granularity, and runtime. Lower-level flows of post-synthesis and post-layout deliver high accuracy and fine-grained temporal resolution because they capture the necessary physical details. How-ever, this fidelity comes at a steep computational cost. Gate-level power evaluation requires logic synthesis followed by gate-level RTL Design App. Workload RTL Simulation  
+
+> Traditional Flow PowerScope Inference Flow ( 80x avg. speedup )
+> Post-layout Gate-level Simulation Power Analysis Intra-cycle Power
+> (a) (b)
+> PowerScope
+> Synthesis and P&R
+
+Figure 1: (a) PowerScope Inference vs. the Traditional flow for intra-cycle power generation (b) Per-bin power comparison of PowerScope prediction and Traditional flow, on the 64-bit Integer Radix-4 Divider [10] over 25 cycles. Speedup achieved is ∼ 80 × end-to-end measured across designs. (excludes the one-time logic synthesis and layout cost) 
+
+simulation (GLS), while layout-level analysis additionally requires place-and-route (P&R), parasitic extraction, and SDF (Standard De-lay Format) back-annotation of timing prior to post-layout GLS. Both flows scale poorly with design size and workload length, mak-ing them a bottleneck for large designs [33, 37, 38]. Machine learning-based power estimation has shown promise in alleviating these bottlenecks by improving the speed-accuracy trade-off [15, 20, 22, 31, 33, 37, 39]. Models are typically trained to map simulation traces or activity patterns at a higher level of abstraction (e.g., RTL) to power consumption labels collected from a lower level (e.g., gate-level netlist). However, prior work has addressed only average or per-cycle power estimation, leaving intra-cycle power estimation unexplored. We show that existing ML-based power estimation techniques do not directly apply to the intra-cycle setting. We propose PowerScope , the first ML-based framework to esti-mate post-layout intra-cycle power directly from RTL simulation traces. Our key contributions are as follows: 
+
+• Novel training methodology tailored to intra-cycle power. 
+
+We identify and address challenges such as imbalanced power 
+
+> 1arXiv:2608.05339v2 [cs.AR] 7 Aug 2026 Jayanth Balasubramanian, Sujay Pandit, Radha Vaidya, and Anand Raghunathan
+
+distributions, that arise at finer temporal resolutions. We fur-ther propose an STA-guided feature selection technique that identifies the subset of RTL signals relevant to predicting power consumption at each interval within the clock cycle. 
+
+• RTL-only inference with post-layout power accuracy. At inference time, PowerScope operates entirely at the RTL level, eliminating post-layout GLS and power analysis for each work-load. It achieves 9% mean absolute percentage error relative to the commercial post-layout power estimation flow while running 
+
+∼80 × faster. 
+
+• Downstream application validation. We demonstrate that 
+
+PowerScope ’s intra-cycle power predictions enable a key down-stream application of pre-silicon power side-channel analysis, with minimal accuracy loss. 
+
+## 2 Background 2.1 Intra-Cycle Power 
+
+Let 𝑇 𝑐𝑙𝑘 denote the clock period of the design under evaluation. Power estimates can be obtained at various temporal resolutions. Average power estimation reports a single power value aggregated over an entire testbench or workload. Per-cycle power analysis reports one power value per clock cycle. Intra-cycle power analysis refers to the case where power is sampled at 𝐵 uniformly spaced temporal offsets within each clock cycle as illustrated in Figure 3 (a). Specifically, we divide 𝑇 clk into 𝐵 bins , each spanning a sampling period 𝑇 𝑠 = 𝑇 clk /𝐵 that sets the temporal resolution. Bin 𝑏 𝑖 captures power at a fixed temporal offset 𝑡 𝑖 = 𝑖 × 𝑇 𝑠 within the cycle, for 
+
+𝑖 ∈ { 0, 1, . . . , 𝐵 − 1}.
+
+## 3 Related Work 
+
+Power estimation is an important challenge in integrated circuit design, and has been extensively studied across various levels of design abstraction for over three decades. At the architectural and micro-architectural levels, tools such as WattWatcher [17], Mc-PAT [18] and McPAT-calib [34] provide fast estimates but operate at a coarse temporal granularity, reporting average power con-sumed across an entire application. At the RTL level, many early power estimation techniques used statistical and probabilistic ap-proaches to accelerate power estimation, and were also limited to average RTL power [6, 7, 21, 23, 24, 29]. Other early works built linear regression models mapping hardware performance counter events to power [5] or mapping RTL switching activity to power consumed by RTL components [2], representing precursors to re-cent approaches to ML-based power estimation. Commercial signoff tools such as Synopsys PrimeTime PX [27] provide accurate intra-cycle power estimates, but require synthesis, layout, post-layout GLS and power analysis to get intra-cycle power, making them subject to the scalability bottlenecks discussed in Section 1. At the transistor level, FastSPICE [8] simulators accelerate transistor-level simulation to achieve faster results, but remain computationally prohibitive for large designs [25]. Recent years have seen growing interest in applying ML to im-prove the speed-accuracy trade-off in power estimation. One class of methods models power as a linear function of a small subset of RTL signals, which are referred to as power proxies . SIMMANI [15] selects its power proxies based on mutual information between signal toggles and power consumption. APOLLO [33], DEEP [31] TRAINING   
+
+> (One-time cost for each design)
+> INFERENCE
+> +
+> Synthesis and P&R Feature Extraction Bin-wise Trained Models RTL Design Micro-Benchmarks Power labels Model Training RTL Simulation Feature Extraction Model Inference Intra-cycle Power
+> No time-consuming Layout-level sim. and Power Analysis PowerScope Flow
+> RTL Simulation Layout-level Sim. & Power Analysis Training Dataset Generation Features
+> +RTL Design Application Workloads
+> Stratified Subsampling
+
+Figure 2: PowerScope Training and Inference flow 
+
+and ML-Power [22] make use of MCP (Minimax Concave Penalty) regularization [35] during regression, which automatically selects power proxies while building power models through regression. A second class of methods, including GRANNITE [37] and PRI-MAL [39], uses neural network based models to learn mappings between switching activity and power consumption. These methods achieve better accuracy but incur a much higher cost to generate the large datasets required, and to perform training and inference. Recent works have shown that tree-based models are well suited for power estimation tasks, and even outperform deep learning approaches including Transformers and Graph-based networks in the context of RTL power prediction [9]. PRIMAL evaluates gradi-ent tree boosting alongside neural networks, finding it competitive with neural networks in accuracy at significantly lower training and inference cost [39]. ML-based power estimation at intra-cycle temporal resolution remains unaddressed by all prior works. As discussed in Section 1, intra-cycle estimates are essential for tasks such as PDN design, timing closure and pre-silicon power side-channel security analy-sis. Addressing this gap requires fundamentally new approaches to feature selection and modeling. PowerScope fills this gap by proposing the first ML-based framework to achieve post-layout power accuracy at intra-cycle temporal resolution, while operating exclusively at the RTL level during inference. 
+
+## 4 Methodology 
+
+PowerScope operates in two phases, as illustrated in Figure 2. Dur-ing the one-time training phase, the RTL design and a set of micro-benchmarks drive two parallel pipelines. The first runs RTL simula-tion followed by feature extraction to produce the input features for training. The second runs logic synthesis, place-and-route (P&R), and post-layout gate-level power analysis, followed by stratified subsampling to obtain ground-truth intra-cycle power labels. The training phase incurs a one-time cost of synthesis, P&R, and post-layout GLS to generate the training dataset. During inference, PowerScope requires only the RTL design and the application workload. The RTL is simulated to extract the required features, which are then fed to the trained models to pro-duce the intra-cycle power trace, entirely bypassing the expensive step of post-layout gate-level simulation and power analysis. We describe the dataset generation, training and inference phases of 
+
+PowerScope in further detail in the following subsections.        
+
+> 2PowerScope : ML-based Intra-Cycle Power Estimation (c)
+> (a) (b)
+> 𝑇 𝑐𝑙𝑘 = 10 & 𝑇𝑠
+> Clock
+> b5b6b8b9b0b1b2b3
+> 𝑇 𝑠
+> b4b0
+> b7
+
+Figure 3: (a) Illustration of temporal bins 𝑏 0 through 𝑏 9 within a single clock cycle. Histogram of per-bin power across 60K simulated cycles for two temporal bins of an OpenTitan AES design [19]. (b) Bin 𝑏 7 is dominated by a leakage mode at low power, with a smaller activity mode at higher power, pro-ducing a bimodal distribution (c) Bin 𝑏 3 exhibits a unimodal leakage-dominated distribution 
+
+## 4.1 Training Dataset Generation 
+
+4.1.1 Power Labels and Stratified Sub-sampling. The ground-truth intra-cycle power labels are generated through a standard post-layout gate-level power estimation flow. First, the RTL design is synthesized to a gate-level netlist, followed by P&R. Post-layout GLS is performed with back-annotated parasitics for a set of micro-benchmarks. The resulting traces in the form of Value Change Dump (VCD) files obtained from simulations are subsequently used as inputs to a power analysis tool. The power analysis tool also takes as input the desired sampling resolution 𝑇 𝑠 and generates the ground-truth power labels for each of the 𝐵 bins within each clock cycle. Most ML-based power estimation methods train on a random subset of the simulated cycles, i.e. , perform a random splitting of the dataset into the training and validation or test sets. However, we observed that using random sampling to train power models for each bin leads to accuracy degradation for bins with imbalanced power distributions. We attribute this to the highly skewed power distribution for certain bins as shown in Figure 3. Bins that are very early in the clock cycle capture most of the signal transitions fol-lowing the clock edge and tend to exhibit switching activity across most simulated cycles, producing a unimodal distribution centered around higher power values (not depicted in Figure 3). Some bins occurring later in the cycle exhibit no activity in most cycles, and also exhibit a unimodal distribution, but concentrated at leakage-level power as shown in Figure 3 (c). In contrast, bins at certain temporal offsets within the clock cycle exhibit dynamic switching only under specific input patterns. As shown in Figure 3 (b), this produces a bimodal distribution. It has a low-power mode corre-sponding to leakage-dominated cycles, and a separate higher-power mode corresponding to cycles with significant dynamic switching activity. A naive random selection of cycles could undersample the leakage-dominated region and oversample the high-activity cycles, or vice versa, leading to poor coverage across the full power range during training. We address this using stratified subsampling to intelli-gently select a subset of cycles from the pool of simulated cycles. We apply stratified subsampling on a per-bin basis during training dataset construction. For each bin requiring stratified subsampling, we sort the cycles by their power values and partition them into 𝐾 equal population strata. We then sample approximately ⌈𝑁 /𝐾 ⌉ cycles uniformly from each stratum where 𝑁 is the target training set size. If a stratum contains fewer than the requested number of cycles, the shortfall is redistributed proportionally to denser strata so that the target dataset size 𝑁 is met exactly. This quantile-based stratification ensures all power regimes are well represented in the training set, regardless of how imbalanced the original distribution is. Quantile-based stratification has the highest impact on accuracy for bins with bi-modal power distributions (Figure 3 (b)), where the high activity cycles would be under-represented by naive random sampling. For such bins, the procedure substantially re-balances the training dataset, allowing for good coverage across the full power range. For other bins (Figure 3 (c)), the per-quantile populations closely resemble those produced by random sampling, and the procedure has negligible effect. 
+
+4.1.2 Feature Selection. Prior ML-based per-cycle power estima-tion works select a small subset of RTL signals as power proxies us-ing L1-regularization methods such as the minimax concave penalty (MCP) to predict per-cycle power. MCP automatically down-selects a small set of power proxies from the full candidate set. However, extending this approach to intra-cycle estimation is impractical. MCP requires an iterative hyperparameter search to balance estima-tion accuracy against the number of selected proxies. At intra-cycle granularity, this search must be repeated independently for each of the 𝐵 bins in the design, significantly increasing training cost. We address this limitation with a static timing analysis (STA) guided feature selection method. Our method is based on the fol-lowing observation: Since gates have non-zero propagation delays, different gates switch at different temporal offsets within the clock cycle. STA can be used to derive a switching window for each gate. Gate 𝑔 contributes to the dynamic power of bin 𝑏 𝑖 only if its switch-ing window overlaps with the timing window represented by bin 𝑏 𝑖 .Thus, each bin 𝑏 𝑖 has a distinct subset of gates, called the potential switching subset (PSS), that contribute to its dynamic power. The PSS for each bin is typically small relative to the total set of gates in the design, and is simply and efficiently constructed using the gate-level netlist and the STA timing report. We trace the transitive fan-in of each gate 𝑔 in the PSS of a bin back to registers, to obtain a subset of registers in the RTL that determine the switching activity in bin 𝑏 𝑖 . For each such selected register 𝑅 and each cycle 𝑐 , we record two binary features that are derived from cycle-level RTL simulation. The first is the register toggle which indicates switching activity and the second is the state of 𝑅 in the previous cycle ( 𝑐 − 1). Together, these features capture the input-dependent component of switching power. These per-bin feature sets constitute the input to the ML model. The full procedure for STA-guided feature selection is described in Algorithm 1. 
+
+> 3Jayanth Balasubramanian, Sujay Pandit, Radha Vaidya, and Anand Raghunathan
+
+Algorithm 1: STA-Guided Feature Selection 
+
+Input: 𝐺 = Gate-level netlist, SDF (Standard Delay Format) file with delays, 𝐵 , 𝑇 𝑠 
+
+Output: 𝐹 𝑏 for each 𝑏 ∈ { 0, . . . , 𝐵 − 1} ; // Bin-specific feature set // Step 1: Identify bin-specific Register set 
+
+for each gate 𝑔 ∈ 𝐺 do 
+
+𝑡 min (𝑔 ), 𝑡 max (𝑔 ) ← min/max arrival times at output of 𝑔 ;
+
+/* Derived from SDF */ 
+
+for 𝑏 ← 0 to 𝐵 − 1 do if [𝑡 min (𝑔 ), 𝑡 max (𝑔 )] overlaps with bin 𝑏 then 
+
+𝑟 ← Fan_in_Registers (𝑔, 𝐺 ) ; /* Trace back to registers driving the gate */ 
+
+𝑅 𝑏 ← 𝑅 𝑏 ∪ 𝑟 ; // Per-bin Register set // Step 2: Build feature set from RTL simulation 
+
+for each bin 𝑏 ∈ { 0, . . . , 𝐵 − 1} do for each register 𝑅 ∈ 𝑅 𝑏 , each cycle 𝑐 do 
+
+toggle (𝑅, 𝑐 ) ← 𝑅 (𝑐 ) ⊕ 𝑅 (𝑐 − 1)
+
+state (𝑅, 𝑐 ) ← 𝑅 (𝑐 − 1)
+
+𝐹 𝑏 .append ({ toggle (𝑅, 𝑐 ), state (𝑅, 𝑐 )}) ;
+
+return 𝐹 𝑏 for all 𝑏 ∈ { 0, . . . , 𝐵 − 1};
+
+## 4.2 Model Training 
+
+ML-based power estimation works predominantly employ linear models [15, 22, 31, 33], which express power as a weighted sum of se-lected RTL features. While computationally efficient and amenable to hardware implementation, linear models cannot capture non-linear effects inherent to gate-level power dissipation, such as glitch generation and propagation due to unbalanced path delays, and logic reconvergence. Deep neural network-based approaches [37, 39] achieve good accuracy but require large training datasets and incur significant training and inference costs [9]. Tree ensemble models provide a middle ground by being sample-efficient compared to neural networks while also capturing non-linear patterns effectively [9, 36, 39]. We hence adopt LightGBM [13] as our per-bin power model. We train one independent LightGBM model per bin 𝑏 𝑖 . The input to each model is the bin-specific feature set 𝐹 𝑏 , derived from STA-guided selection, consisting of the register toggle indicator and register state for each selected register 𝑅 . Since bins vary in their power distributions, we adapt the tree ensemble capacity on a per-bin basis. We perform a grid search over tree-ensemble hyper-parameters to pick the best configuration for each bin. Bins with high-activity use wide and shallow ensembles with a large number of leaf nodes, low depth and light regularization. This is attributed to many simultaneously toggling registers whose individual switching contributions combine to determine the bin’s total power. Deeper and more strongly regularized ensembles are selected for bins that exhibit a wide dynamic range of power across cycles. For the bins which are dominated by leakage power, small heavily regularized ensembles are selected, since a low-capacity model can effectively predict the bin’s power. 
+
+## 4.3 Inference 
+
+During inference, PowerScope operates entirely at the RTL level. Given an application workload, RTL simulation is first performed to produce cycle-by-cycle traces of all registers. The bin-specific STA-guided feature sets identified during training are then extracted from the resulting trace. These bin-specific features are fed to the corresponding LightGBM models for each bin to estimate intra-cycle power. PowerScope thus accelerates intra-cycle power esti-mation by bypassing computationally expensive post-layout GLS and power analysis, which is only required during training. 
+
+## 5 Experiments & Results 5.1 Experimental Setup 
+
+Tool Flow: All RTL and post-layout gate-level simulations are performed using Synopsys VCS [28]. Logic synthesis is performed using Synopsys Design Compiler [26], and place-and-route is per-formed using Cadence Innovus [4], both targeting the GlobalFoundries 22nm technology node [11]. Ground-truth intra-cycle power labels are generated using Synopsys PrimeTime PX [27]. All ML model training and inference experiments are conducted on an Intel Xeon server with 2 TB of RAM and 512 cores. 
+
+Designs Evaluated: We evaluate PowerScope on designs of vary-ing sizes and architectural complexities, spanning combinational, multi-cycle, and pipelined datapaths. These include arithmetic cir-cuits from the EPFL benchmark suite [1], a multi-cycle 64-bit integer radix-4 divider, a pipelined 64-bit floating-point fused multiply-accumulate (FMA) module used in an open-source RISC-V proces-sor [10], and the AES cipher core from OpenTitan [19]. For each design, a representative set of micro-benchmarks are chosen that cover diverse switching patterns and power ranges to construct the training dataset. 
+
+Metrics: We report the following metrics for the selected designs, averaged across all 𝐵 bins: mean absolute percentage error (MAPE), median absolute percentage error (MedAPE), and Spearman correla-tion 𝜌 . Spearman 𝜌 is computed by pooling the test set predictions from all 𝐵 bins into a single ranked list and measuring the cor-relation between the predicted and ground-truth power values. Absolute accuracy (MAPE and MedAPE) and rank correlation ( 𝜌 )capture different aspects of power estimation, and their relative im-portance is application dependent. Some downstream applications, such as pre-silicon power side-channel analysis, rely primarily on the trend of the power samples in the trace rather than the absolute accuracy [3], whereas tasks such as PDN design and IR signoff require absolute power accuracy, because errors propagate into voltage droop and timing analysis [30, 32]. 
+
+## 5.2 Results 
+
+Table 1 summarizes PowerScope ’s accuracy across designs. For all designs, metrics are measured on workloads completely unseen during model training. Across designs, PowerScope achieves an average MedAPE of 5.88% and an average MAPE of 9.05% .The FMA design exhibits an average MAPE of 13 .2% alongside 
+
+𝜌 = 0.96, indicating that the model reliably preserves the trend of power within the cycle. The combinational Fixed-point adder achieves the lowest absolute error across all designs (MAPE = 2 .79%, MedAPE = 2 .4%), averaged across all the bins, even though the 𝜌 is low (0 .276). This can be attributed to the fact that in most cycles, the 
+
+> 4PowerScope : ML-based Intra-Cycle Power Estimation
+
+Design #Cells Type 𝑇 𝑐𝑙𝑘 (ns) 𝑇 𝑠 (ps) 𝐵 Median APE MAPE Spearman (𝜌 ) Speedup Average (%) Average (%) Correlation 
+
+Fixed-point adder ∗ 635 Arithmetic 7.50 750 10 2.40 2.79 0.276 15.2 ×
+
+Radix-4 divider † 7,746 Arithmetic 2.25 750 3 9.53 14.81 0.818 83.3 ×
+
+FMA ‡ 8,910 Arithmetic 10.0 2000 5 8.44 13.20 0.959 248.4 ×
+
+EPFL square ∗ 10,906 Arithmetic 4.00 500 8 13.84 17.81 0.763 49.2 ×
+
+AES † 40,619 Cryptographic 5.00 500 10 2.64 6.27 0.945 207.6 ×
+
+Table 1: Design characteristics and PowerScope accuracy across designs, evaluated at layout-level. Design type: ∗ combinational, † multi-cycle, ‡ pipelined. 
+
+switching activity settles within the early bins (earlier as compared to other designs), while most of the bins occurring later in the cycle see no activity and are dominated by leakage power. Hence, there is limited relative power variation among the bins, leading to a low 
+
+𝜌 value that is not a meaningful metric in this scenario. 
+
+Design #Bins # Selected proxies Total # 
+
+(𝐵 ) per-bin(min–max) RTL Signals 
+
+Adder 10 64–256 1,276 Radix-4 3 75–138 9,389 FMA 5 329–626 7,485 EPFL Square 8 63–63 18,550 AES 10 51–2,303 47,855 
+
+Table 2: STA-guided feature selection selects 1–20% of RTL signals across designs as power proxies 
+
+5.2.1 Power Proxy Selection Speedup: Table 2 reports the number of power proxies per bin selected by the STA-guided procedure across all designs (described in Sec 4.1.2). For the smallest design, no bin uses more than 20 .1% of the available RTL signals, while in the largest design, AES, the highest fraction of selected proxies just drops to 5 .0%. Bin 𝑏 0 captures the rising clock edge, where in general the largest switching activity occurs, and hence 𝑏 0 consistently requires most proxies across all designs. Subsequent bins in the cycle require progressively smaller numbers of proxies. In the AES design, for instance, the count drops from 2 ,303 in 𝑏 0 to 51 in the last bin, 𝑏 9.Prior ML-based per-cycle power estimators [22, 31, 33] use MCP-based proxy selection and require a separate iterative hyperpa-rameter search for each of the 𝐵 bins, scaling feature-selection cost linearly with 𝐵 . As the sampling period 𝑇 𝑠 is made finer for higher temporal resolution, 𝐵 grows proportionally, making this per-bin MCP-based feature selection increasingly expensive. For a fair comparison of proxy selection time, for MCP-based methods, we perform hyperparameter search with 5 values of MCP penalty for each bin and select the model that performs the best with the least number of proxies. PowerScope ’s STA-guided approach pro-duces all the bin-specific proxies in a single pass over the gate-level netlist and SDF file independent of 𝐵 . Figure 4 shows the feature selection speedup (right y-axis) and prediction error (left y-axis) for PowerScope and [22]. PowerScope achieves an average 12 .5×
+
+speedup over ML-Power across the five designs, while also being equally or more accurate than ML-Power. 
+
+5.2.2 Advantage of Stratified Subsampling: PowerScope employs stratified subsampling, which ensures uniform coverage across the entire power range for each bin. To quantify its advantage, we ML-Power 
+
+Figure 4: Accuracy and feature-selection speedup of 
+
+PowerScope vs ML-Power [22] Fixed-point adder EPFL square Radix-4 divider FMA AES  
+
+> 0510 15 20 25
+> Average MAPE (%)
+> 2.79% 17.80% 14.81% 13.20% 6.27% 2.79% 18.07% 15.14% 16.36% 7.06%
+> Stratified subsampling Random sampling
+
+Figure 5: PowerScope ’s stratified subsampling (green) vs. random sampling (orange) 
+
+compare it with random sampling. Figure 5 shows the comparison of the MAPE achieved by using both sampling strategies during training for all designs. All other components of the training flow remain unchanged. Fixed-point adder, EPFL Square, and Radix-4 divider designs show little improvement for stratified subsampling over random sampling because these designs are dominated by bins with unimodal power distributions (similar to Figure 3(c)). So, both sampling techniques achieve similar coverage of the power distribution. The FMA and AES designs, in contrast, contain more bins with a bimodal power distribution (similar to Figure 3(b)). As a result, random sampling is not able to reliably achieve coverage of both power modes. For the FMA design, using stratified sampling, the bins having bimodal distributions show MAPE reductions of 3-9% over random sampling. Beyond accuracy, stratified subsampling also yields a higher Spearman 𝜌 , indicating that it helps better preserve the relative ordering of power values across cycles. 
+
+5.2.3 Varying Sampling periods: Figure 6 shows the effect of vary-ing the sampling period 𝑇 𝑠 on prediction accuracy across designs. 
+
+> 5
+
+Jayanth Balasubramanian, Sujay Pandit, Radha Vaidya, and Anand Raghunathan 500 750 1500 0% 2% 4% 6% 8% 10% 12%                    
+
+> Error (%)
+> 9.5% 2.8% 3.0% 8.9% 2.4% 2.5%
+> Fixed-point adder
+> Average MAPE Average Median APE
+> 250 450 750 0% 10% 20% 30% 40% 34.9% 23.6% 14.8% 8.7% 12.0% 9.5%
+> Radix-4 divider
+> 400 500 800
+> Sampling period Ts(ps)
+> 0% 5% 10% 15% 20%
+> Error (%)
+> 17.6% 17.8% 16.6% 13.6% 13.8% 13.2%
+> EPFL square
+> 500 1000 2000
+> Sampling period Ts(ps)
+> 0% 5% 10% 15% 20% 25%
+> 20.7% 14.2% 13.2% 14.6% 10.4% 8.4%
+> FMA
+
+Figure 6: Effect of sampling period 𝑇 𝑠 on prediction accuracy 15.2x 49.2x 83.3x 248.4x 207.6x 
+
+Figure 7: Runtime breakdown and speedup of PowerScope 
+
+inference (left bar per design) versus the traditional flow (right bar per design) for intra-cycle power across workload of 100k cycles. Speedup (annotated in blue) ranges from 15 .2×
+
+on the Fixed-point adder design to 248 .4× on FMA design. 
+
+For the Fixed-point Adder, Radix-4 Divider, and FMA designs, coars-ening 𝑇 𝑠 reduces the prediction error. This is expected, as coarser bins pool power over wider temporal windows, compressing the per-bin dynamic range and yielding a smoother prediction target for the per-bin model. However, as seen in the Fixed-point Adder design, this improvement can saturate beyond a point as it achieves the best accuracy at 𝑇 𝑠 =750 ps with no further gain at 𝑇 𝑠 =1500 ps. The MAPE reduction with coarser 𝑇 𝑠 depends on how sharply concentrated each design’s intra-cycle switching is within the clock period. Designs like the Fixed-point Adder and the Radix-4 Divider designs have a short toggle window after which switching activity subsides for the remainder of the cycle. At finer 𝑇 𝑠 , the boundary between active switching and idle periods is divided into many nar-row bins, each capturing only a fraction of the transition. In some cycles, these bins observe switching power while in others, only leakage power is captured, producing bimodal per-bin distributions that are inherently harder to predict at the RTL level. Coarsening 𝑇 𝑠 
+
+merges these narrow slices, averaging over the transition and yield-ing smoother per-bin power distributions. The EPFL square design, in contrast, is a combinational design in which switching activ-ity ripples almost across the entire cycle, with no concentrated toggling. Most bins, therefore, have a similar kind of activity at various 𝑇 𝑠 , and hence coarsening only marginally improves the model accuracy. 
+
+5.2.4 PowerScope Inference speedup vs Commercial flow: Figure 7 compares the end-to-end runtime of PowerScope inference against the traditional post-layout power analysis flow across designs. The traditional power analysis flow comprises post-layout GLS (VCS) followed by power analysis (PrimeTime PX), while the PowerScope 
+
+flow includes RTL simulation followed by per-bin model inference run in parallel. In the traditional flow, both post-layout GLS and PrimeTime PX scale poorly with design size and workload length. 
+
+PowerScope eliminates these bottlenecks by replacing them with RTL simulation followed by per-bin model evaluation. The per-bin model’s inference cost depends only on the number of selected proxies and the complexity of the tree ensemble (as discussed in Section 4.2). 
+
+## 6 Downstream Application 
+
+A motivating use case for fine-grained power analysis is pre-silicon power side-channel leakage detection [14]. We use the Test Vector Leakage Assessment (TVLA) methodology described in [12], which computes Welch’s 𝑡 -statistic for each bin. We evaluated the masked OpenTitan AES cipher core post-layout, by computing the TVLA 
+
+𝑡 -statistic independently from PrimeTime PX (ground truth) and 
+
+PowerScope (predicted). The PowerScope -based 𝑡 -statistic closely tracks the PrimeTime PX ground truth, deviating by only 11 .7% on average across all bins. This confirms that PowerScope en-ables rapid TVLA analysis directly from RTL, bypassing the time-consuming traditional power analysis flow. b0 b1 b2 b3 b4 b5 b6 b7 b8 b9
+
+> Intra-cycle bin
+> 510 20 50 100
+> Welch's  |T| (log scale)
+> PrimeTime PX PowerScope
+> CLK
+
+Figure 8: TVLA Welch’s |𝑇 | statistic per intra-cycle bin for the AES design ( 𝑇 𝑠 = 500 ps, 𝐵 = 10 ), comparing PrimeTime PX ground truth (green) against PowerScope predictions (orange) 
+
+## 7 Conclusion 
+
+We presented PowerScope , the first ML-based framework to esti-mate intra-cycle power directly from RTL simulation traces. We proposed a novel training methodology that addresses the imbal-anced power distributions that emerge at the intra-cycle temporal resolution through stratified subsampling. Our STA-guided feature selection identifies a compact, bin-specific set of power proxies, reducing the feature-selection cost by ∼12 .5× over prior ML-based power proxy selection methods. PowerScope achieves ∼80 × in-ference speedup over Synopsys PrimeTime PX while estimating power to within 5 .88% median and 9% mean absolute percentage error. We further validated that PowerScope ’s intra-cycle power predictions transfer to the downstream application of pre-silicon power side-channel analysis using TVLA. 
+
+## Acknowledgment 
+
+This work was supported in part by Qualcomm. The authors would also like to thank Aradhana Mohan Parvathy for her valuable tech-nical guidance and insightful discussions throughout this work. 
+
+6PowerScope : ML-based Intra-Cycle Power Estimation 
+
+## References 
+
+[1] Luca Amarù, Pierre-Emmanuel Gaillardon, and Giovanni De Micheli. 2015. The EPFL Combinational Benchmark Suite. In Proceedings of the 24th International Workshop on Logic & Synthesis (IWLS) . Mountain View, CA, USA. [2] Alessandro Bogliolo, Luca Benini, and Giovanni De Micheli. 2000. Regression-based RTL power modeling. ACM Trans. Des. Autom. Electron. Syst. 5, 3 (July 2000), 337–372. doi:10.1145/348019.348081 [3] Eric Brier, Christophe Clavier, and Francis Olivier. 2004. Correlation Power Analysis with a Leakage Model. In Cryptographic Hardware and Embedded Systems – CHES 2004 (Lecture Notes in Computer Science, Vol. 3156) , Marc Joye and Jean-Jacques Quisquater (Eds.). Springer, Berlin, Heidelberg, 16–29. doi:10.1007/978-3-540-28632-5_2 [4] Cadence Design Systems, Inc. 2026. Innovus Implementation Sys-tem. https://www.cadence.com/en_US/home/tools/digital-design-and-signoff/ soc-implementation-and-floorplanning/innovus-implementation-system.html [5] G. Contreras and M. Martonosi. 2005. Power prediction for intel XScale® processors using performance monitoring unit events. Proceedings of the In-ternational Symposium on Low Power Electronics and Design (2005), 221–226. doi:10.1145/1077603.1077657 2005 International Symposium on Low Power Electronics and Design ; Conference date: 08-08-2005 Through 10-08-2005. [6] J. Costa, J. Monteiro, L.M. Silveira, and S. Devadas. 1999. A probabilistic approach for RT-level power modeling. In ICECS’99. Proceedings of ICECS ’99. 6th IEEE International Conference on Electronics, Circuits and Systems (Cat. No.99EX357) ,Vol. 2. 911–914 vol.2. doi:10.1109/ICECS.1999.813262 [7] José Costa, Luís Silveira, Srinivas Devadas, and José Monteiro. 2004. Power Estimation Using Probability Polynomials. Design Automation for Embedded Systems 9 (2004), 19–52. doi:10.1007/s10617-005-5344-5 [8] Electronic Design. n.d.. What’s the Difference Between SPICE and FastSPICE Circuit Simulators. https://www.electronicdesign.com/technologies/test-measurement/article/21801299/whats-the-difference-between-spice-and-fastspice-circuit-simulators Accessed: 2026-05-27. [9] Wenji Fang, Yao Lu, Shang Liu, Qijun Zhang, Ceyu Xu, Lisa Wu Wills, Hongce Zhang, and Zhiyao Xie. 2023. MasterRTL: A Pre-Synthesis PPA Estimation Frame-work for Any RTL Design. In Proceedings of the 2023 IEEE/ACM International Conference on Computer-Aided Design (ICCAD) . 1–9. doi:10.1109/ICCAD57390. 2023.10323951 [10] Neel Gala, Arjun Menon, Rahul Bodduna, G. S. Madhusudan, and V. Kamakoti. 2016. SHAKTI Processors: An Open-Source Hardware Initiative. In 29th Interna-tional Conference on VLSI Design (VLSID) . IEEE, 7–8. doi:10.1109/VLSID.2016.130 [11] GlobalFoundries. 2026. 22FDX Platform. https://www.cmc.ca/globalfoundries-22fdx-fdsoi-22-nm/ [12] Gilbert Goodwill, Benjamin Jun, Josh Jaffe, and Pankaj Rohatgi. 2011. A Test-ing Methodology for Side-Channel Resistance Validation. In NIST Non-Invasive Attack Testing Workshop . Cryptography Research Inc. [13] Guolin Ke, Qi Meng, Thomas Finley, Taifeng Wang, Wei Chen, Weidong Ma, Qiwei Ye, and Tie-Yan Liu. 2017. LightGBM: A Highly Efficient Gradient Boosting Decision Tree. In Advances in Neural Information Processing Systems 30 (NeurIPS) .Curran Associates, Inc., 3149–3157. [14] Pantea Kiaei, Zhenyuan Liu, Ramazan Kaan Eren, Yuan Yao, and Patrick Schau-mont. 2021. Saidoyoki: Evaluating side-channel leakage in pre- and post-silicon setting. Cryptology ePrint Archive, Paper 2021/1235. https://eprint.iacr.org/ 2021/1235 [15] Donggyu Kim, Jerry Zhao, Jonathan Bachrach, and Krste Asanović. 2019. Sim-mani: Runtime Power Modeling for Arbitrary RTL with Automatic Signal Selec-tion. In Proceedings of the 52nd Annual IEEE/ACM International Symposium on Microarchitecture (MICRO) . ACM, 1050–1062. doi:10.1145/3352460.3358322 [16] Paul Kocher, Joshua Jaffe, and Benjamin Jun. 1999. Differential Power Analysis. In Advances in Cryptology — CRYPTO’ 99 , Michael Wiener (Ed.). Springer Berlin Heidelberg, Berlin, Heidelberg, 388–397. doi:10.1007/3-540-48405-1_25 [17] Michael LeBeane, Jee Ho Ryoo, Reena Panda, and Lizy Kurian John. 2015. Watt Watcher: Fine-Grained Power Estimation for Emerging Workloads. In 2015 27th International Symposium on Computer Architecture and High Performance Com-puting (SBAC-PAD) . 106–113. doi:10.1109/SBAC-PAD.2015.26 [18] Sheng Li, Jung Ho Ahn, Richard D. Strong, Jay B. Brockman, Dean M. Tullsen, and Norman P. Jouppi. 2009. McPAT: an integrated power, area, and timing modeling framework for multicore and manycore architectures. In Proceedings of the 42nd Annual IEEE/ACM International Symposium on Microarchitecture (New York, New York) (MICRO 42) . Association for Computing Machinery, New York, NY, USA, 469–480. doi:10.1145/1669112.1669172 [19] lowRISC contributors. 2019. OpenTitan: Open Source Silicon Root of Trust. https://opentitan.org. Accessed: 2026-05-11. [20] Yao Lu, Qijun Zhang, and Zhiyao Xie. 2024. Unleashing Flexibility of ML-based Power Estimators Through Efficient Development Strategies. In Proceedings of the 29th ACM/IEEE International Symposium on Low Power Electronics and Design 
+
+(Newport Beach, CA, USA) (ISLPED ’24) . Association for Computing Machinery, New York, NY, USA, 1–6. doi:10.1145/3665314.3670823 [21] F.N. Najm. 1995. Power estimation techniques for integrated circuits. In Pro-ceedings of IEEE International Conference on Computer Aided Design (ICCAD) .492–499. doi:10.1109/ICCAD.1995.480162 [22] Sujay Pandit, Sujit Dey, and Anand Raghunathan. 2025. ML-Power: Machine Learning based Power Estimation for SoCs. In 2025 IEEE/ACM International Symposium on Low Power Electronics and Design (ISLPED) . IEEE, 1–7. doi:10.1109/ ISLPED65674.2025.11261702 [23] A. Raghunathan, S. Dey, and N.K. Jha. 1996. Register-transfer level estimation techniques for switching activity and power consumption. In Proceedings of International Conference on Computer Aided Design . 158–165. doi:10.1109/ICCAD. 1996.569539 [24] S. Ravi, A. Raghunathan, and S. Chakradhar. 2003. Efficient RTL power esti-mation for large designs. In 16th International Conference on VLSI Design, 2003. Proceedings. 431–439. doi:10.1109/ICVD.2003.1183173 [25] Michał Rewiénski. 2011. A Perspective on Fast-SPICE Simulation Technol-ogy. In Simulation and Verification of Electronic and Biological Systems , Peng Li, Luis Miguel Silveira, and Peter Feldmann (Eds.). Springer, 23–42. doi:10.1007/978-94-007-0149-6_2 [26] Synopsys, Inc. 2026. Design Compiler: RTL Synthesis. https://www.synopsys. com/implementation-and-signoff/rtl-synthesis-test/design-compiler.html [27] Synopsys, Inc. 2026. PrimeTime Suite for Static Timing Analysis. https://www. synopsys.com/implementation-and-signoff/signoff/primetime.html [28] Synopsys, Inc. 2026. VCS Functional Verification Solution. https://www. synopsys.com/verification/simulation/vcs.html [29] Chi-ying Tsui, José Monteiro, Massoud Pedram, Srinivas Devadas, Alvin Despain, and Bill Lin. 1995. Power Estimation Methods for Sequential Logic Circuits. Very Large Scale Integration (VLSI) Systems, IEEE Transactions on 3 (10 1995), 404 – 416. doi:10.1109/92.406998 [30] Ashka Vakil, Houman Homayoun, and Avesta Sasan. 2019. IR-ATA: IR Annotated Timing Analysis, A Flow for Closing the Loop Between PDN Design, IR Analysis & Timing Closure. 2019 24th Asia and South Pacific Design Automation Conference (ASP-DAC) (2019), 1–8. https://api.semanticscholar.org/CorpusID:58027720 [31] Zhiyao Xie, Shiyu Li, Mingyuan Ma, Chen-Chia Chang, Jingyu Pan, Yiran Chen, and Jiang Hu. 2022. DEEP: Developing Extremely Efficient Runtime On-Chip Power Meters. In Proceedings of the 41st IEEE/ACM International Conference on Computer-Aided Design (ICCAD) . doi:10.1145/3508352.3549427 [32] Zhiyao Xie, Haoxing Ren, Brucek Khailany, Ye Sheng, Santosh Santosh, Jiang Hu, and Yiran Chen. 2020. PowerNet: Transferable Dynamic IR Drop Estimation via Maximum Convolutional Neural Network. 2020 25th Asia and South Pacific Design Automation Conference (ASP-DAC) (2020), 13–18. https://api.semanticscholar. org/CorpusID:214691066 [33] Zhiyao Xie, Xiaoqing Xu, Matt Walker, Joshua Knebel, Kumaraguru Palaniswamy, Nicolas Hebert, Jiang Hu, Huanrui Yang, Yiran Chen, and Shidhartha Das. 2021. APOLLO: An Automated Power Modeling Framework for Runtime Power In-trospection in High-Volume Commercial Microprocessors. In Proceedings of the 54th Annual IEEE/ACM International Symposium on Microarchitecture (MICRO) .ACM, 149–163. doi:10.1145/3466752.3480064 [34] Jianwang Zhai, Chen Bai, Binwu Zhu, Yici Cai, Qiang Zhou, and Bei Yu. 2021. McPAT-Calib: A Microarchitecture Power Modeling Framework for Modern CPUs. In 2021 IEEE/ACM International Conference On Computer Aided Design (ICCAD) . 1–9. doi:10.1109/ICCAD51958.2021.9643508 [35] Cun-Hui Zhang. 2010. Nearly unbiased variable selection under minimax concave penalty. The Annals of Statistics 38 (02 2010). doi:10.1214/09-AOS729 [36] Qijun Zhang, Shiyu Li, Guanglei Zhou, Jingyu Pan, Chen-Chia Chang, Yi-ran Chen, and Zhiyao Xie. 2023. PANDA: Architecture-Level Power Evalu-ation by Unifying Analytical and Machine Learning Solutions. 2023 IEEE/ACM International Conference on Computer Aided Design (ICCAD) (2023), 01–09. https://api.semanticscholar.org/CorpusID:265526745 [37] Yanqing Zhang, Haoxing Ren, and Brucek Khailany. 2020. GRANNITE: Graph Neural Network Inference for Transferable Power Estimation. In Proceedings of the 57th ACM/IEEE Design Automation Conference (DAC) . 1–6. doi:10.1109/ DAC18072.2020.9218643 [38] Yanqing Zhang, Haoxing Ren, Akshay Sridharan, and Brucek Khailany. 2022. GATSPI: GPU accelerated gate-level simulation for power improvement. 1231– 1236. doi:10.1145/3489517.3530601 [39] Yuan Zhou, Haoxing Ren, Yanqing Zhang, Ben Keller, Brucek Khailany, and Zhiru Zhang. 2019. PRIMAL: Power Inference using Machine Learning. In Proceedings of the 56th Annual Design Automation Conference (DAC) . Article 24, 6 pages. doi:10.1145/3316781.3317884 7

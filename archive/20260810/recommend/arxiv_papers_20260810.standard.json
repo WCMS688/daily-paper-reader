@@ -1,0 +1,54 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-10T20:57:40.421504+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 0,
+    "quick_skim_target": 11,
+    "quick_selected": 0
+  },
+  "deep_dive": [
+    {
+      "id": "2608.05339v2",
+      "source": "arxiv",
+      "title": "PowerScope: ML-based Intra-Cycle Power Estimation",
+      "abstract": "Power estimation at sub-clock-cycle temporal resolutions is critical for tasks such as power delivery network (PDN) design, dynamic voltage droop analysis, and pre-silicon power side-channel security evaluation. Designers commonly rely on commercial post-layout gate-level power analysis tools for these tasks, but these flows are computationally expensive and scale poorly with design size and workload length. Machine learning (ML)-based power estimation frameworks have shown promise in accelerating power estimation, but prior efforts only address average power or per-cycle power estimation. We propose PowerScope, the first ML-based intra-cycle power estimation framework. PowerScope operates purely on RTL simulation traces at inference time, eliminating the need for post-layout gate-level simulation and power analysis per workload. Across a diverse benchmark suite, PowerScope achieves 5.88% median and 9% mean absolute percentage error compared to commercial post-layout gate-level power estimates while running ~80x faster. We further demonstrate that PowerScope's predictions can be reliably used for the downstream task of pre-silicon power side-channel leakage assessment.",
+      "authors": [
+        "Jayanth Balasubramanian",
+        "Sujay Pandit",
+        "Radha Vaidya",
+        "Anand Raghunathan"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR"
+      ],
+      "published": "2026-08-05T18:56:36+00:00",
+      "link": "https://arxiv.org/pdf/2608.05339v2",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "ML-based intra-cycle power estimation for PDN design and droop analysis",
+      "llm_evidence_cn": "面向PDN设计与电压跌落分析的基于ML的周期内功耗估计",
+      "llm_evidence": "面向PDN设计与电压跌落分析的基于ML的周期内功耗估计",
+      "canonical_evidence": "面向PDN设计与电压跌落分析的基于ML的周期内功耗估计",
+      "llm_tldr_en": "PowerScope is the first ML-based intra-cycle power estimation framework operating on RTL traces, enabling fast sub-clock-cycle power profiles for PDN design and droop analysis without post-layout simulation.",
+      "llm_tldr_cn": "现有机器学习功耗估计只能提供平均或每周期粒度，难以支撑PDN设计和电压跌落分析所需的亚时钟周期功耗信息。为此，本文提出PowerScope，这是首个基于机器学习的周期内功耗估计框架，推理时仅利用RTL仿真轨迹，无需后布局门级网表或昂贵的商用功耗工具。通过避免后布局仿真，显著减少了功耗分析开销，并在保持精度的同时提供精细时间分辨率的功耗波形，为前端PDN优化和电源完整性评估提供了新的高效手段。",
+      "llm_tldr": "现有机器学习功耗估计只能提供平均或每周期粒度，难以支撑PDN设计和电压跌落分析所需的亚时钟周期功耗信息。为此，本文提出PowerScope，这是首个基于机器学习的周期内功耗估计框架，推理时仅利用RTL仿真轨迹，无需后布局门级网表或昂贵的商用功耗工具。通过避免后布局仿真，显著减少了功耗分析开销，并在保持精度的同时提供精细时间分辨率的功耗波形，为前端PDN优化和电源完整性评估提供了新的高效手段。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Power integrity and PDN modeling optimization",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": []
+}

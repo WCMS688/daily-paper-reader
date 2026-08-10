@@ -1,0 +1,24 @@
+{
+  "label": "2026-08-10",
+  "date": "2026-08-10",
+  "generated_at": "2026-08-10T20:58:59",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202608/10/2608.05339v2-powerscope-ml-based-intra-cycle-power-estimation",
+      "section": "deep",
+      "title_en": "PowerScope: ML-based Intra-Cycle Power Estimation",
+      "authors": "Jayanth Balasubramanian, Sujay Pandit, Radha Vaidya, Anand Raghunathan",
+      "date": "2026-08-05",
+      "pdf": "https://arxiv.org/pdf/2608.05339v2",
+      "score": "9.0",
+      "evidence": "面向PDN设计与电压跌落分析的基于ML的周期内功耗估计",
+      "tldr": "亚时钟周期级功耗估计对电源网络设计、电压跌落分析和预硅功耗侧信道安全评估至关重要，但商业门级工具计算开销大。现有机器学习功耗估计仅支持平均或逐周期粒度。PowerScope是首个基于RTL仿真轨迹的ML亚周期功耗估计框架，无需门级仿真，中位误差5.88%，速度提升约80倍，并能可靠用于预硅侧信道泄露评估。",
+      "tags": "query:si-pi",
+      "abstract_en": "Power estimation at sub-clock-cycle temporal resolutions is critical for tasks such as power delivery network (PDN) design, dynamic voltage droop analysis, and pre-silicon power side-channel security evaluation. Designers commonly rely on commercial post-layout gate-level power analysis tools for these tasks, but these flows are computationally expensive and scale poorly with design size and workload length. Machine learning (ML)-based power estimation frameworks have shown promise in accelerating power estimation, but prior efforts only address average power or per-cycle power estimation. We propose PowerScope, the first ML-based intra-cycle power estimation framework. PowerScope operates purely on RTL simulation traces at inference time, eliminating the need for post-layout gate-level simulation and power analysis per workload. Across a diverse benchmark suite, PowerScope achieves 5.88% median and 9% mean absolute percentage error compared to commercial post-layout gate-level power estimates while running ~80x faster. We further demonstrate that PowerScope's predictions can be reliably used for the downstream task of pre-silicon power side-channel leakage assessment.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
