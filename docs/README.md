@@ -6,25 +6,26 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-10
-- 运行时间：2026-08-10 20:58:55 UTC
+- 最新运行日期：2026-08-11
+- 运行时间：2026-08-11 21:23:59 UTC
 - 运行状态：成功
-- 本次总论文数：1
-- 精读区：1
+- 本次总论文数：2
+- 精读区：2
 - 速读区：0
 
 ### 今日简报（AI）
-今日聚焦1篇高价值论文，精读《PowerScope》机器学习功耗估计方法。
-
-核心亮点：基于机器学习的周期内功耗估计获得9.0高分，是能效优化领域的强参考。
-
-建议普通读者优先阅读该文的方法与实验对比，了解ML功耗模型的适用边界。
-- 详情：[/202608/10/README](/202608/10/README)
+今日精读2篇高分论文，聚焦芯片架构与高速互连两大硬件痛点。  
+最值得关注：2.5D PIM芯片的电压降控制方案，以及高速互连信号完整性分析框架，均获9.0高分。  
+建议下一步结合实测数据验证这两类方法的实际效果，并探索其在先进封装中的协同应用。
+- 详情：[/202608/11/README](/202608/11/README)
 
 ### 精读区论文标签
-1. [PowerScope: ML-based Intra-Cycle Power Estimation](/202608/10/2608.05339v2-powerscope-ml-based-intra-cycle-power-estimation)  
+1. [ReVolt: Power Delivery Network-Aware Voltage Droop Control for 2.5D PIM Chiplet Architectures](/202608/11/2608.08496v1-revolt-power-delivery-network-aware-voltage-droop-control-for-25d-pim-chiplet-architectures)  
    标签：评分：9.0/10、query:si-pi
-   evidence：面向PDN设计与电压跌落分析的基于ML的周期内功耗估计
+   evidence：针对2.5D PIM小芯片架构的PDN电压跌落控制，结合LSTM代理模型
+2. [Automated Signal Integrity Analysis Framework for High-Speed Interconnects in the PPCB-1347-MuPix11 Probe Card](/202608/11/2608.09462v1-automated-signal-integrity-analysis-framework-for-high-speed-interconnects-in-the-ppcb-1347-mupix11-probe-card)  
+   标签：评分：9.0/10、query:si-pi
+   evidence：面向高速互连的自动化信号完整性分析框架
 
 ### 速读区论文标签
 - 本次无速读推荐。

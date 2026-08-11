@@ -1,0 +1,39 @@
+{
+  "label": "2026-08-11",
+  "date": "2026-08-11",
+  "generated_at": "2026-08-11T21:24:06",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202608/11/2608.08496v1-revolt-power-delivery-network-aware-voltage-droop-control-for-25d-pim-chiplet-architectures",
+      "section": "deep",
+      "title_en": "ReVolt: Power Delivery Network-Aware Voltage Droop Control for 2.5D PIM Chiplet Architectures",
+      "authors": "Vibhanshu Sharma, Alish Kanani, Miao Sun, Janardhan Rao Doppa, Umit Y. Ogras, Partha Pratim Pande",
+      "date": "2026-08-09",
+      "pdf": "https://arxiv.org/pdf/2608.08496v1",
+      "score": "9.0",
+      "evidence": "针对2.5D PIM小芯片架构的PDN电压跌落控制，结合LSTM代理模型",
+      "tldr": "在PIM多芯粒系统中，供电网络引起的电压跌落严重制约性能。ReVolt采用LSTM代理预测各芯粒电压轨迹，通过动态调整操作单元大小来主动控制电流需求，从而避免电压违规。实验表明，在不损失推理精度的前提下，ReVolt相比基线平均降低76倍能耗延迟积，显著提升能效。",
+      "tags": "query:si-pi",
+      "abstract_en": "Processing-in-memory (PIM)-based 2.5D multi-chiplet platforms are enablers for machine learning (ML) workloads. However, their performance is affected by the power delivery network (PDN), where varying chiplet-level current demand induces spatially and temporally varying voltage droop. These droop events lead to voltage violations, degrades system performance, and impact inference accuracy for ML workloads. In this work, we propose ReVolt, a dynamic operation unit (OU)-based framework for mitigating voltage droop in PIM-based multi-chiplet systems. ReVolt leverages an LSTM-based PDN surrogate to predict per-chiplet supply voltage trajectories at runtime, enabling proactive adjustment of OU size to mitigate droop events. By treating OU size as a control knob, ReVolt regulates chiplet-level current demand while maintaining computational accuracy. This approach prevents voltage droop violations and improves energy-delay product (EDP) while preserving ML model inference accuracy. Experimental results demonstrate that ReVolt prevents voltage droop violations while achieving an average 76x reduction in EDP compared to existing fixed and dynamic OU-based baselines, without compromising inference accuracy of ML models.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/11/2608.09462v1-automated-signal-integrity-analysis-framework-for-high-speed-interconnects-in-the-ppcb-1347-mupix11-probe-card",
+      "section": "deep",
+      "title_en": "Automated Signal Integrity Analysis Framework for High-Speed Interconnects in the PPCB-1347-MuPix11 Probe Card",
+      "authors": "D M S Sultan, R. Plackett, A. E. McDougall, A. J. A. Knight, A. S. Rotelli, J. Vossebeld, D. Bortoletto",
+      "date": "2026-08-10",
+      "pdf": "https://arxiv.org/pdf/2608.09462v1",
+      "score": "9.0",
+      "evidence": "面向高速互连的自动化信号完整性分析框架",
+      "tldr": "高速互连信号完整性分析常局限于单一损耗指标，缺乏链路级可追踪证据。本文提出自动化MATLAB框架，将四端口S参数经混合模式变换、损耗分解与因果信道建模，传播PRBS-31序列生成眼图、条件BER及8b10b分析。在PPCB-1347-MuPix11探针卡上验证，DP1-DP4在1.25Gbps下插损-0.350~-0.300dB，眼开0.586~0.588V，表明路径长度并非唯一排序变量。该框架为设计审查到VNA测量解释提供可扩展比较基础。",
+      "tags": "query:si-pi",
+      "abstract_en": "A reusable MATLAB signal-integrity (SI) framework is presented that converts compatible four-port S-parameter data, measured by VNA or obtained from electromagnetic simulation, into traceable link-level evidence rather than a single loss metric. The framework is demonstrated on the four 1.25 Gbps differential routes (DP1-DP4) of the PPCB-1347-MuPix11 probe card using PTSL CST Microwave 3D-Solver-derived four-port S-parameters and a virtual time-domain solver. The automated pipeline preflights file structures, performs a power-normalized mixed-mode transformation, applies route-length-aware loss decomposition, constructs a causally loaded channel model, and propagates full PRBS-31 sequences into eye-diagram, conditional-BER, and 8b10b-coded-link analyses. At the 1.25 Gbps data rate (Nyquist 0.625 GHz), DP1-DP4 exhibit differential insertion loss (SDD21) from -0.350 to -0.300 dB, differential-to-common conversion from -31.038 to -28.236 dBc, and modeled FEB-input eye openings from 0.586 to 0.588 V. The comparison shows that path length alone is not an adequate SI ranking variable: DP3 has the lowest Nyquist insertion loss, DP1 the strongest differential-to-common isolation, and DP4 the largest modeled eye. All analytical BER values remain below the reporting floor and therefore do not support a BER ranking. By preserving the distinction between route-dependent waveform behavior, model projections, and finite-record observations, the framework provides an extensible basis for comparative high-speed-interconnect SI analysis from design review through calibrated VNA measurement interpretation.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,98 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-11T21:22:11.207963+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 0,
+    "quick_skim_target": 11,
+    "quick_selected": 0
+  },
+  "deep_dive": [
+    {
+      "id": "2608.08496v1",
+      "source": "arxiv",
+      "title": "ReVolt: Power Delivery Network-Aware Voltage Droop Control for 2.5D PIM Chiplet Architectures",
+      "abstract": "Processing-in-memory (PIM)-based 2.5D multi-chiplet platforms are enablers for machine learning (ML) workloads. However, their performance is affected by the power delivery network (PDN), where varying chiplet-level current demand induces spatially and temporally varying voltage droop. These droop events lead to voltage violations, degrades system performance, and impact inference accuracy for ML workloads. In this work, we propose ReVolt, a dynamic operation unit (OU)-based framework for mitigating voltage droop in PIM-based multi-chiplet systems. ReVolt leverages an LSTM-based PDN surrogate to predict per-chiplet supply voltage trajectories at runtime, enabling proactive adjustment of OU size to mitigate droop events. By treating OU size as a control knob, ReVolt regulates chiplet-level current demand while maintaining computational accuracy. This approach prevents voltage droop violations and improves energy-delay product (EDP) while preserving ML model inference accuracy. Experimental results demonstrate that ReVolt prevents voltage droop violations while achieving an average 76x reduction in EDP compared to existing fixed and dynamic OU-based baselines, without compromising inference accuracy of ML models.",
+      "authors": [
+        "Vibhanshu Sharma",
+        "Alish Kanani",
+        "Miao Sun",
+        "Janardhan Rao Doppa",
+        "Umit Y. Ogras",
+        "Partha Pratim Pande"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR",
+        "cs.ET"
+      ],
+      "published": "2026-08-09T05:30:28+00:00",
+      "link": "https://arxiv.org/pdf/2608.08496v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "PDN-aware voltage droop control for 2.5D PIM chiplet architectures using LSTM surrogate",
+      "llm_evidence_cn": "针对2.5D PIM小芯片架构的PDN电压跌落控制，结合LSTM代理模型",
+      "llm_evidence": "针对2.5D PIM小芯片架构的PDN电压跌落控制，结合LSTM代理模型",
+      "canonical_evidence": "针对2.5D PIM小芯片架构的PDN电压跌落控制，结合LSTM代理模型",
+      "llm_tldr_en": "ReVolt addresses voltage droop in 2.5D PIM chiplet systems caused by varying chiplet current demand. It uses an LSTM-based PDN surrogate to predict voltage trajectories and proactively adjusts operation units, reducing violations and protecting ML accuracy.",
+      "llm_tldr_cn": "针对2.5D PIM小芯片架构中芯片级电流需求变化导致的电源网络(PDN)电压跌落问题，ReVolt提出基于LSTM的PDN代理模型，在线预测各芯片供电电压轨迹，并动态调整操作单元(OU)大小以主动抑制跌落。结果表明该方法能有效减少电压违例、缓解电压跌落对ML推理准确率的影响，为小芯片封装中电源完整性的运行时优化提供了高效方案。",
+      "llm_tldr": "针对2.5D PIM小芯片架构中芯片级电流需求变化导致的电源网络(PDN)电压跌落问题，ReVolt提出基于LSTM的PDN代理模型，在线预测各芯片供电电压轨迹，并动态调整操作单元(OU)大小以主动抑制跌落。结果表明该方法能有效减少电压违例、缓解电压跌落对ML推理准确率的影响，为小芯片封装中电源完整性的运行时优化提供了高效方案。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "SI/PI analysis for 2.5D 3D and Chiplet packaging",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.09462v1",
+      "source": "arxiv",
+      "title": "Automated Signal Integrity Analysis Framework for High-Speed Interconnects in the PPCB-1347-MuPix11 Probe Card",
+      "abstract": "A reusable MATLAB signal-integrity (SI) framework is presented that converts compatible four-port S-parameter data, measured by VNA or obtained from electromagnetic simulation, into traceable link-level evidence rather than a single loss metric. The framework is demonstrated on the four 1.25 Gbps differential routes (DP1-DP4) of the PPCB-1347-MuPix11 probe card using PTSL CST Microwave 3D-Solver-derived four-port S-parameters and a virtual time-domain solver. The automated pipeline preflights file structures, performs a power-normalized mixed-mode transformation, applies route-length-aware loss decomposition, constructs a causally loaded channel model, and propagates full PRBS-31 sequences into eye-diagram, conditional-BER, and 8b10b-coded-link analyses. At the 1.25 Gbps data rate (Nyquist 0.625 GHz), DP1-DP4 exhibit differential insertion loss (SDD21) from -0.350 to -0.300 dB, differential-to-common conversion from -31.038 to -28.236 dBc, and modeled FEB-input eye openings from 0.586 to 0.588 V. The comparison shows that path length alone is not an adequate SI ranking variable: DP3 has the lowest Nyquist insertion loss, DP1 the strongest differential-to-common isolation, and DP4 the largest modeled eye. All analytical BER values remain below the reporting floor and therefore do not support a BER ranking. By preserving the distinction between route-dependent waveform behavior, model projections, and finite-record observations, the framework provides an extensible basis for comparative high-speed-interconnect SI analysis from design review through calibrated VNA measurement interpretation.",
+      "authors": [
+        "D M S Sultan",
+        "R. Plackett",
+        "A. E. McDougall",
+        "A. J. A. Knight",
+        "A. S. Rotelli",
+        "J. Vossebeld",
+        "D. Bortoletto"
+      ],
+      "primary_category": "hep-ex",
+      "categories": [
+        "hep-ex",
+        "eess.SY"
+      ],
+      "published": "2026-08-10T11:31:33+00:00",
+      "link": "https://arxiv.org/pdf/2608.09462v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Automated signal-integrity analysis framework for high-speed interconnects",
+      "llm_evidence_cn": "面向高速互连的自动化信号完整性分析框架",
+      "llm_evidence": "面向高速互连的自动化信号完整性分析框架",
+      "canonical_evidence": "面向高速互连的自动化信号完整性分析框架",
+      "llm_tldr_en": "An automated MATLAB SI framework converts four-port S-parameter data into link-level evidence, shown on 1.25 Gbps differential probe-card routes with mixed-mode transform, loss decomposition, causal channel modeling, and PRBS-31 eye analysis.",
+      "llm_tldr_cn": "针对信号完整性分析常停留在单一损耗指标而缺乏链路级证据的问题，该文提出一个可复用的MATLAB信号完整性分析框架，将四端口S参数数据转化为可追溯的链路级结果。以PPCB-1347-MuPix11探针卡四条1.25Gbps差分走线为例，流程包括功率归一化混合模式变换、路径长度感知的损耗分解、因果加载信道建模以及PRBS-31序列眼图分析。结果表明该自动化工具有效支撑高速互连的信号完整性评估与设计验证。",
+      "llm_tldr": "针对信号完整性分析常停留在单一损耗指标而缺乏链路级证据的问题，该文提出一个可复用的MATLAB信号完整性分析框架，将四端口S参数数据转化为可追溯的链路级结果。以PPCB-1347-MuPix11探针卡四条1.25Gbps差分走线为例，流程包括功率归一化混合模式变换、路径长度感知的损耗分解、因果加载信道建模以及PRBS-31序列眼图分析。结果表明该自动化工具有效支撑高速互连的信号完整性评估与设计验证。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Signal integrity analysis for high-speed interconnects",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": []
+}

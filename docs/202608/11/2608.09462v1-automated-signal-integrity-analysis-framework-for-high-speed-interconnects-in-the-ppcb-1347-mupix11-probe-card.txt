@@ -1,0 +1,445 @@
+Title: A four-link signal-integrity study of the PPCB-1347/MuPix11 high-speed data routes
+
+URL Source: https://arxiv.org/pdf/2608.09462v1
+
+Published Time: Tue, 11 Aug 2026 02:12:53 GMT
+
+Number of Pages: 16
+
+Markdown Content:
+1 Corresponding Author Email: dms.sultan@physics.ox.ac.uk 
+
+# Automated Signal Integrity Analysis Framework for High-Speed Interconnects in the PPCB-1347-MuPix11 Probe Card 
+
+D M S Sultan a,1 , R. Plackett a, A.E. McDougall a, A.J.A. Knight a, A.S. Rotelli a, J. Vossebeld b, D. Bortoletto a  
+
+> aOxford Physics Microstructure Detector Laboratory, University of Oxford, OX1 3PU, United Kingdom
+> bDepartment of Physics, University of Liverpool, L69 7ZE, United Kingdom
+
+Abstract: A reusable MATLAB signal-integrity (SI) framework is presented that converts compatible four-port S-parameter data, measured by VNA or obtained from electromagnetic simulation, into traceable link-level evidence rather than a single loss metric. The framework is demonstrated on the four 1.25 Gbps differential routes (DP1-DP4) of the PPCB-1347/MuPix11 probe card using PTSL CST Microwave 3D-Solver-derived four-port S-parameters and a virtual time-domain solver. The automated pipeline preflights file structures, performs a power-normalized mixed-mode transformation, applies route-length-aware loss decomposition, constructs a causally loaded channel model, and propagates full PRBS-31 sequences into eye-diagram, conditional-BER, and 8b10b-coded-link analyses. At the 1.25 Gbps data rate (Nyquist 0.625 GHz), DP1–DP4 exhibit differential insertion loss (SDD21) from −0.350 to −0.300 dB, differential-to-common conversion from −31.038 to −28.236 dBc, and modeled FEB-input eye openings from 0.586 to 0.588 V. The comparison shows that path length alone is not an adequate SI ranking variable: DP3 has the lowest Nyquist insertion loss, DP1 the strongest differential-to-common isolation, and DP4 the largest modeled eye. All analytical BER values remain below the reporting floor and therefore do not support a BER ranking. By preserving the distinction between route-dependent waveform behavior, model projections, and finite-record observations, the framework provides an extensible basis for comparative high-speed-interconnect SI analysis from design review through calibrated VNA measurement interpretation. 
+
+Keywords: Signal integrity, S-parameters, mixed-mode conversion, high-speed link modeling, probe card, MuPix11, Mu3e experiment, eye diagram, Bit Error Rate (BER), 8b10b encoding, loss decomposition. - 1 -
+
+# Contents 
+
+1 Introduction 1
+
+2 MATLAB-based analysis framework 2
+
+2.1 Mixed-mode representation 2
+
+3 Probe layout and PTSL CST Studio extracts 6
+
+4 Signal-path results 8
+
+5 Comparative analysis 11 
+
+6 Conclusions 14 
+
+Acknowledgments 15 
+
+References 15 
+
+1. Introduction 
+
+At the Paul Scherrer Institute, Mu3e investigates the charged-lepton-flavor-violating decay μ⁺→e⁺e⁻e⁺. Reconstructing its low-momentum electron and positron tracks demands a low-mass detector with fine spatial resolution and sustained operation at high particle rates. Mu3e meets these requirements with thin MuPix high-voltage monolithic active pixel sensors, which combine the sensing region, analog front end, digital hit processing, and data transmission on one chip [1]. 
+
+On the transmitting side of the link considered here, the MuPix digital periphery collects hit addresses and timestamps, forms eight-bit data and control words, applies 8b10b coding, and serializes the resulting ten-bit symbols onto 1.25 Gbps differential outputs. MuPix11 chips established this streaming architecture and the 1.25 Gbps line rate [1], while its reference-clock/PLL and synchronous reset (SYNCRES) operate at 125 MHz, the serializer runs at 800 MHz, and the slow control bus (SIN) runs at 10-40 MHz [2]. The PPCB-1347 probe card includes four MuPix11 high-speed transmitter pairs, denoted DP1-DP4, together with the lower-rate clock, slow-control, and reset paths. 
+
+At the receiving end of the detector link, the Mu3e Frontend Board (FEB) is centered on an Intel/Altera Arria V FPGA. Its clock network distributes 125 MHz detector and FPGA clocks and provides dedicated transceiver reference clocks; the FPGA receives and processes MuPix data before the FEB packetizes the event stream for onward optical transfer to the switching board [3,4]. The present study stops at the electrical FEB input. Accordingly, the 100 Ω differential termination, 0.35 pF input capacitance, 2 mV RMS voltage noise, and 2 ps RMS aperture jitter used below are explicit receiver-model assumptions, not measured Arria V input specifications. 
+
+The motivation is to determine whether the shared PTSL probe-card layout preserves the MuPix-to-FEB signal margin before hardware is available for a complete end-to-end qualification. PTSL supplied route geometry, four-port CST Touchstone data, and simulated time-domain reflectometry (TDR); the TDR indicates a nominal 100 Ω differential trace with localized departures at the probe head, vias, and connector transitions [5]. Raw S-parameters alone do not quantify polarity, mixed-mode conversion, data-dependent inter-symbol interference, sampling-phase margin, or coded-link error consequences. The Oxford MATLAB framework therefore keeps DP1-DP4 traceable to their individual files and physical lengths, verifies port pairing, - 2 -
+
+converts each four-port response to mixed mode, constructs a causal loaded channel, propagates a complete PRBS waveform, and separates eye, conditional-BER, and 8b10b checker projections from finite-record observations. Cross-route statistics are formed only after every route has completed the same independent analysis; no S-parameter matrices are averaged, and no comparison with another ladder or measurement project is made. 
+
+2.  MATLAB-based analysis framework 
+
+Figure 1 summarizes the per-route MATLAB implementation. Each CST Touchstone file is first checked for frequency coverage, storage convention, and physical port pairing; the CST header assignment is cross-checked numerically before a power-normalized single-ended-to-mixed-mode transformation is applied. The response-mode-first matrices provide differential transfer, differential-to-common conversion, common-to-differential conversion, and common-mode transfer. A loaded differential channel is then formed with the declared 100 Ω source and receiver impedances and 0.35 pF receiver input, converted to a causal rational model, and excited by the full aligned PRBS-31 waveform using the stated 0.700 Vpp differential launch, 180 ps edge, and one-UI post-cursor. Eye opening, crossing spread, polarity, lag, and sampling phase are recovered from the propagated waveform. The retained receiver BER is the maximum of the context-resolved Gaussian tail, the robust level-spread/ISI term, and any deterministic decision errors; the same complete decision record is used for the bathtub and data-rate sweep. Finally, the running-disparity 8b10b encoder/decoder path and exhaustive immediate ten-bit-word enumeration convert the raw BER model into separated checker, valid-symbol-mismatch, undetected-mismatch, and combined event-rate projections. Observed finite-record counts, model projections, and the 10 −15 reporting floor remain distinct in the Oxford SI framework outputs. 
+
+> Figure 1. MATLAB analysis sequence from four-port Touchstone input to receiver BER and 8b10b checker/event-rate outputs. Error-rate projections are separated from observed finite-sample counts and hardware measurements.
+
+3. Mixed-mode representation 
+
+Power-normalized sum and difference waves separate desired differential transfer from deterministic modal conversion. The transformation is algebraic and contains no stochastic source; common-mode noise can be calculated only when both a C-to-D transfer function and a source spectrum are supplied [6,7]. 
+
+𝑎 𝑑 = 𝑎 1−𝑎 2 
+
+> √2
+
+, 𝑎 𝑐 = 𝑎 1+𝑎 2 
+
+> √2
+
+(2.1) 
+
+[𝑏 𝑑 
+
+𝑏 𝑐 
+
+] = [ 𝑆 𝐷𝐷 𝑆 𝐶𝐷 
+
+𝑆 𝐷𝐶 𝑆 𝐶𝐶 
+
+][ 𝑎 𝑑 
+
+𝑎 𝑐 ] (2.2) - 3 -
+
+Here, excitation-to-response denotes: SDD is differential-to-differential transmission, SDC is differential excitation observed as common mode, SCD is common excitation observed as differential mode, and SCC is common-to-common transmission. MATLAB's internal array indices place response mode before excitation mode; the manuscript follows the displayed physical direction and spells it out whenever ambiguity is possible. 
+
+3.1. Conductor, dielectric, and higher-order loss 
+
+The smooth attenuation of a high-speed data interconnect is represented by physically motivated frequency bases over the declared fit band. For a good conductor, current crowds into a skin depth that decreases as the inverse square root of frequency, while surface resistance rises as the square root of frequency [8]. 
+
+𝛿(𝑓) = 1√𝜋𝑓𝜇𝜎 , 𝑅 𝑠 (𝑓) = √ 𝜋𝑓𝜇 𝜎 (2.3) 
+
+A causal dielectric term is approximately linear in frequency when effective permittivity and loss tangent vary slowly. Residual curvature is represented by non-negative quadratic and quartic bases. Dielectric Proxy and higher-order contributions fit descriptors, not direct measurements of material loss tangent or radiated power. In order to quantify these effects, the Svensson– Djordjevic model was applied to the frequency sweep range considered in the PTSL ST Microwave 3D solver framework. 
+
+𝐼𝐿 𝑓𝑖𝑡 (𝑓) = 𝐴 𝑓𝑖𝑥𝑡𝑢𝑟𝑒 + 𝐿[𝑎 𝑐 √𝑓 + 𝑎 𝑑 𝑓 + 𝑎 2𝑓 2 + 𝑎 4𝑓 4] (2.4) 
+
+Here, 𝑎 𝑐 √𝑓 denotes conductor loss, 𝑎 𝑑 𝑓 points dielectric loss, and 𝑎 2𝑓 2 + 𝑎 4𝑓 4 quantifies higher-order radiative loss term. The fit residual is measured from 0.1 GHz (ref. CLK) to 0.8 GHz (ref. serializer operating rate). Correlated bases over a finite band make the decomposition non-unique. In the same note, a finding of a zero dielectric coefficient does not imply a lossless dielectric, and a non-zero higher-order coefficient does not by itself locate radiation, a via transition, or a return-path discontinuity. 
+
+3.2. Mixed-mode conversion and disturbance transfer 
+
+In a finished PCB, layouts are never perfectly symmetric (due to glass weave skew, trace length mismatches, asymmetrical via patterns, or bent traces), the channel converts energy between modes. The differential noise variance, 𝜎 𝑑,CM 2 , can be evaluated using the following relation:    
+
+> 𝜎 𝑑,CM 2= ∫ |𝐻 𝐶→𝐷 (𝑓)| 2𝑆 𝑣,CM (𝑓)𝑑𝑓
+> 𝐵 0
+
+(2.5) 
+
+Here, B is the receiver bandwidth, 𝐻 𝐶→𝐷 (𝑓) refers to the channel's conversion efficiency at frequency, and 𝑆 𝑣,CM (𝑓) points to the voltage noise spectral density of the common-mode disturbance (aggressors, power supply ripple, cross-talk). However, the results in figure 4(b) for the channel have been analyzed using S-parameters from the pre-production simulation and shall be completely bound by the statistical error limit assigned to the standard model used, rather than by the real termination imbalance noise or the receiver common-mode rejection versus frequency. 
+
+To avoid double counting, the deterministic D→C/C→D conversion stays in figure 4(b). Deterministic ISI stays in the context-specific sampled voltage. Only the declared 2 mV receiver noise and slope×2 ps aperture-jitter term enter the conditional Gaussian variance. The diagnostic level-spread proxy is excluded from production BER because treating deterministic multimodal ISI as independent Gaussian noise creates false BER structure. - 4 -
+
+3.3. Causal channel and waveform construction 
+
+The selected differential transfer function is interpolated onto the simulation grid with magnitude and unwrapped phase treated coherently. A causal impulse response is formed, and the source waveform is convolved with that impulse response. Any time shift used for display is common across comparisons and does not create eye-opening. 
+
+In MATLAB, the selected loaded differential transfer function H(f) is sampled on a strictly increasing frequency grid and checked for finite complex values. The declared 100 Ω source and 100 Ω receiver impedances and the 0.35 pF receiver input are included before fitting, so mismatch and receiver-capacitance effects remain in both gain and phase. MATLAB rational approximates these complex frequency samples with a finite stable pole-residue LTI transfer function at the configured fitting tolerance. This is a compact causal interpolation of the S-parameter response, not an additional physical loss model. Its impulse response h(t), together with the physical bulk delay, becomes the route-specific channel object used in the subsequent waveform calculations; non-causal pre-cursor energy from finite-band interpolation is discarded rather than interpreted as channel response. 
+
+The transmitter record is constructed from the complete aligned PRBS-31 sequence. Each bit is mapped to a bipolar differential level; the configured one-UI post-cursor is added to the preceding-symbol contribution; and a causal first-order edge model produces the 180 ps transition. The resulting launch waveform x(t) is propagated through the causal loaded-channel impulse response h(t). No magnitude-only filter or eye-specific channel is used, so the received waveform y(t) retains the same frequency-dependent attenuation, group delay, reflection structure , and deterministic inter-symbol interference as the S-parameter-derived channel:  
+
+> 𝑦(𝑡) = ∫ 𝑥(𝜏)ℎ(𝑡 − 𝜏)𝑑𝜏
+
+(2.6) 
+
+In equation (2.6), x(t) is the differential launch waveform, h(t) is the causal impulse response of the loaded S-parameter channel, τ is the integration-time variable, and y(t) is the resulting differential waveform at the receiver input. The convolution therefore applies the route-specific channel memory to the complete transmitted record. 
+
+Receiver polarity is corrected before the decision statistics are formed. MATLAB first evaluates the signed dot product of an initial transmitted and received waveform segment; a negative value causes one inversion of the received differential waveform, corresponding to a swapped pair or 180° receiver-polarity correction. At the decision stage, the known PRBS sequence is then aligned over the permitted whole-symbol lags, and the matching routine returns the decision polarity used for the selected samples and slopes. That recovered polarity and lag are consistently retained across phase recovery, conditional BER, bathtub scans, rate sweeps , and the 8b10b decoder. A later circular shift may center a plotted eye, but it is display-only and never changes the decision samples or the reported BER. 
+
+3.4. Eye metrics 
+
+Samples or time durations of a single bit are folded into the unit interval (UI). Rather than measuring simple peak-to-peak voltage, the eye height ( 𝐻 eye ) is evaluated at a specific sampling phase 𝜑 (usually the center of the eye width). The absolute minimum '1' and absolute maximum '0', a single isolated noise glitch or transient outlier would make the entire eye look completely closed. Using statistical percentiles filters out rare outliers, giving a stable, statistically robust - 5 -
+
+measurement of signal opening; thus, the framework applied the lower logical-one percentile 
+
+𝑃 1(𝜑) minus the upper logical-zero percentile 𝑃 0(𝜑) at the selected phase. The inter-symbol interference, or deterministic jitter (DDJ), is extracted from context-dependent crossing spread to quantify how previous bit patterns affect the timing of current bit transitions. Total eye distortion is computed from the TX-to-RX loss of vertical opening. [10]  
+
+> 𝐻 eye (𝜑) = 𝑃 1(𝜑) − 𝑃 0(𝜑)
+
+(2.7)  
+
+> 3.5.
+
+Receiver and conditional BER model 
+
+The statistical model  used at the RX  calculates the total Gaussian noise standard deviation at the receiver's sampling slicer for a specific bit context 𝑘 . Because of Inter-Symbol Interference (ISI), the voltage at the receiver depends heavily on the preceding sequence of bits (e.g.,  the intended bits ( 𝑏 𝑘 ) 0-0-0-1 results in a different sampling voltage than  1-0-1 -0).  Deterministic ISI is kept directly inside the noiseless, deterministic voltage level predicted by the channel model, 
+
+𝑣 𝑘 . The model does not approximate channel attenuation or ISI as "random Gaussian noise." It isolates true random noise separately. The equation calculates total effective voltage noise by combining two independent Gaussian noise sources in RSS (root-sum-squares) fashion.    
+
+> 𝜎 𝑘 = √𝜎 𝑣 2+ (𝑠 𝑘 𝜎 𝑡 )2
+
+(2.8) 
+
+Here,  𝜎 𝑣  is the p ure amplitude noise generated by the Front-End Board (FEB) or receiver electronics (e.g., thermal and active circuit noise).  A flat 2 mV noise in this context.  𝑠 𝑘 𝜎 𝑡  refers to the aperture jitter—the timing uncertainty in the receiver’s sampling clock, 2 ps RMS. Since the slicer evaluates voltage rather than time, timing uncertainty  𝜎 𝑡 , is converted into an equivalent voltage noise by multiplying it by the waveform's local slope,  𝑠 𝑘 .    
+
+> ∆𝑣 ≈ 𝑑𝑣 𝑑𝑡 ∙ ∆𝑡 = 𝑠 𝑘 𝜎 𝑡
+
+(2.9) 
+
+At the Eye Center ( 𝑠 𝑘 ≈ 0 ), t he signal curve is flat at the top or bottom rail. A 2  ps  timing shift to the left or right results in almost no change in voltage. Total noise is  thus  dominated purely by 2 mV receiver noise.  At n ear  signal  transitions ( 𝑠 𝑘 ≫ 0 ), t he waveform is steep (high 𝑑𝑣 𝑑𝑡 ). A 2 
+
+ps  jitter shift translates into a large voltage fluctuation, causing the jitter-induced term , 𝑠 𝑘 𝜎 𝑡 , to dominate total noise. 
+
+Instead of using a simple average that may blur everything together, the following equation is used to evaluate the bit error rate (BER) context, assessing the dependence of error probability on the bit pattern. For example, a bit pattern of ‘ 0-0-0-1’ gets plenty of time to discharge and contributes a large voltage level for the ending ‘1’ transition. In contrast, a bit pattern of ‘1 -0-1 -
+
+0’ toggles so quickly that the trace capacitance never fully charges, resulting in the 1 being much lower in voltage.     
+
+> BER context =1𝑁 ∑𝑄( 𝑀 𝑘
+> 𝜎 𝑘
+> )
+> 𝑁 𝑘=1
+
+(2.10) 
+
+Here,  𝑀 𝑘  is the distance between the deterministic signal voltage level,  𝑣 𝑘 , and the decision threshold  𝑣 𝑡ℎ  for context  𝑘.  Q(x) is the tail probability of a standard normal distribution. It measures the probability that random Gaussian noise will exceed the margin  𝑀 𝑘 , and flip a 1 to a 0 (or vice versa). Using the  BER context  equation engine, the BER bath plot is also evaluated for each channel to estimate the Clock and Data Recovery (CDR) phase drift tolerance. 
+
+The 10 −15 value is the declared credibility boundary for the BER model used in the analysis. A one-sided Gaussian probability of 10 −15 corresponds to roughly an eight-sigma tail. At that distance, even a few-percent error in the assumed standard deviation or a small unmodelled offset - 6 -
+
+changes the margin, noise RMS, jitter distribution, or threshold, producing orders-of-magnitude changes in Q-function tails. The PTSL-provided S-parameters do not contain measured receiver-noise distributions, supply noise, crosstalk, package nonlinearity, CDR behavior, burst errors, temperature/process variation, or calibrated common-mode interference. Reporting more digits would create false precision. Zero deterministic errors over N decisions instead support the much weaker finite-sample confidence bound shown below. 
+
+𝐵𝐸𝑅 𝑢𝑝𝑝𝑒𝑟 = −𝑙𝑛(1−𝐶) 𝑁 (2.11) 
+
+3.6. 8b10b encoder, serializer, decoder, and confidence model 
+
+The MATLAB coded-link model represents the MuPix transmitter and FEB receiver at the ten-bit-symbol level. It accepts eight-bit data or control inputs, applies the running-disparity 8b10b mapping, serializes the resulting symbols, and then decodes the received sequence after channel propagation. The model explicitly checks legal-symbol status, disparity consistency, and comma-based word alignment, including K28.5 idle symbols. This preserves the two relevant coding properties for the link analysis—bounded disparity and sufficient transition activity— without claiming to reproduce the FEB firmware or CDR loop. The 8b10b representation carries ten serial bits for each eight-bit payload item; it is therefore used here as a diagnostic coded-link model rather than as a payload-throughput estimate. [11] 
+
+Rline = 10 8 Rpayload = 1.25 × R payload (2.12) 
+
+At the RX end, a statistical ‘Zero Count Confidence Bound’ model is used to estimate the event error rate. For a confidence level of ‘C’, 0.99 (99%), ~32k bit streams are considered to evaluate the upper bound error rate, as shown in Equation 2.11. 
+
+4. Probe layout and PTSL CST Studio extracts 
+
+> Figure 2. PTSL probe-card overview.
+
+- 7 -
+
+Oxford oversaw the PTSL probe-card layout from the initial design concept to the computer-aided manufacturing stage. The design review identified localized IPC-2223 compliance concerns regarding connector anti-pad sizes and via annular-ring geometries. While these enlarged anti-pad clearances suppress parasitic capacitance to maintain target differential impedance, they simultaneously introduce return-current discontinuities across the reference plane. The Oxford MATLAB analysis framework evaluates the impact of these discontinuities on pre-production performance using the supplied S-parameters, though final verification still requires empirical hardware validation. The 3D layout is shown in Figure 2. 
+
+The design targets signal-integrity performance up to 1.25 GHz—twice the 0.625 GHz Nyquist frequency. At 1.25 GHz, insertion loss ( 𝑆 𝐷𝐷21 ) is specified to be no worse than -1.5 dB, with input return loss ( 𝑆 𝐷𝐷11 ) kept at or below -15 dB; the return-loss and insertion-loss crossing should be beyond the third harmonic of 1.25 GHz (3.75 GHz). Baseline CST Studio-derived S-parameters and virtual TDR simulations supplied by PTSL [5] are presented first, ensuring raw electromagnetic evidence remains clearly distinguished from derived link-level pipeline inferences. 
+
+Table 1. PTSL-reported route geometry and CST differential S-parameter magnitudes at 1.25 GHz. DATAOUT points to high-speed ‘DP’ links. 
+
+> No .
+
+Diff .
+
+pair  Signal 
+
+Length per segment  Total physical path length 
+
+PH 
+
+input 
+
+PH  →connec tor 
+
+Connector output 
+
+Cantile ver RF probe (mil) 
+
+PCB trace length (mil) 
+
+Conne ctor pin (mil) 
+
+Total (mil) 
+
+Total (mm) 
+
+SDD1 1(dB) 
+
+SDD2 1(dB) 
+
+SDD22 (dB)                                                                                            
+
+> 1CLK CLK_N 427 3216.48 135 3778.48 95.97 −19.71 −0.58 −18.79
+> CLK_P 427 3216.64 135 3778.64 95.98
+> 2SIN SIN_N 427 3861.00 135 4423.00 112.34 −25.30 −0.59 −23.86
+> SIN_P 427 3861.33 135 4423.33 112.35
+> 3
+> DAT AOU T1
+> DATAO UT1_N 427 3932.96 135 4494.96 114.17
+> −21.90 −0.57 −22.03
+> DATAO UT1_P 427 3933.31 135 4495.31 114.18
+> 4
+> DAT AOU T2
+> DATAO UT2_N 427 4293.40 135 4855.40 123.33
+> −28.65 −0.50 −30.78
+> DATAO UT2_P 427 4293.30 135 4855.30 123.32
+> 5
+> DAT AOU T3
+> DATAO UT3_N 427 3408.12 135 3970.12 100.84
+> −18.80 −0.53 −18.16
+> DATAO UT3_P 427 3408.15 135 3970.15 100.84
+> 6
+> DAT AOU T4
+> DATAO UT4_N 427 3351.68 135 3913.68 99.41
+> −17.24 −0.59 −17.13
+> DATAO UT4_P 427 3352.66 135 3914.66 99.43
+> 7SYNC RES
+> SYNCRE S_N 427 3877.86 135 4439.86 112.77
+> −18.60 −0.57 −18.57
+> SYNCRE S_P 427 3877.59 135 4439.59 112.77
+
+Figure 3 shows the CST-simulated differential time-domain reflectometry (TDR) profiles. The traces remain close to the 100 Ω target through the PCB sections, with localized impedance excursions at the probe head (PH), vias, and connector transitions. The connector and routing-via anti-pad geometries influence these departures. Table 1 reports the fixed-port mixed-mode quantities: SDD11 is the reflection at the probe-head input, SDD21 is the forward transmission from the probe head to the connector, and SDD22 is the reflection at the connector output. At - 8 -
+
+1.25 GHz, the simulated SDD11 values range from −28.65 to −17.24 dB, while SDD22 ranges from −30.78 to −17.13 dB; both remain below the −15 dB reflection criterion. The two end responses are generally close, with the largest difference (about 2.1 dB) on DATAOUT2 (DP2), consistent with a small end-specific discontinuity rather than a route-wide loss effect. A direct re-evaluation of the supplied Touchstone files with the MATLAB framework’s fixed-port, power-normalized mixed-mode transform agrees with the PTSL SDD21 values within 0.06 dB. The reflection values do not agree as closely: the absolute differences are 0.02–4.94 dB for SDD11 and 0.10–4.79 dB for SDD22. Therefore, Table 1 is retained explicitly as PTSL-reported CST data; a direct numerical comparison must identify the exact Touchstone export and reference planes. 
+
+> Figure 3. CST time-domain reflectometry profiles for all probe-card differential pairs.
+
+5. Signal-path results 
+
+The PTSL-exported ODB++ layout was imported into the CST Studio 3D electromagnetic field solver with port configurations of excitation (1,2) → response (3,4). Single-ended S-parameters reanalyzed using the Oxford MATLAB-based framework as discussed in Section 2. Among four high-speed channels, the DP4 channel’s findings are narrated here. 
+
+> Figure 4. (a) Differential S-parameters and operating-band loss decomposition; (b) mixed-mode conversion and loss-residual correlation. - 9 -
+
+Figure 4(a) establishes differential insertion/return loss, operating Nyquist behavior, measured-band headroom, and a physically motivated decomposition of smooth attenuation. The non-negative fit uses √f conductor, f dielectric, and f²/f⁴ residual-curvature bases, normalized by the exact 99.42 mm DP4 path. The fixture constant remains a whole-path intercept; it is not divided into imaginary material segments. As shown, the IL (SDD21) of DP4 is −0.34 dB at 1.25 Gbps (Nyquist: 0.625 GHz). After inserting the total channel length from Table 1, the IL contributions from the conductor skin-depth profile and the insulating dielectric properties are 0.073 dB and 0.183 dB, respectively. The non-crossing condition between SDD21 and SDD11 up to the 3rd harmonic at the Nyquist frequency of 3.75 GHz indicates expected negligible bounce-back noise dominance. The higher-order radiative loss is 0 dB, or negligible. However, it is worth noting that bases are correlated over a finite band, that a zero dielectric proxy does not prove, and that a higher-order coefficient does not measure radiated power. Independent coupon/material and de-embedded fixture data are required for causal separation. 
+
+Figure 4(b) reports the quantifiable deterministic conversion between differential and common modes and tests whether the conversion structure tracks unexplained differential-loss residuals. The assessed single-ended matrix is transformed with power-normalized sum/difference waves. Following the plot's excitation→response naming: displayed SDC21=−29.69 dB is D→C, displayed SCD21=−31.695 dB is C→D, SCC21=−0.52 dB is C→C, and D→C relative=−29.354 dB. SCC21 shows a very low common-mode loss from the excitation to the response port, indicating that common-mode injection into the differential nodes has been negligible. Both inter-exchangeable SDC21-to-SCD21 reports found less than −30 dB. Although the insertion loss residual and 𝑆 𝐷𝐶 show a weak correlation (r = 0.1876), this reflects shared frequency dependence rather than deterministic power loss via mode conversion. 
+
+> Figure 5. (a) Modelled MuPix-side transmitter eye; (b) FEB receiver-input eye with nominal noise; (c) 2.50 Gbps stress eye at 1.25 GHz Nyquist.
+
+A MuPix-like differential signal is launched with a deterministic PRBS-31 generator that maps the generated bits to NRZ levels of plus or minus one. The one-UI post-cursor and causal first-order edge are defined below. The waveform is normalized to 0.7 Vpp differential and propagated through the rational approximation of the loaded channel transfer function. The TX eye (Figure 5 (a)) establishes the launch reference prior to the simulated passive channel. Eye height quantifies vertical separation at the selected sampling phase; DDJ crossing spread measures pattern-dependent crossing-time variation. The eye-analysis routine reshapes the finite-edge, post-cursor transmitter waveform into two-UI rows, uses the 5th and 95th percentiles for phase search, and uses the 1st and 99th percentiles for the reported opening. The crossing-analysis routine linearly interpolates zero crossings, tests the equivalent half-UI crossing clusters, selects - 10 -
+
+the best-supported cluster, and reports its 1st-to-99th-percentile width. A display-only circular shift centers the eye; it is not used for BER. TX eye height is 0.596 V and DDJ crossing spread is 0.008 UI, or about 6.4 ps at the 800 ps UI. The nominal electrical launch setting is 0.7 Vpp differential, with an 180 ps rise time and a −0.08 post-cursor. 
+
+The received waveform on the Front-End Board (FEB) is obtained by convolving the transmitter waveform with the loaded channel impulse response. Source and load mismatch are retained through the loaded two-port expression below; therefore, both magnitude and phase influence the pulse response. In the Oxford analysis framework, it first finds the maximum-opening receiver phase, aligns only the plotted eye, and recenters the dominant crossing cluster. The eye-analysis routine returns the 1st/99th-percentile voltage limits, and the crossing-analysis routine returns the corresponding transition bounds. No additive receiver noise, CTLE or DFE is present, so the figure isolates the measured channel plus the stated source/load boundary model. At 1.25 Gbps data rate, the eye height remains 0.593V. Even with the inclusion of the 2 mV RMS random input noise and 2 ps flat-top aperture jitter, the operating point remains limited to ~13 mV (Figure 5 (b)). At the two-fold Nyquist 1.25 GHz (Figure 5 (c)), distortion gets enlarged to ~19.4 mV while eye height remains very comparable to the MuPix operating data rate, 1.25 Gbps. 
+
+> Figure 6. (a) Receiver BER bathtub; (b) receiver BER versus data rate; (c) projected receiver 8b10b checker/event rate versus data rate.
+
+Figure 6(a) shows the BER bathtub that moves the receiver sampling phase across the UI while preserving channel ISI and the configured noise/jitter model. Its minimum identifies the best phase; the slopes indicate sensitivity to clock placement and deterministic timing closure. For each phase, the deterministic context voltage and local slope define a Gaussian decision tail. The DP4 timing scan uses 161 phase positions from −0.55 to +0.55 UI, a 0.006875-UI increment, and linear interpolation of the 200-sample/UI waveform. At each phase, the raw retained probability is the maximum of the context-resolved Gaussian tail, the robust median level-spread guard, and the deterministic slicer-error fraction. The displayed wall then uses the one-sided cumulative maximum, as in Eq. (4.1), moving outwards from the recovered center c. 
+
+𝐵 𝑒𝑛𝑣 (𝜑 𝑖 ) = { 𝑚𝑎𝑥 
+
+> 𝑖≤𝑗≤𝑐
+
+𝐵 𝑟𝑎𝑤 (𝜑 𝑗 ) for 𝑖 ≤ 𝑐, 𝑚𝑎𝑥 
+
+> 𝑐≤𝑗≤𝑖
+
+𝐵 𝑟𝑎𝑤 (𝜑 𝑗 ) for 𝑖 ≥ 𝑐. (4.1) 
+
+Here, 𝜑 𝑖 represents the discrete sampling phase offset at step i, 𝜑 𝑐 (indexed at c) is the recovered optimal phase center of the eye, 𝐵 𝑟𝑎𝑤 (𝜑 𝑗 ) is the context-resolved BER evaluated at phase step j, and 𝐵 𝑒𝑛𝑣 (𝜑 𝑖 ) constructs a monotonic BER envelope moving outward from the center. This cumulative operation ensures that clock-phase offsets are evaluated against worst-- 11 -
+
+case edge margins, preventing raw numerical fluctuations or local statistical crossovers from producing non-physical decreases in BER as the sampling point shifts away from the eye center. 
+
+At the recovered DP4 center, the context tail is 2.225e−308, and the robust level-spread term is 2.281e−297; the plot shows these levels 10 −15 as unresolved beneath a declared credibility floor. The conditional-one/zero ISI spreads are 7.76/7.73 mV, and their slope-weighted jitter terms are 0.17/0.17 mV. A shallow plateau on a wall therefore indicates that the running maximum has held a previous raw estimate, commonly near a component crossover or one-error quantization step of approximately 3.054e−05. It is not a downward BER excursion and cannot, without raw-component and perturbation checks, be assigned to a reflection or resonance. 
+
+Every DP4 rate uses the same full-aligned PRBS decision definition; no low- and high-rate models are spliced. Sub-floor points in Figure 6(b) are displayed at rather than at numerical underflow, so the 1.25 Gbps marker means only that this model does not resolve a larger BER. It is not a zero-error hardware measurement. 
+
+In Figure 6(c), the DP4 receiver checker enumerates immediate ten-bit groups over all 1024 possible received words and retains invalid-code, disparity, and valid-symbol-mismatch classes separately. Its event rate is a projection based on model probabilities, not a measured count. Burst memory, clock-data recovery, framing loss, and later running-disparity propagation remain outside the enumeration. At the operating point, the checker-event projection is below the 8.064e−07 events/s reporting bound, while the zero-count 99% upper bound is 1.111e+06 events/s. 
+
+6.  Comparative analysis 
+
+Table 2 is the route-resolved evidence: it preserves each operating-point quantity before any averaging or subtraction. All four routes contain the same 10.846 mm probe and 3.429 mm connector-pin sections, so the 99.420-123.325 mm path range is produced entirely by the PCB trace. Despite the 23.905 mm span, SDD21 occupies only −0.35 to −0.3 dB, and the channel-only eye occupies 0.586 to 0.588 V. The tighter transmission and eye ranges must not conceal the larger modal differences: D-to-C spans −31.038 to −28.236 dBc, while SCC21 spans −1.244 to −0.52 dB. Conductor and dielectric loss components represented here are mathematical basis decompositions over 0.1–0.8 GHz and do not imply physical substrate variation between routes. 
+
+The columns answer distinct questions. SDD21 is the wanted differential transfer; D-to-C is the conversion of a differential excitation into common mode; SCC21 is the forward transfer of a common-mode excitation already present at the input; and eye height is the time-domain consequence of usable-band magnitude, phase, and pattern response under the common transmitter and receiver assumptions. Neither D-to-C nor SCC21 is random noise, and one cannot be substituted for the other.                                     
+
+> Table 2. DP1-DP4 route-specific operating-point quantities at 1.25 Gbps (0.625 GHz Nyquist).
+> DP Path
+> (mm )
+> SDD21
+> (dB )
+> Cond.
+> (dB )Diel. dB Higher dB
+> D-to-C dBc
+> SCC21 dB RX eye V
+> DP1 114.175 −0.340 0.303 0.000 0.020 −31.038 −1.028 0.586
+> DP2 123.325 −0.350 0.293 0.000 0.021 −28.236 −1.244 0.586
+> DP3 100.840 −0.300 0.261 0.000 0.003 −29.242 −0.531 0.587
+> DP4 99.420 −0.340 0.073 0.183 0.000 −29.354 −0.520 0.588
+
+- 12 -
+
+Table 3 compresses the four absolute rows into sample-level location, spread, and range. It shows whether a metric is tightly clustered or route-sensitive; its mean is not a replacement for a trace result, and its sample standard deviation is neither a fabrication tolerance nor a measurement uncertainty. Table 4 therefore returns from population description to paired engineering contrasts. DP4 is selected as the reference because it is the shortest route and, under the common time-domain model, has the largest channel-only and FEB-input eyes and the smallest reported channel-induced vertical closure. It is also worth mentioning that DP4 differential data pair spTAB bonded alone for the Mu3e outer pixel detector HDI-flex [9]. This baseline choice does not imply that DP4 is superior in insertion loss or modal isolation. 
+
+Table 3. DP1-DP4 descriptive statistics; dispersion is the sample standard deviation. 
+
+Metric  Mean  Sample SD  Minimum  Maximum                                         
+
+> Path length (mm) 109.4400 11.3955 99.4200 123.3250
+> SDD21 (dB) −0.3325 0.0222 −0.3500 −0.3000
+> Loss slope (dB/GHz) 0.3625 0.0419 0.3000 0.3900
+> Conductor contribution (dB) 0.2325 0.1078 0.0730 0.3030
+> Dielectric proxy (dB) 0.0457 0.0915 0.0000 0.1830
+> Higher-order proxy (dB) 0.0110 0.0110 0.0000 0.0210
+> D-to-C relative (dBc) −29.4675 1.1614 −31.0380 −28.2360
+> SCC21 (dB) −0.8307 0.3634 −1.2440 −0.5200
+> RX eye (V) 0.5867 0.0010 0.5860 0.5880
+> Fit residual RMS (dB) 0.0063 0.0010 0.0050 0.0070
+
+Route differences relative to the DP4 reference, together with absolute DP1-DP4 error-model extracts, are summarized in Table 4. 
+
+Table 4. Signed route differences relative to DP4 and absolute BER/8b10b combined-event-rate upper bounds at 1.25 Gbps. Because every route is below the reporting floor, the final two columns are common bounds and are not route-ranking metrics. 
+
+Route 
+
+Path diff . vs DP4 (mm) 
+
+SDD21 diff . vs DP4 (dB) 
+
+D-to-C diff . vs DP4 (dB) 
+
+SCC21 diff . vs DP4 (dB) 
+
+RX-eye diff . vs DP4 (mV) 
+
+FEB-eye diff . vs DP4 (mV) 
+
+Analytical BER (upper bound) 
+
+Projected 8b10b combined event rate (upper bound, events/s)        
+
+> DP1 +14.755 +0.000 −1.684 −0.508 −2.0 −3.0
+
+< 10⁻¹⁵  < 1.25 × 10⁻⁶        
+
+> DP2 +23.905 −0.010 +1.118 −0.724 −2.0 −3.0
+
+< 10⁻¹⁵  < 1.25 × 10⁻⁶        
+
+> DP3 +1.420 +0.040 +0.112 −0.011 −1.0 −1.0
+
+< 10⁻¹⁵  < 1.25 × 10⁻⁶        
+
+> DP4 (ref.) 0.000 0.000 0.000 0.000 0.0 0.0
+
+< 10⁻¹⁵  < 1.25 × 10⁻⁶ 
+
+DP1 is 14.755 mm longer than DP4, yet both report SDD21 = −0.34 dB at 0.625 GHz. This equality at one frequency does not establish equal broadband loss. DP1's D-to-C value is 1.684 dB more negative; expressed as a power ratio, its converted fraction is 0.679 times that of DP4, or about 32.1% lower. Conversely, DP1's SCC21 is 0.508 dB lower, so it transmits less of an already-common-mode incident wave. Its channel-only and FEB-input eyes are only 2.0 and 3.0 mV below DP4. The comparison separates a meaningful modal-isolation advantage from a very small vertical-eye difference. - 13 -
+
+DP2 adds 23.905 mm of path relative to DP4 but changes Nyquist SDD21 by only −0.010 dB; its channel-only and FEB-input eyes are lower by only 2.0 and 3.0 mV. The more discriminating result is D-to-C = −28.236 dBc, 1.118 dB less isolated than DP4 and equivalent to approximately 1.294 times its converted-power fraction. DP2 also has the largest pattern-conditioned zero/one level spreads (11.65/11.97 mV). Those spreads are deterministic context dispersion under the stated model, not additive noise amplitudes. The result shows that extra route length alone does not predict modal balance, even when the final vertical opening remains almost unchanged. 
+
+DP3 is only 1.420 mm longer than DP4 and therefore provides the closest geometric control. It has SDD21= −0.3 dB, +0.040 dB less negative than DP4, but its channel-only and FEB-input eyes are still 1.0 mV smaller. Its D-to-C difference is only +0.112 dB (1.026 times the DP4 converted-power fraction), and SCC21 differs by −0.011 dB. Thus, DP3 and DP4 are nearly modal-equivalent at the operating point, while their single-frequency differential transfer and integrated eye ranking are not identical. 
+
+The non-negative loss fit assigns DP3 0.261/0.000/0.003 dB and DP4 0.073/0.183/0.000 dB to the conductor/dielectric-proxy/higher-order bases. After path normalization, these become 2.588/0.000/0.025 dB/m for DP3 and 0.739/1.841/0.000 dB/m for DP4. Although the residual RMS values are only 0.005 and 0.007 dB, redistribution among correlated non-negative basis functions is a phenomenological description of spectral shape, not evidence that adjacent traces contain different copper or dielectric materials. 
+
+In voltage-ratio terms, DP1/DP2/DP3/DP4 transmit approximately 0.888/0.867/0.941/0.942 of an already-common-mode incident wave. A value nearer 0 dB therefore means stronger common-to-common propagation, not stronger differential-to-common conversion. DP3 and DP4 pass an imposed common-mode component more efficiently than DP1 and DP2, while DP1 provides the strongest D-to-C isolation. These independent modal properties require separate acceptance criteria. 
+
+The channel-only eye varies by only 2.0 mV across all four routes, and channel-induced closure improves from 10.51 mV on DP2 to 8.32 mV on DP4. This supports robust modeled vertical margin for every short route, but does not make their mode-conversion behavior equivalent or validate sub-10 −15 analytical tails as measured BER. The ranking is therefore metric-dependent: DP2 is longest, DP4 is shortest and has the largest reported eye, DP3 has the least-negative Nyquist SDD21, and DP1 has the strongest D-to-C isolation at −31.038 dBc. No single trace is 'best' unless the acceptance quantity is stated explicitly. 
+
+The final two columns of Table 4 are absolute bounds, not differences. DP1-DP4 each have an analytical BER below 10⁻¹⁵ at 1.25 Gbps and a corresponding 8b10b combined-event-rate upper bound below 1.25 × 10⁻⁶ events/s. Their equality follows from the common receiver assumptions and the fact that all four analytical BER results lie beneath the declared reporting floor. Reporting these values as inequalities avoids attributing physical meaning to the raw floating-point tail; the latter is retained only in the unaggregated per-route MATLAB text logs for software traceability. 
+
+The 8b10b combined-event bound is likewise a model projection rather than an observed event rate. The combined class is the logical union of a checker event (invalid code or running-disparity violation) and a valid-symbol mismatch; it is therefore the appropriate end-to-end coded-- 14 -
+
+link metric. The associated checker-only bound is below 8.064e−07 events/s. Immediate ten-bit-word enumeration uses the same 1.25 Gbps line rate and exhaustive 1024-word weighting for every route, with burst memory, clock-data recovery, framing loss, and subsequent running-disparity propagation outside the model. In the finite PRBS record, zero errors among 32749 aligned decisions support only a 99% BER upper bound of 1.406e−04; the encoded zero-count record gives a 99% checker-rate upper bound of 1.111e+06 events/s. Consequently, Table 4 supports no BER or coded-event ranking among DP1-DP4. The defensible manuscript statement remains analytical BER below 10⁻¹⁵, pending a longer independent simulation or timed hardware measurement. 
+
+Across DP1-DP4, the mean physical route is 109.44 mm, and the modeled FEB-input eye is 0.5867 ± 0.001 V (mean ± sample standard deviation) at 1.25 Gbps. The 23.905 mm path-length span produces only a 0.05 dB range in SDD21 and a 2 mV range in the channel-only eye, so all four routes retain favorable modeled differential margin. The comparative analysis nevertheless shows that route length is not a sufficient ranking variable: DP1 has the strongest differential-to-common isolation (−31.038 dBc), DP2 is the longest and has the weakest isolation (−28.236 dBc), DP3 has the least-negative Nyquist SDD21 (−0.3 dB), and the shortest route DP4 has the largest reported eye. The design choice must therefore name the acceptance metric rather than assign a single overall 'best' route. 
+
+7. Conclusions 
+
+The Oxford MATLAB-based SI framework provides a fully automated, reusable pipeline for pre- and post-fabrication assessment of high-speed detector interconnects. Applied to the PPCB-1347/MuPix11 probe card, it preserves the chain from electromagnetic S-parameter data through mixed-mode behavior, a causal loaded channel, propagated waveforms, receiver decisions, and coded-link consequences. Across DP1–DP4, the modeled FEB-input eye is 0.5867 ± 0.001 V at 1.25 Gbps, and the Nyquist SDD21 range is only 0.05 dB, indicating robust modeled differential margin under the stated transmitter and receiver assumptions. The more consequential comparative result is that no single route descriptor gives a complete ranking: DP3 minimizes Nyquist insertion loss, DP1 provides the strongest differential-to-common isolation, and DP4 has the largest modeled eye. Physical length is therefore not a sufficient proxy for link quality, and acceptance criteria must explicitly state whether loss, mode conversion, eye margin, or another receiver-relevant quantity is being controlled. 
+
+The framework’s transferable contribution is this traceable separation of physical channel behavior from model assumptions and observations. Any compatible four-port Touchstone response—whether obtained from electromagnetic simulation or from a calibrated and de-embedded VNA measurement—can be passed through the same checked port-pairing, mixed-mode, loaded-channel, waveform, and protocol-analysis stages, while the transmitter, receiver, data rate, and coding assumptions remain visible and configurable. This makes the method useful beyond the PPCB-1347/MuPix11 probe card for comparative SI analysis of other high-speed interconnects. At the same time, sub-floor BER and coded-event outputs are reported as bounds, not hardware measurements; their purpose is to identify the operating conditions that require calibration or measurement, rather than to claim physical precision unsupported by the input data. The resulting workflow supplies a defensible bridge from pre-fabrication electromagnetic design to calibrated VNA interpretation, threshold sweeps, and timed BER validation. - 15 -
+
+Acknowledgments 
+
+The project has been funded by the Science and Technology Research Council (STAK00085). The authors acknowledge PTSL RF team for sharing the PPCB-1347/MuPix11 signal-integrity and layout inputs for this analysis and thank the Mu3e collaboration for fruitful discussions of the signal-integrity findings. 
+
+Conflicts of Interest 
+
+The authors declare that there is no conflicts of interest. 
+
+References 
+
+[1] H. Augustin et al., The MuPix system-on-chip for the Mu3e experiment, Nucl. Instrum. Methods Phys. Res. A 845 (2017) 194-198, doi:10.1016/j.nima.2016.06.095. 
+
+[2] A. Weber, H. Augustin and I. Perić, MuPix10 Documentation, Mu3e Internal Note 0052, version 0.7 (2023). 
+
+[3] N. Berger and M. Müller, Front-end board v2.0 Manual, Mu3e Internal Note 0057, version 1.2 (2024). 
+
+[4] M. Köppel and M. Müller, Protocol for the data transmission between Frontend- and Switching-Board, Mu3e Internal Note 0047, version 0.2 (2018). 
+
+[5] PTSL, PPCB-1347 - MuPix11 - Final SI Results, revision R02, technical report (2026). 
+
+[6] IBIS Open Forum, Touchstone File Format Specification, version 2.0, technical specification (2009). 
+
+[7] D.E. Bockelman and W.R. Eisenstadt, Combined differential and common-mode scattering parameters: theory and simulation, IEEE Trans. Microwave Theory Tech. 43 (1995) 1530. 
+
+[8] D.M. Pozar, Microwave Engineering, 4th edition, Wiley, Hoboken U.S.A. (2012). 
+
+[9] K. Arndt et al., Technical design of the phase I Mu3e experiment, Nuclear Instruments and Methods in Physics Research Section A, Vol. 1014 (2021). 
+
+[10] S.H. Hall and H.L. Heck, Advanced Signal Integrity for High-Speed Digital Designs, Wiley, Hoboken U.S.A. (2009). 
+
+[11] A.X. Widmer and P.A. Franaszek, A DC-balanced, partitioned-block, 8B/10B transmission code, IBM J. Res. Dev. 27 (1983) 440.
