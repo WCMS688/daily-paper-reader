@@ -1,0 +1,58 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-12T20:55:51.955564+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 0,
+    "quick_skim_target": 11,
+    "quick_selected": 0
+  },
+  "deep_dive": [
+    {
+      "id": "2608.09462v2",
+      "source": "arxiv",
+      "title": "Automated Signal Integrity Analysis Framework for High-Speed Interconnects in the PPCB-1347-MuPix11 Probe Card",
+      "abstract": "A reusable MATLAB signal-integrity (SI) framework is presented that converts compatible four-port S-parameter data, measured by VNA or obtained from electromagnetic simulation, into traceable link-level evidence rather than a single loss metric. The framework is demonstrated on the four 1.25 Gbps differential routes (DP1-DP4) of the PPCB-1347/MuPix11 probe card using PTSL CST Microwave 3D-Solver-derived four-port S-parameters and a virtual time-domain solver. The automated pipeline preflights file structures, performs a power-normalized mixed-mode transformation, applies route-length-aware loss decomposition, constructs a causally loaded channel model, and propagates full PRBS-31 sequences into eye-diagram, conditional-BER, and 8b10b-coded-link analyses. At the 1.25 Gbps data rate (Nyquist 0.625 GHz), DP1-DP4 exhibit differential insertion loss (SDD21) from -0.350 to -0.300 dB, differential-to-common conversion from -31.038 to -28.236 dBc, and modeled FEB-input eye openings from 0.586 to 0.588 V. The comparison shows that path length alone is not an adequate SI ranking variable: DP3 has the lowest Nyquist insertion loss, DP1 the strongest differential-to-common isolation, and DP4 the largest modeled eye. All analytical BER values remain below the reporting floor and therefore do not support a BER ranking. By preserving the distinction between route-dependent waveform behavior, model projections, and finite-record observations, the framework provides an extensible basis for comparative high-speed-interconnect SI analysis from design review through calibrated VNA measurement interpretation.",
+      "authors": [
+        "D M S Sultan",
+        "R. Plackett",
+        "A. E. McDougall",
+        "A. J. A. Knight",
+        "A. S. Rotelli",
+        "J. Vossebeld",
+        "D. Bortoletto"
+      ],
+      "primary_category": "hep-ex",
+      "categories": [
+        "hep-ex",
+        "eess.SY"
+      ],
+      "published": "2026-08-10T11:31:33+00:00",
+      "link": "https://arxiv.org/pdf/2608.09462v2",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Automated SI analysis framework for high-speed interconnects converting S-parameters to link-level eye diagrams",
+      "llm_evidence_cn": "面向高速互连的自动化信号完整性分析框架，将S参数转换为链路级眼图证据",
+      "llm_evidence": "面向高速互连的自动化信号完整性分析框架，将S参数转换为链路级眼图证据",
+      "canonical_evidence": "面向高速互连的自动化信号完整性分析框架，将S参数转换为链路级眼图证据",
+      "llm_tldr_en": "A reusable MATLAB SI framework converts four-port S-parameters into link-level evidence for high-speed differential routes, demonstrated on a probe card via mixed-mode transform, loss decomposition, channel modeling and PRBS-31 eye analysis.",
+      "llm_tldr_cn": "针对高速互连信号完整性分析中仅依赖单一损耗指标、缺乏链路级可追踪证据的问题，提出一个可复用的MATLAB信号完整性框架。该框架将四端口S参数自动转换为混合模式参数，进行与路由长度相关的损耗分解，构建因果通道模型，并传播PRBS-31序列生成眼图与条件化指标。在PPCB-1347/MuPix11探针卡四条1.25 Gbps差分通路上完成验证，证明该方法可从S参数回溯到链路级完整性验证结果。",
+      "llm_tldr": "针对高速互连信号完整性分析中仅依赖单一损耗指标、缺乏链路级可追踪证据的问题，提出一个可复用的MATLAB信号完整性框架。该框架将四端口S参数自动转换为混合模式参数，进行与路由长度相关的损耗分解，构建因果通道模型，并传播PRBS-31序列生成眼图与条件化指标。在PPCB-1347/MuPix11探针卡四条1.25 Gbps差分通路上完成验证，证明该方法可从S参数回溯到链路级完整性验证结果。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Signal integrity analysis for high-speed interconnects",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": []
+}

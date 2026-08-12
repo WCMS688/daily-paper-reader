@@ -6,26 +6,23 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-11
-- 运行时间：2026-08-11 21:23:59 UTC
+- 最新运行日期：2026-08-12
+- 运行时间：2026-08-12 20:57:22 UTC
 - 运行状态：成功
-- 本次总论文数：2
-- 精读区：2
+- 本次总论文数：1
+- 精读区：1
 - 速读区：0
 
 ### 今日简报（AI）
-今日精读2篇高分论文，聚焦芯片架构与高速互连两大硬件痛点。  
-最值得关注：2.5D PIM芯片的电压降控制方案，以及高速互连信号完整性分析框架，均获9.0高分。  
-建议下一步结合实测数据验证这两类方法的实际效果，并探索其在先进封装中的协同应用。
-- 详情：[/202608/11/README](/202608/11/README)
+今日精读1篇高评分论文，聚焦高速互连信号完整性分析框架。  
+最值得关注的是面向PPCB-1347-MuPix11探针卡的自动化信号完整性分析方法，评分达9.0/10。  
+建议后续可深入该框架在实际探针卡设计中的验证细节与性能提升效果。
+- 详情：[/202608/12/README](/202608/12/README)
 
 ### 精读区论文标签
-1. [ReVolt: Power Delivery Network-Aware Voltage Droop Control for 2.5D PIM Chiplet Architectures](/202608/11/2608.08496v1-revolt-power-delivery-network-aware-voltage-droop-control-for-25d-pim-chiplet-architectures)  
+1. [Automated Signal Integrity Analysis Framework for High-Speed Interconnects in the PPCB-1347-MuPix11 Probe Card](/202608/12/2608.09462v2-automated-signal-integrity-analysis-framework-for-high-speed-interconnects-in-the-ppcb-1347-mupix11-probe-card)  
    标签：评分：9.0/10、query:si-pi
-   evidence：针对2.5D PIM小芯片架构的PDN电压跌落控制，结合LSTM代理模型
-2. [Automated Signal Integrity Analysis Framework for High-Speed Interconnects in the PPCB-1347-MuPix11 Probe Card](/202608/11/2608.09462v1-automated-signal-integrity-analysis-framework-for-high-speed-interconnects-in-the-ppcb-1347-mupix11-probe-card)  
-   标签：评分：9.0/10、query:si-pi
-   evidence：面向高速互连的自动化信号完整性分析框架
+   evidence：面向高速互连的自动化信号完整性分析框架，将S参数转换为链路级眼图证据
 
 ### 速读区论文标签
 - 本次无速读推荐。
