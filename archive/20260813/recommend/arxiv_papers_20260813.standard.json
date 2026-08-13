@@ -1,0 +1,94 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-13T21:29:47.615462+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2608.07043v1",
+      "source": "arxiv",
+      "title": "Tensor Network Kernel Machines: A JAX Framework for Machine Learning and Nonlinear System Identification",
+      "abstract": "Developing nonlinear models that are both expressive and computationally efficient remains a challenge in machine learning and nonlinear system identification. Tensor network kernel machines (TNKM) address this challenge by combining nonlinear feature representations with compact low-rank tensor-network parameterizations. However, practical and extensible software frameworks for developing TNKM models remain limited. In this work, we introduce \"tnkm\", an open-source Python library for constructing and training TNKM models using JAX. The library provides a unified interface for combining different feature maps, tensor-network architectures, and optimization strategies, including alternating least squares and gradient-based methods. We demonstrate the capabilities of \"tnkm\" on nonlinear benchmark problems, showing that the implemented models achieve competitive prediction accuracy while retaining compact parameterizations and efficient training. The proposed framework facilitates reproducible development and application of tensor-network-based learning methods.",
+      "authors": [
+        "Albert Saiapin",
+        "Kim Batselier"
+      ],
+      "primary_category": "cs.MS",
+      "categories": [
+        "cs.MS",
+        "cs.LG",
+        "eess.SY"
+      ],
+      "published": "2026-08-07T09:52:05+00:00",
+      "link": "https://arxiv.org/pdf/2608.07043v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "tensor network kernel machines provide a nonlinear system identification method applicable to SI/PI surrogate modeling",
+      "llm_evidence_cn": "张量网络核机器提供可应用于SI/PI代理建模的非线性系统辨识方法",
+      "llm_evidence": "张量网络核机器提供可应用于SI/PI代理建模的非线性系统辨识方法",
+      "canonical_evidence": "张量网络核机器提供可应用于SI/PI代理建模的非线性系统辨识方法",
+      "llm_tldr_en": "Introduces tnkm, an open-source JAX library for tensor network kernel machines, enabling expressive and efficient nonlinear system identification with flexible feature maps and optimization strategies.",
+      "llm_tldr_cn": "非线性模型常面临表达力与计算效率的矛盾，张量网络核机器（TNKM）通过紧致低秩张量网络参数化结合非线性特征映射来解决。本文用JAX实现并开源tnkm库，统一接口支持多种特征映射、张量网络架构与优化策略，包括交替最小二乘和梯度方法。该框架为非线性系统辨识提供通用且高效的软件工具，可用于高速互连或电源网络等SI/PI问题的机器学习建模，但面向通用领域而非SI/PI专用。",
+      "llm_tldr": "非线性模型常面临表达力与计算效率的矛盾，张量网络核机器（TNKM）通过紧致低秩张量网络参数化结合非线性特征映射来解决。本文用JAX实现并开源tnkm库，统一接口支持多种特征映射、张量网络架构与优化策略，包括交替最小二乘和梯度方法。该框架为非线性系统辨识提供通用且高效的软件工具，可用于高速互连或电源网络等SI/PI问题的机器学习建模，但面向通用领域而非SI/PI专用。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.08033v1",
+      "source": "arxiv",
+      "title": "WiFo-INR: A Wireless Foundation Model Based on Implicit Neural Representations",
+      "abstract": "Wireless foundation models are emerging as a promising paradigm for AI-native physical-layer design. However, existing methods typically model channel state information (CSI) as image-like discrete tensors with generic token decoders that may struggle to capture complex high-frequency variations efficiently and often produce high-dimensional, size-dependent representations. In this paper, we propose WiFo-INR, an implicit neural representation (INR)-based wireless foundation model that represents CSI as a coordinate-conditioned neural function. A Transformer encoder maps partial or coarse CSI to fixed-dimensional modulation tokens that adapt a SIREN-based decoder, and a compression autoencoder enables quantized CSI feedback. It adopts a two-stage self-supervised pretraining scheme, where mixed masking and denoising improve channel reconstruction and compression-enhanced pretraining enables accurate CSI feedback at low compression ratios. Extensive experiments demonstrate that WiFo-INR learns efficient, compact, and CSI-size-independent implicit wireless representations. Compared with existing foundation models, WiFo-INR improves channel reconstruction and CSI feedback performance while substantially reducing inference latency. It also transfers efficiently to diverse wireless tasks with minimal fine-tuning overhead and achieves zero-shot generalization to unseen CSI sizes.",
+      "authors": [
+        "Boxun Liu",
+        "Xuanyu Liu",
+        "Shijian Gao",
+        "Xiang Cheng",
+        "Liuqing Yang"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP"
+      ],
+      "published": "2026-08-08T09:42:01+00:00",
+      "link": "https://arxiv.org/pdf/2608.08033v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "implicit neural representation based channel modeling, transferable to high-speed interconnect channel modeling",
+      "llm_evidence_cn": "基于隐式神经表示的无线信道建模方法，可迁移至高速互连信道建模",
+      "llm_evidence": "基于隐式神经表示的无线信道建模方法，可迁移至高速互连信道建模",
+      "canonical_evidence": "基于隐式神经表示的无线信道建模方法，可迁移至高速互连信道建模",
+      "llm_tldr_en": "WiFo-INR is a wireless foundation model using implicit neural representations to represent CSI as coordinate-conditioned functions, enabling flexible channel modeling and efficient CSI feedback compression.",
+      "llm_tldr_cn": "针对无线基础模型将信道状态信息视为类图像离散张量而难以捕捉高频变化、表示维度过高的问题，提出WiFo-INR。该方法用隐式神经表示将CSI表示为坐标条件的神经函数，Transformer编码器将部分或粗粒度CSI映射为固定维度调制令牌，并自适应SIREN解码器，压缩自编码器实现量化CSI反馈。两阶段训练增强跨场景泛化，展示了INR在信道建模中的潜力，对高速互连信道模型构建具有方法迁移价值。",
+      "llm_tldr": "针对无线基础模型将信道状态信息视为类图像离散张量而难以捕捉高频变化、表示维度过高的问题，提出WiFo-INR。该方法用隐式神经表示将CSI表示为坐标条件的神经函数，Transformer编码器将部分或粗粒度CSI映射为固定维度调制令牌，并自适应SIREN解码器，压缩自编码器实现量化CSI反馈。两阶段训练增强跨场景泛化，展示了INR在信道建模中的潜力，对高速互连信道模型构建具有方法迁移价值。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

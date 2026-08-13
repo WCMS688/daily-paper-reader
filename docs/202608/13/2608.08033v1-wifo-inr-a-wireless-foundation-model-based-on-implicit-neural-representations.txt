@@ -1,0 +1,618 @@
+Title: WiFo-INR: A Wireless Foundation Model Based on Implicit Neural Representations
+
+URL Source: https://arxiv.org/pdf/2608.08033v1
+
+Published Time: Tue, 11 Aug 2026 00:34:04 GMT
+
+Number of Pages: 13
+
+Markdown Content:
+1
+
+# WiFo-INR: A Wireless Foundation Model Based on Implicit Neural Representations 
+
+Boxun Liu, Graduate Student Member, IEEE, Xuanyu Liu, Graduate Student Member, IEEE, 
+
+Shijian Gao, Member, IEEE, Xiang Cheng, Fellow, IEEE, Liuqing Yang, Fellow, IEEE 
+
+Abstract —Wireless foundation models are emerging as apromising paradigm for AI-native physical-layer design. How-ever, existing methods typically model channel state informa-tion (CSI) as image-like discrete tensors with generic token decoders that may struggle to capture complex high-frequency variations efficiently and often produce high-dimensional, size-dependent representations. In this paper, we propose WiFo-INR, an implicit neural representation (INR)-based wireless foundation model that represents CSI as a coordinate-conditioned neural function. A Transformer encoder maps partial or coarse CSI to fixed-dimensional modulation tokens that adapt a SIREN-based decoder, and a compression autoencoder enables quantized CSI feedback. It adopts a two-stage self-supervised pretraining scheme, where mixed masking and denoising improve channel reconstruction and compression-enhanced pretraining enables accurate CSI feedback at low compression ratios. Extensive experiments demonstrate that WiFo-INR learns efficient, com-pact, and CSI-size-independent implicit wireless representations. Compared with existing foundation models, WiFo-INR improves channel reconstruction and CSI feedback performance while sub-stantially reducing inference latency. It also transfers efficiently to diverse wireless tasks with minimal fine-tuning overhead and achieves zero-shot generalization to unseen CSI sizes. 
+
+Index Terms —Wireless foundation model, channel state infor-mation, channel reconstruction, implicit neural representation, self-supervised pretraining 
+
+I. I NTRODUCTION 
+
+# THE forthcoming sixth-generation (6G) wireless networks are expected to support ubiquitous intelligent agents and emerging applications such as collaborative embodied intelligence. This vision requires broader coverage, includ-ing satellite communications, diverse configurations such as millimeter-wave bands and massive antenna arrays, and multi-modal sensing capabilities for Synesthesia of Machines (SoM) [1]. The resulting heterogeneity poses substantial challenges to physical-layer design. Existing algorithms largely rely on model-driven parametric methods whose performance depends on accurate prior knowledge. In realistic propagation environ-ments, however, difficult-to-model non-idealities often cause model mismatch and limit their generality. 
+
+Boxun Liu, Xuanyu Liu, and Xiang Cheng are with the State Key Laboratory of Photonics and Communications, School of Electronics, Peking University, Beijing 100871, China (e-mail: boxunliu@stu.pku.edu.cn; xyliu25@stu.pku.edu.cn; xiangcheng@pku.edu.cn). Shijian Gao is with the Internet of Things Thrust, The Hong Kong University of Science and Technology (Guangzhou), Guangzhou 511400, China (e-mail: shijiangao@hkust-gz.edu.cn). Liuqing Yang is with the Internet of Things Thrust and Intelligent Trans-portation Thrust, The Hong Kong University of Science and Technology (Guangzhou), Guangzhou 511400, China (e-mail: lqyang@ust.hk). • Discrete-grid value fitting → Limited reconstruction accuracy                         
+
+> •High-dimensional feature representation → Poor compression capability
+> •CSI-size-dependent representation → Limited cross-size task generalization
+> •Transformer-based decoder → High inference latency
+> •Oscillation-aware inductive bias →High -accuracy reconstruction
+> •Compact parameter representation → Low compression ratio
+> •CSI-size-independent representation → Cross-size task generalization
+> •Lightweight SIREN decoder → Low inference latency
+
+Encoder 
+
+> Transformer layers
+
+Decoder 
+
+> Transformer
+> layers
+
+Explicit discrete modeling-based wireless foundation models 
+
+Encoder  Decoder 
+
+> Transformer layers
+> SIREN layers
+
+(s, k, n)  𝑯 𝑠,𝑘,𝑛 
+
+> Parameter modulation
+
+Implicit neural representations-based wireless foundation models 
+
+Represent CSI as a discrete tensor 
+
+Represent CSI as a coordinate-conditioned neural function 
+
+Fig. 1. Comparison of wireless foundation model architectures based on explicit discrete modeling and INRs. 
+
+Over the past decade, AI has been widely adopted in physical-layer design to improve performance and robust-ness through data-driven modeling. However, most existing approaches remain task-specific, with separate models re-quired for different tasks, system configurations, and sce-narios. As a result, the number of models deployed on a communication device grows with their combination, leading to substantial overhead in storage, training, management, and data collection. This paradigm therefore scales poorly in heterogeneous wireless systems. In recent years, foundation models [2] have driven a paradigm shift in AI. Inspired by this success, domain-specific foundation models for wireless systems, termed wireless foundation models [3–15], have been proposed to address the aforementioned challenges. By pretraining on large-scale wireless data, typically channel state information (CSI), these models learn general-purpose wireless representations [16–19] that transfer across scenarios, system configurations, and tasks, enabling few-shot or even zero-shot adaptation to a broad range of wireless downstream tasks. For example, the early study LWM [6] obtained gen-eral representations through self-supervised masked channel modeling on spatial-frequency CSI data and can efficiently adapt to multiple downstream tasks such as beam predic-tion. The contemporaneous work WiFo [7] performed hybrid arXiv:2608.08033v1 [eess.SP] 8 Aug 2026 2
+
+masked reconstruction pretraining on heterogeneous spatial-temporal-frequency CSI and, for the first time, achieved zero-shot channel prediction that outperformed fully supervised training of task-specific models. Subsequent studies further improved pretraining objectives and network architectures, for example by introducing contrastive learning [8–10], three-dimensional rotary position embedding (3D-RoPE) [11], and modeling in the delay-Doppler-angle (DDA) domain [12], thereby enhancing the modeling and generalization capabilities of general-purpose wireless representations. In addition, some studies have incorporated specialized designs that bias net-works towards particular classes of wireless tasks, such as CSI feedback [13], achieving strong zero-shot generalization. More recently, WiFo-2 [14] has enabled the unified processing of 12 wireless communication and sensing tasks, while substantially reducing the fine-tuning overhead. However, existing wireless foundation models largely in-herit a discrete-tensor modeling paradigm from image pro-cessing and represent CSI on fixed space-time-frequency grids. Such tensors are finite samples obtained under spe-cific bandwidth, subcarrier spacing, antenna configuration, and temporal sampling settings. This is a valid abstraction, but CSI samples exhibit structured oscillatory variations induced by multipath propagation. Generic token-based decoders are not explicitly tailored to this frequency structure and may struggle to capture complex high-frequency channel variations efficiently. In addition, their high-dimensional features can in-crease feedback overhead, while the number of feature tokens changes with CSI size and restricts direct reuse across input scales. Transformer decoders also reconstruct dense CSI grids through repeated token interactions, which incurs considerable latency. These observations motivate a coordinate-conditioned alternative with a frequency-aware sinusoidal inductive bias and compact, fixed-dimensional instance representations. Implicit neural representations (INRs) [20] offer a new opportunity to overcome these bottlenecks. An INR represents a signal as a coordinate-conditioned neural function that maps coordinates to signal values, making it well suited to capturing complex wireless channel variations while yielding compact parameter-based representations. Several studies have begun applying INRs to wireless tasks such as RF propagation-field reconstruction [21], CSI feedback [22], and channel estimation [23], providing early evidence of their potential for efficient wireless channel representation. For example, [22] first introduced INRs for massive multiple-input multiple-output (MIMO) CSI feedback by representing CSI as a neural function of antenna and subcarrier coordinates. It optimizes, at the user side, an instance-specific modulation codeword for each CSI instance to enable feedback, thereby achieving CSI reconstruction at extremely high compression ratios. In [23], SIREN was used to represent high-mobility OFDM channels as INRs, where the INR parameters are optimized from the received signals in the current slot to achieve robust channel estimation. Nevertheless, these methods still require gradient-based optimization for each CSI instance, resulting in substantial online training latency. Moreover, existing efforts are often tailored to a single wireless task, making it difficult to develop a unified design for diverse wireless tasks. To address these limitations, we propose WiFo-INR, an INR-based wireless foundation model that learns generaliz-able implicit wireless representations. As shown in Fig. 1, WiFo-INR exploits the inductive bias that grid-sampled CSI exhibits structured oscillatory variations induced by multipath propagation and models each instance with a coordinate-conditioned neural function. Specifically, we develop an ar-chitecture that generalizes across CSI instances and comprises three key modules. A Transformer-based encoder maps each CSI instance to modulation tokens that adapt the decoder, a SIREN-based decoder provides frequency-aware coordinate mapping over the three CSI dimensions, and a compression autoencoder further compresses the tokens. We also design a two-stage hybrid self-supervised pretraining scheme. The first stage combines mixed masking and interpolation-denoising tasks to enhance 3D CSI estimation and prediction, while the second stage employs compression-reconstruction pretraining to enable 2D CSI feedback at extremely low compression ratios. The main contributions are summarized as follows:  
+
+> •
+
+We propose WiFo-INR, to the best of our knowledge the first INR-based wireless foundation model, which uses coordinate-conditioned neural functions to model sampled CSI. It provides a unified solution for chan-nel acquisition, including channel estimation, channel prediction, and CSI feedback, while learning compact and general-purpose implicit representations for diverse wireless communication and sensing tasks.  
+
+> •
+
+We develop a cross-instance generalizable architecture in which a SIREN-based decoder represents CSI as an INR and a Transformer-based encoder generates modulation tokens to adapt the decoder to each CSI instance. We further design a two-stage self-supervised pretraining scheme to improve channel reconstruction accuracy and support CSI feedback at low compression ratios.  
+
+> •
+
+Extensive experiments demonstrate WiFo-INR’s superior-ity across diverse wireless tasks. Compared with existing wireless foundation models based on explicit discrete modeling, WiFo-INR improves channel reconstruction and CSI feedback performance while substantially reduc-ing inference costs. It also transfers efficiently to CSI-related downstream tasks, including wireless localiza-tion, beam prediction, and scenario classification, with minimal fine-tuning overhead, and achieves zero-shot generalization across different CSI sizes. 
+
+Notations : ai is the i-th element of a vector a, Ai,j denotes the element of matrix A at the i-th row and the j-th column, and A:,m denotes the m-th column of A. ∥·∥ F denotes the Frobenius norm. R and C denote the sets of real numbers and complex numbers, respectively. II. S YSTEM MODEL AND PROBLEM FORMULATION 
+
+In this section, we first introduce the system model and formulate CSI-related wireless tasks. We then present wireless foundation models based on explicit discrete modeling and discuss their limitations. 3
+
+A. System Setup 
+
+We consider a MIMO-orthogonal frequency division mul-tiplexing (OFDM) system where the base station (BS) is equipped with a uniform planar array (UPA), and the user is equipped with a single antenna. Let Nh and Nv denote the numbers of antenna elements along the horizontal and vertical dimensions of the UPA, respectively. We adopt a classical geometric channel model with P propagation paths. For the 
+
+p-th path, the complex path gain, Doppler frequency shift, delay, azimuth angle, and elevation angle are denoted by βp,
+
+μp, τp, θp, and ϕp, respectively. The spatial CSI function 
+
+h(t, f ) ∈ CNhNv between the BS and the user at time t and frequency f is then given by 
+
+h(t, f ) = 
+
+> P
+
+X
+
+> p=1
+
+βpej2πμ pte−j2πf τ p a(θp, ϕ p), (1) where a(θ, ϕ ) ∈ CNhNv represents the corresponding array steering vector of the p-th path. Given T sampling points in the time domain with sampling interval ∆t, and K subcarriers in the frequency domain with subcarrier spacing ∆f , the time–frequency-space CSI tensor observed over the resulting three-dimensional discrete grid is denoted as H ∈ CT ×K×N , where N = NhNv . For any three-dimensional coordinate (s, k, n ) within the domain, the following relation holds: 
+
+Hs,k,n = [ h (s∆t, f 0 + k∆f )] n, (2) where f0 represents the frequency of the first subcarrier. 
+
+B. Overview of CSI-Related Tasks 
+
+CSI plays a central role in wireless communication and sensing tasks. Here, we consider the following five categories of CSI-related tasks. In this paper, we define channel recon-struction as the process of recovering complete CSI from partial CSI, encompassing channel estimation, time-domain channel prediction, and frequency-domain channel prediction. In addition, we use channel acquisition as an umbrella term for channel reconstruction and CSI feedback tasks. 
+
+1) Channel Estimation: Channel estimation aims to recon-struct the complete 3D CSI tensor from the observed signals at a subset of pilot positions. Since neural networks have difficulty efficiently handling diverse pilot patterns, existing AI-based designs typically first employ a least-squares (LS) estimator to estimate the CSI at the pilot positions and then use linear interpolation to obtain a coarse CSI estimate, denoted by ¯H. The AI model then further processes ¯H to produce a refined estimate, denoted by ˆH. Denote the corresponding mapping function as fCE and the process is given as 
+
+ˆH = fCE ( ¯H). (3) 
+
+2) Time-Domain Channel Prediction: Time-domain chan-nel prediction aims to predict the CSI at the next T − Th
+
+time instants from the CSI observed at the preceding Th
+
+time instants, thereby mitigating channel aging caused by high mobility of the transmitter and receiver. Let fTCP denote the mapping function, and this process can be modeled as 
+
+ˆHTh+1: T, :,: = fTCP (H1: Th,:,:). (4) 
+
+3) Frequency-Domain Channel Prediction: Frequency-domain channel prediction aims to predict the CSI at the subse-quent K − Ku neighboring subcarriers from the CSI observed at the preceding Ku subcarriers, thereby substantially reducing pilot overhead. Let fFCP denote the mapping function, and this process is defined as 
+
+ˆH:,K u+1: K, : = fFCP (H:,1: Ku,:). (5) 
+
+4) CSI Feedback: CSI feedback aims to compress space-frequency two-dimensional CSI into low-dimensional infor-mation and transmit it to the receiver side for reconstruction. A typical scenario arises in frequency division duplex (FDD) systems or time division duplex (TDD) systems with imperfect channel reciprocity, where the user measures the downlink CSI and feeds it back to the BS for precoding. Let fC and fR
+
+denote the compressing and recovery mapping functions, and this process is defined as 
+
+ˆH = fR(fC(H)) . (6) Note that, in this case, the time dimension of H has size 1. 
+
+5) CSI-Related Downstream Tasks: In wireless systems, there exist multiple other CSI-based communication and sens-ing tasks, which can be uniformly modeled as classification or regression problems with CSI as the input. Let fdown denote the mapping function and rd denote the output, and this process is given by 
+
+rd = fdown (H). (7) 
+
+C. Wireless Foundation Models based on Explicit Discrete Modeling 
+
+The aforementioned CSI-related tasks can be broadly di-vided into two categories: one that estimates complete CSI from partial and noisy CSI observations or compressed fea-tures, and another that performs CSI-based classification or regression. This formulation is naturally aligned with the architecture and pretraining paradigm of masked autoencoders (MAE), thereby enabling the development of a wireless foun-dation model capable of handling diverse CSI-related tasks. Consider a typical MAE-based wireless foundation model, such as WiFo, which consists of a Transformer-based encoder and decoder. The encoder maps the estimated partial CSI ˜HS
+
+into a sequence of feature tokens TF ∈ RNF×DF , which are then combined with learnable mask tokens TM ∈ RNM×DF
+
+and fed into the decoder to reconstruct the complete CSI ˆH.Here, S denotes a subset of the full element set Ω, DF denotes the dimensionality of tokens, and NF and NM denote the number of feature tokens and mask tokens, respectively. The overall process can be expressed as 
+
+ˆH = fdec (TF, TM), TF = fenc ( ˜HS ), (8) where fenc and fdec denote the encoding and decoding pro-cesses, respectively. Specifically, when S corresponds to the full set, the time-domain subset, and the frequency-domain subset, it naturally instantiates the tasks of channel estimation, time-domain channel prediction, and frequency-domain chan-nel prediction, respectively. Moreover, at a high masking ratio, 4
+
+TF itself can serve as a compact feature representation that can be quantized and used for compressed feedback. In addition, 
+
+TF can be regarded as a general-purpose representation and further fine-tuned for downstream tasks. Nevertheless, the aforementioned approaches primarily rely on explicit discrete modeling of CSI, in which channel acqui-sition is formulated as the direct recovery of CSI values at discrete grid points, leading to the following four limitations.  
+
+> •
+
+Grid-based discrete models directly reconstruct sampled CSI values without explicitly exploiting a frequency-aware inductive bias for multipath-induced high-frequency variations, which may limit their effectiveness in channel reconstruction tasks.  
+
+> •
+
+High-dimensional features hinder accurate CSI feedback at low compression ratios. Specifically, assume that the patch size along the time, frequency, and space dimen-sions is (pt, p f , p s), and the masking ratio is 1 − rm. The input is first replicated pt times along the time dimension to conform to the 3D CSI structure. The compression ratio is defined as the ratio between the feedback tensor dimension and the original CSI dimension, i.e., rc =
+
+DFrm N Kp t 
+
+> ptpfps
+
+
+
+/2N K = rmDF  
+
+> 2pfps
+
+. For a typical setting with DF = 384 , rm = 1 /10 , and pf = ps = 4 , the resulting compression ratio is rc = 1 .2, which is far from adequate for compressed feedback.  
+
+> •
+
+As the number of CSI feature tokens, NF, scales with the input size, downstream fine-tuning is restricted to a fixed CSI size. When the CSI size changes, task-specific output heads must be redesigned and retrained, thereby increasing deployment cost.  
+
+> •
+
+Existing approaches commonly adopt Transformer-based decoders, which introduce substantial inference latency and hinder deployment on resource-constrained wireless devices. III. INR-B ASED UNIFIED WIRELESS TASK DESIGN 
+
+In this section, we first present the motivation and network implementation of INR-based CSI representations. We then formulate a generalizable INR-based unified wireless system design and discuss its advantages. 
+
+A. Motivation: Representing CSI as an INR 
+
+As shown in (2) and (1), a CSI tensor essentially consists of samples from a channel function formed by multipath superpo-sition. Therefore, CSI can be accurately represented using only a small number of multipath parameters, while the CSI value at any time-frequency-space coordinate can be queried with min-imal computational cost. This parameterized representation, rather than a discrete tensor, enables compact and efficient CSI modeling. Nevertheless, accurately estimating multipath parameters in (1) from partial and coarse CSI observations is highly challenging and computationally expensive, making it unsuitable for real-time channel acquisition. We therefore use a coordinate-conditioned INR to fit the sampled CSI without explicitly estimating the multipath parameters. Unlike explicit discrete modeling, INR represents CSI im-plicitly as a neural-network-based function fθ , which maps time-frequency-space coordinates to the corresponding com-plex CSI values, where θ denotes the neural network param-eters. Specifically, for any given three-dimensional coordinate 
+
+(s, k, n ), we have fθ (s, k, n ) = Hs,k,n . Therefore, CSI is no longer treated as a discrete 3D tensor, but is instead modeled as a queryable neural function. In this case, all CSI tensors can be represented by a unified neural function fθ with instance-specific compact parameters θ. In this paper, we adopt a SIREN-based neural network as the INR of CSI. SIREN [20] is a representative INR architecture built upon an MLP, with conventional activation functions replaced by sinusoidal activations to map input coordinates to signal values. Given the input x ∈ Rdin and the output y ∈ Rdout , the single-layer form can be expressed as 
+
+y = sin (ω(W x + b)) , (9) where W ∈ Rdout ×din and b ∈ Rdout denote the weight matrix and bias vector, respectively, and ω is a hyperparameter that controls the frequency scale of the sinusoidal activation. By nonlinearly combining multiple sinusoidal basis functions, this architecture shares a certain similarity with the physical process by which CSI is formed through the superposition of multipath components. Therefore, SIREN is well-suited [24] for characterizing the oscillatory variations of CSI across the time, frequency, and space dimensions. 
+
+B. Generalizable INR-based Unified Wireless System Design 
+
+Despite their compact and efficient CSI representations, existing INR-based wireless methods typically require on-line optimization of a dedicated parameter set for each CSI instance. This per-instance optimization incurs substantial computational overhead, limiting its applicability to real-time tasks such as channel estimation and prediction. Inspired by recent advances in generalizable INRs [25], we propose a generalizable INR architecture that unifies diverse wireless tasks while eliminating online parameter optimization for each CSI instance. The proposed framework consists of two key components, i.e., an encoder fenc and a decoder fψ,ϕ . The decoder acts as the INR of CSI, which maps each time-frequency-space coordinate (s, k, n ) to its corresponding CSI value ˆHs,k,n .The decoder parameters are divided into instance-specific pa-rameters ϕ and instance-agnostic parameters ψ. The instance-agnostic parameters are shared across different CSI instances, while the instance-specific parameters are generated by a Transformer-based encoder conditioned on the current CSI instance ˜HS . These instance-specific parameters are then used to modulate the decoder, enabling the INR to adapt to different CSI instances without online optimization. The overall processing pipeline is formulated as 
+
+ˆHs,k,n = fψ,ϕ (s, k, n ), ϕ = fenc ( ˜HS ). (10) Under this framework, the instance-agnostic parameters of the decoder can be viewed as a universal wireless basis, while the encoder can be regarded as a modulator of this basis. Unlike existing generalizable INRs in computer vision, which primarily focus on image compression, an INR-based 5Time       
+
+> Frequency
+> Space
+> Random
+> masking
+> Time
+> masking
+> Frequency
+> masking
+> Downsampling
+> interpolation
+> Encoder
+> CSI tokenizer
+> Transformer block
+> Transformer block
+> N-STF-PE Learnable
+> tokens
+> Projection layer
+> Modulation token (s, k, n)
+> Fourier features
+> SIREN layer
+> Multiple SIREN layers
+> Linear layer
+> Modulated
+> SIREN layer
+> 𝑯 𝑠,𝑘,𝑛
+> Decoder
+> Parameter
+> modulation
+> MLP
+> Quantizer
+> De-Quantizer
+> Bits
+> Reconstructed
+> modulation token
+> Compression autoencoder
+> Linear + GELU
+> MLP
+> CCM
+> 𝑟 × 𝑑 dec
+> 𝑟 × 𝑑 i
+> TCM
+> 𝑟 × 𝑑 l
+> 𝑟 i× 𝑑 l
+> 𝑟 l× 𝑑 l
+> CRM
+> 𝑟 × 𝑑 dec
+> 𝑟 × 𝑑 i
+> TRM
+> 𝑟 × 𝑑 l
+> 𝑟 i× 𝑑 l
+> 𝑟 l× 𝑑 l
+> Basic block
+> Basic block
+> Basic block
+> Basic block
+> Basic block
+> Basic block
+> Basic block
+> Basic block
+> Basic block
+> MLP
+> CCM
+> TCM
+> TRM
+> CRM
+
+Fig. 2. An illustration of the network structure of WiFo-INR. 
+
+wireless foundation model must accommodate heterogeneous CSI dimensions and incorporate diverse wireless-task-oriented pretraining strategies to generalize across scenarios, system configurations, and tasks. Specifically, with masked recon-struction and interpolation-denoising pretraining tasks, it needs to support channel estimation and channel prediction. More-over, a compression-enhanced pretraining strategy should be designed to further improve compression performance and learn transferable features that can be fine-tuned for various downstream wireless tasks. Compared with existing explicit discrete modeling-based wireless foundation models, the pro-posed framework offers the following prominent advantages.  
+
+> •
+
+By treating CSI tensors as samples of multipath channel responses, the sinusoidal coordinate decoder introduces a frequency-aware inductive bias for fitting complex high-frequency variations. This makes the proposed design well suited to channel reconstruction tasks.  
+
+> •
+
+In contrast to explicitly modeled feature tokens, the encoder-generated instance-specific parameters are highly compact, which substantially reduces the compression ratio for CSI feedback.  
+
+> •
+
+Since the encoder-generated instance-specific parameters are independent of the CSI size, they serve as size-generalizable features that can be fine-tuned for down-stream tasks across different CSI dimensions.  
+
+> •
+
+The SIREN-based decoder incurs much lower inference latency than Transformer-based decoders, making the proposed framework more suitable for deployment on resource-constrained wireless devices. A comparative summary of the two wireless foundation model design paradigms is presented in Fig. 1. IV. P ROPOSED WIFO-INR In this section, we present the proposed INR-based wireless foundation model, including its network architecture, pretrain-ing strategy, and applications to CSI-related downstream tasks. 
+
+A. Network Structure 
+
+As an implementation of the framework given in (10), we design an INR-based wireless foundation model, termed WiFo-INR, whose network architecture is illustrated in Fig. 2. WiFo-INR mainly consists of four components, namely a preprocessor for CSI preprocessing and tokenization, an encoder for generating modulation tokens, a decoder serving as the INR, and a compression autoencoder for reducing the compression ratio. These components are detailed below. 
+
+1) Preprocessor: It preprocesses the CSI and maps it into tokens. To facilitate neural network processing, the complex-valued CSI H is first converted into a real-valued repre-sentation ˜H ∈ R2×T ×K×N . We then divide ˜H into non-overlapping 3D patches with patch size of (pt, p f , p s). This process generates L =
+
+l Tpt
+
+m l Kpf
+
+m l Nps
+
+m
+
+3D patches, which are mapped into CSI tokens Xe ∈ RL×denc through a 3D convolutional network. Here ⌈·⌉ is the ceiling operator and 
+
+denc denotes the embedding dimension of the encoder. For masked reconstruction pretraining tasks, only the visible CSI tokens xvis ∈ RLvis ×denc are retained. For the interpolation-denoising pretraining task, all tokens of the coarsely estimated CSI are retained. 
+
+2) Encoder: It aims to extract instance-specific parameters from CSI tokens to modulate parameters in the decoder. The CSI tokens are first added with the normalized space-time-frequency absolute positional encoding (N-STF-PE) Penc ∈
+
+RLvis ×denc , which differs from STF-PE [7, 14] only in that its input coordinates are normalized. This normalization aligns the input coordinates of the encoder and subsequent decoder, thereby eliminating the impact of varying CSI sizes. Taking the time domain as an example, for the i-th token with temporal coordinate pt 
+
+> i
+
+, the normalized coordinate is given by pt 
+
+> i
+
+/ max (( 
+
+l Tpt
+
+m
+
+− 1) , 1) ∈ [0 , 1] . The position-encoded CSI tokens, together with r learnable tokens Xl ∈ Rr×denc ,are then fed into a backbone built upon Transformer blocks with denc embedding dimension. The r output tokens Xo ∈
+
+Rr×denc corresponding to the learnable tokens are further passed through an MLP-based projection layer to obtain the modulation tokens Xm ∈ Rr×ddec , where ddec represents the hidden width of the SIREN layer of the decoder. 
+
+3) Decoder: It aims to construct an INR that outputs the complex-valued CSI based on the time-frequency-space 6
+
+coordinates. To enhance its capability of characterizing high-frequency variations across the time, space, and frequency dimensions, we transform the normalized input coordinate 
+
+c = [ sT −1 , kK−1 , nN −1 ] into Fourier features [26], as follows. 
+
+γ(c) = [ c, sin(2 πcB ), cos(2 πcB )] (11) Here, B ∈ R3×df denotes the Gaussian matrix, and df is the number of frequency bases. The entries of B follow Gaussian distributions with mean 0 and domain-specific variances σ2 
+
+> t
+
+,
+
+σ2 
+
+> s
+
+, and σ2 
+
+> f
+
+for the time, space, and frequency domains, respectively. The Fourier features are then transformed into low-level frequency patterns hf ∈ Rddec through a SIREN layer, as given by 
+
+hf = sin ( ωf (Wf γ(c) + bf )) , (12) where ωf denotes the frequency factor of the sinusoidal activation, and Wf and bf denote the weight matrix and bias vector of the SIREN layer, respectively. Subsequently, hf is processed by an ndec -layer SIREN network. Following [25], we use Xm to modulate only the first SIREN layer, enabling more effective modulation of wireless patterns. Specifically, let the instance-agnostic parameter of this SIREN layer be 
+
+U ∈ Rddec ×r , and the processing of this layer can then be expressed as 
+
+h0 = sin ( ω0(U X mhf + b0)) , (13) where h0 ∈ Rddec denotes the output hidden feature, ω0 is the frequency factor of the sinusoidal activation, and b0 is the bias. The features are processed by an (ndec −1) -layer SIREN with frequency factor ω0 and then projected through a linear layer to obtain hout ∈ R2, which is finally converted into the complex-valued CSI at the original coordinate (s, k, n ).
+
+4) Compression Autoencoder: It is employed further to re-duce the feedback overhead of the modulation tokens, enabling the model to support CSI compression feedback tasks with extremely high compression. Its input is the modulation token 
+
+Xm generated by the encoder, and its output is the recon-structed modulation token ˆXm ∈ Rr×ddec . Specifically, the input is first processed by an MLP layer without changing its dimension, followed by a channel compression module (CCM) and a token compression module (TCM) that compress the channel dimension and the number of tokens, respectively. To enhance compression performance, each compression module adopts a two-stage progressive compression mechanism, where the features are first compressed to an intermediate scale and then to a lower scale. In each compression stage, a linear layer is first used to transform the dimensionality, followed by a cascaded MLP layer for feature refinement. Let di and 
+
+dl denote the channel dimensions of the two compression stages, and let ri and rl denote the corresponding numbers of tokens. The dimensionality changes during compression and reconstruction are illustrated in the right panel of Fig. 2. In this case, the compression ratio is derived as rc = rldl 
+
+> 2N K
+
+.The compressed modulation tokens are then quantized and dequantized using a non-uniform μ-law quantizer with low-bit quantization [13]. Finally, a symmetric network compressing a token reconstruction module (TRM) and a channel recon-struction module (CRM) is adopted to successively expand Stage 1: Mixed masking and denoising pretraining Stage 2: Compression-enhanced pretraining Encoder Decoder   
+
+> Masking or downsampling interpolation
+> STF coordinates MSE loss Encoder with LoRA Decoder
+> SF coordinates MSE loss
+> Compression autoencoder
+> Based on pretrained weights Temporal padding
+> Fig. 3. An illustration of pretraining schemes of WiFo-INR.
+
+the token and channel dimensions, thereby reconstructing ˆXm
+
+for parameter modulation in the decoder. 
+
+B. Pretraining Scheme 
+
+WiFo-INR adopts a two-stage self-supervised pretraining scheme. The first stage employs mixed-masking and denoising objectives to learn generalizable 3D CSI representations, while the second stage uses compression-enhanced pretraining to adapt the model to 2D CSI feedback by reducing the dimen-sionality of the modulation tokens. 
+
+1) Mixed Masking and Denoising Pretraining: The first stage is designed for 3D CSI reconstruction, aiming to enhance the unified modeling capability of the model for channel reconstruction. During pretraining, the modulation tokens gen-erated by the encoder directly modulate the decoder, while the compression autoencoder is deactivated. We consider the four pretraining tasks adopted in WiFo-2 [14]. For random-masked reconstruction, all tokens are randomly masked with a high masking ratio to strengthen the general time-frequency-space modeling capability of the model. For time-masked and frequency-masked reconstruction, tokens located in the last fraction of the time or frequency domain are masked, respectively, which encourages the model to learn predictive representations for time-domain and frequency-domain chan-nel prediction. For interpolation-denoising, the original CSI is first downsampled at a given ratio to emulate the partial pilot observations in channel estimation. Linear interpolation is then applied to obtain a coarse CSI estimate with the same size as the original CSI, which is fed into the network. This task encourages the model to recover accurate CSI from coarse estimates, thereby improving its channel estimation capability. In this stage, one pretraining strategy is randomly selected for each batch, and the mean squared error (MSE) is adopted as the loss function: 
+
+Lrec = ∥H − Hrec ∥2
+
+> F
+
+|H| , (14) where Hrec denotes the reconstructed CSI and |H| denotes the number of elements in H.7
+
+2) Compression-Enhanced Pretraining: The second stage is designed for 2D CSI compression feedback, where the modulation tokens generated by the encoder are dimension-reduced and quantized to decrease the compression ratio further. To enable efficient training from the first-stage pre-trained weights, the encoder is adapted using LoRA, with all pretrained encoder parameters frozen except for the patch em-bedding layer, while all other modules remain trainable. Since CSI feedback operates on the two-dimensional frequency-space CSI HCF ∈ CK×N , we first replicate it pt times along the temporal dimension to form fHCF , thereby matching the network input dimensions. This operation preserves the knowledge learned from three-dimensional CSI during the first stage, as such padding can be viewed as a special case of temporally quasi-static channels. In this case, ˜HCF is tokenized directly and fed into the encoder without masking or other preprocessing. The decoder is then modulated by the reconstructed modulation tokens ˆXm from the compression autoencoder. Finally, the decoder outputs the CSI at time coordinate 0 as the reconstructed CSI. As in the first stage, we use MSE as the loss function. 
+
+C. Applications 
+
+After pretraining, two sets of network weights are obtained and deployed for various wireless tasks. 
+
+1) Channel Reconstruction: WiFo-INR can be deployed at either the BS or UE side for channel reconstruction tasks. In this case, the complete model except the compression autoencoder is deployed, and the pretrained weights from the first stage are loaded. For time-domain and frequency-domain channel prediction, the partial CSI in the time or frequency domain is treated as the visible input to reconstruct the complete CSI. For channel estimation, the coarse CSI estimate obtained via linear interpolation is fed into the network to recover an accurate CSI estimate. 
+
+2) CSI Feedback: In this case, the encoder and the com-pression module of the compression autoencoder are deployed at the UE, while the remaining network modules are deployed at the BS. The pretrained weights from the second stage are loaded. Similar to the second-stage pretraining process, the 2D CSI at the UE side is first padded along the time dimen-sion and then fed into the network to generate compressed modulation tokens. The tokens are quantized and fed back to the BS over the air interface, where the modulation tokens are reconstructed from the received bits for parameter modulation. Then the CSI is reconstructed according to the 2D coordinates. 
+
+3) CSI-Related Tasks: WiFo-INR can also be applied to CSI-related tasks under either single-sided or two-sided de-ployment. The original or compressed modulation tokens are used as CSI features and fed into lightweight output heads for downstream tasks. During the fine-tuning process, only the output heads are trainable. In this paper, we consider the following three representative tasks.  
+
+> •
+
+Wireless localization : The UE estimates its position from downlink 2D CSI. The second-stage pretrained weights are loaded. The UE maps the 2D CSI into compressed modulation tokens and employs a lightweight regression head to predict the 2D coordinates.  
+
+> •
+
+Beam prediction : The UE compresses and feeds back the downlink sub-6 GHz CSI to the BS, which predicts the optimal mmWave beam index. The second-stage pretrained weights are loaded. The UE compresses the 2D CSI into bits for feedback, while the BS recovers the compressed modulation tokens from the received bits and employs a classification head to predict the beam index.  
+
+> •
+
+Scenario classification : The UE classifies the propaga-tion scenario as LoS or NLoS based on 3D CSI. The first-stage pretrained weights are loaded. The UE maps the 3D CSI into modulation tokens and employs a classification head to predict the scenario class. V. E XPERIMENTAL RESULTS 
+
+In this section, we first introduce the dataset construction and simulation setup. We then evaluate the performance on various wireless tasks, followed by ablation studies and scaling analysis. 
+
+A. Dataset Construction 1) Channel Recovery: To support the two-stage pretraining and generalization validation, we construct a large-scale and heterogeneous CSI dataset. It consists of 32 and 8 sub-datasets for pretraining and generalization validation, respec-tively, categorized as either coarse-grained or fine-grained. The fine-grained CSI adopts an OFDM-symbol-level time-domain sampling interval and a small subcarrier spacing to match the settings of channel estimation, while the coarse-grained CSI adopts slot-level temporal sampling and a larger subcarrier spacing to meet the requirements of channel pre-diction and CSI feedback. Each sub-dataset contains 12,000 time-frequency-space CSI samples, of which 9,000, 1,000, and 2,000 samples are used for training, validation, and testing, respectively. For the pretraining set, we generate 16 coarse-grained CSI datasets (PC1–PC16) and 16 fine-grained CSI datasets (PF1–PF16) using QuaDRiGa [27]. To enable WiFo-INR to learn general wireless representations, the pretraining set spans carrier frequencies from 1.5 GHz to 5.9 GHz, UMa, UMi, RMa, and Indoor scenarios under both LoS and NLoS conditions, user speeds from 0 to 200 km/h, and diverse antenna, subcarrier, and temporal sampling config-urations. The generalization validation set contains datasets from three sources, namely QuaDRiGa, Sionna RT [28], and DeepMIMO [29]. Specifically, we generate 3 coarse-grained datasets (GC1–GC3) and three fine-grained datasets (GF1–GF3) using QuaDRiGa. They cover three unseen carrier frequencies of 6.7 GHz, 28 GHz, and 40 GHz, as well as the unseen indoor factory (InF)-NLoS scenario, to evaluate the generalization capability across frequencies and scenar-ios. Building on Sionna RT, we construct a coarse-grained dataset (GC4) for low-speed pedestrian mobility in the Peking University campus scenario, as detailed in [14]. In addition, we generate a fine-grained dataset (GF4) based on the drone scenario in DeepMIMO, with an unseen carrier frequency of 200 GHz. The detailed system parameters of each sub-dataset are provided in Table I. 8                                                                                                                            
+
+> TABLE I AN ILLUSTRATION OF THE SYSTEM CONFIGURATIONS OF THE CONSTRUCTED LARGE -SCALE HETEROGENEOUS CSI DATASET .fcDENOTES THE CENTER FREQUENCY .Usage Source Dataset fc
+> (GHz) K∆f
+> (kHz) T∆t
+> (ms) Antenna Scenario User speed (km/h) Pretraining QuaDRiGa PC1-PC16 1.5-5.9 32-128 16-32 60-360 0.5-1 (1-4)
+> ×(4-8) UMi/UMa/RMa/ Indoor + LoS/NLoS 0-200 PF1-PF16 36-72 15-60 12-28 0.017-0.067 Generalization validation QuaDRiGa GC1 6.7 64 60 16 14×4UMi LoS 3-50 GF1 36 15 12 0.067 GC2 28 64 90 16 0.5 2×4InF NLoS 0-5 GF2 72 30 28 0.033 GC3 40 64 360 16 0.5 4×4Indoor NLoS 0-10 GF3 36 30 12 0.033 Sionna RT GC4 5.9 64 180 16 21×4Pedestrian 5DeepMIMO GF4 200 72 120 12 0.005 2×8Drone 30-50 TABLE II MODEL CONFIGURATIONS OF DIFFERENT WIFO-INR VARIANTS .Version Enc. width Enc. heads Dec. width Dec. depth Params. (M) Tiny 96 264 30.74 Little 138 388 31.50 Small 192 4128 42.90 Base 270 6176 55.72 Large 384 8256 611.59
+
+2) CSI-Related Downstream Tasks: (i) For wireless lo-calization, we adopt the real-world DICHASUS measure-ment dataset and construct 1,500 samples from the dichasus-005x scenario, including 1,000 and 500 samples for training and testing, respectively. Each sample consists of 2D space-frequency CSI and its corresponding 2D position. The CSI is measured at 1.272 GHz with 64 subcarriers and a 4 × 8
+
+UPA. (ii) For beam prediction, we generate 2,000 samples using QuaDRiGa under the UMi-LoS scenario, with 1,000 and 1,000 samples used for training and testing, respectively. Each sample contains space–frequency 2D CSI collected at 2.5 GHz and the optimal beam at 28 GHz selected from a 64-entry DFT codebook, both obtained at the same transmitter–receiver locations. The sub-6 GHz link covers 64 subcarriers and employs a 1 × 16 ULA, while the mmWave link employs a 1 × 64 ULA. (iii) For scenario classification, we generate data using QuaDRiGa under the UMi-LoS and UMi-NLoS scenarios at 2.5 GHz. To evaluate generalization across differ-ent CSI dimensions, 6 sub-datasets are used for joint training, while one additional sub-dataset is reserved for generalization testing. Each sub-dataset contains 600 samples, including 100 and 500 samples for training and testing, respectively, with equal proportions of LoS and NLoS samples. 
+
+B. Simulation Setup 1) Network and Pretraining Settings: To accommodate wireless devices under different system constraints, we con-sider five WiFo-INR variants, namely Tiny, Little, Small, Base, and Large. Their detailed configurations are given in Table II, where decoder depth denotes the number of SIREN layers 
+
+ndec after the low-level frequency patterns. For all variants, the patch size in the time, frequency, and space domains is fixed to (4,4,4). The encoder contains 6 Transformer blocks with an MLP ratio of 4 and is equipped with r = 32 
+
+modulation tokens. For the compression autoencoder, the two-stage compression dimensions and token numbers are set to 
+
+di = 64 , dl = 16 , ri = 16 , and rl = 4 , respectively. In the decoder, σ2 
+
+> t
+
+, σ2 
+
+> s
+
+, and σ2 
+
+> f
+
+are all set to 1 for Gaussian-sampled frequency bases. The frequency factors of the sinusoidal activations are set to ωf = 10 and ω0 = 1 . During both pretraining and inference, CSI is first subjected to per-sample power normalization. For the first pretraining stage, all 32 pretraining datasets are used. Specifically, PC1-PC16 are used for the masked reconstruction pretraining tasks, while PF1-PF16 are used for the interpolation-denoising pretraining task. For the second pretraining stage, PC1-PC16 are adopted, and only the 2D CSI slice at the first time instant of each CSI sample is used. During the first pretraining stage, the original CSI is randomly corrupted by Gaussian noise with SNRs ranging from 10 to 25 dB. For random-masked, time-masked, and frequency-masked reconstruction, the masking ratios are set to 80%, 25%, and 25%, respectively. For interpolation-denoising pretraining, the pilot placement ratios in the time, frequency, and space domains are set to 1/4, 1/12, and 1, respectively. During the second pretraining stage, the number of quantization bits is fixed at 5, and the LoRA rank and scaling factor in the encoder are set to 8 and 16, respectively. Both pretraining stages use a batch size of 128 and are trained for 1000 epochs with AdamW (β1 = 0 .9, β2 = 0 .999 ) with a weight decay of 1 × 10 −4. We adopt a cosine-decay learning-rate schedule with 5 warmup epochs. The base and minimum learning rates are 3 × 10 −4
+
+and 1 × 10 −7 in the first stage, and 1 × 10 −4 and 1 × 10 −7
+
+in the second stage, respectively. All models are trained with FP32 precision on 4 NVIDIA GeForce RTX 4090 GPUs. 
+
+2) Baselines: To comprehensively compare WiFo-INR with existing methods across diverse wireless tasks, we consider the following four categories of representative baselines. For each AI baseline, we selected the most appropriate training hyperparameters and trained it sufficiently to ensure its best attainable performance.  
+
+> •
+
+Wireless foundation models : We adopt WiFo-2 [14], a state-of-the-art (SOTA) wireless foundation model based on explicit discrete modeling, as a baseline for channel reconstruction and CSI-related downstream tasks. For a fair comparison, we use its dense variant, excluding 9
+
+the MoE architecture, and pretrain it with the same data and protocol as the first-stage pretraining of WiFo-INR. To approximately match the parameter count, it employs a six-layer encoder and a one-layer decoder, with the encoder depth and hidden dimensions aligned with WiFo-INR-Large. Since WiFo-2 is not designed for CSI feedback at low compression ratios, we further include the base version of WiFo-CF [13] as a dedicated base-line, following its original configuration and pretraining scheme while using the same data as the second-stage pretraining of WiFo-INR.  
+
+> •
+
+Task-specific AI models : Task-specific AI models are designed for particular wireless tasks and are fully trained and evaluated on the specific dataset. For both the time domain and frequency domain channel prediction tasks, we adopt the Transformer [30] as the task-specific base-line. For channel estimation, we utilize Channelformer [31], where the antenna dimension is processed in parallel as part of the batch dimension. For CSI feedback, the autoencoder-based CsiNet [32] and Transformer-based TransNet [33] are adopted as representative AI-based schemes. For the three CSI-related downstream tasks, we employ BP-DNN [34], WiT [35], and ST-CNN [36] for beam prediction, wireless localization, and scenario classification, respectively.  
+
+> •
+
+LLM-based schemes : LLM-based schemes [37] refer to methods that enable cross-domain knowledge transfer by fine-tuning LLMs on the specific dataset. For channel prediction tasks, we consider LLM4CP [38], which fine-tunes a pretrained GPT-2 model for CSI prediction. Similarly, the same architecture is adapted to channel estimation by formulating the task as CSI denoising, termed LLM4CE.  
+
+> •
+
+Interpolation/extrapolation : The first-order linear ex-trapolation is adopted for channel prediction, while the bilinear interpolation is used for channel estimation. 
+
+3) Evaluation Metrics: We comprehensively evaluate the models from two aspects: task performance and inference cost.  
+
+> •
+
+Task performance : For channel prediction tasks, we measure the prediction accuracy using the NMSE be-tween the predicted CSI entries and the ground truth. For channel estimation and CSI feedback, NMSE is also adopted, but it is computed over the complete CSI tensor. For beam prediction, wireless localization, and scenario classification, we use the top-1 classification accuracy, the root-mean-square error (RMSE) between the predicted and ground-truth 2D user coordinates, and the F1 score as the performance metrics, respectively.  
+
+> •
+
+Inference cost : We consider three metrics to evaluate the deployment feasibility on communication devices with storage, power, and latency constraints. Specifically, the number of parameters measures the storage overhead, floating point operations (FLOPs) measure the theoretical complexity of model inference, and inference time mea-sures the latency overhead incurred by model inference. 
+
+TABLE III PERFORMANCE (NMSE IN D B) COMPARISON BETWEEN WIFO-INR AND OTHER BASELINES ON THE TIME -DOMAIN CHANNEL PREDICTION TASK .THE BEST AND SECOND -BEST RESULTS ARE HIGHLIGHTED IN BOLD AND UNDERLINED , RESPECTIVELY .Dataset WiFo-INR WiFo-2 Transformer LLM4CP Extrapolation PC1 -14.97 -13.73 -9.31 -12.55 3.88 PC2 -10.58 -9.07 -5.28 -7.70 2.86 PC3 -30.99 -27.05 -19.76 -23.58 -20.03 PC4 -15.02 -16.78 -5.82 -13.39 1.86 PC5 -11.54 -10.04 -7.46 -8.42 3.48 PC6 -12.80 -12.02 -6.81 -9.39 3.71 PC7 -11.99 -13.65 -2.45 -9.81 4.58 PC8 -27.51 -25.36 -15.82 -20.76 -14.39 PC9 -11.06 -10.21 -6.85 -9.23 3.72 PC10 -9.23 -9.92 -5.09 -7.37 4.24 PC11 -9.36 -9.87 -2.47 -7.75 4.20 PC12 -24.84 -23.43 -14.62 -18.16 -5.36 PC13 -7.22 -7.96 -2.78 -5.89 3.68 PC14 -10.67 -9.93 -5.70 -8.08 3.38 PC15 -24.58 -22.77 -15.11 -15.20 -3.18 PC16 -8.46 -8.35 -1.75 -6.52 3.61 
+
+Avg. 
+
+(PC1-PC16) -15.05 -14.38 -7.94 -11.49 0.01 GC1 -14.57 -13.58 -6.85 -10.78 3.98 GC2 -12.07 -11.84 -10.13 -11.43 3.24 GC3 -21.11 -20.44 -18.24 -20.00 -0.89 GC4 -21.20 -20.55 -16.40 -18.24 -15.26 
+
+Avg. 
+
+(GC1-GC4) -17.24 -16.60 -12.91 -15.11 -2.23 TABLE IV PERFORMANCE COMPARISON (NMSE IN D B) BETWEEN WIFO-INR AND OTHER BASELINES ON THE FREQUENCY -DOMAIN CHANNEL PREDICTION TASK . T HE BEST AND SECOND -BEST RESULTS ARE HIGHLIGHTED IN BOLD 
+
+> AND UNDERLINED
+
+, RESPECTIVELY .Dataset WiFo-INR WiFo-2 Transformer LLM4CP Extrapolation PC1 -8.59 -7.94 -4.97 -8.31 2.50 PC2 -12.29 -10.44 -1.72 -8.35 0.82 PC3 -26.93 -22.65 -16.21 -19.58 -6.85 PC4 -12.50 -11.26 -4.09 -7.96 -0.91 PC5 -16.81 -14.65 -7.88 -11.93 -3.46 PC6 -13.49 -11.48 -4.92 -9.87 0.21 PC7 -10.51 -9.45 -6.98 -6.48 -0.22 PC8 -20.51 -17.39 -10.91 -15.31 0.07 PC9 -9.12 -8.12 -4.43 -7.79 2.03 PC10 -10.33 -9.17 -3.50 -6.88 -0.35 PC11 -8.40 -7.00 -4.52 -5.08 2.44 PC12 -25.25 -22.09 -12.34 -16.40 -6.88 PC13 -6.99 -5.80 -3.52 -4.18 2.27 PC14 -10.02 -8.63 -2.61 -7.15 1.87 PC15 -26.18 -22.55 -12.30 -19.33 -6.86 PC16 -10.07 -8.72 -6.79 -7.13 1.95 
+
+Avg. 
+
+(PC1-PC16) -14.25 -12.33 -6.73 -10.11 -0.71 GC1 -13.90 -12.08 -8.72 -9.11 0.37 GC2 -12.85 -11.63 -8.13 -11.55 2.20 GC3 -16.10 -14.08 -11.74 -15.38 2.89 GC4 -21.79 -17.20 -17.23 -18.74 -11.94 
+
+Avg. 
+
+(GC1-GC4) -16.16 -13.75 -11.45 -13.69 -1.62 
+
+C. Performance Evaluation on Wireless Tasks 1) Channel Reconstruction: We first evaluate the perfor-mance of WiFo-INR-Large on channel reconstruction tasks, including full-shot performance on the pretraining datasets and zero-shot performance on the generalization datasets. For time-domain and frequency-domain channel prediction, the prediction ratio is set to 25%. For channel estimation, 10 
+
+TABLE V PERFORMANCE COMPARISON (NMSE IN D B) BETWEEN WIFO-INR AND OTHER BASELINES ON THE CHANNEL ESTIMATION TASK . T HE BEST AND SECOND -BEST RESULTS ARE HIGHLIGHTED IN BOLD AND UNDERLINED ,
+
+> RESPECTIVELY
+
+.Dataset WiFo-INR WiFo-2 Channelformer LLM4CE Interpolation PF1 -26.44 -24.61 -19.41 -18.64 -15.30 PF2 -24.86 -23.83 -18.27 -16.57 -15.12 PF3 -31.87 -28.46 -24.25 -20.63 -17.78 PF4 -12.83 -12.53 -10.42 -10.22 -8.40 PF5 -21.83 -21.16 -16.58 -15.95 -13.82 PF6 -29.42 -26.86 -20.38 -19.23 -16.98 PF7 -9.46 -9.57 -8.40 -8.22 -6.25 PF8 -26.77 -25.50 -20.40 -21.01 -17.13 PF9 -18.62 -18.15 -15.01 -14.26 -11.76 PF10 -13.69 -13.86 -12.00 -11.54 -9.56 PF11 -13.30 -13.22 -10.09 -10.60 -7.18 PF12 -28.70 -26.58 -22.02 -20.42 -17.32 PF13 -17.96 -16.78 -11.72 -11.62 -5.91 PF14 -19.77 -19.81 -15.44 -14.98 -12.33 PF15 -27.55 -25.91 -20.54 -21.64 -17.38 PF16 -13.64 -13.65 -10.63 -10.84 -7.77 
+
+Avg. 
+
+(PF1-PF16) -21.04 -20.03 -15.97 -15.40 -12.50 GF1 -25.28 -23.90 -6.08 -17.78 -15.32 GF2 -25.39 -23.94 -20.00 -20.00 -17.70 GF3 -28.14 -25.88 -23.01 -22.22 -17.75 GF4 -20.77 -17.03 -13.24 -18.78 -15.63 
+
+Avg. 
+
+(GF1-GF4) -24.89 -22.69 -15.58 -19.69 -16.60 
+
+the pilot symbol placement ratios along the time, frequency, and space dimensions are set to (1/4, 1/12, 1). We consider imperfect CSI by adding Gaussian noise with the SNR fixed at 20 dB. WiFo-2 is also evaluated via zero-shot inference on the generalization datasets, whereas the other AI baselines are trained and tested separately on each sub-dataset. The performance of all models on the three tasks is reported in Tables III, IV, and V. On the pretraining datasets, WiFo-INR achieves the lowest average NMSE across all three tasks, reducing NMSE by a further 1.20 dB compared with the second-best WiFo-2 scheme, and obtains the best or second-best performance on all datasets. This demonstrates that the proposed architecture enables effective joint training across heterogeneous CSI datasets. On the generalization datasets, WiFo-INR surpasses WiFo-2 and achieves SOTA zero-shot performance. Notably, it substantially outperforms the full-shot performance of all competing methods, reducing the average NMSE across the three tasks by 3.27 dB. These results highlight the strong and generalizable channel reconstruction capability of WiFo-INR. Table VI reports the inference costs of different schemes. We consider single-sample inference on the PC13 dataset for time-domain channel prediction with a prediction ratio of 25%. WiFo-INR achieves the lowest inference time among all AI-based schemes. Compared with WiFo-2, its lightweight de-coder reduces the number of parameters, FLOPs, and inference time by 20.94%, 27.59%, and 44.56%, respectively. These results demonstrate that, compared with MAE-based models, INR-based wireless foundation models achieve superior per-formance with substantially lower inference costs, facilitating deployment on resource-constrained communication devices. 
+
+TABLE VI INFERENCE COST COMPARISON AMONG DIFFERENT CHANNEL RECONSTRUCTION SCHEMES .WiFo-INR WiFo-2 Transformer LLM4CP Extrapolation Params (M) 11.59 14.66 1.08 82.84 /FLOPs (G) 3.36 4.64 0.37 1.76 0.18 × 10 −3
+
+Inference time (ms) 3.62 6.53 8.49 5.79 0.17 TABLE VII PERFORMANCE COMPARISON (NMSE IN D B) BETWEEN WIFO-INR AND OTHER BASELINES ON THE CSI FEEDBACK TASK . T HE BEST AND SECOND -BEST RESULTS ARE HIGHLIGHTED IN BOLD AND UNDERLINED ,
+
+> RESPECTIVELY
+
+.Dataset CR WiFo-INR WiFo-CF CsiNet TransNet PC1 1/16 -14.16 / -8.93 -11.61 PC2 1/32 -16.04 -13.28 -9.03 -11.67 PC3 1/16 -23.05 / -18.24 -15.69 PC4 1/32 -8.91 -6.52 -4.09 -6.46 PC5 1/8 -20.45 / -15.69 -14.20 PC6 1/32 -14.88 -11.94 -7.85 -11.08 PC7 1/32 -7.46 -5.33 -3.37 -5.33 PC8 1/32 -14.16 -12.15 -6.74 -12.01 PC9 1/16 -13.87 / -8.89 -10.92 PC10 1/16 -9.81 / -5.47 -7.90 PC11 1/32 -8.36 -6.62 -3.84 -5.64 PC12 1/32 -12.83 -10.46 -5.53 -11.08 PC13 1/32 -6.52 -4.47 -2.72 -4.45 PC14 1/32 -13.22 -11.25 -7.54 -10.13 PC15 1/32 -18.74 -15.23 -10.41 -15.09 PC16 1/32 -9.64 -6.42 -3.72 -6.40 
+
+Avg. 
+
+(PC1-PC16) – -13.26 / -7.63 -9.98 GC1 1/32 -14.01 -11.94 -8.86 -11.37 GC2 1/32 -10.74 -8.79 -4.26 -8.18 GC3 1/16 -17.27 / -9.87 -13.01 GC4 1/16 -18.49 / -17.96 -18.54 Avg. 
+
+(GC1-GC4) – -15.13 / -10.24 -12.77 TABLE VIII INFERENCE COST COMPARISON AMONG DIFFERENT CSI FEEDBACK SCHEMES , WITH VALUES BEFORE AND AFTER THE SLASH DENOTING THE 
+
+UE-SIDE AND BS-SIDE COSTS , RESPECTIVELY .WiFo-INR WiFo-CF CsiNet TransNet Params (M) 11.84/0.69 1.91/3.65 0.065/0.070 0.41/0.43 FLOPs (G) 2.24/3.25 0.40/0.74 (0.11/3.5) 
+
+×10 −3
+
+(16.9/16.9) 
+
+×10 −3
+
+Inference time (ms) 7.65/1.78 8.94/14.44 0.14/0.60 0.92/1.59 
+
+2) CSI Feedback: We evaluate the full-shot and zero-shot performance of WiFo-INR-Large for CSI feedback. Since the number and dimension of the compressed tokens are fixed at 4 and 16, respectively, the compression ratio varies across datasets with different CSI sizes. WiFo-CF is pretrained at a fixed compression ratio of 1/32, whereas CsiNet and TransNet are trained and tested on each dataset using the same compression ratio as WiFo-INR. All models adopt the same 5-bit quantization for the compressed features. Table VII reports the CSI reconstruction NMSE of all models. Across all 16 pretraining datasets, WiFo-INR substantially outperforms the competing methods, reducing the average NMSE by 3.28 dB and 5.63 dB compared with TransNet and CsiNet, respectively. On the datasets with a compression ratio of 1/32, it also achieves an average NMSE reduction of 2.46 dB over WiFo-11 
+
+TABLE IX PERFORMANCE AND INFERENCE COST COMPARISON AMONG DIFFERENT SCHEMES FOR WIRELESS LOCALIZATION . T HE BEST PERFORMANCE IS HIGHLIGHTED IN BOLD .WiFo-INR WiFo-2 WiT RMSE (m) 3.93 4.05 4.17 Feature dimension 4 × 16 64 × 384 /Trainable / total params (M) 0.03 / 12.23 0.39 / 13.28 18.93 / 18.93 FLOPs (G) 3.69 2.74 2.48 TABLE X PERFORMANCE AND INFERENCE COST COMPARISON AMONG DIFFERENT SCHEMES FOR BEAM PREDICTION . T HE BEST RESULT IS HIGHLIGHTED IN 
+
+> BOLD
+
+.WiFo-INR TransNet TransNet 
+
++BP-DNN TransNet 
+
++WiFo-2 Acc.@1 0.861 0.677 0.654 0.857 Feature dimension 64 64 / 24576 Trainable params (M) Total params (M) 0.066 12.259 0.0661 1.488 1.198 2.621 1.572 15.883 BS-side FLOPs (G) 0.131 × 10 −3 0.038 1.404 TABLE XI PERFORMANCE (F1 SCORE ) AND INFERENCE COST COMPARISON BETWEEN WIFO-INR AND OTHER BASELINES ON SCENARIO CLASSIFICATION . T HE CSI SIZE IS DENOTED AS (TIME , SUBCARRIER ,
+
+> ANTENNA
+
+). T HE BEST AND SECOND -BEST RESULTS ARE HIGHLIGHTED IN  
+
+> BOLD AND UNDERLINED
+
+, RESPECTIVELY .Dataset CSI size WiFo-INR WiFo-2 ST-CNN S1 (8, 32, 8) 0.788 0.807 0.724 S2 (8, 16, 8) 0.764 0.718 0.710 S3 (12, 16, 8) 0.712 0.788 0.691 S4 (12, 32, 8) 0.780 0.817 0.722 S5 (4, 32, 8) 0.773 0.741 0.679 S6 (4, 16, 8) 0.750 0.652 0.631 
+
+Avg. / 0.761 0.753 0.692 S7 (full-shot) S7 (zero-shot) (12, 8, 8) /
+
+0.662 0.670 
+
+0.588 *
+
+0.645 /Trainable params (M) Total params (M) / 0.016 12.209 0.147 13.034 4.996 4.996 Avg. FLOPs (G) 1.257 0.477 0.553     
+
+> *For S7, the CSI is padded along the subcarrier dimension to (12 ,16 ,8) , and zero-shot generalization is performed using WiFo-2 trained on S3.
+
+CF. More importantly, WiFo-INR exhibits strong zero-shot performance on the four unseen datasets, further reducing the average NMSE by 2.36 dB compared with the full-shot performance of the strongest task-specific baseline, TransNet. These results demonstrate the powerful and generalizable CSI compression capability of WiFo-INR. Moreover, Table VIII compares the UE- and BS-side infer-ence costs of different schemes for single-sample inference on the PC13 dataset at a compression ratio of 1/32. WiFo-INR requires more parameters and FLOPs than WiFo-CF because the latter directly processes 2D CSI without temporal padding and is dedicated solely to CSI feedback. Nevertheless, its inference-efficient architecture reduces the UE- and BS-side inference times by 14.43% and 87.67%, respectively. Overall, WiFo-INR achieves superior CSI feedback performance and lower inference latency than feature-based wireless foundation models tailored to CSI feedback. 
+
+3) CSI-Related Downstream Tasks: For wireless localiza-tion, Table IX reports the localization accuracy and compu-tational costs of WiFo-INR-Large and baselines, with WiFo-
+
+TABLE XII ABLATION RESULTS OF THE FIRST -STAGE PRETRAINING ON FREQUENCY -DOMAIN CHANNEL PREDICTION . R ECONSTRUCTION NMSE 
+
+> RESULTS IN D
+
+B ARE REPORTED . T HE BEST PERFORMANCES ARE HIGHLIGHTED IN BOLD .WiFo-INR-Small w/o Fourier bases w/o raw coordinates SIREN 
+
+→ MLP 
+
+Avg. 
+
+(PC1–PC16) -12.38 -11.09 (↑ 1.29 )-11.92 (↑ 0.46 )-11.63 (↑ 0.75 )
+
+Avg. 
+
+(GC1–GC4) -13.88 -13.00 (↑ 0.88 )-13.42 (↑ 0.46 )-12.98 (↑ 0.90 )
+
+INR achieving SOTA accuracy. Although WiFo-INR incurs slightly higher FLOPs, it reduces the number of trainable parameters by 92.31% compared with WiFo-2. This is because WiFo-INR fine-tunes a lightweight regression head based on compact modulation tokens, whereas the feature dimension of WiFo-2 is much higher. These results demonstrate that the compact representations of WiFo-INR can not only be effectively transferred to downstream regression tasks but also significantly reduce fine-tuning overhead. For beam prediction, we consider the following baselines. The TransNet-based baseline is fine-tuned using the com-pressed features received at the BS, with WiFo-INR replaced by TransNet pretrained on the target dataset. The other two baselines operate on the CSI reconstructed by TransNet: BP-DNN processes the reconstructed CSI directly, while WiFo-2 first extracts CSI features and then applies an output head. Table X reports the prediction accuracy and inference costs of different schemes. Compared with these reconstruction-based schemes, directly processing compressed features sub-stantially reduces the BS-side fine-tuning overhead, feature dimension, and number of trainable parameters. Moreover, using compressed features of the same dimensionality, WiFo-INR achieves a 27.2% relative improvement in classification accuracy over TransNet, further demonstrating its strong rep-resentation capability. We further evaluate scenario classification to assess the generalization of WiFo-INR-Large across CSI sizes. Since the dimension of the modulation token is independent of the CSI size, WiFo-INR can be jointly trained on S1-S6 with a shared output head and directly generalized to the unseen S7 size. In contrast, WiFo-2 requires a separate head for different CSI sizes. It must either be fine-tuned on S7 or perform zero-shot inference by padding S7 to the S3 size, while ST-CNN must be retrained for each dataset. As shown in Table XI, WiFo-INR achieves the highest average F1 score on S1-S6, outperforming the second-best method by 1.06%. On S7, its zero-shot F1 score exceeds that of WiFo-2 by 12.59% and even surpasses the full-shot ST-CNN. It also reduces the number of trainable parameters by 89.12% compared with WiFo-2, although its average FLOPs are higher due to the additional learnable tokens. Overall, its compact representation enables effective generalization across CSI sizes. 
+
+D. Ablation Experiments 
+
+To evaluate the effectiveness of the key modules and design choices, we conduct two groups of ablation experiments. For the first-stage pretraining, we remove the Fourier bases or 12                                   
+
+> TABLE XIII ABLATION RESULTS OF THE SECOND -STAGE PRETRAINING ON CSI FEEDBACK . R ECONSTRUCTION NMSE RESULTS IN D BARE REPORTED . T HE BEST PERFORMANCES ARE HIGHLIGHTED IN BOLD .WiFo-INR-Large Full training Training from scratch w/o progressive compression w/o pre/post MLPs Avg. (PC1-PC16) -13.26 -12.84 ( ↑0.42 )-9.43 ( ↑3.83 )-12.56 ( ↑0.70 )-11.74 ( ↑1.52 )Avg. (GC1-GC4) -15.13 -15.26 (↓0.13 )-10.19 ( ↑4.94 )-14.30 ( ↑0.83 )-13.44 ( ↑1.69 )Trainable params (M) 1.32 12.19 12.19 1.26 0.90
+
+raw coordinates from the Fourier features in (11), and replace all SIREN layers with MLP layers. Table XII reports the frequency-domain channel prediction results based on WiFo-INR-Small. Since these variants have negligible impact on the parameter count, the corresponding values are omitted. All ablations degrade performance on both the pretraining and generalization datasets, confirming the effectiveness of the designed Fourier features and SIREN architecture in enhancing the modeling capability. For the second-stage pretraining, we compare the default LoRA-based scheme with full-parameter training and training from random initialization. We also replace the two-stage progressive compression with single-stage compression and remove the pre- and post-compression MLPs. As these variants substantially affect the training cost, Table XIII reports both the CSI feedback performance and the number of trainable parameters of WiFo-INR-Large. All ablations degrade the av-erage NMSE to varying degrees. The default scheme achieves performance comparable to full-parameter training while using only 10.83% of the trainable parameters, demonstrating the effectiveness of LoRA-based adaptation. Training from scratch increases the NMSE by more than 3.8 dB, highlighting the importance of first-stage pretraining. Single-stage compression and MLP removal further reduce the trainable parameters but lead to substantial performance degradation. Overall, the de-fault design offers the best tradeoff between task performance and training cost. 
+
+E. Scaling Analysis 
+
+We further investigate the empirical scaling behavior of WiFo-INR with respect to model and data scales, using the average test NMSE for frequency-domain channel prediction on both the pretraining and generalization-validation datasets as the evaluation metric. For model scaling, we use all pretrain-ing datasets and evaluate five WiFo-INR variants, ranging from Tiny to Large, as shown in Fig. 4a. For data scaling, we fix the model architecture to WiFo-INR-Base and vary the number of training tokens, as shown in Fig. 4b. For both the pretraining and generalization splits, the NMSE consistently decreases as the model size and the amount of pretraining data increase, indicating favorable empirical scalability of WiFo-INR over the evaluated range. These results provide practical guidance for selecting an appropriate model size and pretraining data scale based on the target performance, available pretraining compute budget, and the deployment platform’s hardware constraints. VI. C ONCLUSION 
+
+In this paper, we proposed WiFo-INR, an INR-based wire-less foundation model that uses coordinate-conditioned neural 7.4 × 10 5 1.5 × 10 6 2.9 × 10 6 5.7 × 10 6 1.2 × 10 7−15 −10 −5 0NMSE (dB) Parameters Pretraining split Generalization split    
+
+> (a) Scaling analysis on the model scale. 5.5 × 10 81.1 × 10 92.2 × 10 94.4 × 10 9−15 −10 −5 0NMSE (dB) Pretraining split Generalization split Training tokens
+> (b) Scaling analysis on the data scale. Fig. 4. Scaling analysis of frequency-domain channel prediction performance with respect to model and data scale.
+
+functions for CSI modeling. Beyond existing methods that rely on per-instance optimization, we designed an architecture that generalizes across CSI instances. It comprised a Transformer-based encoder for modulation-token generation and a SIREN-based decoder serving as the INR. We further adopted a two-stage pretraining strategy to enhance channel reconstruction and CSI feedback. Experiments demonstrated that the compact and efficient implicit representation offered clear advantages over existing wireless foundation models based on explicit discrete modeling. For channel reconstruction, WiFo-INR out-performed WiFo-2 while substantially reducing inference cost. For CSI feedback, it achieved better performance and lower inference time than WiFo-CF. For CSI-related downstream tasks, its compact representations maintained strong task per-formance while substantially reducing fine-tuning overhead and enabling generalization across CSI sizes. Ablation studies validated the effectiveness of the proposed modules, while the scaling analysis demonstrated the scalability of the architec-ture. REFERENCES 
+
+[1] X. Cheng et al. , “Intelligent Multi-Modal Sensing-Communication Integration: Synesthesia of Machines,” 
+
+IEEE Commun. Surv. Tutor. , vol. 26, pp. 258–301, Jan. 2024. [2] R. Bommasani et al. , “On the Opportunities and Risks of Foundation Models,” arXiv preprint arXiv:2108.07258 , Aug. 2021. 13 
+
+[3] T. Yang et al. , “WirelessGPT: A Generative Pre-Trained Multi-Task Learning Framework for Wireless Communication,” IEEE Netw. , vol. 39, no. 5, pp. 58–65, Sep./Oct. 2025. [4] F. ¨O. C¸ atak, M. Kuzlu, and U. Cali, “BERT4MIMO: AFoundation Model Using BERT Architecture for Massive MIMO Channel State Information Prediction,” arXiv preprint arXiv:2501.01802 , Jan. 2025. [5] T. Zheng, J. Guo, L. Dai, S. Jin, and J. Zhang, “MUSE-FM: Multi-Task Environment-Aware Foundation Model for Wireless Communications,” IEEE Trans. Wireless Commun. , vol. 25, pp. 19 791–19 806, Jul. 2026. [6] S. Alikhani, G. Charan, and A. Alkhateeb, “Large wireless model (lwm): A foundation model for wireless channels,” arXiv preprint arXiv:2411.08872 , 2024. [7] B. Liu, S. Gao, X. Liu, X. Cheng, and L. Yang, “WiFo: Wireless Foundation Model for Channel Prediction,” Sci. China Inf. Sci. ,vol. 68, p. 162302, May 2025. [8] B. Guler, G. Geraci, and H. Jafarkhani, “A multi-task foundation model for wireless channel representation using contrastive and masked autoencoder learning,” IEEE J. Sel. Areas Commun. ,vol. 44, pp. 4489–4504, 2026. [9] J. Jiang, W. Yu, Y. Li, Y. Gao, and S. Xu, “A MIMO Wireless Channel Foundation Model via CIR-CSI Consistency,” arXiv preprint arXiv:2502.11965 , Feb. 2025. [10] G. Pan, K. Huang, H. Chen, S. Zhang, C. H¨ ager, and H. Wymeersch, “Large Wireless Localization Model (LWLM): A Foundation Model for Positioning in 6G Networks,” arXiv preprint arXiv:2505.10134 , May 2025. [11] C. Zhang, X. Lyu, C. Ren, S. Liu, and Q. Cui, “Adaptive 3d-rope: Physics-aligned rotary positional encoding for wireless foundation models,” arXiv preprint arXiv:2605.00968 , 2026. [12] K. Bian, M. Tao, J. Mo, Z. Chen, and L. Chen, “AirFM-DDA: Air-Interface Foundation Model in the Delay-Doppler-Angle Domain for AI-Native 6G,” arXiv preprint arXiv:2605.00020 ,2026. [13] X. Liu, S. Gao, B. Liu, X. Cheng, and L. Yang, “WiFo-CF: Wireless Foundation Model for CSI Feedback,” IEEE Trans. Wireless Commun. , vol. 25, pp. 15 039–15 053, Apr. 2026. [14] B. Liu, X. Liu, S. Gao, X. Cai, X. Cheng, and L. Yang, “WiFo-2: a generalist foundation model unifies heterogeneous wireless system design,” arXiv preprint arXiv:2511.22222 , 2026. [15] X. Liu, S. Gao, B. Liu, X. Cheng, and L. Yang, “WiFo-MiSAC: A Wireless Foundation Model for Multimodal Sensing and Communication Integration via Synesthesia of Machines (SoM),” arXiv preprint arXiv:2604.18255 , Apr. 2026. [16] X. Cheng, B. Liu, X. Liu, and X. Cai, “Large wireless foundation models: Stronger over bigger,” arXiv preprint arXiv:2601.10963 , 2026. [17] X. Cheng, B. Liu, X. Liu, E. Liu, and Z. Huang, “Foundation Model Empowered Synesthesia of Machines (SoM): AI-Native Intelligent Multi-Modal Sensing-Communication Integration,” 
+
+IEEE Trans. Netw. Sci. Eng. , Jul. 2025, early Access. [18] L. Liang, H. Ye, Y. Sheng, O. Wang, J. Wang, S. Jin, and G. Y. Li, “Large Language Models for Wireless Communications: From Adaptation to Autonomy,” IEEE Commun. Mag. , vol. 64, no. 3, pp. 140–147, Mar. 2026. [19] J. Guo, Y. Cui, S. Jin, and J. Zhang, “Large AI Models for Wireless Physical Layer,” IEEE Commun. Mag. , vol. 64, no. 5, pp. 148–155, May 2026. [20] V. Sitzmann, J. N. P. Martel, A. W. Bergman, D. B. Lindell, and G. Wetzstein, “Implicit Neural Representations with Periodic Activation Functions,” in Proc. Adv. Neural Inf. Process. Syst. (NeurIPS) , vol. 33, Dec. 2020, pp. 7462–7473. [21] X. Zhao, Z. An, Q. Pan, and L. Yang, “Nerf2: Neural radio-frequency radiance fields,” in Proceedings of the 29th Annual International Conference on Mobile Computing and Network-ing , 2023, pp. 1–15. [22] H. Wu, M. Zhang, Y. Shao, K. Mikolajczyk, and D. G¨ und¨ uz, “MIMO channel as a neural function: Implicit neural representa-tions for extreme CSI compression in massive MIMO systems,” 
+
+arXiv preprint arXiv:2403.13615 , 2024. [23] B. Shi, T. Qi, X. Chen, and J. Wang, “Unsupervised Online Channel Estimation for High-Mobility OFDM via Implicit Neural Representation,” arXiv preprint arXiv:2605.10213 , 2026. [24] Z. Xiao, Z. Zhang, C. Huang, X. Chen, C. Zhong, and M. Deb-bah, “C-GRBFnet: A Physics-Inspired Generative Deep Neural Network for Channel Representation and Prediction,” IEEE J. Sel. Areas Commun. , vol. 40, no. 8, pp. 2282–2299, Aug. 2022. [25] C. Kim, D. Lee, S. Kim, M. Cho, and W.-S. Han, “Gener-alizable Implicit Neural Representations via Instance Pattern Composers,” in Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit. (CVPR) , Jun. 2023, pp. 11 808–11 817. [26] M. Tancik, P. P. Srinivasan, B. Mildenhall, S. Fridovich-Keil, N. Raghavan, U. Singhal, R. Ramamoorthi, J. T. Barron, and R. Ng, “Fourier Features Let Networks Learn High Frequency Functions in Low Dimensional Domains,” in Proc. Adv. Neural Inf. Process. Syst. (NeurIPS) , vol. 33, Dec. 2020, pp. 7537– 7547. [27] S. Jaeckel, L. Raschkowski, K. B¨ orner, and L. Thiele, “QuaDRiGa: A 3-D Multi-Cell Channel Model With Time Evo-lution for Enabling Virtual Field Trials,” IEEE Trans. Antennas Propag. , vol. 62, no. 6, pp. 3242–3256, 2014. [28] F. A¨ ıt Aoudia, J. Hoydis, M. Nimier-David, B. Nicolet, S. Cam-merer, and A. Keller, “Sionna RT: Technical Report,” arXiv preprint arXiv:2504.21719 , Nov. 2025. [29] A. Alkhateeb, “DeepMIMO: A Generic Deep Learning Dataset for Millimeter Wave and Massive MIMO Applications,” in Proc. Inf. Theory Appl. Workshop (ITA) , Feb. 2019. [30] H. Jiang, M. Cui, D. W. K. Ng, and L. Dai, “Accurate Channel Prediction Based on Transformer: Making Mobility Negligible,” 
+
+IEEE J. Sel. Areas Commun. , vol. 40, no. 9, pp. 2717–2732, 2022. [31] D. Luan and J. S. Thompson, “Channelformer: Attention-Based Neural Solution for Wireless Channel Estimation and Effective Online Training,” IEEE Trans. Wireless Commun. , vol. 22, no. 10, pp. 6562–6577, 2023. [32] C.-K. Wen, W.-T. Shih, and S. Jin, “Deep Learning for Massive MIMO CSI Feedback,” IEEE Wireless Commun. Lett. , vol. 7, no. 5, pp. 748–751, Oct. 2018. [33] Y. Cui, A. Guo, and C. Song, “TransNet: Full Attention Network for CSI Feedback in FDD Massive MIMO System,” IEEE Wireless Commun. Lett. , vol. 11, no. 5, pp. 903–907, May 2022. [34] M. Alrabeiah and A. Alkhateeb, “Deep Learning for mmWave Beam and Blockage Prediction Using Sub-6 GHz Channels,” 
+
+IEEE Trans. Commun. , vol. 68, no. 9, pp. 5504–5518, Sep. 2020. [35] A. Salihu, S. Schwarz, and M. Rupp, “Attention Aided CSI Wireless Localization,” in 2022 IEEE 23rd International Work-shop on Signal Processing Advances in Wireless Communica-tions (SPAWC) , 2022, pp. 1–5. [36] Z. Sun, K. Wang, R. Sun, and Z. Chen, “Channel State Iden-tification in Complex Indoor Environments With ST-CNN and Transfer Learning,” IEEE Commun. Lett. , vol. 27, no. 2, pp. 546–550, 2023. [37] X. Liu, S. Gao, B. Liu, X. Cheng, and L. Yang, “LLM4WM: Adapting LLM for Wireless Multi-Tasking,” IEEE Trans. Mach. Learn. Commun. Netw. , vol. 3, pp. 835–847, Jul. 2025. [38] B. Liu, X. Liu, S. Gao, X. Cheng, and L. Yang, “LLM4CP: Adapting Large Language Models for Channel Prediction,” J. Commun. Inf. Netw. , vol. 9, no. 2, pp. 113–125, Jun. 2024.

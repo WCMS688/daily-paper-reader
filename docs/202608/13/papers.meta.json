@@ -1,0 +1,39 @@
+{
+  "label": "2026-08-13",
+  "date": "2026-08-13",
+  "generated_at": "2026-08-13T21:31:02",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202608/13/2608.07043v1-tensor-network-kernel-machines-a-jax-framework-for-machine-learning-and-nonlinear-system-identification",
+      "section": "quick",
+      "title_en": "Tensor Network Kernel Machines: A JAX Framework for Machine Learning and Nonlinear System Identification",
+      "authors": "Albert Saiapin, Kim Batselier",
+      "date": "2026-08-07",
+      "pdf": "https://arxiv.org/pdf/2608.07043v1",
+      "score": "6.0",
+      "evidence": "张量网络核机器提供可应用于SI/PI代理建模的非线性系统辨识方法",
+      "tldr": "非线性建模常面临表达力与计算效率的矛盾。为此，提出基于JAX的开源库tnkm，实现张量网络核机器，将非线性特征映射与紧凑低秩张量网络结合。库提供统一接口，支持多种特征映射、张量网络结构和优化策略，如交替最小二乘与梯度法。在非线性基准上，模型以紧凑参数获得竞争性精度且训练高效，为可复现研究提供基础。",
+      "tags": "query:si-pi",
+      "abstract_en": "Developing nonlinear models that are both expressive and computationally efficient remains a challenge in machine learning and nonlinear system identification. Tensor network kernel machines (TNKM) address this challenge by combining nonlinear feature representations with compact low-rank tensor-network parameterizations. However, practical and extensible software frameworks for developing TNKM models remain limited. In this work, we introduce \"tnkm\", an open-source Python library for constructing and training TNKM models using JAX. The library provides a unified interface for combining different feature maps, tensor-network architectures, and optimization strategies, including alternating least squares and gradient-based methods. We demonstrate the capabilities of \"tnkm\" on nonlinear benchmark problems, showing that the implemented models achieve competitive prediction accuracy while retaining compact parameterizations and efficient training. The proposed framework facilitates reproducible development and application of tensor-network-based learning methods.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/13/2608.08033v1-wifo-inr-a-wireless-foundation-model-based-on-implicit-neural-representations",
+      "section": "quick",
+      "title_en": "WiFo-INR: A Wireless Foundation Model Based on Implicit Neural Representations",
+      "authors": "Boxun Liu, Xuanyu Liu, Shijian Gao, Xiang Cheng, Liuqing Yang",
+      "date": "2026-08-08",
+      "pdf": "https://arxiv.org/pdf/2608.08033v1",
+      "score": "6.0",
+      "evidence": "基于隐式神经表示的无线信道建模方法，可迁移至高速互连信道建模",
+      "tldr": "现有无线基础模型将CSI视为图像样离散张量，难以高效捕获高频变化且表示尺寸依赖。为此提出WiFo-INR，用隐式神经表示将CSI建模为坐标条件函数，结合Transformer编码器与SIREN解码器，并通过压缩自编码器实现量化反馈。两阶段自监督预训练（混合掩码去噪与压缩增强）显著提升信道重建和CSI反馈性能，同时降低推理延迟。该方法支持高效迁移和零样本泛化到未见CSI尺寸，展示了隐式无线基础模型的潜力。",
+      "tags": "query:si-pi",
+      "abstract_en": "Wireless foundation models are emerging as a promising paradigm for AI-native physical-layer design. However, existing methods typically model channel state information (CSI) as image-like discrete tensors with generic token decoders that may struggle to capture complex high-frequency variations efficiently and often produce high-dimensional, size-dependent representations. In this paper, we propose WiFo-INR, an implicit neural representation (INR)-based wireless foundation model that represents CSI as a coordinate-conditioned neural function. A Transformer encoder maps partial or coarse CSI to fixed-dimensional modulation tokens that adapt a SIREN-based decoder, and a compression autoencoder enables quantized CSI feedback. It adopts a two-stage self-supervised pretraining scheme, where mixed masking and denoising improve channel reconstruction and compression-enhanced pretraining enables accurate CSI feedback at low compression ratios. Extensive experiments demonstrate that WiFo-INR learns efficient, compact, and CSI-size-independent implicit wireless representations. Compared with existing foundation models, WiFo-INR improves channel reconstruction and CSI feedback performance while substantially reducing inference latency. It also transfers efficiently to diverse wireless tasks with minimal fine-tuning overhead and achieves zero-shot generalization to unseen CSI sizes.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
