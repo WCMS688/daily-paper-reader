@@ -1,0 +1,54 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-14T21:06:42.973649+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2608.09466v1",
+      "source": "arxiv",
+      "title": "Second order unfitted ghost-FEM for elliptic interface problems with applications to low-dimensional semiconductor devices",
+      "abstract": "We develop an unfitted ghost finite element method for elliptic interface problems with discontinuous diffusion coefficients and apply it to the electrostatic simulation of low-dimensional semiconductor devices. The proposed approach is based on a fixed Cartesian grid and represents the geometry by level-set functions, avoiding mesh generation and remeshing even in the presence of interfaces. A snapping-back-to-grid strategy is used to control the small-cut-cell issue, while interface conditions are weakly enforced by a symmetric Nitsche formulation. The method is first validated on benchmark elliptic interface problems with different geometries and coefficient jumps, showing second-order accuracy for the solution and first-order accuracy for its gradient.   As an application, we consider a graphene field-effect transistor described by a self-consistent drift-diffusion-Poisson model. The electrostatic potential is computed in a two-dimensional oxide/graphene/oxide structure, while charge transport in the graphene layer is modeled by one-dimensional bipolar drift-diffusion equations in the degenerate case and by including a field-dependent mobility model. The coupled nonlinear system is solved by a damped fixed-point iteration combined with a domain-decomposition treatment of the three-layer geometry. Numerical simulations reproduce transfer characteristics with a clear transition from an OFF state to an ON state and show the influence of the gate voltage on the two-dimensional electrostatic potential. The results also indicate that the effective thickness and discretization of the graphene layer affect the transverse potential profile, supporting the use of a full two-dimensional electrostatic description with explicit oxide/graphene interface conditions.",
+      "authors": [
+        "Clarissa Astuto",
+        "Giovanni Nastasi"
+      ],
+      "primary_category": "math.NA",
+      "categories": [
+        "math.NA",
+        "math-ph"
+      ],
+      "published": "2026-08-10T11:36:21+00:00",
+      "link": "https://arxiv.org/pdf/2608.09466v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "High-order unfitted FEM for elliptic interface problems applicable to parasitic capacitance modeling in high-speed interconnect and package structures.",
+      "llm_evidence_cn": "高阶非贴体有限元方法用于求解椭圆界面问题，可应用于高速互连与封装结构中的寄生电容建模。",
+      "llm_evidence": "高阶非贴体有限元方法用于求解椭圆界面问题，可应用于高速互连与封装结构中的寄生电容建模。",
+      "canonical_evidence": "高阶非贴体有限元方法用于求解椭圆界面问题，可应用于高速互连与封装结构中的寄生电容建模。",
+      "llm_tldr_en": "This paper proposes a second-order unfitted ghost FEM for elliptic interface problems with discontinuous diffusion coefficients, using fixed Cartesian grids and level-set representations to avoid remeshing. Nitsche weak enforcement handles interface conditions; a snapping-to-grid strategy controls small-cut cells. Benchmark tests and low-dimensional semiconductor device electrostatic simulations show second-order accuracy, offering a reusable numerical tool for advanced SI/PI modeling and parasitic capacitance extraction.",
+      "llm_tldr_cn": "针对具有不连续扩散系数的椭圆界面问题，现有方法在复杂几何下常需重新生成网格，效率与精度受限。本文提出二阶非贴体幽灵有限元方法，采用固定笛卡尔网格与水平集几何表示，结合Nitsche弱形式施加界面条件及对齐网格策略控制小割单元，从而避免网格重构。基准算例与低维半导体器件静电模拟验证了方法的二阶精度，并能处理大系数跳跃和任意界面几何。该方法可为封装与互连结构的寄生电容提取等SI/PI建模提供高效高精度的数值求解工具。",
+      "llm_tldr": "针对具有不连续扩散系数的椭圆界面问题，现有方法在复杂几何下常需重新生成网格，效率与精度受限。本文提出二阶非贴体幽灵有限元方法，采用固定笛卡尔网格与水平集几何表示，结合Nitsche弱形式施加界面条件及对齐网格策略控制小割单元，从而避免网格重构。基准算例与低维半导体器件静电模拟验证了方法的二阶精度，并能处理大系数跳跃和任意界面几何。该方法可为封装与互连结构的寄生电容提取等SI/PI建模提供高效高精度的数值求解工具。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Advanced modeling and optimization techniques for SI/PI in high speed systems",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

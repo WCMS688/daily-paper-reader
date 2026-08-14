@@ -1,0 +1,24 @@
+{
+  "label": "2026-08-14",
+  "date": "2026-08-14",
+  "generated_at": "2026-08-14T21:08:10",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202608/14/2608.09466v1-second-order-unfitted-ghost-fem-for-elliptic-interface-problems-with-applications-to-low-dimensional-semiconductor-devices",
+      "section": "quick",
+      "title_en": "Second order unfitted ghost-FEM for elliptic interface problems with applications to low-dimensional semiconductor devices",
+      "authors": "Clarissa Astuto, Giovanni Nastasi",
+      "date": "2026-08-10",
+      "pdf": "https://arxiv.org/pdf/2608.09466v1",
+      "score": "6.0",
+      "evidence": "高阶非贴体有限元方法用于求解椭圆界面问题，可应用于高速互连与封装结构中的寄生电容建模。",
+      "tldr": "针对扩散系数间断的椭圆界面问题与低维半导体器件静电模拟，提出基于固定笛卡尔网格与水平集几何表示的非拟合ghost有限元，通过snapping-back-to-grid控制小切割单元、对称Nitsche弱加界面条件。基准测试获得解二阶、梯度一阶精度。应用于石墨烯场效应晶体管，耦合二维泊松与一维漂移扩散模型，复现OFF至ON转移特性并揭示栅压与石墨烯层厚度对电势的影响，验证了显式界面处理的优势。",
+      "tags": "query:si-pi",
+      "abstract_en": "We develop an unfitted ghost finite element method for elliptic interface problems with discontinuous diffusion coefficients and apply it to the electrostatic simulation of low-dimensional semiconductor devices. The proposed approach is based on a fixed Cartesian grid and represents the geometry by level-set functions, avoiding mesh generation and remeshing even in the presence of interfaces. A snapping-back-to-grid strategy is used to control the small-cut-cell issue, while interface conditions are weakly enforced by a symmetric Nitsche formulation. The method is first validated on benchmark elliptic interface problems with different geometries and coefficient jumps, showing second-order accuracy for the solution and first-order accuracy for its gradient.   As an application, we consider a graphene field-effect transistor described by a self-consistent drift-diffusion-Poisson model. The electrostatic potential is computed in a two-dimensional oxide/graphene/oxide structure, while charge transport in the graphene layer is modeled by one-dimensional bipolar drift-diffusion equations in the degenerate case and by including a field-dependent mobility model. The coupled nonlinear system is solved by a damped fixed-point iteration combined with a domain-decomposition treatment of the three-layer geometry. Numerical simulations reproduce transfer characteristics with a clear transition from an OFF state to an ON state and show the influence of the gate voltage on the two-dimensional electrostatic potential. The results also indicate that the effective thickness and discretization of the graphene layer affect the transverse potential profile, supporting the use of a full two-dimensional electrostatic description with explicit oxide/graphene interface conditions.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

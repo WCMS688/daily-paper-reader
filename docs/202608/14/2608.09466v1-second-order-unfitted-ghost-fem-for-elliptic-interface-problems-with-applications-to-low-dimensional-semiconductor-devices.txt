@@ -1,0 +1,1670 @@
+Title: Second order unfitted ghost-FEM for elliptic interface problems with applications to low-dimensional semiconductor devices
+
+URL Source: https://arxiv.org/pdf/2608.09466v1
+
+Published Time: Tue, 11 Aug 2026 02:13:14 GMT
+
+Number of Pages: 25
+
+Markdown Content:
+# Second order unfitted ghost-FEM for elliptic interface problems with applications to low-dimensional semiconductor devices 
+
+## Clarissa Astuto 1 and Giovanni Nastasi 21Department of Mathematics and Computer Science, University of Catania, Catania, Italy 
+
+> 2
+
+## Department of Engineering and Architecture, University of Enna “Kore”, Enna, Italy 
+
+Abstract 
+
+We develop an unfitted ghost finite element method for elliptic interface problems with discontinuous diffusion coef-ficients and apply it to the electrostatic simulation of low-dimensional semiconductor devices. The proposed approach is based on a fixed Cartesian grid and represents the geometry by level-set functions, avoiding mesh generation and remeshing even in the presence of interfaces. A snapping-back-to-grid strategy is used to control the small-cut-cell issue, while interface conditions are weakly enforced by a symmetric Nitsche formulation. The method is first validated on benchmark elliptic interface problems with different geometries and coefficient jumps, showing second-order accuracy for the solution and first-order accuracy for its gradient. As an application, we consider a graphene field-effect transistor described by a self-consistent drift-diffusion-Poisson model. The electrostatic potential is computed in a two-dimensional oxide/graphene/oxide structure, while charge transport in the graphene layer is modeled by one-dimensional bipolar drift-diffusion equations in the degenerate case and by including a field-dependent mobility model. The coupled nonlinear system is solved by a damped fixed-point iteration combined with a domain-decomposition treatment of the three-layer geometry. Numerical simulations reproduce transfer characteristics with a clear transition from an OFF state to an ON state and show the influence of the gate voltage on the two-dimensional electrostatic potential. The results also indicate that the effective thickness and discretization of the graphene layer affect the transverse potential profile, supporting the use of a full two-dimensional electrostatic description with explicit oxide/graphene interface conditions. 
+
+# 1 Introduction 
+
+The modeling and simulation of semiconductor devices have attracted considerable attention from physicists, mathe-maticians, and engineers due to their fundamental role in modern technology and the challenging multiscale phenomena involved. For a comprehensive overview of the physical models and their mathematical treatment, we refer to [32, 33]. The metal-oxide-semiconductor field-effect transistor (MOSFET) constitutes the fundamental building block of modern integrated circuits. Over several decades, extensive theoretical and numerical investigations have enabled the optimization of silicon- and III-V-semiconductor-based devices, leading to remarkable improvements in performance, scalability, and reliability [42, 30, 46]. As device dimensions continue to shrink toward the nanometer scale, however, conventional semi-conductor technologies face increasing challenges associated with short-channel effects, mobility degradation, and power dissipation [31]. These limitations have stimulated intense research into novel materials capable of sustaining the next generation of electronic devices. Among the emerging materials, graphene has attracted exceptional interest due to its unique physical properties. Its atomically thin structure, high carrier mobility, excellent electrical conductivity, and outstanding thermal characteristics 1arXiv:2608.09466v1 [math.NA] 10 Aug 2026 make it a promising candidate for nanoelectronic applications [13, 28]. In particular, the possibility of employing a conducting channel only one atomic layer thick offers an attractive route toward ultimate device scaling. Consequently, graphene field-effect transistors (GFETs) have been extensively investigated as potential alternatives or complements to conventional silicon MOSFETs. Despite these advantages, the practical implementation of GFETs remains challenging [41]. The absence of an intrinsic energy bandgap in monolayer graphene results in ambipolar transport and a limited current-off region, severely restricting the achievable on/off current ratio required for digital applications. Furthermore, the transport properties of graphene supported on substrates are often degraded by impurity scattering and interactions with remote substrate phonons, leading to reduced carrier mobility. Additional complexities arise at the metal-graphene interfaces, where the contact physics differs substantially from that of conventional semiconductor devices and cannot always be described adequately through standard Ohmic or Schottky contact models. Accurate modeling and simulation therefore play a crucial role in understanding the operation of GFETs and guiding device optimization. While drift-diffusion models remain the most widely used framework in semiconductor device simu-lation because of their computational efficiency, many existing GFET studies rely on simplified electrostatic descriptions, often based on reduced one-dimensional approximations of the Poisson equation [2, 26, 25, 14]. Such approaches may not fully capture the complex electrostatic interactions occurring in realistic device geometries. For this reason, multidimen-sional drift-diffusion-Poisson formulations [34] have attracted increasing attention as a means of providing a more faithful representation of charge transport and electrostatic coupling within graphene-based devices. In [35], a novel GFET architecture was proposed that appears to mitigate the limitations associated with the zero-bandgap nature of graphene while exhibiting a sufficiently wide off-state region for practical engineering applications. The device is modeled through a self-consistent framework in which the full two-dimensional Poisson equation is coupled with the drift-diffusion transport equations. The charge in the graphene sheet is assumed to be uniformly distributed within an equivalent three-dimensional region represented by a parallelepiped whose base corresponds to the graphene surface and whose height is the sum of the thicknesses of the graphene sheet and the two graphene/oxide interfaces. In [27], the electrostatic problem is reformulated as an interface Poisson problem in which the semiconducting single-layer material is modeled as a lower-dimensional manifold embedded in the computational domain, giving rise to suitable transmission conditions that account for the charge distribution and dielectric discontinuities across the interface. A comparison between the two approaches has been performed in [12]. Another important aspect concerns the carrier statistics employed in the transport model. Owing to the high carrier densities frequently encountered in graphene, degenerate effects can become significant, making the conventional Maxwell-Boltzmann approximation potentially inadequate [36]. A careful assessment of the differences between degenerate and non-degenerate transport descriptions is therefore essential for obtaining reliable predictions of device performance. Moreover, the determination of accurate mobility models remains a key issue, since carrier transport in graphene is strongly influenced by multiple scattering mechanisms, including electron-phonon interactions, charged impurities, and substrate-induced effects. In this work, we investigate the behavior of a graphene field-effect transistor through a self-consistent drift-diffusion-Poisson framework incorporating a full two-dimensional electrostatic description. Particular attention is devoted to the influence of carrier statistics and transport modeling on the predicted device characteristics. The discretization of the spatial derivatives is performed using the ghost-nodal finite element method (ghost-FEM), an unfitted finite element approach proposed in [4, 5], and subsequently employed in several applications, including biological network formation [6, 8], Multiscale Poisson-Nernst-Planck systems for the diffusion of ions [7, 3], and high-order Navier-Stokes equations [22]. Furthermore, Multigrid solvers tailored to the ghost-FEM discretization for elliptic problems on arbitrary domains have been developed and analyzed in [23]. The present work focuses instead on the extension of the ghost-FEM framework to elliptic interface problems with discontinuous diffusion coefficients. Such problems introduce additional difficulties in the treatment of the solution at the interfaces where the jump conditions need to be satisfied. Among the numerous unfitted methods available in the literature, including finite difference schemes such as the Coco-2Russo [17], and finite element approaches such as CutFEM [11] or AgFEM [9], the ghost-FEM offers some advantages. In particular, it employs a very simple algorithm based on snapping-back-to-grid approach to overcome the ill-conditioning issue arising from small cut cells. Moreover, the present approach is based on a fixed Cartesian grid, consequently, neither mesh generation nor mesh adaptation to the interface is required. In standard fitted finite element frameworks, resolving complex interfaces often necessitates adaptive mesh refinement strategies (see, e.g., [43]) near the interface, leading to additional meshing efforts. Even in the presence of complex or irregular interfaces, ghost-FEM employs the same squared mesh, avoiding the need for remeshing procedures. In the present work, ghost-FEM provides a convenient framework for coupling systems that consider different spatial dimensions, for example when considering the two-dimensional Poisson equation and the drift-diffusion equations in the one-dimensional setting in the graphene sheet. The mathematical model is defined in a semiconducting device with a central active zone between two inactive layers. To efficiently solve the resulting system, the domain is partitioned into three sub regions and a domain decomposition strategy is employed. This method provides an effective framework for the numerical solution of elliptic problems by replacing the original problem with a collection of smaller problems defined on regular subdomains [15, 16]. A similar approach is investigated in [27], for a single-layer graphene formulation. The paper is organized as follows. In Section 2, we present the drift-diffusion-Poisson mathematical model for charge transport in a GFET, together with its variational formulation. In Section 3, we describe the numerical discretization of both the one-dimensional drift-diffusion model and the two-dimensional interface problem. In Section 4, we assess the accuracy of the method in a more general framework. In Section 5, we present the numerical results for the GFET. Finally, Section 6 concludes the paper with final remarks and future perspectives. 
+
+# 2 Mathematical model 
+
+A GFET typically consists of a single-layer (or few-layer) graphene sheet acting as the channel, connected to source and drain electrodes. In a back-gate GFET, the channel is electrostatically controlled by a gate electrode located beneath the substrate and separated from graphene by a dielectric layer. In a double-gate GFET, an additional top gate is placed above the graphene channel, providing enhanced electrostatic control. The combined action of the top and bottom gates enables more efficient carrier modulation and improved device performance. Fig. 1 shows the cross-sectional view of the GFET structure introduced in [35]. The mathematical model is defined in the rectangular domain Ω = [ x1, x 4] × [y1, y 4], which is partitioned into three subdomains. The regions Ω 1 = [ x1, x 4] × [y1, y 2] and Ω 2 = [ x1, x 4] × [y3, y 4] represent the lower and upper SiO 2 dielectric layers, respectively, while Ω gr = [ x1, x 4] × [y2, y 3] denotes the graphene layer. Although graphene is only one atom thick and charge transport occurs exclusively along the x-direction, a finite thickness tgr = y3 − y2 is introduced to accurately describe the electrostatic potential. This thickness accounts for the charge distribution across the graphene layer and the adjacent oxide-graphene interfaces, following the approach adopted in [34, 35]. The metallic source, drain, and gate contacts (represented in black) are not explicitly included in the computational domain; their effect is incorporated through suitable boundary conditions imposed on the corresponding portions of the domain boundary. The charge transport is described by the one-dimensional bipolar stationary drift-diffusion equations, which read 
+
+∂J n
+
+∂x = e(G − R) in Ω gr (1a) 
+
+∂J p
+
+∂x = −e(G − R) in Ω gr (1b) where Jn and Jp are the electron and hole current density, respectively, and G − R denotes the generation-recombination term. The positive elementary charge is denoted by e. In the non-degenerate case, the current densities are expressed in 3,
+
+,
+
+,
+
+,
+
+, ,
+
+,,
+
+,y1y2y3y4
+
+3xxxxSiO 2SiO 2Graphene LVGdVGuxy124
+
+,Figure 1: The domain is Ω = Ω 1 ∪ Ωgr ∪ Ω2 and its boundary ∂Ω is composed by the union of Dirichlet and Neumann boundaries, ΓD , Γ1,D , Γ2,D and Γ1,N , Γ2,N respectively. The two interfaces are Γ1 and Γ2.
+
+terms of the quasi-Fermi energies ε(n) and ε(p) by 
+
+Jn = μnn ∂ε (n)
+
+∂x (2a) 
+
+Jp = μpp ∂ε (p)
+
+∂x (2b) where n and p represent the electron and hole densities, respectively, and μn and μp are appropriate mobility models. The carrier densities are related to the quasi-Fermi energy by 
+
+n(ε(n) − εD ) = 
+
+Z +∞
+
+> 0
+
+fFD (ε; ε(n) − εD ) dε, (3a) 
+
+p(ε(p) − εD ) = 
+
+Z +∞
+
+> 0
+
+fFD (ε; −(ε(p) − εD )) dε, (3b) where fFD is the Fermi-Dirac statistics 
+
+fFD (ε; εF − εD ) = D(ε)1 + exp 
+
+ ε−(εF −εD ) 
+
+> kBT
+
+ . (4) In (4), kB is the Boltzmann constant, T is the temperature (kept constant at 300 K), εD is the Dirac-point energy, and 
+
+D(ε) is the density of states in graphene, i.e., 
+
+D(ε) = 2
+
+πε
+
+(ℏvF )2 , (5) 4with ℏ the reduced Planck constant and vF the Fermi velocity. In graphene, the physically meaningful reference energy is the Dirac point, where the conduction and valence bands touch. The electrostatic potential φ shifts the whole band structure in energy, so the Dirac point itself moves. Therefore, we have εD = −eφ .When graphene is connected to metallic source and drain contacts, the metal and graphene must reach electrochemical equilibrium. Because the metal and graphene generally have different work functions, electrons are transferred across the metal/graphene interface until their Fermi levels align. For copper contacts, this charge transfer shifts the graphene Fermi level relative to the Dirac point. In the quoted case, Cu induces an n-type doping, meaning that the Fermi level lies above the Dirac point, i.e. 
+
+εF − εD = ∆ ε > 0. (6) In our simulations, we will adopt ∆ ε = 0 .25 eV [35]. Therefore, we impose Dirichlet boundary conditions 
+
+εl := ε(n)(x = x1) = ε(p)(x = x1) = ∆ ε − eφ (x1, y ), ∀y ∈ [y2, y 3], (7a) 
+
+εr := ε(n)(x = x4) = ε(p)(x = x4) = ∆ ε − eφ (x4, y ), ∀y ∈ [y2, y 3]. (7b) We remark that, although Jn and Jp depend on both x and y, charge transport in graphene occurs only along the 
+
+x-direction. Consequently, in Section 2.1, we define the one-dimensional function space V = H1([ x1, x 4]) to introduce the variational formulation of the drift-diffusion equations. Therefore, the total current density flowing through the contact, including both electron and hole contributions, is obtained by averaging the current densities across the effective graphene thickness tgr (see Fig. 9): 
+
+Jav (x) = 1
+
+tgr 
+
+Z y3
+
+> y2
+
+(Jn(x, y ) + Jp(x, y )) dy. (8) In our simulations, we adopt the mobility model proposed in [24], that is 
+
+μn(n, E ) = νs(n)
+
+
+
+1 + 
+
+ νsEvsat 
+
+ζ 1/ζ , (9) where E = − ∂φ ∂x , vsat is the saturation velocity (we take the value 0.2 μm/ps), ζ = 2 and 
+
+νs(n) = μ0
+
+
+
+1 + nnref 
+
+σ , (10) where μ0 is the low field mobility. The values of μ0, n ref and σ are defined in Table 2. The hole mobility μp takes the same expression as μn.In the considered operating regime, the device geometry suppresses the activation of minority carriers, so that transport is mainly governed by the self-consistent electrostatic potential. Moreover, since a reliable spatially resolved generation– recombination model for graphene is still debated and other previous GFET simulations [34, 35, 36] showed only a weak sensitivity to the recombination time, we neglect this contribution and set G − R = 0. The drift-diffusion equations are coupled with the Poisson equation for the electrostatic potential φ ∈ Ω, 
+
+−∇ · (ϵ∇φ) = γ in Ω (11) where 
+
+γ =
+
+ e(p − n + nimp )/t gr in Ω gr 
+
+0 otherwise (12) 5and nimp is the areal density of the impurity charges at the graphene/oxide interface. The dielectric coefficient ϵ is given by 
+
+ϵ =
+
+ ϵgr in Ω gr 
+
+ϵox otherwise (13) with ϵgr and ϵox dielectric constants in graphene and oxide, respectively. Eq. (11) is augmented with the following boundary conditions in Γ = ∂Ω for φφ = 0 at x = x1, (14a) 
+
+φ = Vb at x = x4, (14b) 
+
+φ = VGd at y = y1, x ∈ [x2, x 3], (14c) 
+
+φ = VGu at y = y4, x ∈ [x2, x 3], (14d) 
+
+∇nφ = 0 at y = y1, y 4, x < x 2 ∨ x > x 3, (14e) where Vb is the bias voltage, VGd is the down gate-source potential and VGu is the upper gate-source potential. VGd and 
+
+VGu include the (subtracted) flat-band voltages. All the values of the parameters are shown in Table 2. Finally, we define the interface conditions [|φ|] = 0 in Γ 1 ∪ Γ2 (15a) [|ϵ∇nφ|] = 0 in Γ 1 ∪ Γ2 (15b) where ∇n denotes the outgoing normal derivative. For the sake of simplicity, we refer to Fig. 1 for the description of the setting. The domain Ω is partitioned into three subdomains, so that Ω = Ω 1 ∪ Ωgr ∪ Ω2. Moreover, we decompose the boundary of Ω 1 as ∂Ω1 = Γ 1 ∪ Γ1,D ∪ Γ1,N , where Γ 1,D and Γ 1,N denote the portions of the boundary where Dirichlet and Neumann boundary conditions are imposed, respectively. The boundary Γ 1 represents the interface between Ω 1 and Ω gr .Analogously, the boundary of Ω 2 is decomposed as ∂Ω2 = Γ 2 ∪ Γ2,D ∪ Γ2,N , where Γ 2 denotes the interface between Ω 2
+
+and Ω gr .
+
+## 2.1 Variational formulation 
+
+In this section, we derive the variational formulation of the coupled problem defined by systems (1-2) and (11-12), together with the associated boundary (14) and interface conditions (15). To this end, we consider the one-dimensional drift-diffusion model in (1-2) and define V = H1([ x1, x 4]). Multiplying Eqs. (1-2) by a test function ψ ∈ V and integrating over the interval [ x1, x 4], we obtain 
+
+
+
+μnn ∂ε (n)
+
+∂x ψ(x)
+
+ x4
+
+> x1
+
++
+
+
+
+μnnε (n) ∂ψ ∂x 
+
+ x4
+
+> x1
+
+−
+
+Z x4
+
+> x1
+
+μnn ∂ε (n)
+
+∂x ∂ψ ∂x dx + λ
+
+
+
+ε(n)(x1)ψ(x1) + ε(n)(x4)ψ(x4)
+
+
+
++ (16a) =
+
+Z x4
+
+> x1
+
+f ψ (x) dx + ( μn(x1)n(x1)εlψ′(x1) + μn(x4)n(x4)εr ψ′(x4)) + λ (εlψ(x1) + εr ψ(x4)) , ∀ψ ∈ V (16b) 
+
+
+
+μpp ∂ε (p)
+
+∂x ψ(x)
+
+ x4
+
+> x1
+
++
+
+
+
+μppε (p) ∂ψ ∂x 
+
+ x4
+
+> x1
+
+−
+
+Z x4
+
+> x1
+
+μpp ∂ε (p)
+
+∂x ∂ψ ∂x dx + λ
+
+
+
+ε(p)(x1)ψ(x1) + ε(p)(x4)ψ(x4)
+
+
+
++ (16c) = −
+
+Z x4
+
+> x1
+
+f ψ (x) dx + ( μp(x1)p(x1)εlψ′(x1) + μp(x4)p(x4)εr ψ′(x4)) + λ (εlψ(x1) + εr ψ(x4)) , ∀ψ ∈ V (16d) 6with f = e(G − R). We apply Nitsche technique to symmetrize the variational formulation and add a penalization term 
+
+λ → ∞ , that will force Dirichlet conditions; see [18, 19]. The choice of λ is discussed in Section 3.3. Now we look at the system (11-12) with boundary conditions in (14) and interface conditions in (15). We define the space of test functions W = H1(Ω), multiply Eq. (11) by ψ ∈ W , and integrate over the domain Ω, obtaining 
+
+−
+
+Z
+
+> Ω
+
+∇ · (ϵ∇φ) ψ d Ω = 
+
+Z
+
+> Ω
+
+γ ψ d Ω. (17) Considering the contribution of each subdomain, Eq. (17) becomes 
+
+−ϵox 
+
+Z
+
+> Ω1
+
+∆φ ψ d Ω − ϵox 
+
+Z
+
+> Ω2
+
+∆φ ψ d Ω − ϵgr 
+
+Z
+
+> Ωgr
+
+∆φ ψ d Ω = 
+
+Z
+
+> Ω
+
+γψ d Ω. (18) Integrating by parts, we obtain the following 
+
+ϵox 
+
+Z
+
+> Ω1
+
+∇φ · ∇ ψ d Ω − ϵox 
+
+Z
+
+> ∂Ω1
+
+∂φ ∂n ψ dl + ϵox 
+
+Z
+
+> Ω2
+
+∇φ · ∇ ψ d Ω − ϵox 
+
+Z
+
+> ∂Ω2
+
+∂φ ∂n ψ dl + (19a) +ϵgr 
+
+Z
+
+> Ωgr
+
+∇φ · ∇ ψ d Ω − ϵgr 
+
+Z
+
+> ∂Ωgr
+
+∂φ ∂n ψ dl =
+
+Z
+
+> Ω
+
+γψ d Ω. (19b) Here we make use of the boundary conditions in (14) and of the interface conditions in (15), and Eq. (19) becomes 
+
+ϵox 
+
+Z
+
+> Ω1
+
+∇φ · ∇ ψ d Ω − ϵox 
+
+Z
+
+> Γ1,D
+
+∂φ ∂n ψ dl − ϵox 
+
+Z
+
+> Γ1
+
+∂φ ∂n ψ dl + (20a) +ϵox 
+
+Z
+
+> Ω2
+
+∇φ · ∇ ψ d Ω − ϵox 
+
+Z
+
+> Γ2,D
+
+∂φ ∂n ψ dl − ϵox 
+
+Z
+
+> Γ2
+
+∂φ ∂n ψ dl + (20b) +ϵgr 
+
+Z
+
+> Ωgr
+
+∇φ · ∇ ψ d Ω − ϵgr 
+
+Z
+
+> ΓD
+
+∂φ ∂n ψ dl − ϵgr 
+
+Z
+
+> Γ1
+
+∂φ ∂n ψ dl − ϵgr 
+
+Z
+
+> Γ2
+
+∂φ ∂n ψ dl =
+
+Z
+
+> Ω
+
+γψ d Ω. (20c) To make symmetric the variational formulation, we apply Nitsche technique first to Γ 1,D and Γ 2,D . Thus, Eq. (20) becomes 
+
+ϵox 
+
+Z
+
+> Ω1
+
+∇φ · ∇ ψ d Ω − ϵox 
+
+Z
+
+> Γ1,D
+
+ ∂φ ∂n ψ + φ ∂ψ ∂n 
+
+
+
+dl − ϵox 
+
+Z
+
+> Γ1
+
+∂φ ∂n ψ dl ++ϵox 
+
+Z
+
+> Ω2
+
+∇φ · ∇ ψ d Ω − ϵox 
+
+Z
+
+> Γ2,D
+
+ ∂φ ∂n ψ + φ ∂ψ ∂n 
+
+
+
+dl − ϵox 
+
+Z
+
+> Γ2
+
+∂φ ∂n ψ dl ++ϵgr 
+
+Z
+
+> Ωgr
+
+∇φ · ∇ ψ d Ω − ϵgr 
+
+Z
+
+> ΓD
+
+ ∂φ ∂n ψ + φ ∂ψ ∂n 
+
+
+
+dl − ϵgr 
+
+Z
+
+> Γ1
+
+∂φ ∂n ψ dl − ϵgr 
+
+Z
+
+> Γ2
+
+∂φ ∂n ψ dl =
+
+Z
+
+> Ω
+
+γψ d Ω − ϵox 
+
+Z
+
+> Γ1,D
+
+φ|Γ1,D 
+
+∂ψ ∂n dl − ϵox 
+
+Z
+
+> Γ2,D
+
+φ|Γ2,D 
+
+∂ψ ∂n dl. 
+
+7Now, we add the penalization terms to impose the Dirichlet boundary conditions 
+
+ϵox 
+
+Z
+
+> Ω1
+
+∇φ · ∇ ψ d Ω − ϵox 
+
+Z
+
+> Γ1,D
+
+ ∂φ ∂n ψ + φ ∂ψ ∂n 
+
+
+
+dl + λ
+
+Z
+
+> Γ1,D
+
+φ ψ dl − ϵox 
+
+Z
+
+> Γ1
+
+∂φ ∂n ψ dl ++ϵox 
+
+Z
+
+> Ω2
+
+∇φ · ∇ ψ d Ω − ϵox 
+
+Z
+
+> Γ2,D
+
+ ∂φ ∂n ψ + φ ∂ψ ∂n 
+
+
+
+dl + λ
+
+Z
+
+> Γ2,D
+
+φ ψ dl − ϵox 
+
+Z
+
+> Γ2
+
+∂φ ∂n ψ dl ++ϵgr 
+
+Z
+
+> Ωgr
+
+∇φ · ∇ ψ d Ω − ϵgr 
+
+Z
+
+> ΓD
+
+ ∂φ ∂n ψ + φ ∂ψ ∂n 
+
+
+
+dl + λ
+
+Z
+
+> ΓD
+
+φ ψ dl − ϵgr 
+
+Z
+
+> Γ1
+
+∂φ ∂n ψ dl − ϵgr 
+
+Z
+
+> Γ2
+
+∂φ ∂n ψ dl =
+
+Z
+
+> Ω
+
+γψ d Ω − ϵox 
+
+Z
+
+> Γ1,D
+
+φ|Γ1,D 
+
+∂ψ ∂n dl − ϵox 
+
+Z
+
+> Γ2,D
+
+φ|Γ2,D 
+
+∂ψ ∂n dl + λ
+
+Z
+
+> Γ1,D
+
+φ|Γ1,D ψ dl + λ
+
+Z
+
+> Γ2,D
+
+φ|Γ2,D + λ
+
+Z
+
+> ΓD
+
+φ|ΓD ψ dl. 
+
+Finally, we make use of the interface conditions (15) in Γ 1 and Γ 2
+
+ϵox 
+
+Z
+
+> Ω1
+
+∇φ · ∇ ψ d Ω − ϵox 
+
+Z
+
+> Γ1,D
+
+ ∂φ ∂n ψ + φ ∂ψ ∂n 
+
+
+
+dl + λ
+
+Z
+
+> Γ1,D
+
+φ ψ dl − ϵgr 
+
+Z
+
+> Γ1
+
+∂φ ∂n ψ dl + (23a) +ϵox 
+
+Z
+
+> Ω2
+
+∇φ · ∇ ψ d Ω − ϵox 
+
+Z
+
+> Γ2,D
+
+ ∂φ ∂n ψ + φ ∂ψ ∂n 
+
+
+
+dl + λ
+
+Z
+
+> Γ2,D
+
+φ ψ dl − ϵgr 
+
+Z
+
+> Γ2
+
+∂φ ∂n ψ dl + (23b) +ϵgr 
+
+Z
+
+> Ωgr
+
+∇φ · ∇ ψ d Ω − ϵgr 
+
+Z
+
+> ΓD
+
+ ∂φ ∂n ψ + φ ∂ψ ∂n 
+
+
+
+dl + λ
+
+Z
+
+> ΓD
+
+φ ψ dl − ϵgr 
+
+Z
+
+> Γ1∪Γ2
+
+ ∂φ ∂n ψ + φ ∂ψ ∂n 
+
+
+
+dl = (23c) 
+
+Z
+
+> Ω
+
+γψ d Ω − ϵox 
+
+Z
+
+> Γ1,D
+
+φ|Γ1,D 
+
+∂ψ ∂n dl − ϵox 
+
+Z
+
+> Γ2,D
+
+φ|Γ2,D 
+
+∂ψ ∂n dl + (23d) +λ
+
+Z
+
+> Γ1,D
+
+φ|Γ1,D ψ dl + λ
+
+Z
+
+> Γ2,D
+
+φ|Γ2,D ψ dl + λ
+
+Z
+
+> ΓD
+
+φ|ΓD ψ dl − ϵgr 
+
+Z
+
+> Γ1∪Γ2
+
+φ|Γ1∪Γ2
+
+∂ψ ∂n dl, (23e) where, in Eqs. (23a-23b), we make use of the interface conditions in (15b), and in Eq. (23c) of the condition (15a). In other words, in the latter one, we symmetrize the term ϵgr 
+
+R
+
+> Γ1∪Γ2
+
+ ∂φ ∂n ψ + φ ∂ψ ∂n 
+
+
+
+dl in (23c), and evaluate ϵgr 
+
+R 
+
+> Γ1∪Γ2
+
+φ|Γ1∪Γ2 
+
+> ∂ψ ∂n
+
+dl 
+
+on the right hand side of the equation, in (23e). We leave the description of the choice of the parameter λ to Section 3.3. The numerical scheme used to solve the two variational formulations is described in Section 3. The detailed treatment of the interfaces Γ 1 and Γ 2 is deferred to Section 6. Since the coupling between the three subdomains is entirely mediated through these interfaces, their formulation plays a central role in the numerical method. A dedicated section allows us to describe the numerical computation of the coupling conditions and the resulting decomposition strategy. 
+
+# 3 Numerical scheme 
+
+In this section, we adopt a one- and two-dimensional space discretizations based on finite elements method for arbitrary domains. The two-dimensional domain is Ω = [ x1, x 4] × [y1, y 4] ⊂ S, with S = [0 , L S ]2 a square region. The side length 
+
+LS of S is chosen such that LS > L , ensuring sufficient space for the definition and labeling of ghost points when Dirichlet or Neumann boundary conditions are imposed. In our simulations LS = 0 .102 . Moreover, the domain is partitioned as Ω = Ω 1 ∪ Ωgr ∪ Ω2, where Ω 1 = [ x1, x 4] × [y1, y 2], Ωgr = [ x1, x 4] × [y2, y 3], and Ω 2 = [ x1, x 4] × [y3, y 4] (see Fig. 1). The subdomain Ω gr is treated as a collection of one-dimensional domains (horizontal lines), on which the numerical scheme is applied to solve the corresponding one-dimensional problem (see Fig. 7). Finally, we set by L = x4 − x1 and H = y4 − y1,the two space lengths. 83.1 Space discretization of the one-dimensional drift-diffusion model 
+
+For the system (1-2) in Ω gr , we consider the space Vh of dimension N + 1 as the space of the splines S1 on the mesh of size h = L/N , N ∈ N, where N is the number of subintervals that define the mesh 
+
+Th = {Ki = [ ξi, ξ i+1 ]}Ni=1 , ξ1 = x1, ξN +1 = x4.
+
+As basis for the space Vh we choose continuous, piecewise polynomial functions defined on the interval [ x1, x 4]. Since Ω gr = [ x1, x 4] × [y2, y 3], there exists an integer Ngr ∈ N denoting the number of grid points in the y-direction within Ω gr . We compute the solution of the one-dimensional problem (16) for each yj
+
+> gr
+
+, j = 1 , · · · , N gr . To emphasize this dependence, we denote by fj,h ≈ f (xh, y j
+
+> gr
+
+), j = 1 , · · · , N gr , and apply the same argument for all the variables in Eq. (24). Specifically, in Eq. (16), the functions ε(n), ε (p), μ n, μ p, n, p, f ∈ V are approximated by ε(n) 
+
+> h
+
+, ε (p) 
+
+> h
+
+, (μnn)j,h , (μpp)j,h , f j,h ∈
+
+Vh, respectively. To perform computations, the domain Ω gr is approximated by a set of Ngr one-dimensional domains (see Fig. 7). Consequently, the original integrals, defined over Ω gr , are now evaluated as follows. 
+
+Proposition 1. Given fj,h ∈ L2(Th) for all j = 1 , · · · , N gr find ε(n) 
+
+> h
+
+, ε (p) 
+
+> h
+
+∈ Vh such that it holds 
+
+(μnn)j,h 
+
+∂ε (n)
+
+> h
+
+∂x ψh
+
+! x4
+
+> x1
+
++
+
+
+
+(μnn)j,h ε(n)
+
+> h
+
+∂ψ h
+
+∂x 
+
+ x4
+
+> x1
+
+− (μnn)j,h 
+
+∂ε (n)
+
+> h
+
+∂x , ∂ψ h
+
+∂x 
+
+!
+
++ λ
+
+
+
+ε(n) 
+
+> h
+
+(x1)ψh(x1) + ε(n) 
+
+> h
+
+(x4)ψh(x4)
+
+
+
++(24a) = ( fj,h , ψ h) + (( μnn)j,h (x1)εlψ′(x1) + ( μnn)j,h (x4)εr ψ′(x4)) + λ (εlψh(x1) + εr ψh(x4)) , ∀ψh ∈ Vh,
+
+(24b) 
+
+(μpp)j,h 
+
+∂ε (p)
+
+> h
+
+∂x ψh
+
+! x4
+
+> x1
+
++
+
+
+
+(μpp)j,h ε(p)
+
+> h
+
+∂ψ h
+
+∂x 
+
+ x4
+
+> x1
+
+− (μpp)j,h 
+
+∂ε (p)
+
+> h
+
+∂x , ∂ψ h
+
+∂x 
+
+!
+
++ λ
+
+
+
+ε(p) 
+
+> h
+
+(x1)ψh(x1) + ε(p) 
+
+> h
+
+(x4)ψh(x4)
+
+
+
++(24c) = − (fj,h , ψ h) + (( μpp)j,h (x1)εlψ′(x1) + ( μpp)j,h (x4)εr ψ′(x4)) + λ (εlψh(x1) + εr ψh(x4)) , ∀ψh ∈ Vh.
+
+(24d) 
+
+and ∀j = 1 , · · · , N gr , where (·, ·) denotes the scalar product in L2(Th). The parameter λ is chosen in such a way that 
+
+λ = h−α, where α is defined in Section 3.3. 
+
+## 3.2 Space discretization of the interface problem in two dimensions 
+
+The square region S is discretized by a uniform mesh of squares ( cells ) of size h2, h = L/N , where N ∈ N is the number of cells in x and y direction, respectively. The set of cells is denoted by C, with # C = N 2. A cell K ∈ C is classified as 
+
+active cell if K ∩ Ω̸ = ∅, or inactive cell otherwise. An active cell K can be internal cell if K ⊆ Ω or cut cell otherwise (namely K ∩ Γ̸ = ∅). Following the approach shown in [38, 40, 44, 45], the domains Ω i, i = 1 , 2, gr , are implicitly defined by a level set function ϕi(x, y ) that is negative inside Ω i, positive in S \ Ωi and zero on the boundary ∂Ωi:Ωi = {(x, y ) : ϕi(x, y ) < 0}, ∂Ωi = {(x, y ) : ϕi(x, y ) = 0 }, i = 1 , 2, gr . (25) The set of grid points is denoted by N , with cardinality # N = ( N + 1) 2. It is partitioned as N = I ∪ G ∪ O ,corresponding to the internal, ghost and inactive points, respectively. The internal points are defined as those grid points 9for which the level-set function takes negative values. While, the set of ghost points, G, consists of grid points that belong to the complement domain Ω c := S \ Ω and are vertices of cut cells, formally defined as (x, y ) ∈ G ⇐⇒ (x, y ) ∈ N ∩ Ωc and {(x ± h, y ), (x, y ± h), (x ± h, y ± h)} ∩ I̸ = ∅.
+
+All the other points, are inactive points and belong to O.Lastly, we define the computational domain Ω h = Ω ∩ C (or Ω h 
+
+> 1
+
+= Ω 1 ∩ C , Ω h 
+
+> 2
+
+= Ω 2 ∩ C and Ω h 
+
+> gr
+
+= Ω gr ∩ C ). In each cut cell, the portion of boundary is approximated by a straight line. The union of these segments is denoted by Γh = Γ h 
+
+> 1
+
+∪ Γh 
+
+> 2
+
+∪ Γh 
+
+> 1,D
+
+∪ Γh 
+
+> 2,D
+
+∪ Γh 
+
+> 1,N
+
+∪ Γh 
+
+> 2,N
+
+(see Fig. 1). Consequently, the integrals in (23) are now evaluated over Ω h and Γh, respectively. The discrete space Wh is constructed from continuous, piecewise polynomial functions defined on Ω h. The functions 
+
+ψ, which are defined in the function space W , are approximated by the function ψh that belong to finite-dimensional subspace Wh, defined as follows: 
+
+Wh = {ψh ∈ W : ψh|K ∈ Q1(K), ∀K ∈ Ωh}, (26) where Q1(K) denotes the space of bilinear Lagrangian shape functions on the element K.As in the one-dimensional case, to obtain a discrete variational problem, we consider (23) with both trial and test functions taken in Wh, leading to the following discrete problem. 
+
+Proposition 2. Given γh ∈ L2(Ω h), find φh ∈ Wh such that it holds 
+
+ϵox (∇φh, ∇ψh)L2(Ω h  
+
+> 1)
+
+− ϵox 
+
+ ∂φ h
+
+∂n , ψ h
+
+ 
+
+> L2(Γ h
+> 1,D )
+
+− ϵox 
+
+
+
+φh, ∂ψ h
+
+∂n 
+
+ 
+
+> L2(Γ h
+> 1,D )
+
++ λ (φh, ψ h)L2(Γ h  
+
+> 1,D )
+
+− ϵgr 
+
+ ∂φ h
+
+∂n , ψ h
+
+ 
+
+> L2(Γ h
+> 1)
+
++(27a) +ϵox (∇φh, ∇ψh)L2(Ω h  
+
+> 2)
+
+− ϵox 
+
+ ∂φ h
+
+∂n , ψ h
+
+ 
+
+> L2(Γ h
+> 2,D )
+
+− ϵox 
+
+
+
+φh, ∂ψ h
+
+∂n 
+
+ 
+
+> L2(Γ h
+> 2,D )
+
++ λ (φh, ψ h)L2(Γ h  
+
+> 2,D )
+
+− ϵgr 
+
+ ∂φ h
+
+∂n , ψ h
+
+ 
+
+> L2(Γ h
+> 2)
+
++(27b) +ϵgr (∇φh, ∇ψh)L2(Ω gr ) − ϵgr 
+
+ ∂φ h
+
+∂n , ψ h
+
+ 
+
+> L2(Γ hD)
+
+− ϵgr 
+
+
+
+φh, ∂ψ h
+
+∂n 
+
+ 
+
+> L2(Γ hD)
+
+− ϵgr 
+
+ ∂φ h
+
+∂n , ψ h
+
+ 
+
+> L2(Γ h
+> 1)
+
+− ϵgr 
+
+
+
+φh, ∂ψ h
+
+∂n 
+
+ 
+
+> L2(Γ h
+> 1)
+
++(27c) +λ (φh, ψ h)L2(Γ hD ) − ϵgr 
+
+ ∂φ h
+
+∂n , ψ h
+
+ 
+
+> L2(Γ h
+> 2)
+
+− ϵgr 
+
+
+
+φh, ∂ψ h
+
+∂n 
+
+ 
+
+> L2(Γ h
+> 2)
+
+=(27d) (γh, ψ h)L2(Ω h) − ϵox 
+
+
+
+φh|Γ1,D , ∂ψ h
+
+∂n 
+
+ 
+
+> L2(Γ h
+> 1,D )
+
+− ϵox 
+
+
+
+φh|Γ2,D , ∂ψ h
+
+∂n +
+
+ 
+
+> L2(Γ h
+> 2,D )
+
++ λ
+
+
+
+φh|Γ1,D , ψ h
+
+ 
+
+> L2(Γ h
+> 1,D )
+
++(27e) +λ
+
+
+
+φh|Γ2,D , ψ h
+
+ 
+
+> L2(Γ h
+> 2,D )
+
++ λ   φh|ΓD , ψ h
+
+  
+
+> L2(Γ hD)
+
+− ϵgr 
+
+
+
+φh|Γh
+
+> 1
+
+, ∂ψ h
+
+∂n 
+
+ 
+
+> L2(Γ h
+> 1)
+
+− ϵgr 
+
+
+
+φh|Γh
+
+> 2
+
+, ∂ψ h
+
+∂n 
+
+ 
+
+> L2(Γ h
+> 2)
+
+, ∀ψh ∈ Wh.
+
+(27f) 
+
+## 3.3 Snapping-back-to-grid technique for interface problems 
+
+When dealing with arbitrary domains, the so-called small cut issue arises, which might result in losing the coercivity of the bilinear form. We avoid this problem by perturbing the mesh geometry. In particular, in [4], the perturbation procedure 10 Ω1
+
+# Ω2
+
+# Ω1
+
+# Ω2
+
+Figure 2: Representation of the domains after the snapping-back-to-grid procedure (Algorithm 1), with α = 2 in (a) and 
+
+α = 1 .5 in (b). 
+
+we introduce is well known to the engineering community by the name of snapping-back-to-grid. In other words, whenever the distance between an interior point and the boundary is smaller than hα, the corresponding cell is discarded. Fig. 2-3 illustrate the effect of this procedure for α = 2 (left panel) and α = 1 .5 (right panel). As expected, smaller values of α
+
+lead to the removal of a larger number of cells. Consequently, the computational domain becomes closer to a polygonal approximation of the original geometry, and a larger number of points change their classification from interior to ghost points (see Fig. 3). This technique improves the conditioning of the resulting linear systems by eliminating arbitrarily small cut cells. On the other hand, the geometric approximation error increases and the second-order accuracy is no longer guaranteed, as illustrated by the results reported in Table 1. The parameter α is chosen based on the accuracy. Since the numerical scheme is second-order accurate, choosing α > 2 we do not expect any further improvement in the convergence rate. Therefore, we restrict our investigation to α = 1 .5, 1 .75, and 2. 
+
+Algorithm 1 Snapping back to grid 
+
+for k ∈ N do if ϕ(k) < 0 & |ϕ(k)| < h α then 
+
+ϕ(k) := eps 
+
+end if end for 
+
+# 4 Accuracy tests 
+
+In this section, we present different numerical tests of the one-dimensional drift-diffusion problem and of the two dimen-sional elliptic interface problem. Our main goal is to examine the accuracy and convergence behavior of the numerical scheme. We test different geometries, and for each one we show the accuracy of the solution, which is computed as follows: 11 Ωh
+
+## 1
+
+# Ωh
+
+## 2
+
+# Ωh
+
+## 1
+
+# Ωh
+
+## 2
+
+Figure 3: Points classification after the snapping-back-to-grid procedure (Algorithm 1) for α = 2 (a) and α = 1 .5 (b). Blue and black dots represent interior points of Ωh 
+
+> 1
+
+and Ωh 
+
+> 2
+
+, respectively. Red and green circles denote ghost points associated with Ωh 
+
+> 1
+
+and Ωh 
+
+> 2
+
+, respectively. 
+
+error i =
+
+qR 
+
+> Ωi
+
+|uh − ui
+
+> exa
+
+|2dxdy 
+
+qR 
+
+> Ωi
+
+|ui
+
+> exa
+
+|2dxdy , i = 1 , 2 (28a) 
+
+∇error i =
+
+qR 
+
+> Ωi
+
+|∇ uh − ∇ ui
+
+> exa
+
+|2dxdy 
+
+qR 
+
+> Ωi
+
+|∇ ui
+
+> exa
+
+|2dxdy , i = 1 , 2, (28b) where the integral over Ω i is computed using the midpoint quadrature rule. 
+
+## 4.1 Drift-diffusion model in one dimension 
+
+Here, we perform numerical tests to check that the numerical discretization for the drift-diffusion equation achieves the expected accuracy. We consider the following problem, whose exact solution is known. 
+
+∂∂x 
+
+
+
+ν(x) ∂u ∂x 
+
+
+
+= f (x) [0 , 1] (29a) 
+
+u(0) = 0 , u(1) = 0 (29b) with ν(x) = exp(cos( x)) and f (x) = −2π exp(cos( x))(sin( x) cos(2 πx )+2 π sin(2 πx )), whose exact solution has the following expression 
+
+uexa = sin(2 πx ). (30) In Fig. 4 (panel (a)), we show the comparison between the exact solution (blue line) and the numerical solution (red asterisks) with number of elements N = 40. In panel (b), we show the convergence order as a function of N .12 4.2 Interface problem in two dimensions 
+
+Here, we perform numerical tests for a generic elliptic interface problem in two dimensions. Let Ω be a domain in R2 with external boundary ∂Ω1. We assume that Ω is subdivided into two subdomains Ω i, i = 1 , 2 so that Ω = Ω 1 ∪ Ω2. The subdomains are separated by a continuous interface Γ = Ω 1 ∩ Ω2. Then, we consider the following system: 
+
+−∇ · (βi∇u) = fi in Ω i, i = 1 , 2 (31a) [|u|] = gD on Γ (31b) [|βi∇u · bni|] = gN on Γ (31c) 
+
+u = g on ∂Ω1 (31d) where fi : Ω i → R, i = 1 , 2 and bni, i = 1 , 2 is the unit vector pointing out of Ω i, i = 1 , 2 and normal to Γ. Our simulations involve various cases, including different combinations of coefficients between the two domains, and different shape domains. Specifically, we consider a square, a circle, and a flower, each equipped with suitable Dirichlet boundary conditions. We first consider square Ω 1 = [ −1.5, 1.5] 2 \ Ω2 and Ω 2 is defined by the following level set function 
+
+ϕ(x, y ) = px2 + y2 − 1.
+
+In these cases, it is possible to find expressions for the exact solution of system (31) for gD = 0 , g N = 0 and g = u1 on 
+
+∂Ω1. We test the following three cases: Case A : 
+
+
+
+u1exa = 4 − x2 − y2
+
+4 , β1 = 1 in Ω 1
+
+u2exa = 31 − x2 − y2
+
+40 , β2 = 10 in Ω 2
+
+(32a) Case B : 
+
+
+
+u1exa = 4 − x2 − y2
+
+4 , β1 = 1 in Ω 1
+
+u2exa = 30001 − x2 − y2
+
+40000 , β2 = 10000 in Ω 2
+
+(32b) Case C : 
+
+
+
+u1exa = 4 − x2 − y2
+
+40 , β1 = 10 in Ω 1
+
+u2exa = 13 − 10 x2 − 10 y2
+
+40 , β2 = 1 in Ω 2
+
+(32c) These examples are chosen from [1] to demonstrate the robustness of our proposed method in dealing with different geometries, and the numerical results are shown in Fig. 5. In the first row, we present the meshes of the numerical solutions for the three cases. In the second row, we show the error in the solution and its gradient, as defined in Eq. (28). Since a quadrature rule is used to compute the integrals over the cells of the numerical solutions, quadrature errors must also be taken into account. As a result, the error curves exhibit a flattening behavior when reaching values on the order of 10 −6. Table 1 reports the observed orders of convergence of the error for Case A (order 1 in Ω 1 and order 2 in Ω 2) as the parameter α in Algorithm 1 is varied. The fourth and fifth columns (i.e., α = (2 , 1.75) and α = (2 , 1.5)) correspond to using different values of α in Ω 1 and Ω 2. These two tests show that the error decreases irregularly, achieving the second order only for larger values of N .The next test explores the case in which the jump condition gN is nonzero. This scenario is included primarily for completeness, as the main applications of this work involve homogeneous interface conditions. We consider a flower shaped domain immersed in a square, where Ω 1 = [ −1.5, 1.5] 2 \ Ω2 and Ω 2 is defined by the following level set function 
+
+ϕ(x, y ) = r − 0.52 − Y 5 + 5 X4Y − 10 X2Y 3
+
+5r5 , r = pX2 + Y 2, X = x − 0.0√3, Y = y − 0.04 √2.
+
+13 (a) (b) Figure 4: Panel (a) compares the exact solution (blue line), given by Eq. (30) , with the numerical solution (red asterisks) for the problem defined in Eq. (29) , with number of elements N = 40 . Panel (b) shows the convergence order of the numerical scheme. 
+
+The reference solutions we choose are the following Case D : 
+
+ u1exa = cos((2 πx )/L ) cos((2 πy )/L ), β1 = 1 in Ω 1
+
+u2exa = exp( xy ), β2 = 2 in Ω 2
+
+(33a) and the numerical results are shown in Fig. 6. Panel (a) shows the meshes of the numerical solution. Panel (b) shows the error in the solution and its gradient, as defined in Eq. (28). Table 1: Order of accuracy of Case A, changing the parameter α in Algorithm 1. 
+
+α = 2 α = 1 .75 α = 1 .5 α = (2 , 1.75) α = (2 , 1.5) 
+
+N order 1 order 2 order 1 order 2 order 1 order 2 order 1 order 2 order 1 order 2
+
+32 2.02 5.20 0.93 2.63 0.94 2.19 0.66 1.13 2.51 3.16 64 2.05 1.46 2.38 5.86 0.86 2.54 5.10 5.40 2.53 1.08 128 2.03 2.34 3.48 1.84 0.53 0.0 1.28 1.88 2.08 0.013 256 1.99 1.89 2.16 1.70 2.10 3.13 1.41 1.72 1.40 6.28 512 1.97 2.04 1.56 1.92 1.07 1.38 3.96 2.13 3.50 1.18 1024 1.99 2.16 2.04 1.93 1.90 2.10 1.48 1.96 1.92 1.80 
+
+# 5 Two interfaces problem and Numerical results 
+
+We now consider the problem introduced in Section 2, in which the electrostatic potential is affected by the presence of two interfaces. The numerical simulations are carried out by solving the drift-diffusion equations (1-2) self-consistently coupled with the Poisson equation (11). The resulting nonlinear system is solved by an iterative procedure until self-consistency between the carrier densities and the electrostatic potential is achieved. 14 Figure 5: The first row shows the numerical solutions defined in Eq. (32) , for the problem in Eq. (31) . The second row shows the convergence order of the respective numerical tests. 
+
+(a) (b) Figure 6: Panel (a) shows the numerical solution defined in Eq. (33) , for the problem in Eq. (31) . Panel (b) shows the convergence order of the respective numerical test. 
+
+15 At a generic iteration k, given the densities nk and pk, the Poisson equation (11) is solved to obtain the electrostatic potential φk. The drift-diffusion equations (1-2) are then solved as described in Section 3, yielding the quasi-Fermi energy profiles  ε(n)k and  ε(p)k. New carrier densities are subsequently computed as 
+
+nnew ,k = n
+
+
+
+ε(n)k
+
++ eφ k
+
+
+
+, (34a) 
+
+pnew ,k = p
+
+
+
+ε(p)k
+
++ eφ k
+
+
+
+. (34b) To improve the stability of the self-consistent iteration, we use a fixed under-relaxation step. Starting with a couple of initial guesses ( n0, p 0), the updated densities are defined by 
+
+nk+1 = ξ n k + (1 − ξ)nnew ,k , (35a) 
+
+pk+1 = ξ p k + (1 − ξ)pnew ,k , (35b) with 0 < ξ < 1, until the difference between two successive approximations falls below a specific tolerance toll . This corresponds to a damped fixed-point iteration with relaxation parameter 1 − ξ [20]. The computational domain consists of a three-layer sandwich structure composed of two inactive regions, denoted by Ω1 and Ω 2, separated by an active graphene layer, denoted by Ω gr . In this study, we investigate the effect of varying the thickness of the graphene layer, defined as 
+
+tgr = y3 − y2.
+
+To conduct this comparison, we consider three values of tgr . As a consequence, the total height H of the computational domain varies across the numerical experiments. Each layer is represented through a level set function describing a rectangular region centered at ( xc, y c). Let 
+
+ex = x − xc, ey = y − yc,
+
+and define 
+
+ϕi(x, y ) = max 
+
+
+
+|ex| − r(i) 
+
+> x
+
+, |ey| − r(i)
+
+> y
+
+
+
+, i = 1 , gr , 2, (36) where r(i) 
+
+> x
+
+and r(i) 
+
+> y
+
+denote the half-width and half-height of the corresponding layer. The three subdomains are then given by Ωi = (x, y ) ∈ R2 : ϕi(x, y ) < 0 , i = 1 , gr , 2. (37) All layers are rectangular and aligned along the same centerline, differing only in their vertical position and thickness, see Fig. 7. The computational domain is symmetric with respect to the horizontal centerline passing through the center of the graphene layer Ω gr , whose position is kept fixed throughout the analysis. Consequently, any modification of the central layer is performed in a way that preserves this symmetry with respect to the midline of Ω gr . The parameters of the numerical simulations are shown in Table 2. Fig. 8 presents the convergence study for the numerical solution of the potential φ, in the case of a three layers domain Ω with two interfaces Γ 1 and Γ 2. The results are shown after one iteration, and are obtained by solving only the elliptic problem in panel (a), while panel (b) displays the results for the fully coupled drift-diffusion-Poisson system. The obtained convergence rates confirm the expected order of accuracy, as the nonlinear terms arising from the transport model reduce the overall convergence order to one in panel (b). In the absence of an exact solution, we apply the Richardson extrapolation technique (see, e.g., [39]) to estimate the order of the method. 16 (a) 
+
+# S
+
+Ω1
+
+Ω2
+
+(b) 
+
+# Ωgr 
+
+# Γ1
+
+# Γ2
+
+y3gr 
+
+y1gr 
+
+y2gr 
+
+y4gr 
+
+y5gr 
+
+Figure 7: (a) Mesh of the region where the product of the level-set functions ϕ1, ϕ 2, ϕ gr (defined in Eq. (36) ) is negative, which corresponds to the computational domain. Zoom of the central layer Ωgr in panel (b). Parameters: tgr = 1 nm, 
+
+N = 520 .
+
+Fig. 9 shows the transfer characteristics of the simulated GFET, defined in Eq. (8), for three values of the drain-source bias voltage, namely Vb = 0 .1, 0 .2, and 0 .3 V. The same data are reported both in linear and logarithmic scale in order to highlight, respectively, the OFF-state and ON-state behavior. For negative gate voltages, the current remains strongly suppressed, while a sharp increase is observed when VG approaches the threshold region. This indicates that the electrostatic control exerted by the gates is effective in driving the device from a low-conducting state to an ON state. Such behavior is particularly relevant in monolayer graphene devices, where the absence of an energy gap usually leads to ambipolar conduction and makes the definition of a clear OFF region difficult. As expected, the ON-state current increases with the drain-source bias voltage, due to the larger longitudinal driving field along the graphene channel. In the positive-gate region the current reaches a quasi-saturated regime, with only moderate variations as VG is further increased. This behavior can be ascribed to the combined effect of gate-induced carrier-density modulation, field-dependent mobility, and the self-consistent electrostatic potential obtained from the coupled transport-Poisson model. The logarithmic plot shows that the ratio between the ON current and the residual OFF current is of several orders of magnitude, confirming that the adopted device configuration mitigates the typical ambipolar response of gapless graphene and yields transfer curves with a conventional FET-like behavior. A weak non-monotonicity is observed in the ON region of the transfer characteristics. Non-monotone or distorted transfer characteristics are not unusual in low-dimensional field-effect devices, since the gate voltage can affect not only the channel charge density but also the contact regions, the local electrostatic profile, and the effective transport parameters. This has been observed, for example, in graphene FETs with contact-induced doping or gate-dependent contact resistance, and is consistent with the general view that 2D/metal and 2D/dielectric interfaces play a decisive role in the electrostatics and transport of atomically thin transistors [37, 21, 29]. Fig. 10 displays the two-dimensional electrostatic potential for Vb = 0 .2 V and different values of the gate voltage: in panel (a) VG = −1.5V and in panel (b) VG = 1 .5V. The potential is strongly affected by the gate bias: a negative VG
+
+lowers the potential in the central part of the channel, while a positive VG raises it and produces a broad plateau in the gated region. This behavior reflects the combined action of the source/drain boundary conditions and of the upper and 17 (a) (b) Figure 8: Convergence order of the numerical accuracy of the potential φ in the three-layer domain defined by Eq. (36) 
+
+after one iteration. In panel (a), only the two-dimensional elliptic equation is solved in Ω. In panel (b), the full coupled system is considered, combining the elliptic problem with the one-dimensional drift-diffusion equation. In this test, the order is calculated with Richardson extrapolation technique. 
+
+lower gates acting through the two oxide/graphene interfaces. The corresponding horizontal profiles inside the graphene layer are shown in Fig. 11, where 
+
+φ(x, y j
+
+> gr
+
+), j = 1 , . . . , N gr ,
+
+is plotted for the different grid lines belonging to Ω gr . The curves are nearly superposed, as expected from the very small thickness of the graphene layer, but their small separation indicates that the transverse variation of the electrostatic potential is not completely negligible. This confirms the relevance of solving the full two-dimensional Poisson problem across the oxide/graphene/oxide structure. In particular, the gate voltage modifies not only the potential level in the channel, but also the longitudinal profile and hence the electric field, which is the quantity directly entering the drift-diffusion current. To further investigate the effect of the discretization of the graphene layer, we consider the transverse profile of the electrostatic potential along the central section of the device, 
+
+φ
+
+ x1 + x4
+
+2 , y 
+
+
+
+.
+
+Fig. 12 shows this profile for three different values of the effective thickness tgr of the graphene region. The total number of grid points N = 820, and thus also the space step h are kept fixed, so that a reduction of tgr also reduces the number of grid points inside Ω gr . This provides a direct test of the sensitivity of the solution to the resolution of the active layer. For negative gate voltage, the potential presents a local maximum in the graphene region, whereas for positive gate voltage, it presents a local minimum. The zoomed views highlight that the potential varies slightly across the graphene thickness and that this variation depends on tgr . Therefore, even though the active layer is extremely thin, its effective thickness and vertical discretization influence the electrostatic profile. This supports the use of a full two-dimensional Poisson problem with two oxide/graphene interfaces, rather than a purely one-dimensional or lumped electrostatic ap-proximation. 18 (a) (b) Figure 9: Characteristic curves of the simulated GFET in linear scale in panel (a) and logarithmic one in panel (b). Parameters: tgr = 1 nm, initial values n0 = p0 = 10 , number of points N = 520 , number of lines in the graphene layer 
+
+Ngr = 5 , snapping parameter α = 2 , ξ = 10 −4 and toll = 10 −4.
+
+(a) (b) Figure 10: Electrostatic potential φ of the simulated GFET. Parameters: tgr = 1 nm, initial values n0 = p0 = 10 , number of points N = 520 , number of lines in the graphene layer Ngr = 5 , snapping parameter α = 2 , ξ = 10 −4, toll = 10 −4,
+
+Vb = 0 .2V gate voltage VG = −1.5V in panel (a) and VG = 1 .5V in panel (b). 
+
+19 (a) (b) Figure 11: Profiles in the x-direction of the numerical solution φ(x, y = yj
+
+> gr
+
+), j = 1 , · · · , 5, in the graphene layer Ωgr .Parameters: tgr = 1 nm, initial values n0 = p0 = 10 , number of points N = 520 , number of lines in the graphene layer 
+
+Ngr = 5 , snapping parameter α = 2 , ξ = 10 −4, toll = 10 −4, Vb = 0 .2V gate voltage VG = −1.5V in panel (a) and 
+
+VG = 1 .5V in panel (b). 
+
+(a) (b) Figure 12: Profiles in the y-direction of the numerical solution φ(x = x1+x4 
+
+> 2
+
+, y ) for three configurations corresponding to different thicknesses tgr of the graphene layer Ωgr . The total number of grid points, N = 820 , is fixed across all cases. As the thickness of Ωgr decreases, the number of points yj
+
+> gr
+
+, j = 1 , . . . , N gr , in the graphene layer is reduced (circles in the inset box). Parameters: initial values n0 = p0 = 100 , number of points N = 820 , snapping parameter α = 2 , ξ = 5 · 10 −6,
+
+toll = 10 −5, Vb = 0 .2V gate voltage VG = −1.5V in panel (a) and VG = 1 .5V in panel (b). 
+
+20 Symbol value Symbol value Symbol value 
+
+μ0 0.4650 μm2/V ps nref 1.1 · 10 5 μm−2 σ 2.2 
+
+ϵ0 8.85 · 10 −18 ϵox 3.6ϵ0 ϵgr 3.3ϵ0
+
+L 100 nm y2 − y1 = y4 − y3 10 nm VGu = VGd VG
+
+nimp 2.5 · 10 3μm−2 e 0.1602 · 10 −18 C ∆ε 0.25 eV Table 2: Parameters involved. 
+
+# 6 Conclusions and Future work 
+
+In this work, we extended the ghost-FEM framework to elliptic interface problems with discontinuous diffusion coefficients and applied it to the numerical simulation of low-dimensional semiconductor devices. The proposed method combines an unfitted Cartesian-grid discretization with a level-set description of the geometry and a snapping-back-to-grid procedure to avoid ill-conditioning due to small cut cells. Boundary and interface conditions are imposed through a Nitsche-type variational formulation, allowing the method to handle internal interfaces without requiring a mesh fitted to the geometry. The accuracy of the method was assessed through several benchmark elliptic interface problems involving different geometries and coefficient jumps. The numerical results show second-order convergence for the solution and first-order convergence for its gradient, confirming the expected accuracy of the spatial discretization. These tests demonstrate that the proposed approach provides an effective and flexible numerical framework for interface problems arising in heterogeneous media. The method was then applied to a graphene field-effect transistor modeled by a self-consistent drift-diffusion–Poisson system. The electrostatic potential was computed in a two-dimensional oxide/graphene/oxide structure, while charge transport in the graphene layer was described by one-dimensional bipolar drift-diffusion equations. This setting naturally leads to a coupled problem involving different spatial dimensions, for which the ghost-FEM formulation and the domain-decomposition strategy provide a convenient computational framework. The GFET simulations show that the gate voltage strongly affects the electrostatic potential and the resulting current response. The computed transfer characteristics exhibit a clear transition from a low-conducting regime to an ON state, while the ON current increases with the drain-source bias. Moreover, the analysis of the electrostatic potential inside the graphene layer shows that, although the layer is very thin, the transverse variation of the potential is not completely negligible. The effective graphene thickness and its vertical discretization influence the numerical solution, confirming the relevance of a full two-dimensional Poisson description with explicit oxide/graphene interface conditions. Future work will address several extensions. A time-dependent formulation of the drift-diffusion model would pro-vide additional flexibility in the choice of temporal discretization. In particular, high-order IMEX schemes [10] could be employed to treat the nonlinear transport terms efficiently while maintaining the second-order accuracy achieved by the spatial derivatives shown in Fig. 8. Further developments will also focus on more efficient implementations and mesh-refinement strategies, with the aim of resolving thinner graphene regions and more pronounced multiscale effects. Finally, the unfitted discretization framework considered in this work can be applied to refined meshes without the need for remeshing. This provides a basis for the investigation of semiconductor devices with more complex geometries and multiscale effects, which will be addressed in future work. The development of more efficient computational implementa-tions could further enable high-resolution simulations, allowing the investigation of thinner graphene regions and a more accurate description of the associated multiscale phenomena. 21 Appendix 
+
+## Steps of the two interfaces problems 
+
+The domain is divided in three subdomains, i.e. Ω = Ω 1 ∪ Ωgr ∪ Ω2 (see Fig. 1). Usually, in domain decomposition procedures an iterative approach is considered to solve system (27). Since one grid line of Ω gr is associated with the interface condition at Γ 1 and another one with the interface condition at Γ 2, at least three additional grid lines are required to perform the interior computation within Ω gr . For this reason, the number of cells in Ω gr is chosen so that the subdomain contains at least five grid lines in total. Below, we describe the computational steps to compute. We start from the central layer, with the same interface conditions at Γ 1 and Γ 2, because we expect symmetry respect to the y-direction. 
+
+step 1: We solve the system for φgr ∈ Ωgr , with Dirichlet boundary conditions 
+
+−∇ · (ϵgr ∇φgr ) = e(p − n + nimp )/t gr in Ω gr 
+
+φgr = 0 at x = x1
+
+φgr = Vb at x = x4
+
+φgr = 0 at Γ 1, Γ2
+
+(38) 
+
+step 2: We solve the system for φ1 ∈ Ω1 and for φ2 ∈ Ω2
+
+−∇ · (ϵox ∇φi) = 0 in Ω i
+
+φi = 0 at x = x1
+
+φi = Vb at x = x4
+
+φ1 = VGd at y = y1, x ∈ [x2, x 3]
+
+φ2 = VGu at y = y4, x ∈ [x2, x 3]
+
+ϵox ∇nφi = ϵgr ∇nφgr at Γ i,
+
+∇nφi = 0 in Γ N,
+
+(39) for i = 1 , 2. 
+
+step 3: We solve the system for φgr ∈ Ωgr , with Dirichlet boundary conditions 
+
+−∇ · (ϵgr ∇φgr ) = e(p − n + nimp )/t gr in Ω gr 
+
+φgr = 0 at x = x1
+
+φgr = Vb at x = x4
+
+φgr = φi at Γ i, i = 1 , 2(40) and repeat from step 2 .
+
+# Acknowledgements 
+
+The work of C.A. has been supported by the Spoke 10 Future AI Research (FAIR) of the Italian Research Center funded by the Ministry of University and Research as part of the National Recovery and Resilience Plan (PNRR). C.A. has also been supported also by Italian Ministerial grant PRIN 2022 “Efficient numerical schemes and optimal control 22 methods for time-dependent partial differential equations”. C.A. has also been supported by the Italian Ministerial grant PRIN 2022 PNRR “FIN4GEO: Forward and Inverse Numerical Modeling of hydrothermal systems in volcanic regions with application to geothermal energy exploitation”. C.A. is member of the Gruppo Nazionale Calcolo Scientifico-Istituto Nazionale di Alta Matematica (GNCS-INdAM). G.N. acknowledges the support from the Gruppo Nazionale per la Fisica Matematica - Istituto Nazionale di Alta Matem-atica (GNFM-INdAM). 
+
+# References 
+
+[1] Najwa Alshehri, Daniele Boffi, and Lucia Gastaldi. Unfitted mixed finite element methods for elliptic interface problems. Numerical Methods for Partial Differential Equations , 40(1):e23063, 2024. [2] Mario G. Ancona. Electron transport in graphene from a diffusion-drift perspective. IEEE Transactions on Electron Devices , 57(3):681–689, Mar 2010. [3] Clarissa Astuto. Standard versus Asymptotic Preserving Time Discretizations for the Poisson-Nernst-Planck system in the Quasi-Neutral Limit. arXiv preprint arXiv:2511.07964 , 2025. [4] Clarissa Astuto, Daniele Boffi, Giovanni Russo, and Umberto Zerbinati. A nodal ghost method based on variational formulation and regular square grid for elliptic problems on arbitrary domains in two space dimensions. Computer Methods in Applied Mechanics and Engineering , 443:118041, 2025. [5] Clarissa Astuto, Armando Coco, and Umberto Zerbinati. A Comparison of the Coco-Russo Scheme and ghost-FEM for elliptic Equations in Arbitrary Domains. Advances in Nonlinear Hyperbolic Partial Differential Equations, Springer , pages 1–21, 2026. [6] Clarissa Astuto, Jan Haskovec, Peter Markowich, and Simone Portaro. Self-regulated biological transportation struc-tures with general entropy dissipations, part I: The 1D case. Journal of Dynamics and Games , 2023. [7] Clarissa Astuto and Giovanni Russo. Asymptotic preserving and accurate scheme for multiscale poisson-nernst-planck (MPNP) system. arXiv preprint arXiv:2507.01402 , 2025. [8] Clarissa Astuto and Daniele Francesco Santamaria. Modeling damage in self-regulated transportation networks with tree-like structure. Mathematical and Computational Applications , 31(3):87, 2026. [9] Santiago Badia, Hridya Dilip, and Francesc Verdugo. Space-time unfitted finite element methods for time-dependent problems on moving domains. Computers & Mathematics with Applications , 135:60–76, 2023. [10] Sebastiano Boscarino, Lorenzo Pareschi, and Giovanni Russo. Implicit-explicit methods for evolutionary partial dif-ferential equations . SIAM, 2024. [11] Erik Burman, Susanne Claus, Peter Hansbo, Mats G Larson, and Andr´ e Massing. Cutfem: discretizing geometry and partial differential equations. International Journal for Numerical Methods in Engineering , 104(7):472–501, 2015. [12] Vito Dario Camiola, Giovanni Nastasi, and Vittorio Romano. A drift-diffusion model for charge transport in GFETs with a proper modeling of the electrostatic potential. Journal of Mathematics in Industry , 15(1):1–13, Mar 2025. [13] A. H. Castro Neto, F. Guinea, N. M. R. Peres, K. S. Novoselov, and A. K. Geim. The electronic properties of graphene. Reviews of Modern Physics , 81(1):109–162, Jan 2009. 23 [14] James G. Champlain. A first principles theoretical examination of graphene-based field effect transistors. Journal of Applied Physics , 109(8):084515, Apr 2011. [15] Tony F Chan. Analysis of preconditioners for domain decomposition. SIAM journal on numerical analysis , 24(2):382– 390, 1987. [16] Tony F Chan and Tarek P Mathew. Domain decomposition algorithms. Acta numerica , 3:61–143, 1994. [17] Armando Coco and Giovanni Russo. Second order finite-difference ghost-point multigrid methods for elliptic problems with discontinuous coefficients on an arbitrary interface. Journal of Computational Physics , 361:299 – 330, 2018. [18] R. Courant. Variational methods for the solution of problems of equilibrium and vibrations. Bull. Amer. Math. Soc. ,49:1–23, 1943. [19] R. Courant and D. Hilbert. Methods of mathematical physics. Vol. I . Interscience Publishers, Inc., New York, N.Y., 1953. [20] P. H. Dederichs and R. Zeller. Self-consistency iterations in electronic-structure calculations. Physical Review B ,28(10):5462–5472, 1983. [21] A. Di Bartolomeo, S. Santandrea, F. Giubileo, F. Romeo, M. Petrosino, R. Citro, P. Barbara, G. Lupina, T. Schroeder, and A. Rubino. Effect of back-gate on contact resistance and on channel conductance in graphene-based field-effect transistors. Diamond and Related Materials , 38:19–23, 2013. [22] Hridya Dilip, Clarissa Astuto, Armando Coco, and Giovanni Russo. High order ghost-fem for incompressible navier-stokes equations on moving domains. arXiv preprint arXiv:2603.19928 , 2026. [23] Hridya Dilip and Armando Coco. Multigrid methods for the ghost finite element approximation of elliptic problems. 
+
+Journal of Computational Physics , page 115034, 2026. [24] Vincent E. Dorgan, Myung-Ho Bae, and Eric Pop. Mobility and saturation velocity in graphene on SiO2. Applied Physics Letters , 97(8):082112, 2010. [25] Pedro C. Feijoo, David Jim´ enez, and Xavier Cartoix` a. Short channel effects in graphene-based field effect transistors targeting radio-frequency applications. 2D Materials , 3(2):025036, May 2016. [26] David Jim´ enez and Olivia Moldovan. Explicit drain-current model of graphene field-effect transistors targeting analog and radio-frequency applications. IEEE Transactions on Electron Devices , 58(11):4049–4052, Nov 2011. [27] Cl´ ement Jourdana and Paola Pietra. An interface formulation for the Poisson equation in the presence of a semicon-ducting single-layer material. ESAIM: Mathematical Modelling and Numerical Analysis , 58(3):833–856, Mar 2024. [28] Mikhail I. Katsnelson. The Physics of Graphene . Cambridge University Press, Cambridge, UK, 2nd edition, 2020. [29] Yuan Liu, Xiangfeng Duan, Yu Huang, and Xiangfeng Duan. Interface engineering for two-dimensional semiconductor transistors. Materials Today , 30:7–23, 2019. [30] Mark Lundstrom. Fundamentals of carrier transport, 2nd edn. Measurement Science and Technology , 13(2):230–230, 2002. [31] Mark S. Lundstrom and Jing Guo. Nanoscale Transistors: Device Physics, Modeling and Simulation . Springer Science+Business Media, Inc., New York, NY, USA, 2006. 24 [32] Peter A Markowich. The stationary semiconductor device equations . Springer Science & Business Media, 1985. [33] Peter A Markowich, Christian A Ringhofer, and Christian Schmeiser. Semiconductor equations . Springer Science & Business Media, 2012. [34] Giovanni Nastasi and Vittorio Romano. A full coupled drift-diffusion-Poisson simulation of a GFET. Communications in Nonlinear Science and Numerical Simulation , 87:105300, Aug 2020. [35] Giovanni Nastasi and Vittorio Romano. An Efficient GFET Structure. IEEE Transactions on Electron Devices ,68(9):4729–4734, Sep 2021. [36] Giovanni Nastasi and Vittorio Romano. Drift-diffusion models for the simulation of a graphene field effect transistor. 
+
+Journal of Mathematics in Industry , 12(1):1–11, Jan 2022. [37] Ryo Nouchi, Masashi Shiraishi, and Yoshishige Suzuki. Transfer characteristics in graphene field-effect transistors with co contacts. Applied Physics Letters , 93(15):152104, 2008. [38] Stanley Osher and Ronald P. Fedkiw. Level set methods and dynamic implicit surfaces . Applied mathematical sciences; 153. Springer, New York, 2002. [39] Lewis Fry Richardson. IX. the approximate arithmetical solution by finite differences of physical problems involving differential equations, with an application to the stresses in a masonry dam. Philosophical Transactions of the Royal Society of London. Series A, Containing Papers of a Mathematical or Physical Character , 210(459-470):307–357, 1911. [40] Giovanni Russo and Peter Smereka. A remark on computing distance functions. Journal of computational physics ,163(1):51–67, 2000. [41] Frank Schwierz. Graphene transistors. Nature Nanotechnology , 5(7):487–496, Jul 2010. [42] Siegfried Selberherr. Analysis and Simulation of Semiconductor Devices . Springer-Verlag Wien New York, 1984. [43] Matteo Semplice and Rapha¨ el Loub` ere. Adaptive-mesh-refinement for hyperbolic systems of conservation laws based on a posteriori stabilized high order polynomial reconstructions. Journal of Computational Physics , 354:86–110, 2018. [44] J. A. Sethian. Level set methods and fast marching methods: evolving interfaces in computational geometry, fluid me-chanics, computer vision, and materials science . Cambridge monographs on applied and computational mathematics 3. Cambridge University Press, 2nd ed edition, 1999. [45] Mark Sussman, Peter Smereka, and Stanley Osher. A level set approach for computing solutions to incompressible two-phase flow. Journal of computational physics , 114(1):146–159, 1994. [46] Simon M. Sze, Yiming Li, and Kwok K. Ng. Physics of Semiconductor Devices . John Wiley & Sons, Hoboken, NJ, USA, 4th edition, 2021. 25
