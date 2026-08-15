@@ -6,28 +6,22 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-14
-- 运行时间：2026-08-14 21:08:05 UTC
+- 最新运行日期：2026-08-15
+- 运行时间：2026-08-15 20:11:21 UTC
 - 运行状态：成功
-- 本次总论文数：1
+- 本次总论文数：0
 - 精读区：0
-- 速读区：1
+- 速读区：0
 
 ### 今日简报（AI）
-今日速读文献1篇，聚焦椭圆界面问题的二阶无拟合Ghost-FEM方法。
-
-值得关注该法在低维半导体器件模拟中的应用潜力，评分6.0/10。
-
-建议后续可精读原文验证数值性能，或拓展查阅同类界面问题求解方案。
-- 详情：[/202608/14/README](/202608/14/README)
+> 今日无新推荐，系统未产出可展示论文。
+- 详情：[/202608/15/README](/202608/15/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Second order unfitted ghost-FEM for elliptic interface problems with applications to low-dimensional semiconductor devices](/202608/14/2608.09466v1-second-order-unfitted-ghost-fem-for-elliptic-interface-problems-with-applications-to-low-dimensional-semiconductor-devices)  
-   标签：评分：6.0/10、query:si-pi
-   evidence：高阶非贴体有限元方法用于求解椭圆界面问题，可应用于高速互连与封装结构中的寄生电容建模。
+- 本次无速读推荐。
 
 
 <div class="dpr-home-promo-card">
