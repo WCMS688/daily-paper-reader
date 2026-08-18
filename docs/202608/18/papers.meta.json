@@ -1,0 +1,39 @@
+{
+  "label": "2026-08-18",
+  "date": "2026-08-18",
+  "generated_at": "2026-08-18T20:04:06",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202608/18/2608.14933v1-aperiodic-temporal-modulation-for-distortionless-broadband-impedance-matching-beyond-the-bode-fano-limit",
+      "section": "quick",
+      "title_en": "Aperiodic temporal modulation for distortionless broadband impedance matching beyond the Bode-Fano limit",
+      "authors": "Martin Olguin-Lopez, Dimitrios L. Sounas, Nader Engheta, Andrea Alù, Mario J. Mencagli",
+      "date": "2026-08-14",
+      "pdf": "https://arxiv.org/pdf/2608.14933v1",
+      "score": "7.0",
+      "evidence": "宽带阻抗匹配技术，可用于高速互连以减少信号反射",
+      "tldr": "经典无源线性时不变匹配网络受Bode-Fano极限约束，在带宽与反射间存在根本权衡。本文利用非周期时间调制的电抗元件（如电容）模拟非Foster响应，实现对指定脉冲的无反射、近无失真宽带匹配，突破该极限。新机制要求最小直流偏置随脉冲带宽增大，源于调制电容恒为正的物理约束，从而将经典带宽-反射权衡转变为带宽-能量权衡。电路仿真表明该方案物理可实现，并非纯数学规避。",
+      "tags": "query:si-pi",
+      "abstract_en": "The Bode-Fano bound sets a fundamental trade-off between bandwidth and reflection in passive, linear, time-invariant matching networks. We show that an aperiodically time-modulated reactive element can emulate the non-Foster response required to match a prescribed pulse, achieving reflectionless, nearly distortionless energy transfer beyond the Bode-Fano limit. The approach introduces a new constraint: a minimum dc bias that scales with pulse bandwidth, derived from the requirement that the modulated capacitance remain positive at all times. This modulation-bias bound replaces the classical bandwidth-reflection trade-off with a bandwidth-energy trade-off. A realistic circuit simulation confirms broadband matching with preserved waveform fidelity, demonstrating that the scheme is physically realizable and not merely a mathematical circumvention.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/18/2608.13767v1-simulation-aware-in-context-policy-improvement-for-llm-aided-analog-layout-refinement",
+      "section": "quick",
+      "title_en": "Simulation-Aware In-Context Policy Improvement for LLM-Aided Analog Layout Refinement",
+      "authors": "Bingyang Liu, Ziming Wei, Xiaohan Gao, David Z. Pan",
+      "date": "2026-08-13",
+      "pdf": "https://arxiv.org/pdf/2608.13767v1",
+      "score": "6.0",
+      "evidence": "基于LLM与仿真反馈的布局优化方法，结合寄生提取，可应用于SI/PI设计优化",
+      "tldr": "模拟集成电路版图设计仍依赖反复仿真调参，贝叶斯优化需数百次评估代价高昂。本文提出仿真感知的LLM多智能体框架，通过行动-观察-反思循环在紧凑的结构化版图表示上迭代更新优化参数，实现上下文策略改进。实验表明，在真实模拟电路上仅需数十次后仿真，即可超越生成器内置启发式及基于贝叶斯优化的调优方法，显著提升样本效率与最终性能。",
+      "tags": "query:si-pi",
+      "abstract_en": "Analog IC layout design remains a labor-intensive iterative process dominated by simulation-driven refinement. Although end-to-end layout generators accelerate initial placement and routing, they still require experts to manually tune layout optimization parameters with repeated post-layout simulations for stringent design specifications. While Bayesian Optimization (BO) is widely adopted for parameter tuning in analog IC design, at the layout level it typically requires hundreds to thousands of evaluations, each involving costly parasitic extraction and post-layout simulation, which makes it impractical. Recently, Large Language Models (LLMs) have demonstrated potential in improving the sample efficiency of such simulation-driven tuning. However, their restricted access to geometric layout context and design-specific heuristics limits their ability to manipulate the layout optimization process. In this paper, we propose a simulation-aware LLM multi-agent framework that performs in-context policy improvement (ICPI) by iteratively updating layout optimization parameters exposed by an analog layout generator through an act-observe-reflect loop on compact structured layout representations. Experiments on real-world analog circuits show that, with only tens of post-layout simulations, our approach improves post-layout performance over the generator's built-in heuristics and BO-based tuning method.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

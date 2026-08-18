@@ -1,0 +1,1085 @@
+Title: Aperiodic temporal modulation for distortionless broadband impedance matching beyond the Bode-Fano limit
+
+URL Source: https://arxiv.org/pdf/2608.14933v1
+
+Published Time: Tue, 18 Aug 2026 00:17:53 GMT
+
+Number of Pages: 15
+
+Markdown Content:
+## Aperiodic temporal modulation for distortionless broadband impedance matching beyond the Bode-Fano limit 
+
+Martin Olguin-Lopez, 1 Dimitrios L. Sounas, 2 Nader Engheta, 3 Andrea Al` u, 4, 5 and Mario J. Mencagli 1, ∗
+
+> 1
+
+Department of Electrical and Computer Engineering, University of Delaware, Newark, DE 19716, USA 
+
+> 2
+
+Department of Electrical and Computer Engineering, Wayne State University, Detroit, MI 48202, USA 
+
+> 3
+
+Department of Electrical and Systems Engineering, University of Pennsylvania, Philadelphia, PA 19104, USA 
+
+> 4
+
+Photonics Initiative, Advanced Science Research Center, City University of New York, New York, NY 10031, USA 
+
+> 5
+
+Physics Program, Graduate Center, City University of New York, New York, NY 10016, USA 
+
+(Dated: August 18, 2026) The Bode–Fano bound sets a fundamental trade-off between bandwidth and reflection in passive, linear, time-invariant matching networks. We show that an aperiodically time-modulated reactive element can emulate the non-Foster response required to match a prescribed pulse, achieving reflec-tionless, nearly distortionless energy transfer beyond the Bode–Fano limit. The approach introduces a new constraint: a minimum dc bias that scales with pulse bandwidth, derived from the require-ment that the modulated capacitance remain positive at all times. This modulation-bias bound replaces the classical bandwidth-reflection trade-off with a bandwidth-energy trade-off. A realistic circuit simulation confirms broadband matching with preserved waveform fidelity, demonstrating that the scheme is physically realizable and not merely a mathematical circumvention. 
+
+The Bode–Fano (BF) bound [1, 2] establishes a funda-mental limit on broadband impedance matching in elec-tromagnetic engineering. It defines an inherent trade-off between bandwidth and matching efficiency: the band-width over which high-efficiency transfer of energy to a given load is maximized and reflections are minimized is fundamentally limited. This limitation is particularly significant for electrically small devices, as these tend to behave as highly reactive loads. Importantly, two other fundamental electromagnetic limits—Chu’s limit for small antennas [3, 4] and Rozanov’s bound for thin absorbers [5]—can ultimately be treated as impedance-matching problems, see, e.g., Refs. [6–8]. Therefore, the BF bound serves as an es-sential reference point for designing compact devices in fields such as medical equipment, portable wireless de-vices, communication systems, and sensors, where space constraints make broadband matching challenging. To circumvent the BF bound, approaches that de-liberately violate its underlying assumptions—linearity, passivity, and time invariance—and enable broadband matching have been actively pursued. Early efforts pri-marily focused on breaking the passivity assumption by using non-Foster (active) elements [9–11]. However, non-Foster matching networks are well known to suffer from stability issues and to degrade the signal-to-noise ratio (SNR) [12–14]. More recently, renewed interest in time-varying media has opened the door to new wave phe-nomena, see, e.g., Refs. [15–23], and provided an alterna-tive route to broadband matching by violating the time-invariance assumption. Time-modulation approaches can be divided into two categories, depending on whether they use periodic or non-periodic forms of modulation. Periodic modulation allows one to design matching net-0 1 2 3 4 5 6 7 8-0.5 -0.4 -0.3 -0.2 -0.1 00.1 0.2 0.3 0.4 0.5 0 1 2 3 4 5 6 7 8-0.5 -0.4 -0.3 -0.2 -0.1 00.1 0.2 0.3 0.4 0.5  
+
+> Matching network Load
+
+FIG. 1. Matching of a reactive load (here modeled as a series combination of an inductor and a resistor) to a transmission line through an aperiodically-modulated capacitor. 
+
+works that are independent of the input signals [24, 25]. However, they need to access regimes of parametric gain, otherwise such networks follow bounds similar to the BF bound [26]. Parametric gain is more controllable than other active devices, but can still lead to instabilities. Aperiodic forms of temporal modulation can expand the return loss bandwidth beyond the BF bound without the problem of instabilities [27, 28], but they are not signal agnostic, i.e., they need to be timed with the specific sig-nal they need to impedance match. In addition, existing approaches are based on abrupt switching, and generally introduce distortion to the signal transmitted to the load. In a different context, it has been shown that time modulation can be used to transform the response of a circuit for prescribed input signals [29, 30], enabling also non-Foster responses. This approach also requires time synchronization between the modulation and the incom-ing signals. Here, we use aperiodic modulation to realize effective non-Foster responses for broadband matching of highly reactive loads. In addition to completely sup-pressing reflections, this approach minimizes the tempo-ral distortion of the signal at the load, thereby preserving the waveform of the pulse to be transmitted or radiated. arXiv:2608.14933v1 [physics.app-ph] 14 Aug 2026 2Similarly to other approaches that transform the circuit response with time modulation [29–31], we need to bias with a nonzero static voltage the modulation waveform, in order to avoid nonphysical values in the modulated components. To understand the implications of this re-quirement, we derive bounds on the minimum required static bias versus the pulse bandwidth and energy for ar-bitrary pulse profiles. We validate the proposed matching approach in a realistic circuit implementation and tran-sient nonlinear circuit simulations, showing that it can indeed surpass the BF bound. 
+
+Aperiodically Time-Modulated Matching Network .–We begin by considering the canonical architecture model-ing an impedance matching problem: a matching net-work between a transmission line and a load (Fig. 1). In the proposed scheme, the matching network is an aperiodically time modulated capacitor C (t). The load is assumed to be inductive, a resistor R in series with an inductor L, modeling, for example, an electrically small loop antenna. Transformers can equalize the real part of the load to the transmission-line characteristic impedance over a relatively broad bandwidth. Thus, we assume Z0 = R. The circuit is excited by a voltage pulse 
+
+v+(t) that propagates along the line towards the load, and the variable capacitor is connected to a DC source 
+
+Vdc . Similarly to other approaches for the implementa-tion of arbitrary circuit responses using time modulation [29–32], a DC bias is necessary to avoid singularities or negative values in the time-varying capacitor. By enforcing zero reflections and assuming that the voltage across the resistor is the same as the input pulse, i.e., vR(t) = v+(t), Kirchhoff’s voltage law (KVL) yields 
+
+vC (t) = Vdc − vL(t), with vC (t) and vL(t) denoting the voltage across the capacitor and the inductor, respec-tively. By combining the previous equation with the capacitor q-v relation, we obtain the required temporal variation of the capacitance to fully transmit v+(t) to the resistor load without distortion [33], 
+
+C (t) = 
+
+> 1
+> R
+
+Z t
+
+> −∞
+
+v+(ν) dν + Vdc C0
+
+Vdc − LRdv +(t)
+
+> dt
+
+(1) with C0 denoting the initial value of the capacitance. Eq. (1) can be written as −L di +(t) 
+
+> dt
+
+= vC (t) − Vdc ,where i+(t) is the current flowing through the circuit and 
+
+vC (t) − Vdc is the alternating component of the capacitor voltage. This is the constitutive relation of a negative inductor −L showing that the time-varying capacitor re-alizes such an inductance for the specified incident pulse. As an illustrative example, we consider a modulated Gaussian pulse v+g (t) = Ae −(t−μ)2/(2 σ2) sin( ωc(t − μ)), where A, μ, σ, and ωc denote the pulse amplitude, tempo-ral center, temporal width, and carrier frequency, respec-tively. Replacing v+g (t) into Eq. (1), an analytical form for C (t) can be obtained [33]. Figs. 2(a) and (b) show the temporal profile of C(t) for σ = 0 .3 ns and σ = 0 .9 ns, respectively. As σ increases, the bandwidth of v+g (t) de-(a)                           
+
+> (b) (d)
+> (c)
+> FIG. 2. Time-varying capacitance profiles and corresponding load responses for the matching architecture of Fig. 1. (a), (b) Temporal profiles of C(t) for σ= 0 .3 ns and σ= 0 .9 ns, respectively. (c), (d) Voltage across the load resistor vR(t). In each panel of (c) and (d), the input pulse v+g(t) and the load voltage for a linear time-invariant (LTI) network with
+> C(t) = C0are also reported for comparison. The results were obtained for C0= 4 pF, L= 10 nH, R= 1 Ω, Ev= 1 pJ,
+> Vdc = 6 V, and ωc=ω0= 1 /√C0L.
+
+creases and, as expected, a smaller excursion of C(t) is required to achieve matching. To validate the match-ing capabilities of these capacitance profiles, the archi-tecture of Fig. 1 is implemented in Keysight ADS [34], with the time-varying capacitor realized through a lin-ear symbolically defined device. Figs. 2(c) and (d) show the voltage across the load resistor vR(t) for σ = 0 .3 ns and σ = 0 .9 ns, respectively. In each plot, the input pulse v+g (t) and the load voltage vR, LTI (t) for match-ing with a linear time-invariant (LTI) capacitor equal to 
+
+C0 are also reported for comparison. The parameters of the load are selected to give a characteristic decay time 
+
+τ = L/R = 10 ns, significantly larger than the character-istic time σ of the pulse, thus representing a remarkably challenging matching scenario. In this case, the LTI con-figuration leads to strong reflections and a pronounced ringing response in the load voltage. In contrast, when the capacitor is modulated according to Eq. (1), the volt-age across the load closely reproduces the input pulse, demonstrating distortionless matching. The approach described above works for pulses of arbi-trarily large bandwidths. However, as we will show next, a larger bandwidth requires the use of a larger Vdc to avoid nonphysical values for C(t), such as negative val-ues or infinities. To ensure that C (t) remains finite and strictly positive for any t, Vdc must be chosen to prevent (i) singularities and (ii) sign changes in Eq. (1). These requirements yield two admissible branches for Vdc , a positive and a negative branch, depending on whether the numerator and denominator in Eq. (1) are both positive or negative, respectively. The positive branch is defined by Vdc > V +dc = max V N+ dc , V D+ dc , where 3(a) (b) 
+
+FIG. 3. Admissible dc-bias voltage required to achieve dis-tortionless impedance matching with C (t) > 0 of a mod-ulated Gaussian pulse as a function of its temporal width 
+
+σ (bandwidth ∝ 1/σ ). The green shaded region indicates the admissible set of voltage values for (a) the positive-bias branch and (b) the negative-bias branch. Insets show the profile of C (t) for different ( σ, V dc ) pairs. The results were obtained for C0 = 4pF, L = 10nH, R = 1[Ω], Ev = 1pJ, and 
+
+fc = f0 =  2π√C0L−1.
+
+V N+ dc = − 1 
+
+> RC 0
+
+inf t
+
+R t 
+
+> 0
+
+v+(ν) dν and V D+ dc = LR sup tdv +(t)
+
+> dt
+
+are the lower limits on Vdc for the numerator and denom-inator to be positive, respectively. The negative branch is defined by Vdc < V − 
+
+> dc
+
+= min V N− 
+
+> dc
+
+, V D− 
+
+> dc
+
+, where 
+
+V N− 
+
+> dc
+
+= − 1 
+
+> RC 0
+
+sup t
+
+R t 
+
+> 0
+
+v+(ν) dν and V D− 
+
+> dc
+
+= LR inf t dv +(t)
+
+> dt
+
+are the upper limits on Vdc for the numerator and de-nominator to be negative, respectively. To better understand the effect of the load and pulse characteristics on these limits, we derive V ± 
+
+> dc
+
+for the mod-ulated Gaussian pulse v+g (t) introduced earlier. For this pulse, V N+ dc ,g and V D+ dc ,g can be evaluated analytically [33] and are plotted versus versus σ in Fig. 3(a). These results are derived for fixed load parameters and a fixed energy, 
+
+Ev , for the pulse. The green regions in Fig. 3 repre-sent the allowed values of Vdc . As σ increases, V N+ dc ,g and 
+
+V D+ dc ,g decrease, showing that the required Vdc decreases as the pulse bandwidth decreases. In the limiting case of large σ (narrowband pulses), V N+ dc ,g ∼= 1
+
+> ωcC0R
+
+q 2Ev 
+
+> σ√π
+
+and 
+
+V D+ dc ,g ∼= ωcLR
+
+q 2Ev 
+
+> σ√π
+
+. This result shows that, for large σ,
+
+Vdc decreases as σ−1/2. A similar behavior is observed for the negative branch [Fig. 3(b)]. In the opposite limiting case of small σ (wide bandwidth), V N+ dc ,g ∼= σ1/2 1
+
+> C0R
+
+q 4Ev√π
+
+and V D+ dc ,g ∼= σ−3/2 LR
+
+q 2Ev√π . The latter expression is strongly dominant, increasing as σ decreases, while V N+ dc ,g
+
+exhibits the opposite trend [Fig. 3(a)]. A similar behav-ior is observed for the negative branch, with V D− 
+
+> dc ,g
+
+being strongly dominant [Fig. 3(b)]. In either case, the mini-mum required Vdc scales as σ−3/2. From Figs. 3(a) and (b), we also observe that, for a given σ, the negative branch V − 
+
+> dc ,g
+
+yields lower absolute DC bias voltages and is therefore preferable for designs targeting the minimum 
+
+Vdc . Finally, comparing the temporal profiles of C (t) ob-tained from Eq. (1) for different Vdc and the same v+g (t)shows that selecting Vdc close to the limits leads to larger peak excursions for C (t). The bounds derived above show that V ± 
+
+> dc
+
+→ 0 for σ →∞. For pulses of fixed energy, this is a result of the fact that, in the limit σ → ∞ , the pulse amplitude goes to zero, essentially implying no input signal. A more realistic scenario in the limit σ → ∞ is for pulses of constant amplitude A, which become continuous signals in the limit σ → ∞ . In such a case, it can be shown that 
+
+V ± 
+
+> dc ,g
+
+∼= cA , with c a constant that depends only on the load [33]. This seems to suggest that a nonzero Vdc is necessary even for continuous signals, contrary to what is expected from conventional matching theory, where a continuous signal can be perfectly matched to a reactive load by simply selecting C0 to resonate with the load at the frequency of the signal. The resolution to this paradox comes from the fact that V ± 
+
+> dc
+
+is derived under the very strict condition of zero reflection. As we show in [33], in the limit σ → ∞ , C(t) → C0 and reflections stay low for a wide range of Vdc values that can be different from the Vdc used in the evaluation of C(t) through Eq. (1). The previous analysis can be extended to arbitrary pulses by using Bernstein’s inequality [35, 36]. To this end, we consider pulses with finite energy ( Ev < ∞) and finite support [ ω1, ω 2]. Under these assumptions, Bern-stein’s inequality combined with Fourier inversion and the Cauchy–Schwarz inequality [35] allows us to derive a sufficient condition on the minimum biasing voltage as 
+
+|Vdc | > 1
+
+ω1C0R
+
+r Ev Bπ , ω0 ≥ ωc, (2a) 
+
+|Vdc | > ω2LR
+
+r Ev Bπ , ω0 < ω c, (2b) where B = ω2 − ω1 is the bandwidth and ωc = √ω1ω2
+
+the center frequency of the pulse. The mathematical de-tails of this derivation are provided in [33]. The bound predicts the same admissible regions for positive and neg-ative Vdc , which is expected from the waveform indepen-dence of the bound. The admissible threshold exhibits the same scaling with respect to Ev and R as for the case 4of the modulated Gaussian pulse. In the limiting case of narrow bandwidth ( B → 0), ω1 ∼= ω2 ∼= ωc, and Eqs. (2a) and (2b) reduce to Vdc > 1
+
+> ωcRC 0
+
+q Ev Bπ for ω0 ≥ ωc and 
+
+Vdc > ωcLR
+
+q Ev Bπ for ω0 < ω c, respectively. Consistent with the behavior observed for the modulated Gaussian pulse, the bound monotonically decrease with decreasing bandwidth B.In the opposite limit of wide bandwidth, ω1 ≈ ω2c /B 
+
+and ω2 ≈ B, and Eqs. (2a) and (2b) reduce to Vdc > 
+
+> B3/2
+> ω2cC0R
+
+q Ev 
+
+> π
+
+for ω0 ≥ ωc and Vdc > B3/2LR
+
+q Ev 
+
+> π
+
+for 
+
+ω0 < ω c. This scaling behavior is the same as for the modulated Gaussian pulse (Fig. 3). This result shows that the proposed approach allows the matching of arbi-trarily broadband pulses at the expense of a larger Vdc .
+
+Modulation Energy .–In lossless linear time-invariant (LTI) matching networks, energy transfer from the source to the load is maximized by minimizing the reflection coefficient. In contrast, in time-varying matching net-works, there can be energy exchange between the mod-ulation source and the system. As a result, even in the absence of reflection, the energy delivered to the load may differ from the incident energy, as part of it can be exchanged with the modulation source. For the circuit analyzed here, the net modulation energy over the entire process is Wmod = 12 Vdc (q∞ − q0), where q0 and q∞ are the capacitor charges before and after the transmission of the incident pulse to the load, respectively. This ex-pression for Wmod is a direct consequence of energy con-servation and, therefore, does not depend on the shape of the incoming pulse. Instead, it depends only on the difference of the capacitor energy before and after the pulse, which is given by one half the product of Vdc with ∆q. By charge conservation, this variation is related to the current of the incoming pulse as ∆ q = R ∞−∞ i+(t) dt .Thus, when the incoming pulse carries zero net charge (∆ q = 0), the modulation energy vanishes. This is the case of the modulated Gaussian pulse considered ear-lier. As shown in [33], during the transient, the capacitor charge increases and decreases by equal amounts relative to its initial value q0, resulting in ∆ q = 0. The cor-responding temporal evolution of the modulation energy indicates that the modulation source injects and extracts the same amount of energy from the system [33], yielding 
+
+Wmod = 0. In contrast, if the incoming pulse carries a nonzero net charge, such as a Gaussian pulse, ∆ q̸ = 0, leading to a nonzero modulation energy. This energy exchange between the system and the modulation source arises from the interplay between the DC bias and the in-coming pulse. Specifically, a positive (negative) net flow of charge leads to an increase (decrease) of stored charge in the capacitor, and to energy extraction (injection) by the modulation source [33]. 
+
+Proposed Practical Implementation .–To validate the main features of the proposed time-varying matching scheme, we consider the realistic implementation in Fig. 4(a), consisting of a differential circuit in which the time-varying capacitor is realized by using a Wheatstone bridge of four varactors. The initial equivalent capac-itance is set by the bias voltage Vb and subsequently modulated in time through the control signal vm(t). The input signal vs(t) is equal to the modulated gaussian pulse vg(t) introduced earlier and models the forward-propagating pulse v+(t) in the transmission line model of Fig. 1. The circuit is analyzed by using a commer-cial transient circuit simulator. The nonlinear model of the varactor (inverse square root model of an inversely biased diode) is used to determine the modulation signal 
+
+vm(t) that produces the required capacitance profile C(t). Figs. 4(b) and (c) show the voltage across the load resis-tor, vR(t), obtained from the nonlinear transient circuit simulations for two different values of σ. An excellent agreement with the input pulse v+g (t) can be observed, demonstrating the capability of the proposed approach to achieve matching without distorting the signal. On the other hand, matching with a time-invariant ca-pacitor leads to a long damping time, strong reflections and a long ringing response in the voltage across the re-sistor vR, LTI (t) [continuous solid black line in Figs. 4(b) and (c)]. Further insight into the spectral characteristics of the output signal and the ability of the proposed approach to surpass the BF bound can be gained by examining the energy spectrum of the output voltage. In Fig. 4(d), the gray-shaded region denoted as the BF region represents the area where an output pulse is bound to reside for any low-ripple passive time-invariant matching network as predicted from the Bode–Fano bound. The input volt-age spectrum |V +g (f )|2 is also shown, together with the output spectrum |VR, LTI (f )|2 of matching with a time-invariant capacitor C0 and the output spectrum |VR(f )|2
+
+for the proposed time-modulated matching network. The unmodulated response, as expected, lies within the BF region, whereas the time-modulated response extends to a large degree beyond the bound, demonstrating a signifi-cant enhancement of the matching bandwidth beyond the BF bound. 
+
+Conclusion .–In this Letter, we introduced a time-modulated matching framework that enables distortion-less broadband impedance matching beyond the limita-tions imposed by the BF bound. By employing aperi-odic temporal modulation of reactive elements, the pro-posed approach enables broadband, reflectionless energy transfer while preserving the temporal profile of the in-cident pulse. Our analysis establishes a lower bound on an electric dc biasing required to ensure physically real-izable modulation and provides an in-depth formulation for the modulation energy that applies to a large variety of pulses. We validated our results through a realistic cir-cuit implementation, showing that the resulting output spectra extend beyond the BF bound. The approach re-quires prior knowledge of the incident waveform and syn-chronization between the waveform and the prescribed temporal modulation; however, the analysis in [33] shows that the normalized reflected energy is first-order insensi-5Matching network    
+
+> (a) (b) (c) (d)
+
+FIG. 4. Breaking the Bode-Fano bound with an aperiodically time-modulated matching scheme. (a) Proposed realistic imple-mentation based on a differential Wheatstone bridge of four varactors. Temporal profile of the voltage across the load resistor obtained from a nonlinear transient simulation when the circuit in (a) is excited by a modulated Gaussian pulse with (b) 
+
+σ = 0 .8ns and Vdc = 2 .1, and (c) σ = 0 .4ns and Vdc = 4. In (b) and (c), the response of the corresponding linear time-invariant (LTI) case is also shown for comparison. (d) Output voltage energy spectrum for the input pulse in (c), with and without temporal modulation, including the Bode–Fano region. Other common parameters are the same as in Fig. 3. 
+
+tive to small synchronization errors. Because the RF and modulation-control paths are, in principle, independently generated, synchronization need not rely on feedback and may instead be established using a common timing ref-erence. This differs from many non-Foster implemen-tations, in which the synthesized impedance is realized through an active feedback network and is therefore di-rectly subject to loop-stability constraints. These find-ings open new opportunities for broadband impedance matching in a wide range of electromagnetic systems, in-cluding antennas, RF front ends, and photonic platforms. More broadly, this framework offers a promising pathway to revisit and potentially overcome classical performance limits in electromagnetic systems. 
+
+Acknowledgments .– N.E. and A.A. acknowledge par-tial support from the Simons Foundation/Collaboration on Symmetry-Driven Extreme Wave Phenomena (Grant No. SFI-MPS-EWP-00008530-04). A.A. and D.L.S. ac-knowledge support from the Air Force Office of Scientific Research. 
+
+> ∗
+
+Corresponding author. 
+
+mencagli@udel.edu 
+
+[1] H. W. Bode, Network Analysis and Feedback Amplifier De-sign (Van Nostrand, New York, 1945). [2] R. M. Fano, Theoretical limitations on the broadband matching of arbitrary impedances, technical Report No. 41, Research Laboratory of Electronics, MIT, 1948. [3] H. A. Wheeler, Fundamental limitations of small antennas, Proceedings of the IRE 35 , 1479 (1947). [4] L. J. Chu, Physical limitations on omni-directional anten-nas, Journal of Applied Physics 19 , 1163 (1948). [5] K. N. Rozanov, Ultimate thickness-to-bandwidth ratio of radar absorbers, IEEE Transactions on Antennas and Propagation 48 , 1230 (2000). [6] C. Pfeiffer, Fundamental efficiency limits for small metallic antennas, IEEE Transactions on Antennas and Propaga-tion 65 , 1642 (2017). [7] M. Manteghi, Fundamental limits, bandwidth, and infor-mation rate of electrically small antennas: Increasing the throughput of an antenna without violating the thermo-dynamic q-factor, IEEE Antennas Propag. Mag. 61 , 14 (2019). [8] C. Firestein, A. Shlivinski, and Y. Hadad, Sum rule bounds beyond rozanov criterion in linear and time-invariant thin absorbers, Phys. Rev. B 108 , 014308 (2023). [9] S. Hrabar, I. Krois, I. Bonic, and A. Kiricenko, Negative capacitor paves the way to ultra-broadband metamateri-als, Appl. Phys. Lett. 99 , 254103 (2011). [10] N. Zhu and R. W. Ziolkowski, Design and measure-ments of an electrically small, broad bandwidth, non-Foster circuit-augmented protractor antenna, Appl. Phys. Lett. 101 , 024107 (2012). [11] P. Loghmannia and M. Manteghi, Broadband parametric impedance matching for small antennas using the bode-fano limit: Improving on chu’s limit for loaded small an-tennas, IEEE Antennas and Propagation Magazine 64 , 55 (2022). [12] E. Ugarte-Munoz, S. Hrabar, D. Segovia-Vargas, and A. Kiricenko, Stability of non-foster reactive elements for use in active metamaterials and antennas, IEEE Trans. Antennas Propag. 60 , 3490 (2012). [13] M. M. Jacob and D. F. Sievenpiper, Gain and noise anal-ysis of non-foster matched antennas, IEEE Trans. Anten-nas Propag. 64 , 4993 (2016). [14] T.-Y. Shih and N. Behdad, Wideband, non-foster impedance matching of electrically small transmitting an-tennas, IEEE Trans. Antennas Propag. 66 , 5687 (2018). [15] E. Galiffi, R. Tirole, S. Yin, H. Li, S. Vezzoli, P. A. Huidobro, M. G. Silveirinha, R. Sapienza, A. Al` u, and J. B. Pendry, Photonics of time-varying media, Advanced Photonics 4, 014002 (2022). [16] A. Ortega-Gomez, M. Lobet, J. E. V´ azquez-Lozano, and I. Liberal, Tutorial on the conservation of momentum in photonic time-varying media [invited], Optical Materials Express 13 , 1598 (2023). [17] G. Ptitcyn, M. S. Mirmoosa, A. Sotoodehfar, and S. A. Tretyakov, A tutorial on the basics of time-varying elec-tromagnetic systems and circuits: Historic overview and 6
+
+basic concepts of time-modulation, IEEE Antennas and Propagation Magazine 65 , 10 (2023). [18] T. T. Koutserimpas and F. Monticone, Time-varying me-dia, dispersion, and the principle of causality [invited], Op-tical Materials Express 14 , 1222 (2024). [19] E. Lustig, Y. Sharabi, and M. Segev, Topological aspects of photonic time crystals, Optica 5, 1390 (2018). [20] V. Pacheco-Pe˜ na and N. Engheta, Antireflection tempo-ral coatings, Optica 7, 323 (2020). [21] P. Jayathurathnage, F. Liu, M. S. Mirmoosa, X. Wang, R. Fleury, and S. A. Tretyakov, Time-varying components for enhancing wireless transfer of power and information, Phys. Rev. Appl. 16 , 014017 (2021). [22] M. J. Mencagli, D. L. Sounas, M. Fink, and N. Engheta, Static-to-dynamic field conversion with time-varying me-dia, Phys. Rev. B 105 , 144301 (2022). [23] H. Wang, C. Guo, and S. Fan, Spatiotemporal steering of nondiffracting wave packets, Phys. Rev. Lett. 134 , 073803 (2025). [24] H. Li, A. Mekawy, and A. Al` u, Beyond chu’s limit with floquet impedance matching, Phys. Rev. Lett. 123 , 164102 (2019). [25] Z. Fritts, A. Babaee, S. M. Young, and A. Grbic, Space–time modulation of a multimode electrically small antenna for increased matching and efficiency bandwidths, IEEE Transactions on Antennas and Propagation 73 , 1308 (2025). [26] D. L. Sounas, Reactance theorem for time modulated net-works, in 2022 Sixteenth International Congress on Artifi-cial Materials for Novel Wave Phenomena (Metamaterials 2022) (Siena, Italy). [27] A. Shlivinski and Y. Hadad, Beyond the bode-fano bound: Wideband impedance matching for short pulses using temporal switching of transmission-line parameters, Phys. Rev. Lett. 121 , 204301 (2018). [28] X. Yang, E. Wen, and D. F. Sievenpiper, Broadband time-modulated absorber beyond the bode-fano limit for short pulses by energy trapping, Phys. Rev. Appl. 17 ,044003 (2022). [29] S. Hrabar, Time-varying route to non-foster elements, in 2020 Fourteenth International Congress on Artificial Materials for Novel Wave Phenomena (Metamaterials) 
+
+(2020) pp. 108–109. [30] G. Ptitcyn, M. Mirmoosa, S. Hrabar, and S. Tretyakov, Time-modulated circuits and metasurfaces for emulating arbitrary transfer functions, Phys. Rev. Appl. 20 , 014041 (2023). [31] K. Hecht, D. Gonz´ alez-Ovejero, D. L. Sounas, and M. J. Mencagli, First-principles analysis of energy exchange in time-varying capacitors for energy trapping applications, IEEE Access 11 , 71494 (2023). [32] D. S. Schwartz and D. F. Sievenpiper, Catching an elec-tronic pulse with varactors, IEEE Transactions on Anten-nas and Propagation 73 , 6756 (2025). [33] See supplemental material at, http://........ ,for the derivation of the temporal modulation pro-file, modulation-energy balance, dc-bias bound, synchronization-error formulation, and additional validation. [34] Keysight Technologies, Advanced Design System (ADS) ,Keysight Technologies (2024), electronic design automa-tion software. [35] A. Lapidoth, A Foundation in Digital Communication 
+
+(Cambridge University Press, Cambridge, UK, 2009). [36] M. A. Pinsky, Introduction to Fourier Analysis and Wavelets (Brooks/Cole, Pacific Grove, CA, 2002). 7
+
+## Supplemental Material 
+
+## Aperiodic Temporal Modulation for Distortionless Broadband Impedance Matching Beyond the Bode–Fano Limit 
+
+S1. DERIVATION OF THE CAPACITANCE PROFILE FOR DISTORTIONLESS MATCHING 
+
+Consider the aperiodically time-modulated impedance-matching architecture proposed in this manuscript, shown in Fig. 1 of the main text and reproduced here as Fig. S1 for convenience. The matching network, consisting of a capacitor actively modulated in time [ C(t)], connects an RL load to a feeding transmission line, which carries a voltage pulse v+ (t, z ) and biases the capacitor through a DC source Vdc . To focus on reactive matching, which represents the main challenge [S1, S2], we assume Z0 = R, where Z0 is the characteristic impedance of the transmission line. Applying the Kirchhoff’s voltage law (KVL) at the load, we obtain 
+
+Vdc + v+(t) + v−(t) = vC (t) + vL(t) + vR(t), (S1) where v+(t) = v+(t, z = 0) and v−(t) = v−(t, z = 0) denote the incident and reflected pulses, respectively, and vC (t), 
+
+vL(t), and vR(t) denote the voltage across the capacitor, inductor, and resistor, respectively. Imposing zero reflection, 0 1 2 3 4 5 6 7 8-0.5 -0.4 -0.3 -0.2 -0.1 00.1 0.2 0.3 0.4 0.5 0 1 2 3 4 5 6 7 8-0.5 -0.4 -0.3 -0.2 -0.1 00.1 0.2 0.3 0.4 0.5  
+
+> Matching network Load
+
+FIG. S1. Matching of a reactive load (here, a series combination of an inductor and a resistor) to a transmission line through an aperiodically-modulated capacitor. 
+
+v−(t) = 0, and assuming that the voltage across the resistor is equal to the input pulse, vR (t) = v+(t), the previous equation reduces to 
+
+vC (t) = Vdc − vL(t). (S2) where vL(t) = Ldi +(t)/dt and i+(t) = v+(t)/R is the current flowing into the load. The capacitance C(t) can be determined from C(t) = q(t)/v C (t), where q(t) is the capacitor charge given by 
+
+q(t) = 
+
+Z t
+
+> −∞
+
+iC (ν) dν + Vdc C0, (S3) 
+
+iC (t) is the capacitor current, and Vdc C0 is the initial capacitor charge. Taking into account that in the absence of reflection, iC (t) = i+(t) = v+(t)/R , we find 
+
+C (t) = 
+
+> 1
+> R
+
+Z t
+
+> −∞
+
+v+(ν) dν + Vdc C0
+
+Vdc − LRdv +(t)
+
+> dt
+
+(S4) The previous equation enables an interesting parallel to be drawn between the proposed aperiodically time-modulated matching approach and the standard linear time-invariant (LTI) impedance-matching concept. In the LTI regime, the load of Fig. S1 is matched to the feeding transmission line with Z0 = R when the capacitive impedance of the matching network cancels the inductive impedance of the load. As is well known, this cancellation occurs only at a single frequency, thereby inherently limiting the achievable matching bandwidth. In contrast, in the proposed time-modulated scheme, this condition is enforced in the time domain through the dynamic adjustment of the capacitance C(t), which effectively makes the capacitor behave as a negative inductor, as can be seen from Eq. (S2), enabling broadband matching while preserving the temporal profile of the incoming pulse. 8From Eq. (S4), as discussed in the main text, two admissible branches for Vdc , corresponding to a positive or negative 
+
+Vdc , can be defined to ensure C(t) remains finite and strictly positive for any t. For convenience, we explicitly state these branches here. The positive branch is given by V +dc > max V N+ dc , V D+ dc , where 
+
+V N+ dc = − 1
+
+RC 0
+
+inf 
+
+> t∈R
+
+Z t
+
+> −∞
+
+v+(ν) dν, (S5) and 
+
+V D+ dc = LR sup 
+
+> t∈R
+
+dv +(t)
+
+dt . (S6) The negative branch is given by V − 
+
+> dc
+
+< min V N− 
+
+> dc
+
+, V D− 
+
+> dc
+
+, where 
+
+V N− 
+
+> dc
+
+= − 1
+
+RC 0
+
+sup 
+
+> t∈R
+
+Z t
+
+> −∞
+
+v+(ν) dν, (S7) and 
+
+V D− 
+
+> dc
+
+= LR inf 
+
+> t∈R
+
+dv +(t)
+
+dt . (S8) 
+
+V +dc and V − 
+
+> dc
+
+represent the lower and upper bounds, respectively, of the biasing level required to ensure that C(t)remains finite and strictly positive. 
+
+S2. ANALYSIS FOR A MODULATED GAUSSIAN INPUT PULSE 
+
+The input voltage is a modulated Gaussian pulse, as defined in the main text, given by 
+
+v+g (t) = Ae −(t−μ)2/(2 σ2) sin( ωc(t − μ)) , (S9) where A, μ, σ, and ωc = 2 πf c denote the pulse amplitude, temporal center, temporal width, and carrier angular frequency, respectively. Substituting v+g (t) in Eq. (S4), we obtain the required temporal capacitance profile C(t), given by 
+
+C (t) = 
+
+RV dc C0 − Ae −ω2 
+
+> cσ2/2
+
+p π 
+
+> 2
+
+σ Im 
+
+n
+
+Erf 
+
+ t−μ+iω cσ2
+
+> √2σ
+
+o 
+
+RV dc − ALe − (t−μ)22σ2
+
+ωc cos( ωc(t − μ)) − t−μσ2 sin( ωc(t − μ))  (S10) where Erf( x) = 2√π
+
+R x 
+
+> 0
+
+e−u2
+
+du is the error function, Im denotes the imaginary part of its argument, and i = √−1denotes the imaginary unit. Having established the expression of C(t) for the modulated Gaussian pulse, we now ex-amine the admissible biasing values that ensure C(t) remains finite and strictly positive, under different normalization conditions. 
+
+S2.1. Admissible Biasing Values Under Constant-Amplitude Normalization 
+
+Under this normalization, σ is varied while the pulse amplitude A is kept fixed, and the corresponding admissible biasing values are determined. It can be shown that V N+ dc ,g and V D+ dc ,g [Eqs. (S5) and (S6)], which define the positive lower bound V +dc ,g for the pulse 
+
+v+g (t), are obtained at t = μ and are given by 
+
+V N+ dc ,g = A
+
+r π
+
+2
+
+σRC 0
+
+e− ω2 
+
+> c σ22
+
+Erfi 
+
+ ωcσ
+
+√2
+
+
+
+(S11) and 
+
+V D+ dc ,g = Aω c
+
+LR , (S12) 9(a) (b) (c)   
+
+> (d) (e) (f)
+
+FIG. S2. Admissible biasing values (constant-amplitude normalization). Panels (a)-(c) show the positive branch, V +dc ,g >
+
+max 
+
+n
+
+V N +dc ,g , V D+dc ,g 
+
+o
+
+, while panels (d)-(f) show the negative branch V − 
+
+> dc ,g
+
+< min 
+
+n
+
+V N − 
+
+> dc ,g
+
+, V D−
+
+> dc ,g
+
+o
+
+. The results were obtained for 
+
+A = 0 .1[V], L = 10[nH], R = 1[Ω], ωc = 5rad/ns, and ω0 =  √C0L−1.
+
+where Erfi( x) = −i Erf( ix ) denotes the imaginary error function. Figs. S2(a)-(c) show V N+ dc ,g and V D+ dc ,g as functions of σ, obtained from Eqs. (S11) and (S12), respectively, for three different values of C0. We observe that V D+ dc ,g is independent of both C0 and σ, and therefore assumes the same value in Figs. S2(a)–(c) (solid red curves). This behavior follows from the fact that V D+dc ,g is determined by the derivative of the incoming pulse. In particular, the supremum of the derivative of v+g (t) [Eq. (S6)] occurs at the center of the Gaussian envelope ( t = μ), where v+g (t) is dominated by the carrier frequency. As a result, σ controls only the temporal extent of the Gaussian envelope, not its peak instantaneous slope. On the other hand, the condition defining V N+ dc ,g [Eq. (S5)], which is inversely proportional to C0, involves the integral of v+g (t) and depends on the interplay between the width of the Gaussian envelope and the carrier oscillations. As a result, V N+ dc ,g, which also occurs at t = μ, captures both the pulse width and the oscillatory regime. As shown in Figs. S2(a)–(c) (solid blue curves), varying C0 shifts the range of values of V N+ dc ,g, whereas the variation within that range depends on σ. In the limits σ → 0 and σ → ∞ , Eq. (S11) reduces to 
+
+V N+ dc ,g = A ωc
+
+C0R σ2, σ → 0, (S13a) 
+
+V N+ dc ,g = AωcC0R , σ → ∞ . (S13b) showing that V N+ dc ,g vanishes quadratically with σ in the former case and becomes independent of σ in the latter. Combining Eqs. (S11) and (S12) with the condition V +dc ,g > max 
+
+n
+
+V N+ dc ,g, V D+ dc ,g
+
+o
+
+, we obtain the admissible sets of biasing values, corresponding to the green shaded regions in Figs. S2(a)–(c). As σ → 0, corresponding to an ultra-wideband pulse v+g (t) with bandwidth B ∼ 1/σ , the minimum required biasing level is determined by V D+ dc ,g, since 
+
+V N+ dc ,g approaches zero [Eq. (S13a)]. It is interesting that in this case, V +dc depends only on the load, and increasing the pulse bandwidth does not lead to an increase in V +dc . On the other hand, as σ increases beyond the broadband regime, including the intermediate and narrowband cases, the minimum biasing depends on C0 through the relation between the resonance angular frequency, ω0 = 1 /√C0L, and the carrier angular frequency, ωc. For the value of C0
+
+such that ω0 = ωc, V +dc ,g, away from the broadband regime, is dominated by V N+ dc ,g, which converges to V D+ dc ,g in the narrowband regime. For C0 values such that ω0 < ω c, V +dc ,g is determined by V D+ dc ,g for all values of σ. Conversely, for 
+
+C0 such that ω0 > ω c, V +dc ,g is by determined by V N+ dc ,g, except in the broadband regime. Figs. S2(d)–(f) show, for the same three values of C0 as in Figs. S2(a)–(c), the admissible set of biasing values for the negative branch, given by V − 
+
+> dc ,g
+
+< min 
+
+n
+
+V N−
+
+> dc ,g
+
+, V D−
+
+> dc ,g
+
+o
+
+, where V N− 
+
+> dc ,g
+
+and V D− 
+
+> dc ,g
+
+are obtained numerically from 10 Eqs. (S7) and (S8), respectively. In this branch, V D− 
+
+> dc ,g
+
+depends on σ, since, in contrast to the supremum [Eq. (S6)], the infimum of the derivative of v+g (t) [Eqs. (S8)] occurs at a time instant that depends on σ. Apart from this difference, considerations analogous to those for the positve branch apply. 
+
+S2.2. Admissible Biasing Values Under Constant-Energy Normalization 
+
+The results in Fig. S2 are obtained under constant-amplitude normalization, in which the pulse amplitude is kept fixed while varying σ, and the energy therefore changes accordingly. To decouple the effects of bandwidth and energy, we next consider the case in which the input pulse is normalized with respect to its energy, Ev . In this case, σ is varied while the pulse amplitude is adjusted to maintain constant energy. To this end, the amplitude A of v+ 
+
+> g
+
+(t) is expressed as 
+
+A =
+
+s
+
+2Ev
+
+σ√π
+
+11 − e−ω2  
+
+> cσ2
+
+(S14) to ensure constant energy. Using this normalization and the same procedure as in Fig. S2 for the same values of C0,we reanalyze the admissible biasing values for both branches. In particular, by substituting Eq. (S14) into Eqs. (S11) and (S12), we obtain: 
+
+V N+ dc ,g = 1
+
+RC 0
+
+r πσ 
+
+2 − 2e−ω2  
+
+> cσ2
+
+e− (ωcσ )22 Erfi 
+
+ ωcσ
+
+√2
+
+ s
+
+2Ev
+
+√π , (S15a) 
+
+V D+ dc ,g = ωc
+
+LR
+
+r 1
+
+σ − σe −ω2 
+
+> cσ2
+
+s
+
+2Ev
+
+√π . (S15b) which are then combined into V +dc ,g > max 
+
+n
+
+V N+ dc ,g, V D+ dc ,g
+
+o
+
+to determine the admissible set of positive biasing values. The admissible negative biasing values, V − 
+
+> dc ,g
+
+< min 
+
+n
+
+V N−
+
+> dc ,g
+
+, V D−
+
+> dc ,g
+
+o
+
+, are obtained by evaluating numerically Eqs. (S7) and (S8). The green-shaded regions in Fig. S3 show the corresponding admissible values under constant-energy normalization. Since considerations analogous to those for the constant-amplitude normalization apply, particularly regarding the dependence on C0 and outside the broadband and narrowband regimes, we focus on these two cases. In the broadband regime, while V N+ dc ,g tends to zero as σ → 0, similar to the constant-amplitude case, V D+ dc ,g diverges [Fig. S3(a)-(c)]. Specifically, under the assumption σ → 0, Eqs. (S15a) and (S15b) reduce to 
+
+V N+ dc ,g =
+
+√2σRC 0
+
+s
+
+2Ev
+
+√π , (S16a) 
+
+V D+ dc ,g =
+
+√2Lσ3/2R
+
+s
+
+2Ev
+
+√π , (S16b) from which it follows that V N+ dc ,g ∼ √σ and V D+ dc ,g ∼ σ−3/2. In the narrowband limit, σ → ∞ , Eqs. (S15a) and (S15b) reduce to 
+
+V N+ dc ,g = 1
+
+ωcRC 0
+
+√σ
+
+s
+
+2Ev
+
+√π , (S17a) 
+
+V D+ dc ,g = ωcL
+
+√σR 
+
+s
+
+2Ev
+
+√π . (S17b) Both V N+ dc ,g and V D+ dc ,g decrease as 1 /√σ [Fig. S3(a)–(c)]. A similar behavior is observed for the negative branch, 
+
+V −
+
+> dc ,g
+
+, in both broadband and narrowband regimes [Fig. S3(d)–(f)]. Thus, increasing the bandwidth of the pulse requires a higher minimum biasing level, which diverges as σ → 0, whereas moving toward the narrowband regime reduces the required biasing, which approaches zero as σ → ∞ . In the narrowband case, the system approaches the sinusoidal regime through increasingly broader pulses, and, when ω0 = ωc, the standard resonance matching condition, 
+
+C(t) → C0, is expected to be recovered. This behavior in the narrowband limit will be discussed in the next section. 11 (a) (b) (c)   
+
+> (d) (e) (f)
+
+FIG. S3. Admissible biasing values (constant-energy normalization). Panels (a)–(c) show the positive branch, V +dc ,g >
+
+max 
+
+n
+
+V N+ dc ,g, V D+ dc ,g
+
+o
+
+, while panels (d)–(f) show the negative branch V − 
+
+> dc ,g
+
+< min 
+
+n
+
+V N−
+
+> dc ,g
+
+, V D−
+
+> dc ,g
+
+o
+
+. The results were obtained for 
+
+Ev = 1 [pJ], L = 10 [nH], R = 1 [Ω], ωc = 5 rad/ns, and ω0 = 1 /√C0L.
+
+S2.3. Behavior of C(t) in the Narrowband Limit 
+
+We consider the narrowband limit σ → ∞ , where the excitation consists of increasingly broad pulses approaching the sinusoudal regime. In this limit, the expression of C(t) in Eq. (S10) reduces to 
+
+C (t) = C0
+
+Vdc − A 1 
+
+> ωcRC 0
+
+cos( ωc(t − μ)) 
+
+Vdc − A ωcLR cos( ωc(t − μ)) , (S18) and, combining V +dc ,g > max 
+
+n
+
+V N+ dc ,g, V D+ dc ,g
+
+o
+
+with Eqs. (S13b) and (S12) gives 
+
+V +dc ,g > Aω c
+
+LR max 
+
+ ω20
+
+ω2
+
+> c
+
+, 1
+
+
+
+. (S19) To facilitate the analysis, the previous inequality can be parameterized as V +dc ,g = bAω c LR max 
+
+n ω20
+
+> ω2
+> c
+
+, 1
+
+o
+
+, b > 1. Substituting this parameterized expression for V +dc ,g in Eq. (S18), we obtain C(t) as 
+
+C(t) = C0
+
+b − cos( ωc(t − μ)) 
+
+b − ω2
+
+> c
+> ω20
+
+cos( ωc(t − μ)) , ω0 ≥ ωc, (S20a) 
+
+C(t) = C0
+
+b − ω20
+
+> ω2
+> c
+
+cos( ωc(t − μ)) 
+
+b − cos( ωc(t − μ)) , ω0 ≤ ωc. (S20b) From these expressions, we observe that when ω0 = ωc, C(t) = C0 and the standard resonance matching condition is recovered. When ω0̸ = ωc, however, even in the narrowband limit the standard resonance matching condition is not satisfied, achieving matching requires C(t) to vary in time and to be appropriately biased so that it remains finite and strictly positive. 
+
+S3. DERIVATION OF LOWER BOUNDS ON THE MINIMUM REQUIRED BIASING VOLTAGE 
+
+In this section, we extend the analysis by deriving a general lower bound on the minimum required biasing voltage that is not tied to a specific temporal waveform. The resulting bound ensures distortionless impedance matching and 12 depends only on the pulse bandwidth and energy, remaining independent of its temporal profile. To this end, we assume that the incoming pulse, v+ (t), is real-valued, passband, and of finite energy Ev = ∥v+ (t) ∥22 = R ∞−∞ |v+ (t) |2 dt < ∞
+
+and with spectral support in [ −ω2, −ω1] ∪ [ω1, ω 2], 0 < ω 1 < ω 2. As discussed above, ensuring a physically realizable capacitance, C(t) > 0 for all t, imposes a constraint on the biasing voltage, which must satisfy V +dc > max V N+ dc , V D+ dc ,where V N+ dc and V D+ dc are defined in Eqs. (S5) and (S6), respectively. Therefore, deriving upper bounds on V N+ dc and 
+
+V D+ dc yields a lower bound on V +dc . Since the derived bound is symmetric with respect to the sign of Vdc , as discussed in the main text, we omit the superscript “+” in the following for notational simplicity. We begin with V Ddc [Eq. (S6)], which can be equivalently expressed as 
+
+V Ddc = LR
+
+dv +(t)
+
+dt ∞
+
+(S21) where ∥ · ∥ ∞ denotes the supremum norm. Applying Bernstein’s inequality [S3, S4] to the right-hand side of this expression, the derivative of the pulse can be upper-bounded in terms of its maximum frequency, yielding 
+
+dv +(t)
+
+dt ∞
+
+≤ ω2∥v+ (t) ∥∞. (S22) By invoking the Cauchy-Schwarz inequality [S3], the supremum norm of the pulse can be related to its energy, 
+
+∥v+ (t) ∥∞ ≤ p(ω2 − ω1)
+
+r Ev
+
+π . (S23) Combining Eqs. (S22) and (S23) with Eq. (S21), we obtain the upper bound on V Ddc :
+
+V Ddc ≤ ω2
+
+LR
+
+√ω2 − ω1
+
+r Ev
+
+π . (S24) We now derive an upper bound on V N 
+
+> dc
+
+[Eq. (S5)], which can be conveniently rewritten as 
+
+V Ndc = − 1
+
+RC 0
+
+inf  
+
+> t∈R
+
+I(t), (S25) where I(t) = R t 
+
+> −∞
+
+v+(ν) dν . The right-hand side of Eq. (S25) can be upper-bounded in terms of the supremum norm as 
+
+− 1
+
+RC 0
+
+inf  
+
+> t∈R
+
+I(t) ≤ 1
+
+RC 0
+
+∥I (t) ∥∞. (S26) By bounding I(t) via Fourier inversion and the Cauchy-Schwarz inequality, we obtain the following upper bound on 
+
+V Ndc :
+
+V Ndc ≤ 1
+
+C0R
+
+√ω2 − ω1
+
+ω1
+
+r Ev
+
+π . (S27) Combining Eqs. (S24) and (S27) with the condition Vdc > max V Ndc , V Ddc , we obtain the following lower bound on the required biasing voltage on Vdc :
+
+|Vdc | >
+
+√ω2 − ω1
+
+ω1C0R
+
+r Ev
+
+π , ω0 ≥ √ω2ω1, (S28a) 
+
+|Vdc | > ω2L√ω2 − ω1
+
+R
+
+r Ev
+
+π , ω0 < √ω2ω1. (S28b)  
+
+> S4. DERIVATION OF THE ENERGY BALANCE INCLUDING MODULATION WORK
+
+The derivation proceeds from the instantaneous power balance of the time-varying matching network, which is subsequently integrated over the interaction interval to obtain the global energy relation. Let t0 denote the arrival 13 time of the incident pulse at the load ( z = 0). The instantaneous power in the transmission line at the input of the circuit is given by 
+
+p0(t) = Vdc i+(t) + pv (t) (S29) where pv (t) = v+(t)i+(t) denotes the instantaneous power of the incident current with i+(t) = v+(t)/R denoting its current. The total instantaneous power in the circuit is 
+
+p(t) = ddt (UC (t) + UL(t)) + pR(t), (S30) where UC (t) = 12 C(t)v2 
+
+> C
+
+(t) is the capacitor stored energy, UL(t) = 12 Li 2
+
+> R
+
+(t) is the inductor stored energy, and 
+
+pR(t) = vR(t)iR(t) is the instantaneous power dissipated in the resistor. In the reflectionless case, the instantaneous modulation power is therefore defined as 
+
+pmod (t) = p(t) − p0(t). (S31) With C(t) given by Eq. (1) in the main text, we have vC (t) = Vdc − LRdv +(t) 
+
+> dt
+
+, iR(t) = i+(t), and pR(t) = pv (t). Consequently, by using the capacitor relation q = Cv c, where q denotes the capacitor charge, and the charge-conservation law i+ = dq/dt , the instantaneous modulation power reduces to 
+
+pmod (t) = − 12 Vdc 
+
+dq dt + 12 L
+
+ dq dt d2qdt 2 − q d3qdt 3
+
+
+
+(S32) The energy exchange with the system by the modulation source from t0 to t is ∆ Wmod (t) = R tt0 pmod (ν) dν . Combining this expression with Eq. (S32) and noticing that q is differentiable and q(t0) = q0, where q0 denotes the capacitor charge for t < t 0, the modulation energy is obtained as ∆Wmod (t) = − 12 Vdc (q(t) − q0) + 12 L
+
+" dq (t)
+
+dt 
+
+2
+
+− q(t) d2q(t)
+
+dt 2
+
+#
+
+. (S33) Since we consider incoming pulses ( v+ (t, z )) with finite temporal support, after the transient ( t ≫ t0) the charge q(t)returns to a constant value, say q∞, and becomes time-independent. In this limit, the previous expression corresponds to the total modulation energy exchanged with the system and reduces to 
+
+Wmod = − 12 Vdc (q∞ − q0) . (S34)  
+
+> S5. SYNCHRONIZATION-ERROR FORMULATION AND ANALYSIS
+
+As demonstrated in the preceding sections, aperiodic time modulation enables broadband, distortion-free impedance matching well beyond the conventional Bode–Fano bound. This performance, however, relies on synchronization be-tween the incident waveform and the prescribed capacitance profile, representing an important practical constraint of the proposed approach. In practical implementations, synchronization may be affected by multiple nonidealities, resulting in temporal misalignment and a nonzero reflected wave. To quantify this sensitivity, we introduce a synchro-nization error τ by replacing the ideal capacitance C(t) with Cτ (t) = C(t−τ ) where τ denotes time-shifted modulation. We first derive the governing equations for the reflected waveform. The resulting formulation is then evaluated nu-merically for a Gaussian-enveloped sinusoidal incident pulse to determine the reflected waveform, normalized reflected energy, and degradation in matching performance as a function of the synchronization error. We define the charge perturbation induced by the synchronization error as ∆qτ (t) = qτ (t) − q(t), (S35) where qτ (t) is the capacitor charge associated with the shifted capacitance profile Cτ (t), whereas q(t) is the capacitor charge under perfectly synchronized, reflectionless operation. The reflected voltage associated with a synchronization error τ is denoted by v−(t; τ ). For notational simplicity, its dependence on τ is suppressed in the following derivation, and we write v−(t) ≡ v−(t; τ ). Let iτ (t) denote the current flowing into the load when the capacitance profile is 14 shifted by τ . Since dq τ (t) 
+
+> dt
+
+= iτ (t) = v+(t)−v−(t) 
+
+> R
+
+, whereas, under perfectly synchronized and reflectionless operation,  
+
+> dq (t)
+> dt
+
+= i+(t) = v+(t) 
+
+> R
+
+, differentiating Eq. (S35) yields 
+
+d∆qτ (t)
+
+dt = − v−(t)
+
+R , (S36) which directly relates the charge perturbation to the reflected voltage. Applying the load KVL equation, Eq. (S1), to the perfectly synchronized and temporally shifted cases and subtracting the former from the latter gives 
+
+dv −(t)
+
+dt = − 2RL v−(t) + RL q(t)
+
+ 1
+
+Cτ (t) − 1
+
+C(t)
+
+
+
++ RL
+
+∆qτ (t)
+
+Cτ (t) , (S37) Eqs. (S36) and (S37) constitute a two-state, first-order, linear time-varying model describing the synchronization-error dynamics, with v−(t) and ∆ qτ (t) as the state variables. Eq. (S37) identifies two contributions to the reflected wave. The first is the direct forcing caused by the temporal displacement of the capacitance profile. The second is a memory term associated with the accumulated deviation of the capacitor charge from the perfectly synchronized solution. The DC bias enters through q(t) [Eq. (S3)] and can therefore affect timing sensitivity. When the shifted capacitance profile coincides with the ideal one, Cτ (t) = C(t), the direct forcing term in Eq. (S37) vanishes. As defined in the previous section, t0 denotes an instant preceding the arrival of the incident pulse. For the synchronization-error analysis, t0 is further chosen to precede the time at which the ideal and shifted capacitance profiles begin to differ. Thus, the two cases share the same initial state, such that v−(t0) = 0 and ∆ qτ (t0) = 0. The unique solution of the resulting homogeneous error model is therefore v−(t) = 0 and ∆ qτ (t) = 0, corresponding to perfectly synchronized, reflectionless operation. For sufficiently small synchronization errors, and assuming that C(t) is sufficiently smooth and nonzero, the shifted capacitance can be Taylor-expanded around τ = 0, while the reflected voltage and charge perturbation are represented by first-order perturbation expansions in τ = 0: 1
+
+Cτ (t) = 1
+
+C(t) + τ ˙C(t)
+
+C2(t) + O(τ 2), (S38) 
+
+v−(t; τ ) = τ v − 
+
+> 1
+
+(t) + O(τ 2), (S39) ∆qτ (t) = τ ∆q1(t) + O(τ 2). (S40) where v− 
+
+> 1
+
+(t) = ∂v −(t;τ )  
+
+> ∂τ τ=0
+
+and ∆ q1(t) = ∂∆qτ (t)  
+
+> ∂τ τ=0
+
+are the first-order timing sensitivities. Substitution into the synchronization-error model and collection of the terms proportional to τ gives 
+
+d∆q1(t)
+
+dt = − v− 
+
+> 1
+
+(t)
+
+R , (S41) 
+
+dv − 
+
+> 1
+
+(t)
+
+dt = − 2RL v− 
+
+> 1
+
+(t) + RL
+
+∆q1(t)
+
+C(t) + RL q(t) ˙C(t)
+
+C2(t) , (S42) The first-order approximation shows that the reflected-voltage waveform is first order in the timing error. To quantify the corresponding degradation in matching performance, we define the normalized reflected energy as 
+
+RE (τ ) = 
+
+Z tf
+
+> t0
+
+v−(t; τ ) 2 dt 
+
+Z tf
+
+> t0
+
+v+(t) 2 dt . (S43) Here, tf is selected sufficiently late that v+(t) and v−(t; τ ) are negligible for t ≥ tf over the entire range of timing errors considered. Using Eq. (S39), the normalized reflected energy becomes 
+
+RE (τ ) = SE τ 2 + O(τ 3), SE =
+
+Z tf
+
+> t0
+
+v− 
+
+> 1
+
+(t) 2 dt 
+
+Z tf
+
+> t0
+
+v+(t) 2 dt . (S44) Consequently, RE (0) = 0 and dRE /dτ |τ =0 = 0, showing that the normalized reflected energy is stationary at perfect synchronization. Therefore, sufficiently small synchronization errors do not produce a first-order degradation in the 15 energy-based matching performance; instead, the normalized reflected energy increases quadratically with the timing error. Perfect synchronization is thus first-order insensitive, in an energy sense, to small timing perturbations, while the coefficient SE determines the rate at which the matching performance degrades as the timing error increases. We next evaluate the synchronization sensitivity of the proposed matching scheme for the Gaussian-enveloped sinusoidal incident pulse [Eq. (S9)] by comparing the exact response with the quadratic small-error approximation. As shown in Fig. S4(a), the first-order model accurately reproduces the exact normalized reflected energy for sufficiently small values of σ/τ , while the discrepancy increases as the timing error becomes larger. Note that the normalized reflected energy exceeds unity for sufficiently large timing errors. This behavior is possible because the system is time modulated, allowing the modulation and bias mechanisms to exchange energy with the circuit and transfer part of that energy to the outgoing wave. To complement the energy-based analysis, Fig. S4(b) shows the temporal profiles of the incident voltage v+ 
+
+> g
+
+(t), the reflected voltage v− 
+
+> g
+
+(t), and the voltage across the load resistor vR(t) for a representative synchronization error. The timing mismatch produces a nonzero reflected waveform and a corresponding deviation of the resistor voltage from the incident pulse. The comparison provides a direct view of how the reflected waveform modifies the voltage delivered to the load resistor. Both the reflected voltage and the resistor voltage exhibit post-pulse ringing associated with the residual transient dynamics of the circuit. (b) (a)
