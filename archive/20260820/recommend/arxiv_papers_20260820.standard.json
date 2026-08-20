@@ -1,0 +1,96 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-20T19:47:00.762035+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2608.12687v1",
+      "source": "arxiv",
+      "title": "Finding the Needle in a Haystack: Test-Time Analog Circuit Representation Adaptation for Bayesian Optimization",
+      "abstract": "Bayesian optimization (BO) is a sample-efficient framework for analog circuit topology search, where evaluating each candidate topology can require costly simulation. However, representation-based BO methods typically treat circuit embeddings as fixed after encoder training. This creates a mismatch between representation learning and optimization: embeddings learned to encode or reconstruct circuit structure are not necessarily organized according to the figure of merit (FoM) being optimized. This paper introduces Test-Time Analog Representation Adaptation for Bayesian Optimization (TTARO), an online deep-kernel BO framework that adapts circuit representations throughout the search process. Starting from pretrained circuit embeddings, TTARO jointly learns a nonlinear feature transformation and a Gaussian-process surrogate using the FoM labels of the circuits evaluated so far. Following each new evaluation, TTARO updates the representation and surrogate before selecting the next candidate. We compare TTARO with conventional Gaussian Process-based BO over fixed embeddings and with Deep Kernel Learning (DKL), which learns the representation only from the initial evaluated designs and keeps it fixed throughout the remainder of the search. By continually incorporating newly observed FoM labels into representation learning, TTARO aligns the search space with the optimization objective as BO progresses. In our experiments, TTARO reduces regret AUC by 15.2% on average relative to BO and by 20.7% relative to DKL across 40 encoder/kernel/acquisition settings, outperforming prior art in most settings with reductions as large as 46.7%.",
+      "authors": [
+        "Fin Amin",
+        "Sounak Dutta",
+        "Paul D. Franzon"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-08-13T01:09:58+00:00",
+      "link": "https://arxiv.org/pdf/2608.12687v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Bayesian optimization with representation adaptation for analog circuit topology search",
+      "llm_evidence_cn": "面向模拟电路拓扑搜索的贝叶斯优化与表示自适应方法",
+      "llm_evidence": "面向模拟电路拓扑搜索的贝叶斯优化与表示自适应方法",
+      "canonical_evidence": "面向模拟电路拓扑搜索的贝叶斯优化与表示自适应方法",
+      "llm_tldr_en": "Analog circuit topology search is expensive; fixed circuit embeddings in Bayesian optimization ignore the figure of merit. TTARO adapts circuit representations during search, improving sample efficiency and optimization of analog circuits.",
+      "llm_tldr_cn": "模拟电路拓扑搜索的每次候选评估都需要昂贵仿真，而现有基于表示的贝叶斯优化在编码器训练后固定电路嵌入，导致表示学习与优化目标失配。本文提出测试时模拟表示自适应方法TTARO，在搜索过程中持续调整电路表示，使其与目标指标对齐。实验表明该方法能够更高效地找到更优的电路拓扑，为数据驱动电路优化提供了新思路。",
+      "llm_tldr": "模拟电路拓扑搜索的每次候选评估都需要昂贵仿真，而现有基于表示的贝叶斯优化在编码器训练后固定电路嵌入，导致表示学习与优化目标失配。本文提出测试时模拟表示自适应方法TTARO，在搜索过程中持续调整电路表示，使其与目标指标对齐。实验表明该方法能够更高效地找到更优的电路拓扑，为数据驱动电路优化提供了新思路。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.16080v1",
+      "source": "arxiv",
+      "title": "DeepOHeat-v2: Self-Improving Operator Learning for Fast and Trustworthy Thermal Optimization in 3D-IC Design",
+      "abstract": "Thermal-aware optimization of multi-die 3D integrated circuits evaluates many designs, each a costly heat-equation solve. Operator-learning surrogates replace this solve with a fast forward pass, ideally trained from physics alone, without labeled data. DeepOHeat-v1 made such surrogates fast and trustworthy, but only on low-contrast geometries. High-contrast multi-die stacks break it in two ways: discontinuous conductivities make the continuous physics loss ill-defined at material interfaces, and ill-conditioning ($κ_2(A_h) \\approx 6 \\times 10^4$) puts the discretized strong-form loss beyond first-order optimization. We propose DeepOHeat-v2 to overcome both. First, we train on a discretized physics loss that handles the discontinuities natively; its energy form reduces the prediction-space loss-Hessian conditioning from $κ^2$ to $κ$, and a matrix-preconditioned optimizer cuts the mean peak temperature error from over 30 K to 0.55 K. Second, because optimization leaves the training distribution, we propose a self-improving framework: a hotspot trust gate sends flagged placements to a reference solver, and the surrogate incrementally retrains on the refined solutions, keeping an update only when it improves held-out validation error. On a multi-die benchmark, the surrogate-true peak gap on the returned design falls from 1.12 K to 0.11 K, matching a solve-at-every-step optimizer while running $56\\times$ faster.",
+      "authors": [
+        "Xinling Yu",
+        "Yixing Li",
+        "Ziyue Liu",
+        "Xin Ai",
+        "Zhiyu Zeng",
+        "Hai Li",
+        "Zheng Zhang"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "physics.data-an"
+      ],
+      "published": "2026-08-17T04:23:55+00:00",
+      "link": "https://arxiv.org/pdf/2608.16080v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Operator-learning surrogate with discretized physics loss for 3D-IC design; methodology transferable to SI/PI modeling and optimization",
+      "llm_evidence_cn": "面向3D-IC设计热优化的算子学习代理模型，其方法可迁移至SI/PI建模与优化",
+      "llm_evidence": "面向3D-IC设计热优化的算子学习代理模型，其方法可迁移至SI/PI建模与优化",
+      "canonical_evidence": "面向3D-IC设计热优化的算子学习代理模型，其方法可迁移至SI/PI建模与优化",
+      "llm_tldr_en": "DeepOHeat-v2 trains operator-learning surrogates on a discretized physics loss to enable fast and trustworthy thermal optimization of high-contrast multi-die 3D-ICs; this PDE surrogate methodology directly supports SI/PI-oriented design optimization.",
+      "llm_tldr_cn": "多裸片3D集成电路的热感知优化需要反复求解热方程，计算开销大，而算子学习代理模型在高低对比几何中训练不稳定。DeepOHeat-v2提出基于离散化物理损失的自改进算子学习，解决材料界面处连续物理损失失效与离散强形式损失病态问题，从而对高对比多裸片堆叠实现快速且可信的热优化。实验表明其在大不连续性几何上显著优于先前版本。该成果展现了物理约束算子学习在先进封装设计优化中的潜力，对SI/PI协同优化具有可迁移的方法论价值。",
+      "llm_tldr": "多裸片3D集成电路的热感知优化需要反复求解热方程，计算开销大，而算子学习代理模型在高低对比几何中训练不稳定。DeepOHeat-v2提出基于离散化物理损失的自改进算子学习，解决材料界面处连续物理损失失效与离散强形式损失病态问题，从而对高对比多裸片堆叠实现快速且可信的热优化。实验表明其在大不连续性几何上显著优于先前版本。该成果展现了物理约束算子学习在先进封装设计优化中的潜力，对SI/PI协同优化具有可迁移的方法论价值。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Advanced modeling and optimization techniques for SI/PI in high speed systems",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

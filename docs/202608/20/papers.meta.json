@@ -1,0 +1,39 @@
+{
+  "label": "2026-08-20",
+  "date": "2026-08-20",
+  "generated_at": "2026-08-20T19:49:13",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202608/20/2608.12687v1-finding-the-needle-in-a-haystack-test-time-analog-circuit-representation-adaptation-for-bayesian-optimization",
+      "section": "quick",
+      "title_en": "Finding the Needle in a Haystack: Test-Time Analog Circuit Representation Adaptation for Bayesian Optimization",
+      "authors": "Fin Amin, Sounak Dutta, Paul D. Franzon",
+      "date": "2026-08-13",
+      "pdf": "https://arxiv.org/pdf/2608.12687v1",
+      "score": "6.0",
+      "evidence": "面向模拟电路拓扑搜索的贝叶斯优化与表示自适应方法",
+      "tldr": "模拟电路拓扑搜索中，贝叶斯优化常用固定电路嵌入，但编码器学习到的表示与优化指标不一致，导致搜索效率受限。本文提出测试时表示自适应方法TTARO，在每轮评估后利用新获得的指标标签，联合更新非线性特征变换和高斯过程代理，使表示持续对齐优化目标。在四十种编码器、核函数与采集函数配置下，相比固定嵌入BO和DKL，后悔曲线下面积平均降低15.2%和20.7%，最高降低46.7%，展现出显著的样本效率提升。",
+      "tags": "query:si-pi",
+      "abstract_en": "Bayesian optimization (BO) is a sample-efficient framework for analog circuit topology search, where evaluating each candidate topology can require costly simulation. However, representation-based BO methods typically treat circuit embeddings as fixed after encoder training. This creates a mismatch between representation learning and optimization: embeddings learned to encode or reconstruct circuit structure are not necessarily organized according to the figure of merit (FoM) being optimized. This paper introduces Test-Time Analog Representation Adaptation for Bayesian Optimization (TTARO), an online deep-kernel BO framework that adapts circuit representations throughout the search process. Starting from pretrained circuit embeddings, TTARO jointly learns a nonlinear feature transformation and a Gaussian-process surrogate using the FoM labels of the circuits evaluated so far. Following each new evaluation, TTARO updates the representation and surrogate before selecting the next candidate. We compare TTARO with conventional Gaussian Process-based BO over fixed embeddings and with Deep Kernel Learning (DKL), which learns the representation only from the initial evaluated designs and keeps it fixed throughout the remainder of the search. By continually incorporating newly observed FoM labels into representation learning, TTARO aligns the search space with the optimization objective as BO progresses. In our experiments, TTARO reduces regret AUC by 15.2% on average relative to BO and by 20.7% relative to DKL across 40 encoder/kernel/acquisition settings, outperforming prior art in most settings with reductions as large as 46.7%.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/20/2608.16080v1-deepoheat-v2-self-improving-operator-learning-for-fast-and-trustworthy-thermal-optimization-in-3d-ic-design",
+      "section": "quick",
+      "title_en": "DeepOHeat-v2: Self-Improving Operator Learning for Fast and Trustworthy Thermal Optimization in 3D-IC Design",
+      "authors": "Xinling Yu, Yixing Li, Ziyue Liu, Xin Ai, Zhiyu Zeng, Hai Li, Zheng Zhang",
+      "date": "2026-08-17",
+      "pdf": "https://arxiv.org/pdf/2608.16080v1",
+      "score": "6.0",
+      "evidence": "面向3D-IC设计热优化的算子学习代理模型，其方法可迁移至SI/PI建模与优化",
+      "tldr": "三维集成电路热优化需要反复求解热方程，成本高昂，算子学习代理可加速。但高对比度多芯片堆叠中存在不连续电导率与病态条件数，使原有物理损失失效。DeepOHeat-v2采用离散物理损失的能量形式与预条件优化解决数值困难，并设计自改进框架提升泛化。在多芯片基准上，平均峰值温度误差由超过三十开尔文降至零点五五开尔文，代理与真实峰值差距由一点一二降至零点一一开尔文，且速度提升五十六倍。",
+      "tags": "query:si-pi",
+      "abstract_en": "Thermal-aware optimization of multi-die 3D integrated circuits evaluates many designs, each a costly heat-equation solve. Operator-learning surrogates replace this solve with a fast forward pass, ideally trained from physics alone, without labeled data. DeepOHeat-v1 made such surrogates fast and trustworthy, but only on low-contrast geometries. High-contrast multi-die stacks break it in two ways: discontinuous conductivities make the continuous physics loss ill-defined at material interfaces, and ill-conditioning ($κ_2(A_h) \\approx 6 \\times 10^4$) puts the discretized strong-form loss beyond first-order optimization. We propose DeepOHeat-v2 to overcome both. First, we train on a discretized physics loss that handles the discontinuities natively; its energy form reduces the prediction-space loss-Hessian conditioning from $κ^2$ to $κ$, and a matrix-preconditioned optimizer cuts the mean peak temperature error from over 30 K to 0.55 K. Second, because optimization leaves the training distribution, we propose a self-improving framework: a hotspot trust gate sends flagged placements to a reference solver, and the surrogate incrementally retrains on the refined solutions, keeping an update only when it improves held-out validation error. On a multi-die benchmark, the surrogate-true peak gap on the returned design falls from 1.12 K to 0.11 K, matching a solve-at-every-step optimizer while running $56\\times$ faster.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
