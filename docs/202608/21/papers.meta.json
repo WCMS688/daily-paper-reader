@@ -1,0 +1,24 @@
+{
+  "label": "2026-08-21",
+  "date": "2026-08-21",
+  "generated_at": "2026-08-21T20:29:47",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202608/21/2608.15563v1-scaled-boundary-cubature-scheme-in-higher-dimensions-integration-over-polytopes-and-curved-regions",
+      "section": "quick",
+      "title_en": "Scaled boundary cubature scheme in higher dimensions: integration over polytopes and curved regions",
+      "authors": "Eric B. Chin, N. Sukumar",
+      "date": "2026-08-16",
+      "pdf": "https://arxiv.org/pdf/2608.15563v1",
+      "score": "6.0",
+      "evidence": "高维求积方案可应用于PEEC封装互连建模中的积分计算",
+      "tldr": "针对高维多面体与曲区域的数值积分难题，提出高维缩放边界立方体方法。该方法将区域积分转化为边界补丁参数域与径向坐标的积分，递归应用于仿射多面体得到四面体扇区规则，适用于凸与非凸定向多面体。支持B样条等曲面边界，通过广义径向缩放处理点线奇异性。数值实验验证了多项式精确性、快速收敛及近边界奇异处理能力，为高维积分提供统一框架。",
+      "tags": "query:bga-xtalk",
+      "abstract_en": "We extend the scaled boundary cubature (SBC) scheme from planar regions to higher-dimensional regions described by oriented boundary patches. The resulting parametrization transforms integrals over compact regions in $\\Re^d$ into sums of integrals over the boundary-patch parameter domains and a radial coordinate. In three dimensions, this yields a direct volume-integration rule for solids bounded by affine faces, triangular or tensor-product surface patches, B-spline patches, NURBS patches, and combinations of curved and affine boundary representations. For affine polytopes, recursive application of the scaled boundary map yields nested tensor-product rules over simplex sectors; in three dimensions, these reduce to tetrahedral-sector rules that apply equally to convex and nonconvex oriented polyhedra. We also develop transformations for weakly singular integrands. Placing the scaling center at a point singularity exposes the radial power cancelled by the Jacobian, while generalized radial scalings and Gauss--Jacobi quadrature handle fractional powers. A transverse scaled-boundary map provides the analogous construction for affine singular sets, with straight-line examples in three dimensions. Numerical examples verify polynomial exactness on affine polyhedra and a four-dimensional tesseract, rapid convergence on curved B-spline and NURBS solids, and the expected convergence improvements for point and line singularities. Near-boundary singularity tests also identify when additional patch subdivision or patch-parameter transformations are required.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

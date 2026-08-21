@@ -1,0 +1,1151 @@
+Title: Scaled boundary cubature scheme in higher dimensions: integration over polytopes and curved regions
+
+URL Source: https://arxiv.org/pdf/2608.15563v1
+
+Published Time: Tue, 18 Aug 2026 01:15:23 GMT
+
+Number of Pages: 27
+
+Markdown Content:
+# Scaled boundary cubature scheme in higher dimensions: integration over polytopes and curved regions 
+
+Eric B. Chin a, ∗, N. Sukumar b
+
+> aLawrence Livermore National Laboratory, 7000 East Avenue, Livermore, CA 94550, USA
+> bDepartment of Civil and Environmental Engineering, University of California, Davis, CA 95616, USA
+
+Abstract 
+
+We extend the scaled boundary cubature (SBC) scheme from planar regions to higher-dimensional regions described by oriented boundary patches. The resulting parametrization transforms integrals over compact regions in Rd into sums of integrals over the boundary-patch parameter domains and a radial coordinate. In three dimensions, this yields a direct volume-integration rule for solids bounded by a ffi ne faces, triangular or tensor-product surface patches, B-spline patches, NURBS patches, and combinations of curved and a ffi ne boundary representations. For a ffi ne poly-topes, recursive application of the scaled boundary map yields nested tensor-product rules over simplex sectors; in three dimensions, these reduce to tetrahedral-sector rules that apply equally to convex and nonconvex oriented polyhe-dra. We also develop transformations for weakly singular integrands. Placing the scaling center at a point singularity exposes the radial power cancelled by the Jacobian, while generalized radial scalings and Gauss–Jacobi quadrature handle fractional powers. A transverse scaled-boundary map provides the analogous construction for a ffi ne singu-lar sets, with straight-line examples in three dimensions. Numerical examples verify polynomial exactness on a ffi ne polyhedra and a four-dimensional tesseract, rapid convergence on curved B-spline and NURBS solids, and the ex-pected convergence improvements for point and line singularities. Near-boundary singularity tests also identify when additional patch subdivision or patch-parameter transformations are required. 
+
+Keywords: scaled boundary cubature, polytopes, parametric surfaces, NURBS, weakly singular functions, Gauss–Jacobi quadrature 
+
+1. Introduction 
+
+Computational mechanics discretizations increasingly require the integration of functions over domains that are not simplices or tensor-product cells. Such domains arise in finite element and discontinuous Galerkin methods on polygonal and polyhedral meshes [1], in the virtual element method (VEM) [2, 3], in extended, embedded, and un-fitted finite element methods for interfaces, cracks, and immersed boundaries [4–7], in isogeometric analysis with trimmed or boundary-representation geometries [8–10], and in mortar and contact formulations [11–13]. Related integration tasks also occur outside Galerkin discretizations, for example in computer graphics simulations with non-convex bodies [14] and in computer-aided design when computing surface or volumetric moments from parametric geometry [15]. The integration problem in these settings is not limited to high-order polynomial cubature. The boundary may be nonconvex, may be represented by polynomial or rational parametric patches, or may be produced by intersections and trimming operations; the integrand may also contain nonpolynomial geometry factors or weak singularities. In this setting, the value of SBC is not only that it generates cubature points and weights, but also that it provides a constructive parametrization of the enclosed region from its oriented boundary representation. In Chin and Sukumar [16], we introduced the scaled boundary cubature (SBC) scheme for planar regions bounded by a ffi ne and curved edges. The central observation was that the scaled boundary parametrization produces a tensor-product integral over a radial coordinate and a boundary parameter. This viewpoint also showed that the homogeneous   
+
+> ∗Corresponding author
+> Email address: chin23@llnl.gov (Eric B. Chin) arXiv:2608.15563v1 [math.NA] 16 Aug 2026
+
+numerical integration (HNI) method [17–19] is recovered as a special case when the integrand is homogeneous. The present paper extends that idea beyond planar regions: we develop the higher-dimensional construction, specialize it to three-dimensional regions bounded by parametric surfaces, and introduce transformations for weakly singular integrands. Several established strategies are available for integration over nonstandard domains. A direct approach is to partition the domain into triangles, tetrahedra, or curved subcells and then apply standard quadrature rules on each piece [4, 20–23]. This strategy is robust and familiar, but for complex, nonconvex, or curved domains the geome-try generation can dominate the cost, and high-order rules over many subcells can produce far more points than are needed by the integrand. Moment-fitting and optimized rules provide more compact formulas; for example, general-ized Gaussian rules have been constructed for arbitrary polygons with interior nodes and positive weights [24], and effi cient rules in two and higher dimensions can be generated by numerical optimization [25]. Moment-fitting variants have also been developed for cut cells and large deformation settings [26, 27]. These rules are attractive when they are available, but their construction requires solving nonlinear systems and commonly starts from an existing rule or partition. One moment-fitting strategy is to compress a dense candidate rule or discrete measure into a smaller weighted rule that preserves the moments of a chosen polynomial space [28, 29]. Such compressed rules are attractive for nonlinear computations in which the same integration rule is reused many times over an element, because the setup cost can be amortized while subsequent residual, tangent, or constitutive evaluations use fewer points. Another class of methods uses Green’s theorem, Stokes’s theorem, or the divergence theorem to reduce the dimen-sion of the integral. Product Gauss and Gauss–Green cubature rules use Green’s formula for polygons and curvilinear geometries, and they have also been used for moment computation over arbitrary geometries [30–33]. These methods avoid volume meshing and scale with the number of boundary pieces, although the resulting cubature points need not lie inside the physical domain and the implementation depends on suitable antiderivative or boundary-integral constructions. SBC instead keeps the domain integral as a mapped tensor-product integral, which can be direct to apply when the boundary is represented by CAD or simulation geometry such as NURBS, Bézier patches, segmented overlap regions, or nonconvex polytopes. The HNI method [17–19, 34] is also based on dimension reduction and is particularly e ffi cient for homogeneous functions and polynomials after decomposition into homogeneous terms. Its restriction to homogeneous structure, however, makes general nonpolynomial functions and black-box integrands less direct. For implicitly defined, trimmed, and curved polyhedral geometries, high-order quadrature schemes based on local height functions, recursive decompositions, folded decompositions, patchwise surface quadrature, or transport corrections have been developed [35–39]; these methods address important cases in unfitted and isogeometric analysis but are tied to their particular geometry descriptions. Weakly singular integration is a related challenge, and classical Du ff y-type and Gauss–Jacobi transformations provide important tools for vertex and simplex singularities [40–43]. SBC has recently been used to compute weak-form integrals in several virtual element formulations over polygonal and polyhedral meshes, including curved elements and enriched formulations with weakly singular functions [44]. In contrast to that application-focused study, the purpose of the present paper is to develop SBC itself as a general higher-dimensional integration method. Our contributions are as follows: 
+
+• a scaled boundary cubature formula in Rd for compact regions bounded by oriented hypersurface patches; 
+
+• an explicit three-dimensional specialization for regions bounded by parametric surface patches, including ten-sor-product and triangular patch parameterizations; 
+
+• recursive constructions for polytopes and for patch parameter domains that are not already canonical integration domains; 
+
+• a simplified a ffi ne-polyhedron formula based on nested scaled boundary maps, yielding tetrahedral sector inte-grals in tensor-product coordinates; 
+
+• transformations for point singularities in arbitrary dimension, including the cancellation provided by the radial Jacobian factor and generalized scaled boundary or Gauss–Jacobi variants; and 
+
+• a transverse SBC-like transformation for a ffi ne singular sets, with straight-line examples in three dimensions. The remainder of this paper is organized as follows. In Section 2, we present the higher-dimensional scaled boundary parametrization, its cubature rule, and specializations to polytopes and three-dimensional curved regions. 2t1
+
+td−1 Di
+
+si
+
+x0
+
+φi(ρ, t)
+
+Si
+
+R+
+
+> i
+
+ρ                
+
+> Figure 1: Scaled boundary map from a patch parameter domain Dito a swept sector R+
+> i. The grid on Dimaps to corresponding parameter lines on the boundary patch Si. The dashed line shows the radial segment obtained by fixing tand varying ρ∈[0 ,1], and the marked point is φi(ρ, t) for one intermediate value of ρ.
+
+In Section 3, we develop transformations for weakly singular integrands with point and line singularities. Numeri-cal studies in Section 4 examine polynomial exactness on a ffi ne polyhedra and a four-dimensional a ffi ne polytope, convergence for smooth nonpolynomial functions, curved surface geometries, and singular integration. Concluding remarks are given in Section 5. 
+
+2. Higher dimensional scaled boundary cubature 
+
+2.1. General scaled boundary parametrization in Rd
+
+Let R ⊂ Rd be a compact region whose boundary is represented by oriented hypersurface patches Si, i = 1, . . . , m.Each patch is given by a su ffi ciently smooth parametrization si : Di → S i, where Di ⊂ Rd−1. The patch orientations are taken to be consistent with the outward orientation of ∂R; in particular, the determinant appearing below is a signed quantity. We assume that each parameter domain Di is either a canonical integration domain, such as a hypercube or simplex, or has a boundary representation that permits the scaled boundary construction to be applied recursively. The patch parametrizations and the maps introduced below need not be globally injective, provided the oriented image counts the region with the correct multiplicity. For a scaling center x0 ∈ Rd, define the scaled boundary (SB) map: 
+
+φi(ρ, t) = x0 + ρ si(t) − x0
+
+, 0 ≤ ρ ≤ 1, t ∈ Di. (1) Apart from the translation by x0, this is the scaled boundary parametrization introduced by Song [45]. The coordinate 
+
+ρ linearly scales each boundary point to the scaling center. If Di = [0 , 1] d−1, then (1) maps the unit hypercube to a curved pyramid with apex x0 and base Si; for more general Di, it maps [0 , 1] × Di to the corresponding swept sector. We denote the union of these swept sectors by R+. If R is star-convex with respect to x0, then R+ = R up to shared sector boundaries. Otherwise R+ may strictly contain R, and the signed contributions in (3) provide the cancellation needed to recover the oriented integral over R.The Jacobian of (1) is 
+
+Ji(ρ, t) = det ∇φi(ρ, t) = ρd−1 det hsi(t) − x0
+
+∂si
+
+∂t1
+
+(t) · · · ∂si
+
+∂td−1
+
+(t)i. (2) The factor ρd−1 is the key dimensional scaling: the d − 1 directions tangent to the boundary patch are scaled by ρ,whereas the direction associated with changing ρ, from x0 to si(t), is not. 
+
+Proposition. Let the oriented patches Si represent ∂R, and let f be smooth on an open set containing R+. Then 
+
+Z
+
+> R
+
+f (x) dx =
+
+> m
+
+X
+
+> i=1
+
+Z 10
+
+Z
+
+> Di
+
+f  φi(ρ, t)Ji(ρ, t) dt dρ. (3) 3x0
+
+(a) R+ = R
+
+x0 R+ \ R 
+
+(b) signed cancellation     
+
+> Figure 2: In the star-convex case, the swept sectors partition R. For a nonconvex region or exterior scaling center, R+can include points outside R,and the oriented sum cancels the extra contributions.
+
+Proof. For y = x − x0, define 
+
+F(x) = y
+
+Z 10
+
+f (x0 + τy)τd−1 dτ. 
+
+Using the product and chain rules, 
+
+∇ · F(x) =
+
+Z 10
+
+hdτd−1 f (x0 + τy) + τd∇ f (x0 + τy) · yi dτ =
+
+Z 10
+
+ddτ
+
+hτd f (x0 + τy)i dτ = f (x).
+
+The divergence theorem gives Z
+
+> R
+
+f (x) dx =
+
+> m
+
+X
+
+> i=1
+
+Z
+
+> Di
+
+F(si(t)) · Ni(t) dt,
+
+where Ni dt is the oriented normal measure induced by si. For any a ∈ Rd,
+
+a · Ni(t) = det ha ∂si
+
+∂t1
+
+(t) · · · ∂si
+
+∂td−1
+
+(t)i.
+
+Taking a = si(t) − x0, substituting the definition of F, and identifying x0 + τ(si(t) − x0) = φi(τ, t) leads to (3), with the dummy variable τ renamed as ρ.When R is star-convex with respect to an interior x0, the swept sectors form a partition of R up to shared bound-aries, and the signed Jacobians have one sign when the patch orientations are consistent. This is the setting in which positive cubature weights are expected. For nonconvex regions, or for scaling centers outside the region, R+ can extend outside R; the formula remains an oriented identity and the resulting cubature weights may be signed. In that case, f must be evaluable on the swept region and the integral is obtained by cancellation. The map is not one-to-one at ρ = 0, since every patch parameter maps to x0, but this set has zero measure. Thus the degeneracy at the scal-ing center is not a practical obstruction for cubature, although it can matter in boundary-value discretizations based directly on the same parametrization [46]. 
+
+2.2. Cubature rules and polynomial exactness 
+
+Equation (3) reduces the volume integral to a sum of integrals over simple product domains whenever the patch domains Di are simple. If Di = [0 , 1] d−1, a tensor-product Gauss rule in ρ and the d − 1 patch parameters gives 
+
+Z
+
+> R
+
+f (x) dx ≈
+
+> m
+
+X
+
+> i=1
+
+X
+
+> qρ
+
+X
+
+> q
+
+wqρ wq f  φi(ρqρ , tq)Ji(ρqρ , tq), (4) where wq denotes the product of the one-dimensional weights in the patch coordinates. The point count scales as 
+
+O(mp d) for m patches and a p-point rule in each coordinate. If Di is a simplex, one may use a standard simplex rule 4on Di or apply SBC recursively to the parameter domain. The recursive option is useful when Di is a polygonal, polyhedral, or trimmed domain whose boundary is already available in parametric form. In the a ffi ne polyhedron specialization below, a tensor-product rule with orders pρ, pt, and pu uses pρ pt pu
+
+Pi ni points, where ni is the number of edges of face Si.The exactness of (4) follows from the mapped integrand. If f is polynomial and each si is polynomial, then 
+
+f (φi(ρ, t)) Ji(ρ, t) is a polynomial in the integration parameters, and a su ffi ciently high-order rule integrates it exactly. This includes a ffi ne polytopes and polynomial surface patches. For rational patches, including NURBS, the mapped integrand is generally rational even when f is polynomial, so polynomial exactness is not expected; for smooth rational geometry and smooth f , the tensor-product rules still give rapid convergence as shown in Section 4.1. 
+
+2.3. Three-dimensional regions bounded by parametric surfaces 
+
+For R ⊂ R3, the boundary patches are surfaces si(t, u) : Di → S i. The SB map becomes 
+
+φi(ρ, t, u) = x0 + ρ si(t, u) − x0
+
+, 0 ≤ ρ ≤ 1, (t, u) ∈ Di, (5) and its Jacobian is 
+
+Ji(ρ, t, u) = ρ2 si(t, u) − x0
+
+ · ∂si
+
+∂t (t, u) × ∂si
+
+∂u (t, u)
+
+!
+
+. (6) The order of the cross product is part of the surface orientation. Reversing the patch orientation reverses the sign of the contribution. For a star-convex solid and an interior scaling center, outward-oriented surface patches give positive signed volumes. Tensor-product Bezier, B-spline, and NURBS patches have Di = [0 , 1] 2 and fit directly into (4). Triangular Bezier patches and other simplex-parametrized surfaces can be integrated with a triangular rule on Di, or with a secondary SB construction on the triangular parameter domain. Trimmed patches can also be used, provided that the trimmed parameter region is integrated by a compatible rule. For polynomial surface patches and polynomial f , (6) again yields a polynomial mapped integrand. For NURBS and other rational patches, the mapped integrand is rational, so the numerical studies below assess convergence rather than polynomial exactness. 
+
+2.4. Recursive integration over polytopes 
+
+Let P ⊂ Rd be a polytope whose facets Pi are ( d − 1)-dimensional polytopes lying in a ffi ne hyperplanes Hi.Applying (1) to each facet reduces the integral over P to integrals over the facets. If a facet is not already a canonical integration domain, a second SB map is applied within Hi from a facet scaling center xi ∈ H i to the boundary of Pi.The process continues until the remaining domains are edges, simplices, hypercubes, or other domains with available rules. The nested construction is most simply viewed as a sequence of a ffi ne or curved radial maps. Each level contributes a radial coordinate and the corresponding radial power: the first level in Rd contributes ρd−1, the next level on a facet contributes a factor of degree d − 2, and so on. The algorithm is direct: integrate over the oriented boundary of the current polytope in its own a ffi ne hull, using a scaling center in that a ffi ne hull, and multiply the Jacobians from the nested maps. The same oriented interpretation applies at every level. For star-convex choices of scaling centers the sectors partition the polytope; otherwise, signed sectors represent the integral by cancellation. Algorithm 1 summarizes this recursive construction. 
+
+2.5. Simplification for a ffi ne polyhedra 
+
+For an a ffi ne polyhedron P ⊂ R3, the recursive construction reduces to tensor-product integrals over tetrahedral sectors. In this specialization, ρ is the volume radial coordinate, η is the face-radial coordinate, and t is the edge coordinate. Let Si, i = 1, . . . , m, be the oriented planar faces of P, and choose a face scaling point xi in the plane of Si. Let the oriented boundary of face Si consist of edges with endpoint pairs vi j 1 and vi j 2, j = 1, . . . , ni, ordered consistently with the face orientation. The face sector associated with edge j is parametrized by 
+
+si j (η, t) = xi + η h(1 − t)vi j 1 + tvi j 2 − xi
+
+i , 0 ≤ η, t ≤ 1. (7) 5Algorithm 1 Recursive scaled boundary cubature over a polytope 
+
+Require: An oriented k-dimensional polytope P(k), scaling center x(k) 
+
+> c
+
+in its a ffi ne hull, and an accumulated map Φ
+
+and Jacobian factor J.
+
+Ensure: Physical cubature points and signed weights for the branch rooted at P(k). 
+
+> 1:
+
+if P(k) is a canonical integration domain then  
+
+> 2:
+
+Apply the corresponding rule on P(k). 
+
+> 3:
+
+Compose its points with Φ and multiply its weights by J. 
+
+> 4:
+
+return the resulting physical points and signed weights.  
+
+> 5:
+
+end if  
+
+> 6:
+
+for all oriented facets P(k−1)  
+
+> ℓ
+
+of P(k) do  
+
+> 7:
+
+Choose a facet scaling center x(k−1)  
+
+> c,ℓ
+
+in the a ffi ne hull of P(k−1)  
+
+> ℓ
+
+. 
+
+> 8:
+
+Define the SB map from x(k) 
+
+> c
+
+to P(k−1)  
+
+> ℓ
+
+and its signed Jacobian factor.  
+
+> 9:
+
+Compose this map and Jacobian factor with Φ and J. 
+
+> 10:
+
+Call Algorithm 1 with arguments P(k−1)  
+
+> ℓ
+
+, x(k−1)  
+
+> c,ℓ
+
+, the composed map, and the composed Jacobian factor.  
+
+> 11:
+
+end for  
+
+> 12:
+
+return the union of the points and signed weights generated by all recursive branches. Nesting this map inside the volume SB map produces 
+
+φi j (ρ, η, t) = x0 + ρ si j (η, t) − x0
+
+, 0 ≤ ρ, η, t ≤ 1. (8) Its Jacobian is 
+
+Ji j (ρ, η, t) = ρ2η (xi − x0) · h(vi j 1 − xi) × (vi j 2 − vi j 1)i = 6Vi j ρ2η, (9) where Vi j is the signed volume of the tetrahedron with vertices x0, xi, vi j 1, and vi j 2. Therefore, 
+
+Z
+
+> P
+
+f (x) dx =
+
+> m
+
+X
+
+> i=1
+> ni
+
+X
+
+> j=1
+
+6Vi j 
+
+Z 10
+
+Z 10
+
+Z 10
+
+f  φi j (ρ, η, t)ρ2η dt d η dρ. (10) Equation (10) is a tensor-product cubature formula over each sector. Choosing x0 at a vertex of the polyhedron or xi
+
+at a vertex of a face can eliminate some zero-volume or redundant sectors, but the best choice depends on the face and edge counts and on the desired weight distribution. For convex and star-convex polyhedra, interior scaling centers lead to positive sector volumes when the boundary orientation is consistent. For nonconvex polyhedra or exterior choices of x0, the signed volumes in (10) handle the required cancellation, provided the integrand can be evaluated on the swept tetrahedral sectors. 
+
+2.6. Relationship to HNI and previous SBC work 
+
+The SB formula also clarifies the relationship with homogeneous numerical integration. Suppose, for simplicity, that x0 = 0 and that f is homogeneous of degree q, so f (ρs) = ρq f (s). The radial part of (3) then contains ρq+d−1 and can be integrated analytically: Z 10
+
+ρq+d−1 dρ = 1
+
+q + d .
+
+This recovers the dimension-reduction structure used in HNI for homogeneous functions over polytopes [17–19]. In particular, the recursive face-to-edge construction in Algorithm 1 parallels the recursive polyhedron integration procedure in Section 3.1 of Chin et al. [19]: each step replaces an integral over a polytope by oriented integrals over its facets. The distinction is that HNI evaluates the radial contribution analytically by exploiting homogeneity, whereas SBC retains the radial variables and applies quadrature to them. This removes the restriction to homogeneous integrands and permits black-box smooth functions, nonpolynomial functions, and parametric curved geometries. The two-dimensional version of this connection was developed in detail in [16]; the present construction is its higher-dimensional extension. 6x0
+
+xi
+
+vi j 1
+
+vi j 2
+
+Si
+
+6Vi j 
+
+η
+
+t
+
+ρ            
+
+> Figure 3: One tetrahedral sector in the a ffi ne-polyhedron construction. The face map sweeps from the face point xito the edge ( vi j 1,vi j 2), and the volume map sweeps that face sector from x0. The arrows indicate representative coordinate directions: tmoves along the edge, ηsweeps the face sector from xitoward points on the edge, and ρsweeps the resulting face sector through the tetrahedral volume.
+
+3. Integration of weakly singular functions 
+
+The scaled boundary map is particularly useful for weakly singular integrals when the singular set is compatible with the scaling direction. The Jacobian factor generated by the map can cancel part, or all, of the singular radial power, thereby reducing the burden on the one-dimensional quadrature rule in the scaling coordinate. This section summarizes that mechanism for point singularities in arbitrary dimension and then introduces transverse scaling for affi ne singular sets, with an explicit three-dimensional straight-line specialization. 
+
+3.1. Point singularities in Rd
+
+Let R ⊂ Rd be represented by the oriented boundary patches used in Section 2.1, and consider 
+
+I =
+
+Z
+
+> R
+
+g(x)
+
+∥x − xc∥β dx, (11) where g is smooth on an open set containing the swept region R+, as in the nonsingular case; the only singular factor is the radial distance term. A point singularity of this form is locally integrable if 0 < β < d. (12) We first assume that xc is an admissible scaling center and set x0 = xc in (1). Then 
+
+∥φi(ρ, t) − xc∥ = ρ ∥si(t) − xc∥, (13) and the Jacobian in (2) contributes ρd−1. Hence, (11) becomes 
+
+I =
+
+X
+
+> i
+
+Z 10
+
+Z
+
+> Di
+
+g φi(ρ, t) ρd−1−β det [ si(t) − xc, ∂ 1 si, . . . , ∂ d−1 si]
+
+∥si(t) − xc∥β dt dρ. (14) The singular radial dependence has been reduced to the power ρd−1−β. In three dimensions, the common kernels 1 /r
+
+and 1 /r2 therefore leave the powers ρ and ρ0, respectively. The latter case removes the radial singularity exactly, while the former yields a smooth radial factor for smooth g and boundary maps. For fractional or stronger weak singularities, it can be advantageous to modify the radial scaling. Define the generalized scaled boundary map 
+
+φi,α (ξ, t) = xc + ξα si(t) − xc
+
+, 0 ≤ ξ ≤ 1, α > 0. (15) 7Since ρ = ξα, this map has Jacobian 
+
+Ji,α (ξ, t) = α ξ αd−1 det [ si(t) − xc, ∂ 1 si, . . . , ∂ d−1 si] . (16) Substitution into (11) gives 
+
+I =
+
+X
+
+> i
+
+Z 10
+
+Z
+
+> Di
+
+g φi,α (ξ, t) α ξ α(d−β)−1 det [ si(t) − xc, ∂ 1 si, . . . , ∂ d−1 si]
+
+∥si(t) − xc∥β dt dξ. (17) The exponent α(d − β) − 1 is nonnegative whenever α(d − β) ≥ 1. For polynomial integrands and a ffi ne patches, choosing the smallest positive integer α such that α(d − β) is a positive integer removes fractional radial powers while limiting the increase in polynomial degree caused by the composition g(φi,α ). When this choice would make the mapped integrand unnecessarily high degree, an alternative is to retain the standard map and use a Gauss–Jacobi rule in the radial coordinate with weight ρd−1−β, or to use a Gauss–Jacobi rule in ξ for the weight ξα(d−β)−1; see, for example, the convergence results for singular simplex integrals in [42] and the two-dimensional SBC discussion in [16]. The formulas above remove only the radial singularity associated with the scaling center. The remaining fac-tor ∥si(t) − xc∥−β is a boundary-patch contribution. If the singular point lies on, or very near, one of the boundary patches, then this factor can be singular or nearly singular in the patch parameters. In two dimensions, this residual edge contribution can be treated by distance transformations for a ffi ne edges and related near-singular integration techniques [16, 43, 47]. In higher dimensions, the same issue becomes a lower-dimensional singular or nearly sin-gular integral over the boundary-patch parameter domain. Possible remedies include patch subdivision, local patch-parameter transformations, or an alternative scaling center to isolate the di ffi cult feature. The point-singularity studies in Section 4.4 first isolate the radial part of this behavior and then test one such local patch-parameter transformation: a face-level transfer for the boundary-patch contribution that remains when the singular point approaches a face. 
+
+3.2. Point singularities in three-dimensional sectors 
+
+For a three-dimensional region bounded by parametric surfaces, the preceding expression takes a compact form. Let si(t, u) be an oriented surface patch and set x0 = xc. With the generalized map 
+
+φi,α (ξ, t, u) = xc + ξα si(t, u) − xc
+
+, (18) we obtain 
+
+Z
+
+> R
+
+g(x)
+
+∥x − xc∥β dx =
+
+X
+
+> i
+
+Z 10
+
+Z
+
+> Di
+
+g φi,α (ξ, t, u) α ξ α(3 −β)−1 si(t, u) − xc
+
+ · (∂t si × ∂u si)
+
+∥si(t, u) − xc∥β dt du d ξ. (19) The standard choice α = 1 leaves the radial powers ξ2−β. Thus the Newtonian kernel β = 1 leaves a factor ξ, and the stronger weak singularity β = 2 leaves no radial power. If β is fractional, or if a higher-order smoothness condition is desired in the radial coordinate, the generalized map can be chosen so that α(3 − β) − 1 is a convenient nonnegative integer. Otherwise, a weighted radial rule is often preferable because it avoids over-resolving the composed function 
+
+g(xc + ξα(si − xc)). For a ffi ne polyhedra, (10) can be modified in the same manner by choosing the volume scaling center x0 = xc and replacing the outer scaling coordinate by ξα. For a face sector si j (t, u), this gives 
+
+Z
+
+> P
+
+g(x)
+
+∥x − xc∥β dx =
+
+X
+
+> i
+
+X
+
+> j
+
+6Vi j 
+
+Z 10
+
+Z 10
+
+Z 10
+
+g xc + ξα(si j (t, u) − xc) α ξ α(3 −β)−1t
+
+∥si j (t, u) − xc∥β du dt d ξ. (20) The factor t is inherited from the recursive face decomposition and is independent of the point-singularity cancellation. The face scaling points xi still influence the behavior of the surface factor ∥si j (t, u) − xc∥−β and should be chosen, together with any face subdivision, so that near-singular features are not spread over large parameter intervals. If xc lies outside R, the integrand is smooth on the region but may be nearly singular. Such integrals are known to converge slowly under standard polynomial-precision rules when the source approaches the integration domain [47, 848]. In this setting, placing the scaling center at xc may require evaluating g on swept sectors outside the physical region and can introduce signed weights. This is permissible in the oriented formulation when the integrand is defined on the swept region, but it is not always the most stable choice. Local subdivision around the closest boundary feature, a local patch-parameter transformation, or an adaptive rule may be more e ffi cient for nearly singular exterior sources. The numerical examples in Section 4.4 include both separated point singularities and a near-boundary point-source test that applies such a face-level parameter transfer to the residual boundary factor. 
+
+3.3. Transverse scaling for a ffi ne singular sets 
+
+We consider a straight line singularity in three dimensions. Choose a point on the line as the origin and an orthonormal frame in which e3 is tangent to the line and e1, e2 span the transverse plane. In these adapted coordinates, write x = x1e1 + x2e2 + x3e3. The singular line is {λe3 : λ ∈ R}, and the transverse distance is r⊥(x) = (x21 + x22)1/2.Since the local transverse measure is two-dimensional, the kernel r⊥(x)−β is locally integrable when 0 < β < 2. (21) We therefore consider integrals of the form 
+
+I =
+
+Z
+
+> R
+
+g(x)
+
+r⊥(x)β dx. (22) For each boundary patch, write 
+
+si1 = si · e1, si2 = si · e2, si3 = si · e3. (23) The line-singularity map scales only the transverse coordinates, 
+
+eφi(ρ, t, u) = ρsi1(t, u)e1 + ρsi2(t, u)e2 + si3(t, u)e3, 0 ≤ ρ ≤ 1. (24) The Jacobian determinant of (24) is 
+
+eJi(ρ, t, u) = ρ (si1 (∂t si2∂u si3 − ∂u si2∂t si3) − si2 (∂t si1∂u si3 − ∂u si1∂t si3)) . (25) Equivalently, if si⊥ = (si1, si2) and ri⊥ = ∥si⊥∥, then the distance from the mapped point to the singular line satisfies dist  eφi(ρ, t, u), {λe3 : λ ∈ R} = ρri⊥. (26) Consequently, 
+
+I =
+
+X
+
+> i
+
+Z 10
+
+Z
+
+> Di
+
+g eφi(ρ, t, u) ρ1−β
+
+rβ
+
+> i⊥
+
+(si1 (∂t si2∂u si3 − ∂u si2∂t si3) − si2 (∂t si1∂u si3 − ∂u si1∂t si3)) dt du d ρ. (27) For the common kernel r⊥(x)−1, the factor ρ in the Jacobian cancels the transverse radial singularity exactly. For this three-dimensional line case, the transformed radial power is ρ1−β, reflecting the two-dimensional transverse measure. Fractional values of β can be handled by Gauss–Jacobi quadrature in ρ or by a generalized transverse scaling ρ =
+
+ξα, which changes the radial power to ξα(2 −β)−1. Note, the construction assumes a straight singular line, or a local approximation in which a straight tangent frame is adequate. Curved singular lines require local frames and additional geometric terms. The denominator rβ 
+
+> i⊥
+
+in (27) is the analogue of the boundary-patch factor in the point-singularity formula. If the singular line intersects, or nearly intersects, a boundary patch, then ri⊥ can vanish or become small in the patch parameters and the transverse scaling alone is insu ffi cient. This is the three-dimensional counterpart of the edge-direction near singularities treated by distance transformations in two dimensions [16, 43, 47]. The patch should then be subdivided so the intersection is isolated, or an additional parameter transformation should be applied on the aff ected patch. The numerical study in Section 4.5 tests this straight-line transformation for a centered line and then moves the line toward a boundary patch to show how a face-level parameter transformation removes the remaining near-singular patch behavior. 9Table 1: Radial powers remaining after scaled boundary transformations for representative weak singularities. 
+
+Singularity Setting Transformation Remaining radial power point r−β d standard SB ρd−1−β
+
+point r−β d generalized SB, ρ = ξα ξα(d−β)−1
+
+affi ne set r−β 
+
+> ⊥
+
+codim. c transverse scaling ρc−1−β
+
+affi ne set r−β 
+
+> ⊥
+
+codim. c generalized transverse scaling ξα(c−β)−1
+
+This line-singularity map and the standard SB map can also be viewed as members of a broader family of scaled-boundary-like transformations. Such maps use boundary information to define canonical quadrature points by pre-serving selected coordinates and scaling the remaining transverse coordinates toward a lower-dimensional reference set. For weakly singular functions, this viewpoint is useful when the preserved coordinates can be aligned with the singular set. If an a ffi ne singular set has dimension m in Rd, then its transverse codimension is c = d − m; the local kernel r−β 
+
+> ⊥
+
+is integrable for 0 < β < c, and transverse scaling leaves the radial power ρc−1−β. The point-singularity map corresponds to m = 0, the straight-line case above corresponds to m = 1 and d = 3, and a plane-collapse map in three dimensions would correspond to m = 2 and d = 3. The same coordinate-preserving viewpoint also includes nonsin-gular integration rules. In particular, the planar Sommariva–Vianello Gauss–Green and product Gauss constructions are related m = 1, d = 2 members of the family: they preserve a boundary coordinate and use boundary information to generate canonical cubature rules without first forming an area mesh [30, 31]. 
+
+3.4. Practical use 
+
+The preceding formulas, together with the distance-transformation results for near-singular boundary integrals [16, 43, 47], suggest the following strategy. For point singularities, choose the volume scaling center at the singular point whenever the oriented swept sectors are admissible and the integrand is defined on them. For a ffi ne singular sets of positive dimension, align the coordinate system with tangent and transverse directions and scale only the transverse coordinates. In both cases, if the singular set intersects or nearly intersects a boundary patch, the transformation reduces or cancels the radial singularity in the swept coordinate but does not remove singular behavior that remains in the boundary parametrization. The a ff ected patch can then be treated with a local parameter transformation, with subdivision used if needed to isolate the di ffi cult feature. The point and line singularity examples in Section 4.4– Section 4.5 exercise these choices: the point-source examples include a face-level transfer for a near-boundary source, while the line-source examples compare the untransformed and transferred boundary-patch rules as a line approaches a boundary patch. Table 1 summarizes the radial powers produced by the transformations. The exponent is the power of the scaling coordinate that remains after multiplying the singular kernel by the corresponding Jacobian. Nonnegative integer exponents are convenient for polynomial exactness with ordinary Gauss rules. For fractional exponents, Gauss– Jacobi weighting avoids increasing the degree of the composed integrand; this option is used in the examples below and was also e ff ective in the planar SBC setting [16]. 
+
+4. Numerical results 
+
+This section reports numerical studies that verify the smooth and singular cubature constructions introduced above. The first examples establish the baseline behavior of the tensor-product scaled-boundary rule on smooth curved solids. The remaining examples examine a ffi ne polyhedra and nonconvexity, a four-dimensional a ffi ne polytope, and weakly singular integrands. 
+
+4.1. Curved surface-bounded solids 
+
+We first consider two solids whose oriented boundary patches are swept from the origin. The first is a watertight quadratic B-spline pillow made from six tensor-product patches. Let h = (1 .35 , 1.00 , 0.75) denote the half widths of the underlying rectangular box in the e1, e2, and e3 directions, and set δ = 0.35. Define the half-axis vectors qk = hkek.10 Each face is specified by an outward face vector n and two tangent half-axis vectors a and b, ordered so that a × b
+
+points outward. The six triples are (n, a, b) ∈ { (q1, q2, q3), (−q1, q3, q2), (q2, q3, q1), (−q2, q1, q3), (q3, q1, q2), (−q3, q2, q1)}. (28) For each triple, the polynomial patch is 
+
+s(r, t) = h1 + δ(1 − r2)(1 − t2)i n + ra + tb, −1 ≤ r, t ≤ 1. (29) This polynomial form is the explicit evaluation of the same quadratic B-spline patch used in the computations. Equiv-alently, with r = 2u − 1, t = 2v − 1, the open quadratic knot vector {0, 0, 0, 1, 1, 1}, and Bernstein control coordinates 
+
+ri, t j ∈ {− 1, 0, 1}, the control points are 
+
+Pi j = n + ri a + t j b + 4δn 1i=1, j=1, i, j = 0, 1, 2. (30) The second geometry is the quadratic NURBS torus from [34], with major radius 3 and minor radius 1. The geometries are shown in Fig. 4; the black curves show the control nets and the interior points show a representative fourth-order scaled-boundary rule. The B-spline pillow tests the polynomial case in which the patch maps are polynomial, whereas the torus tests a rational surface representation for which polynomial exactness is not expected. For each nonzero knot span, we apply an n-point Gauss rule in the two surface parameters and an n-point Gauss rule in the radial coordinate ρ. The reported rule size is therefore n×n×n per knot-span sector. Two smooth integrands are used: 
+
+f1(x) = x2 + 2y2 − 3z2, f2(x) = exp( x + y + z). (31) Reference values are computed with a higher-order scaled-boundary rule, except for the polynomial torus integral where the analytic torus moments are used. Errors are plotted in Fig. 5, and the first rule orders that reach selected tolerances are listed in Table 2. −2 02x−1.5 0.0 1.5 y−1.5 0.0 1.5 z
+
+> (a)
+
+−2.5 0.0 2.5 x−2.5 0.0 2.5 y−0.8 0.0 0.8 z (b) 
+
+> Figure 4: Curved surface patches used for the smooth three-dimensional tests. The black curves show the control nets, and the plotted interior points show a representative fourth-order scaled-boundary cubature rule. (a) Quadratic B-spline pillow. (b) Quadratic NURBS torus.
+
+The B-spline pillow polynomial case reaches roundo ff once the rule is su ffi ciently high to integrate the polynomial mapped integrand. The exponential integrand is not polynomial, but the error decreases rapidly as the tensor-product order is increased. On the torus, the rational NURBS map destroys polynomial exactness even for f1, so the poly-nomial and exponential tests both show convergence rather than exactness at a fixed low order. These results are consistent with the discussion in Section 2: polynomial exactness is available for polynomial patch maps and polyno-mial integrands, whereas rational patch maps are handled by ordinary smooth quadrature convergence. 11 1 3 5 7 9 11 13 Tensor-product order 10 −16 
+
+10 −12 
+
+10 −8 
+
+10 −4 
+
+10 0
+
+> Relative error
+
+x2 + 2 y2 − 3 z2
+
+exp( x + y + z)(a) 1 3 5 7 9 11 13 Tensor-product order 10 −16 
+
+10 −12 
+
+10 −8 
+
+10 −4 
+
+10 0
+
+> Relative error
+
+x2 + 2 y2 − 3 z2
+
+exp( x + y + z) (b) 
+
+Figure 5: Convergence of the tensor-product scaled-boundary rule for smooth integrands over curved solids. The B-spline pillow is polynomial and reaches machine precision for the polynomial integrand at modest order. The NURBS torus exhibits rapid convergence but is not polynomial-exact in the tensor-product coordinates. (a) Quadratic B-spline pillow. (b) Quadratic NURBS torus. Table 2: First tensor-product rule orders that reach selected error tolerances for the curved-solid tests. Each entry denotes an n × n × n rule on each nonzero knot-span sector. 
+
+Relative error Geometry Integrand < 10 −4 < 10 −8 < 10 −12 
+
+B-spline pillow x2 + 2y2 − 3z2 4 × 4 × 4 4 × 4 × 4 4 × 4 × 4B-spline pillow exp( x + y + z) 4 × 4 × 4 6 × 6 × 6 9 × 9 × 9NURBS torus x2 + 2y2 − 3z2 4 × 4 × 4 8 × 8 × 8 11 × 11 × 11 NURBS torus exp( x + y + z) 6 × 6 × 6 10 × 10 × 10 14 × 14 × 14 12 4.2. A ffi ne polyhedra and nonconvexity 
+
+We next test the a ffi ne specialization of the rule on polyhedra with polygonal and triangular faces. The exam-ples in Fig. 6 include the Szilassi polyhedron, a truncated hexagonal trapezohedron, the Echidnahedron, and the dodecahedron-small triambic icosahedron compound; these polyhedral shapes are taken from [34]. The plotted points are produced by a 4 × 4 × 3 rule on each tetrahedral sector generated by the nested map in Section 2. This rule integrates polynomials of degree at most five on each sector because the Jacobian contributes the factor ρ2η and the affi ne coordinate map leaves a polynomial integrand polynomial in ( ρ, η, t). −4 04 −4 04−4 04
+
+> (a)
+
+−5 05 −5 05−5 05 (b) −4 04 −4 04−4 04
+
+> (c)
+
+−2.5 0.0 2.5 −2.5 0.0 2.5 −2.5 0.0 2.5 (d)     
+
+> Figure 6: A ffi ne-polyhedron examples with representative 4 ×4×3 scaled-boundary cubature points. Each polygonal face is triangulated by the nested face map, and each face triangle is then scaled from the chosen center. (a) Szilassi polyhedron. (b) Truncated hexagonal trapezohedron. (c) Echidnahedron. (d) Dodecahedron-small triambic icosahedron compound.
+
+To verify exactness, we integrate every monomial xaybzc with a+b+c ≤ 5. Reference values are computed analyt-13 ically on the same oriented tetrahedral sector decomposition by expanding each a ffi ne coordinate map in barycentric coordinates. The largest error over all tested monomials is shown in Table 3. The errors are at roundo ff level for all four geometries, including the nonconvex Szilassi polyhedron. This confirms that the nested a ffi ne formula achieves the expected polynomial exactness when the boundary orientation is consistent.     
+
+> Table 3: Polynomial exactness test for the 4 ×4×3 a ffi ne-polyhedron rule. The table reports the largest error over all monomials of total degree at most five.
+
+Geometry Cubature points Max. absolute error Max. relative error Szilassi polyhedron 1344 1.05 × 10 −11 2.83 × 10 −15 
+
+Truncated hexagonal trapezohedron 2112 1.46 × 10 −10 1.37 × 10 −13 
+
+Echidnahedron 8640 3.41 × 10 −13 2.18 × 10 −14 
+
+Dodecahedron-small triambic icosahedron 8640 1.82 × 10 −12 2.28 × 10 −13 
+
+The same sector formula can produce signed weights when the scaling center is not star-convex with respect to the oriented boundary. To quantify this e ff ect, Table 4 reports Pq |wq|/| Pq wq| and the number of negative weights for the origin-centered rules shown in Fig. 6. The truncated hexagonal trapezohedron, Echidnahedron, and dodecahedron-small triambic icosahedron have positive weights for this center. The Szilassi polyhedron, however, has both positive and negative sectors, and the sum of absolute weights is about 1 .55 times the net oriented volume. The exactness test is still satisfied, but the signed weights indicate the cancellation that can arise in nonconvex or non-star-convex settings.     
+
+> Table 4: Signed-weight diagnostics for the origin-centered 4 ×4×3 a ffi ne-polyhedron rules.
+
+Geometry Pq |wq|/| Pq wq| Positive weights Negative weights Szilassi polyhedron 1.546 672 672 Truncated hexagonal trapezohedron 1.000 2112 0Echidnahedron 1.000 8640 0Dodecahedron-small triambic icosahedron 1.000 8640 0
+
+4.3. Four-dimensional a ffi ne polytope 
+
+The preceding examples focus on three-dimensional regions. To exercise the higher-dimensional recursive con-struction more directly, we also integrate over a rotated and sheared a ffi ne image of the tesseract [ −1, 1] 4. The map has the form 
+
+x = A ˆx + b, ˆx ∈ [−1, 1] 4, (32) with 
+
+A =
+
+
+
+1.03736796 −0.19598887 −0.27921549 −0.06768860 0.49957008 0.90454137 −0.13446309 −0.03259711 0.31769041 0.05956695 0.99179131 0.51405037 
+
+−0.11562985 −0.02168060 −0.36098252 0.66424318 
+
+
+
+, b =
+
+
+
+0.20 
+
+−0.10 0.15 0.05 
+
+
+
+. (33) Equivalently, the matrix is generated as 
+
+A = R12 (π/ 7) R34 (−π/ 9) R13 (π/ 11) H D , (34) where Ri j (θ) denotes a rotation by angle θ in the ( i, j) coordinate plane, 
+
+D = diag(1 .20 , 0.90 , 1.10 , 0.80) , H =
+
+
+
+1 1/4 0 00 1 0 00 0 1 1/30 0 0 1
+
+
+
+. (35) 14 Thus the reference tesseract is first anisotropically scaled, then sheared in two coordinate directions, and finally rotated in the (1 , 3), (3 , 4), and (1 , 2) coordinate planes. The rotations are not required by the construction; they are included only to make the a ffi ne image oblique to the coordinate axes while preserving a simple determinant. The nested SBC rule uses the image of the origin as the scaling center, sweeps to each cubical three-dimensional facet, triangulates each facet into six tetrahedra, and applies the nested a ffi ne-sector map on the resulting four-simplices. Tensor-product Gauss quadrature on the reference tesseract is used as an independent verification rule. For the chosen a ffi ne map, the exact volume is 16 | det A| = 15 .2064. On each four-simplex sector, the volume Jacobian is proportional to a3b2c in the nested coordinates ( a, b, c, d), so a 2 × 2 × 1 × 1 Gauss rule is already exact for volume. This minimal nested SBC rule evaluates to 15 .206400000000002, while a sixteenth-order tensor-product rule returns 15 .206400000000002. Thus both absolute volume errors are 3 .6 × 10 −15 . A fifth-order nested rule is then used for the moment study; it integrates all monomial moments through total degree five to roundo ff when compared with the tensor-product verification values, as shown in Table 5. 
+
+> Table 5: Maximum moment errors for the rotated and sheared a ffi ne tesseract. The nested SBC rule uses order five in each tensor-product coordinate and is compared with a sixteenth-order tensor-product rule on the reference tesseract.
+
+Total degree Number of moments Max absolute error Max relative error 0 1 2.13 × 10 −14 1.40 × 10 −15 
+
+1 4 3.11 × 10 −15 1.36 × 10 −15 
+
+2 10 3.55 × 10 −15 1.33 × 10 −15 
+
+3 20 6.22 × 10 −15 2.19 × 10 −15 
+
+4 35 1.07 × 10 −14 2.27 × 10 −15 
+
+5 56 1.15 × 10 −14 2.33 × 10 −15 10 2 10 3 10 4 10 5
+
+Cubature points 10 −16 
+
+10 −12 
+
+10 −8 
+
+10 −4 
+
+10 0
+
+> Relative error
+> (a)
+
+10 2 10 3 10 4 10 5
+
+Cubature points 10 −16 
+
+10 −12 
+
+10 −8 
+
+10 −4 
+
+10 0    
+
+> Relative error (b)
+> Figure 7: Convergence of the nested SBC rule on the rotated and sheared a ffi ne tesseract, using tensor-product Gauss quadrature on the reference tesseract as the verification rule. (a) Maximum error over monomial moments of total degree at most five. (b) Error for exp( c·x) with a fixed coe ffi cient vector c.
+
+The convergence in Fig. 7 is consistent with the polynomial exactness of the nested a ffi ne map. The maximum error over all moments of total degree at most five reaches roundo ff by order four. For the smooth nonpolynomial test exp( c · x), the relative error decreases from 5 .1 × 10 −3 at order two to 1 .5 × 10 −8 at order four, 1 .3 × 10 −11 at order five, and roundo ff by order seven. This example verifies that the recursive a ffi ne-polytope construction used in three dimensions extends directly to a non-simplex polytope in four dimensions. 
+
+4.4. Point singularities 
+
+We now separate the point-source tests into three regimes. The first tests ordinary scaled-boundary cancellation for integer powers, the second tests generalized radial scaling for fractional powers, and the third tests the residual 15 near-boundary factor that remains on a face after the volume scaling has been applied. 
+
+4.4.1. Integer powers away from the boundary 
+
+The basic cancellation test uses 
+
+Iβ =
+
+Z
+
+> Ω
+
+1
+
+∥x∥β dx, β ∈ { 1, 2}, (36) with the singular point used as the scaling center, xc = x0 = 0. The point is well separated from each boundary patch of the truncated hexagonal trapezohedron (THT) and the B-spline pillow. Therefore the only singular factor exposed by the scaled-boundary map is the radial power ρ2−β. For β = 1 this is the polynomial factor ρ, and for β = 2 it is the constant factor 1. Ordinary Gauss quadrature in the radial coordinate is therefore su ffi cient; generalized scaling or Gauss–Jacobi weighting would give the same radial rule for these two cases. Reference values are computed by integrating the radial factor analytically, giving 1 /(3 − β), and multiplying by a high-order surface quadrature approximation of the remaining smooth boundary integral. To separate the radial requirement from the cost of resolving the boundary patches, we next fix the radial rule at nρ = 1 and vary only the surface order. The reference values use a high-order surface rule and the exact radial factor 1 /(3 − β). Since one Gauss point integrates both remaining radial factors exactly, the convergence in Fig. 8 is controlled by the surface quadrature alone. The THT reaches the 10 −8 and 10 −12 tolerances at surface orders 8 and 13 for β = 1, and 9 and 14 for β = 2. The B-spline pillow reaches 10 −8 at orders 11 and 12 and 10 −12 at orders 16 and 17 for β = 1 and β = 2, respectively. The B-spline panel is extended to surface order 24, where the relative errors are about 1 .4 × 10 −16 and 6 .2 × 10 −16 for the two kernels. The higher order for the B-spline pillow is still inexpensive relative to the THT rule: the THT boundary decomposition produces 44 tetrahedral sectors, so a 16 × 16 surface rule is applied 44 times, whereas the B-spline case uses six tensor-product patch rules. 5 10 15 Surface order 10 −16 
+
+10 −12 
+
+10 −8 
+
+10 −4 
+
+10 0  
+
+> Relative error
+> β= 1
+> β= 2
+> (a)
+
+0 10 20 Surface order 10 −16 
+
+10 −12 
+
+10 −8 
+
+10 −4 
+
+10 0             
+
+> Relative error
+> β= 1
+> β= 2 (b)
+> Figure 8: Surface-order convergence for integer point-singular kernels with the radial order fixed at nρ=1. The single radial point is su ffi cient for the β=1 and β=2 kernels, so the remaining error comes from the boundary-patch integration. The B-spline panel is run to surface order 24 to show convergence to near-roundo ff error. (a) Truncated hexagonal trapezohedron. (b) B-spline pillow.
+
+The total-cubature plot in Fig. 9 shows the same trend with cost measured by the number of points rather than by the surface order. The THT panel uses orders through 16 on each tetrahedral sector, while the B-spline panel is extended through surface order 24 on each of the six pillow patches. The comparison confirms that, for these integer kernels away from the boundary, the radial singularity has been removed by the SB map and the observed convergence is governed by the boundary quadrature. 
+
+4.4.2. Fractional powers away from the boundary 
+
+The generalized scaled-boundary map is more relevant for fractional powers. We next use β ∈ { 0.5, 1.5, 2.5} on the same two geometries, again with the singular point far from the boundary. The standard map leaves a non-polynomial radial factor ρ2−β. The generalized map sets ρ = ξα and chooses the smallest integer α such that α(3 − β) − 1 is a 16 10 2 10 3 10 4 10 5
+
+Cubature points 10 −16 
+
+10 −12 
+
+10 −8 
+
+10 −4 
+
+10 0  
+
+> Relative error
+> β= 1
+> β= 2 (a)
+
+10 1 10 2 10 3 10 4 10 5
+
+Cubature points 10 −16 
+
+10 −12 
+
+10 −8 
+
+10 −4 
+
+10 0         
+
+> Relative error
+> β= 1
+> β= 2 (b)
+> Figure 9: Standard scaled-boundary convergence for integer point-singular kernels with the singularity far from the boundary patches. For β=1and β=2, the remaining radial powers are polynomial, so no generalized radial treatment is needed. (a) Truncated hexagonal trapezohedron. (b) B-spline pillow.
+
+nonnegative integer; for these half-integer examples, α = 2. We compare this with a Gauss–Jacobi radial rule that keeps the standard map but integrates the weight ρ2−β directly. As in the integer-power study, the homogeneity of the kernel lets us separate the radial and surface contributions. The exact radial factor is again 1 /(3 − β). Generalized SB makes the transformed radial factor polynomial for these half-integer powers, while Gauss–Jacobi integrates the original radial weight directly; in either case the remaining convergence is governed by the boundary-patch quadrature. To show this, Fig. 10 fixes the radial contribution analyt-ically and varies only the surface order. 5 10 15 Surface order 10 −16 
+
+10 −12 
+
+10 −8 
+
+10 −4 
+
+10 0   
+
+> Relative error
+> β= 0.5
+> β= 1.5
+> β= 2.5
+> (a)
+
+0 10 20 Surface order 10 −16 
+
+10 −12 
+
+10 −8 
+
+10 −4 
+
+10 0    
+
+> Relative error
+> β= 0.5
+> β= 1.5
+> β= 2.5 (b)
+> Figure 10: Surface-order convergence for fractional point-singular kernels after the homogeneous radial factor is integrated exactly. The THT panel uses surface orders through 16 on each tetrahedral sector, while the B-spline panel uses orders through 24 on each of the six tensor-product pillow patches. (a) Truncated hexagonal trapezohedron. (b) B-spline pillow.
+
+The surface-order results reach the same thresholds as the generalized and Gauss–Jacobi curves in the total-cost plot. On the THT, the 10 −8 thresholds occur at orders 8, 9, and 9 for β = 0.5, 1.5, 2.5, respectively, and the 10 −12 
+
+thresholds occur at orders 12, 13, and 14. On the B-spline pillow, the 10 −8 thresholds occur at orders 10, 11, and 12, and the 10 −12 thresholds occur at orders 15, 17, and 18. The fractional-power results in Fig. 11 isolate the benefit of the generalized transform. Unlike the surface-order 17 10 2 10 3 10 4 10 5
+
+Cubature points 10 −16 
+
+10 −12 
+
+10 −8 
+
+10 −4 
+
+10 0
+
+> Relative error
+
+β = 0.5 
+
+> standard SB generalized SB Gauss-Jacobi
+
+10 2 10 3 10 4 10 5
+
+Cubature points 
+
+β = 1.5 10 2 10 3 10 4 10 5
+
+Cubature points 
+
+β = 2.5 (a) 10 1 10 2 10 3 10 4
+
+Cubature points 10 −16 
+
+10 −12 
+
+10 −8 
+
+10 −4 
+
+10 0
+
+> Relative error
+
+β = 0.5 
+
+> standard SB generalized SB Gauss-Jacobi
+
+10 1 10 2 10 3 10 4
+
+Cubature points 
+
+β = 1.5 10 1 10 2 10 3 10 4
+
+Cubature points 
+
+β = 2.5 
+
+> (b)
+
+Figure 11: Convergence for fractional point-singular kernels ∥x∥−β with the singular point used as the scaling center. The standard SB rule must approximate a fractional radial power, while generalized SB and Gauss–Jacobi quadrature remove or weight that factor directly. (a) Truncated hexagonal trapezohedron. (b) B-spline pillow. 
+
+18 diagnostic in Fig. 10, these curves use full tensor-product rules: the same order is used in the surface coordinates and in the radial coordinate, and the horizontal axis reports the resulting total number of cubature points. For all three half-integer powers, the standard SB rule does not reach 10 −8 by order 16. On the THT, both generalized SB and Gauss–Jacobi reach 10 −8 at orders 8, 9, and 9 for β = 0.5, 1.5, 2.5, respectively, and 10 −12 at orders 12, 13, and 14. On the B-spline pillow, the corresponding 10 −8 thresholds are orders 10, 11, and 12; the surface-order diagnostic shows that the corresponding 10 −12 thresholds occur at surface orders 15, 17, and 18. 
+
+4.4.3. Near-boundary point sources 
+
+The preceding tests remove the radial singularity, after which the remaining error is governed by the boundary-patch integral. Even when the source is not asymptotically close to the boundary, the surface integral contribution can still require many quadrature points. We now test a more localized version of the same e ff ect using a single tetrahedral sector. As shown in Fig. 12, the point source is also the volume scaling center x0 at one vertex of the tetrahedron. One tetrahedron edge is aligned with the segment from x0 to the face scaling center, so the singularity-aligned decomposition consists of a single tetrahedral sector. The face scaling center is a vertex of the opposite face, the two incident face edges have fixed length L = 2, and the opposite face edge is placed a distance d from this point. Thus, as d → 0, both the volume face and the opposite face edge approach the singularity, while the perimeter of the face approaches 4 L. The outer SB map cancels the 1 /r singularity in the volume radial coordinate, but the remaining boundary integrand ∥s− xc∥−1 on the opposite face becomes nearly singular near the face scaling center and the nearby edge. The face scaling center is chosen as the closest point on the triangular face to the source. The local SB map on the face uses a face-radial coordinate η from this center to the opposite edge and an edge coordinate τ along that edge. The 
+
+t-transfer is applied only to the edge coordinate τ. In the face-radial direction, the local SB surface Jacobian already supplies the factor η; in the limiting case d = 0, this exactly cancels the 1 /η behavior of the remaining boundary factor. On the opposite edge, the residual edge-direction distance has the limiting form r(τ) = √ℓ2 + τ2, where ℓ is the perpendicular distance from the face scaling center to the edge. We therefore compare ordinary Gauss quadrature in τ with the t-transfer used for near-singular edge factors in the planar SBC scheme [16]: ˜τ = log τ + √ℓ2 + τ2 , τ = 12 e−˜τ e2˜ τ − ℓ2 . (37) xc = x0  
+
+> dℓ=d
+> (a)
+
+0.0 0.5 face  y  
+
+> ℓ=d
+
+−2 0 2face x
+
+0.0 0.5 face  y              
+
+> ℓ=d
+> 0.48 0.64 0.80 0.96 1.12 1.28 1.44 1.60 1.76 1.92
+> 1/‖ s − xc‖(b)
+> Figure 12: Near-boundary point-source geometry. The 3D panel shows the single tetrahedral sector and the equal distances dand ℓ=d. The face panel shows the remaining boundary factor ∥s−xc∥−1and compares isocontours of the transferred and untransformed edge coordinates; darker contour lines correspond to larger coordinate values. (a) Tetrahedral sector geometry. (b) Face factor with ˜ τcontours on top and untransformed τ
+> contours below.
+
+19 10 20 30 40 Edge-parameter order 10 −16 
+
+10 −12 
+
+10 −8 
+
+10 −4 
+
+10 0
+
+> Relative error
+> standard t-transfer (a)
+
+10 20 30 40 Edge-parameter order 10 −16 
+
+10 −12 
+
+10 −8 
+
+10 −4 
+
+10 0 
+
+> Relative error (b)
+
+Figure 13: Near-boundary point-source convergence with increasing edge-direction order. The face-radial coordinate is integrated with 720 Gauss points, so the plotted errors primarily reflect edge-direction quadrature. The t-transfer reduces the near-singularity left on the face when the opposite edge approaches the source. (a) d = 10 −2. (b) d = 10 −4.10 −4 10 −3 10 −2 10 −1 10 0
+
+Distance d 10 −12 
+
+10 −10 
+
+10 −8 
+
+10 −6 
+
+10 −4 
+
+> Relative error
+> standard t-transfer
+> (a)
+
+10 −4 10 −3 10 −2 10 −1 10 0
+
+Distance d 10 −16 
+
+10 −13 
+
+10 −10 
+
+10 −7 
+
+10 −4  
+
+> Relative error (b)
+
+Figure 14: Near-boundary point-source error as the source approaches the face. The separation between the standard edge rule and the t-transfer increases when a su ffi ciently high edge-direction order is used. (a) Edge-direction order 12. (b) Edge-direction order 36. 
+
+20 This test confirms that the volume radial cancellation and the face-level transfer address di ff erent factors. At d = 1, where the source is not close to the face, the standard rule reaches the 10 −8 and 10 −12 tolerances at orders 11 and 16, while the t-transfer reaches them at orders 7 and 11. At d = 10 −1, the standard edge rule does not reach 10 −8 over the tested range of edge orders, whereas the t-transfer reaches the 10 −8 and 10 −12 tolerances at orders 13 and 25. At d = 10 −2 and d = 10 −4, the standard rule again does not reach 10 −8, while the t-transfer reaches 10 −8 at orders 16 and 4 and 10 −12 at orders 30 and 28, respectively. This shows that the angular transfer is useful when true point singularities leave large, localized boundary contributions that would otherwise be poorly resolved. 
+
+4.5. Line singularities 
+
+We next test the transverse scaling map from Section 3.3. The test integrals are 
+
+Iβ =
+
+Z
+
+> [−1,1] 3
+
+1(x2 + y2)β/ 2 dx, β ∈ { 0.5, 1, 1.5}, (38) where the singular line is the z-axis. 
+
+4.5.1. Centered line 
+
+The centered-line test uses the cube because the vertical side faces are star-convex with respect to the line, while the top and bottom faces have zero measure under the transverse sweep. We compare four rules: ordinary volume SB cubature with scaling center on the line, the transverse scaling map with ordinary Gauss quadrature in the transverse coordinate, generalized transverse scaling, and the same transverse scaling map with Gauss–Jacobi quadrature for the transverse factor ρ1−β. Reference values are computed with a high-order Gauss–Jacobi transverse rule. 10 1 10 2 10 3 10 4
+
+Cubature points 10 −16 
+
+10 −12 
+
+10 −8 
+
+10 −4 
+
+10 0
+
+> Relative error
+
+β = 0.5 
+
+> volume SB line SB generalized line SB Gauss-Jacobi line SB
+
+10 1 10 2 10 3 10 4
+
+Cubature points 
+
+β = 1 10 1 10 2 10 3 10 4
+
+Cubature points 
+
+β = 1.5 
+
+> Figure 15: Convergence for centered line-singular kernels on the cube. The transverse scaling map isolates the line singularity in the transverse coordinate. For fractional transverse powers, generalized transverse scaling or Gauss–Jacobi quadrature removes the remaining noninteger radial factor.
+
+The centered-line convergence in Fig. 15 follows the radial powers in Table 1. The ordinary transverse scaling map leaves the transverse factor ρ1−β; this is a constant for β = 1, but fractional for β = 0.5 and singular for β = 1.5. Generalized transverse scaling, with ρ = ξα, and the Gauss–Jacobi rule remove or weight that factor directly, giving the fastest convergence for the fractional cases. The ordinary volume SB rule converges slowly here because the top and bottom faces intersect the singular line in their face parameters, so the point-based sweep does not isolate the line singularity as cleanly as the transverse scaling map. 
+
+4.5.2. Near-boundary line 
+
+The second line test moves the singular line to (1 − d, 0, z), leaving it inside the cube but bringing it close to the side face x = 1. The transverse scaling map still removes the transverse swept-coordinate singularity, but on that side face the remaining boundary factor is 
+
+r−β 
+
+> ⊥
+
+= d2 + y2−β/ 2
+
+, (39) 21 Table 6: First tensor-product orders reaching selected relative-error tolerances for the centered line-singularity tests. A dash indicates that the tolerance was not reached by order 16. 
+
+Relative error Kernel Treatment < 10 −8 < 10 −12 
+
+β = 0.5 volume SB – –
+
+β = 0.5 transverse scaling – –
+
+β = 0.5 gen. transverse scaling / Gauss–Jacobi 9 14 
+
+β = 1 volume SB – –
+
+β = 1 transverse scaling / gen. transverse scaling / Gauss–Jacobi 10 15 
+
+β = 1.5 volume SB – –
+
+β = 1.5 transverse scaling – –
+
+β = 1.5 gen. transverse scaling / Gauss–Jacobi 10 16 where y is measured along the face from the closest point to the line. This is the same residual patch-parameter near singularity identified in Section 3.3. For the β = 1 kernel, we therefore apply the one-dimensional t-transfer to the aff ected face coordinate, ˜y = log y +
+
+q
+
+d2 + y2
+
+!
+
+, y = 12 e−˜y e2˜ y − d2 . (40) Since dy /d˜y = pd2 + y2, this transfer cancels the 1 / pd2 + y2 factor on the near face. The transformation is applied only to the side face x = 1; all other boundary faces use ordinary transverse-scaling surface quadrature. The face-transferred rule removes the near-boundary loss of accuracy in Fig. 16. At order 12, the ordinary transverse-scaling rule has relative errors 2 .7 × 10 −3 for d = 10 −2 and 1 .3 × 10 −4 for d = 10 −4, while the transferred rule yields errors below 10 −12 in both cases. In the distance sweep at the same order, the transferred rule remains near 10 −12 over the tested distances, whereas the untransferred transverse-scaling rule reaches 2 .3 × 10 −3 at d = 10 −1 and 5.6 × 10 −3 at d = 3 × 10 −2. Thus the transverse scaling map handles the line singularity in the swept coordinate, and the additional face-level transfer handles the near singularity that remains in the a ff ected boundary-patch parameter. 22 10 1 10 2 10 3 10 4
+
+Cubature points 10 −16 
+
+10 −12 
+
+10 −8 
+
+10 −4 
+
+10 0
+
+> Relative error
+
+d = 10 −2 line SB line SB + t-transfer 
+
+10 1 10 2 10 3 10 4
+
+Cubature points 
+
+d = 10 −4 (a) 10 −3 10 −2 10 −1 10 0
+
+Line-boundary distance 10 −11 
+
+10 −9 
+
+10 −7 
+
+10 −5 
+
+10 −3  
+
+> Relative error
+> volume SB line SB line SB + t-transfer
+> (b)
+
+Figure 16: Near-boundary line-singularity tests for β = 1. The face-level t-transfer cancels the remaining near-singular factor on the side face 
+
+x = 1. (a) Convergence with increasing cubature order for two line-boundary distances. (b) Fixed-order error at order 12 as the line moves toward the side face x = 1. 
+
+23 5. Conclusions 
+
+We have developed a higher-dimensional scaled boundary cubature framework for regions described by oriented boundary representations. The construction extends the planar SBC idea to compact regions in Rd by sweeping each boundary patch to a scaling center and integrating over the patch parameters together with a radial coordinate. In three dimensions, this yields a direct volume rule for solids bounded by a ffi ne faces, triangular patches, tensor-product surface patches, B-spline patches, and NURBS patches. For a ffi ne polytopes, recursively applying the same idea on each facet produces nested tensor-product formulas over simplex sectors; in three dimensions this results in the tetrahedral-sector formula for a ffi ne polyhedra. Because the formulation is oriented, it also applies to nonconvex geometries and to scaling centers that produce signed sector contributions. The numerical examples support the main accuracy claims. On a ffi ne polyhedra and on the four-dimensional tesseract, the nested rule integrates polynomial data through the expected degree to near machine precision, including nonconvex and highly faceted three-dimensional examples. On curved solids, the B-spline and NURBS tests show rapid convergence for both polynomial and nonpolynomial integrands, while retaining the same boundary-based con-struction. These examples demonstrate that the method is not tied to simplex or tensor-product cells in the physical domain; it only requires a compatible oriented boundary representation and quadrature rules on the corresponding patch parameter domains. We also introduced scaled-boundary transformations for weakly singular functions in three dimensions. For point singularities, choosing the singular point as the scaling center exposes the radial power in the Jacobian. The standard map is su ffi cient for the common 1 /r and 1 /r2 point kernels tested here, while generalized scaling and Gauss–Jacobi quadrature recover rapid convergence for fractional powers. The near-boundary point-source study shows that this radial cancellation does not remove singular or nearly singular behavior that remains in the boundary-patch parame-ters; a face-level t-transfer substantially improves those cases. For line singularities, transverse scaling provides the analogous cancellation in the plane normal to the line, and generalized or Gauss–Jacobi transverse rules handle frac-tional transverse powers. The near-boundary line study confirms the analogous limitation: when the line approaches a boundary patch, a nearly singular patch factor remains even though the transverse volume singularity has been removed. The present work is distinct from earlier uses of SBC in two ways. The planar SBC paper [16] developed the two-dimensional construction and its relation to homogeneous numerical integration, while recent work on the VEM [44] used SBC as a component in application-specific polygonal and polyhedral discretizations. Here, the focus was on the integration framework itself: the arbitrary-dimensional boundary sweep, the three-dimensional curved-boundary and affi ne-polyhedron specializations, the four-dimensional a ffi ne-polytope verification, and the point- and line-singularity transformations. These constructions also suggest a broader family of boundary-induced transformations. The scaled-boundary rule used here collapses all three coordinate directions to a point, while the line-singularity map preserves one coor-dinate and collapses the remaining two directions to a line. A complementary plane-based map would preserve two coordinates and collapse only the normal direction to a reference plane. These point-, line-, and plane-collapse maps lead to di ff erent canonical cubature rules and di ff erent distributions of quadrature points in the physical domain. The point-collapse rule is natural for point singularities and oriented boundary representations, whereas line- and plane-collapse rules may be advantageous for smooth nonpolynomial integrands or geometries with preferred directions because they can distribute points more evenly through the domain. Several extensions remain important. Curved singular lines, surface singularities, trimmed NURBS patches, and implicit boundary representations require additional geometric machinery. Future work will also consider production implementations of these rules for high-order embedded, contact, mortar, isogeometric, and polytopal methods, where robust integration over curved and nonmatching regions is a recurring bottleneck. 
+
+Declaration of competing interest 
+
+The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper. 24 Declaration of generative AI and AI-assisted technologies in the manuscript preparation process 
+
+During the preparation of this work, the authors used GPT 5.5 to edit an initial draft of the paper and expand some sections of the manuscript based on detailed prompting from the authors. After using this tool /service, the authors reviewed and edited the content as needed and take full responsibility for the content of the published article. 
+
+Acknowledgements 
+
+This work was performed under the auspices of the U.S. Department of Energy by Lawrence Livermore National Laboratory under Contract DE-AC52-07NA27344. 
+
+References 
+
+[1] A. Cangiani, E. H. Georgoulis, P. Houston, hp -version discontinuous Galerkin methods on polygonal and poly-hedral meshes, Mathematical Models and Methods in Applied Sciences 24 (10) (2014) 2009–2041. [2] L. Beirão da Veiga, F. Brezzi, A. Cangiani, G. Manzini, L. D. Marini, A. Russo, Basic principles of virtual element methods, Mathematical Models and Methods in Applied Sciences 23 (1) (2013) 199–214. [3] L. Beirão da Veiga, A. Russo, G. Vacca, The virtual element method with curved edges, ESAIM: Mathematical Modelling and Numerical Analysis 53 (2019) 375–404. [4] N. Moës, J. Dolbow, T. Belytschko, A finite element method for crack growth without remeshing, International Journal for Numerical Methods in Engineering 46 (1) (1999) 131–150. [5] N. Sukumar, J. E. Dolbow, N. Moës, Extended finite element method in computational fracture mechanics: a retrospective examination, International Journal of Fracture 196 (2015) 189–206. [6] E. Burman, S. Claus, P. Hansbo, M. G. Larson, A. Massing, CutFEM: Discretizing geometry and partial di ff er-ential equations, International Journal for Numerical Methods in Engineering 104 (7) (2015) 472–501. [7] D. Schillinger, M. Ruess, The finite cell method: A review in the context of higher-order structural analysis of CAD and image-based geometric models, Archives of Computational Methods in Engineering 22 (2015) 391–455. [8] T. J. R. Hughes, J. A. Cottrell, Y. Bazilevs, Isogeometric analysis: CAD, finite elements, NURBS, exact ge-ometry and mesh refinement, Computer Methods in Applied Mechanics and Engineering 194 (39–41) (2005) 4135–4195. [9] B. Marussig, T. J. R. Hughes, A review of trimming in isogeometric analysis: challenges, data exchange, and simulation aspects, Archives of Computational Methods in Engineering 25 (2018) 1059–1127. [10] L. Chen, B. Simeon, S. Klinkel, A NURBS based Galerkin approach for the analysis of solids in boundary representation, Computer Methods in Applied Mechanics and Engineering 305 (2016) 777–805. [11] M. A. Puso, T. A. Laursen, A mortar segment-to-segment contact method for large deformation solid mechanics, Computer Methods in Applied Mechanics and Engineering 193 (6–8) (2004) 601–629. [12] C. Hesch, P. Betsch, Transient three-dimensional contact problems: mortar method. Mixed methods and con-serving integration, Computational Mechanics 48 (2011) 461–475. [13] P. Farah, A. Popp, W. A. Wall, Segment-based vs. element-based integration for mortar methods in computational contact mechanics, Computational Mechanics 55 (2015) 209–228. [14] E. Guendelman, R. Bridson, R. Fedkiw, Nonconvex rigid bodies with stacking, ACM Transactions on Graphics 22 (3) (2003) 871–878. 25 [15] A. Krishnamurthy, S. McMains, Accurate GPU-accelerated surface integrals for moment computation, Computer-Aided Design 43 (2011) 1284–1295. [16] E. B. Chin, N. Sukumar, Scaled boundary cubature scheme for numerical integration over planar regions with affi ne and curved boundaries, Computer Methods in Applied Mechanics and Engineering 380 (2021) 113796. [17] J. B. Lasserre, Integration on a convex polytope, Proceedings of the American Mathematical Society 126 (8) (1998) 2433–2441. [18] J. B. Lasserre, Integration and homogeneous functions, Proceedings of the American Mathematical Society 127 (3) (1999) 813–818. [19] E. B. Chin, J. B. Lasserre, N. Sukumar, Numerical integration of homogeneous functions on convex and non-convex polygons and polyhedra, Computational Mechanics 56 (6) (2015) 967–981. [20] R. Sevilla, S. Fernández-Méndez, A. Huerta, NURBS-enhanced finite element method (NEFEM), International Journal for Numerical Methods in Engineering 76 (2008) 56–83. [21] R. Sevilla, S. Fernández-Méndez, A. Huerta, 3D NURBS-enhanced finite element method (NEFEM), Interna-tional Journal for Numerical Methods in Engineering 88 (2) (2011) 103–125. [22] T. P. Fries, S. Omerovi´ c, D. Schöllhammer, J. Steidl, Higher-order meshing of implicit geometries—Part I: Integration and interpolation in cut elements, Computer Methods in Applied Mechanics and Engineering 313 (2017) 759–784. [23] E. Artioli, A. Sommariva, M. Vianello, Algebraic cubature on polygonal elements with a circular edge, Com-puters & Mathematics with Applications 79 (7) (2020) 2057–2066. [24] S. E. Mousavi, H. Xiao, N. Sukumar, Generalized Gaussian quadrature rules on arbitrary polygons, International Journal for Numerical Methods in Engineering 82 (1) (2010) 99–113. [25] H. Xiao, Z. Gimbutas, A numerical algorithm for the construction of e ffi cient quadrature rules in two and higher dimensions, Computers & Mathematics with Applications 59 (2009) 663–676. [26] A. Düster, O. Allix, Selective enrichment of moment fitting and application to cut finite elements and cells, Computational Mechanics 65 (2) (2020) 429–450. [27] W. Garhuom, A. Düster, Non-negative moment fitting quadrature for cut finite elements and cells undergoing large deformations, Computational Mechanics 70 (5) (2022) 1059–1081. [28] A. Sommariva, M. Vianello, Compression of multivariate discrete measures and applications, Numerical Func-tional Analysis and Optimization 36 (9) (2015) 1198–1223. [29] B. Bauman, A. Sommariva, M. Vianello, Compressed algebraic cubature over polygons with applications to optical design, Journal of Computational and Applied Mathematics 370 (2020) 112658. [30] A. Sommariva, M. Vianello, Product Gauss cubature over polygons based on Green’s integration formula, BIT Numerical Mathematics 47 (2007) 441–453. [31] A. Sommariva, M. Vianello, Gauss-Green cubature and moment computation over arbitrary geometries, Journal of Computational and Applied Mathematics 231 (2009) 886–896. [32] D. Gunderman, K. Weiss, J. A. Evans, Spectral mesh-free quadrature for planar regions bounded by rational parametric curves, Computer-Aided Design 130 (2021) 102944. [33] D. Gunderman, K. Weiss, J. A. Evans, High-accuracy mesh-free quadrature for trimmed parametric surfaces and volumes, Computer-Aided Design 141 (2021) 103093. 26 [34] E. B. Chin, N. Sukumar, An e ffi cient method to integrate polynomials over polytopes and curved solids, Com-puter Aided Geometric Design 82 (2020) 101914. [35] R. I. Saye, High-order quadrature methods for implicitly defined surfaces and volumes in hyperrectangles, SIAM Journal on Scientific Computing 37 (2) (2015) A993–A1019. [36] F. Scholz, B. Jüttler, Numerical integration on trimmed three-dimensional domains with implicitly defined trim-ming surfaces, Computer Methods in Applied Mechanics and Engineering 357 (2019) 112577. [37] F. Scholz, B. Jüttler, Using high-order transport theorems for implicitly defined moving curves to perform quadrature on planar domains, SIAM Journal on Numerical Analysis 59 (4) (2021) 2138–2162. [38] P. Antolin, X. Wei, A. Bu ff a, Robust numerical integration on curved polyhedra based on folded decompositions, Computer Methods in Applied Mechanics and Engineering 395 (2022) 114948. [39] M. Loibl, L. Leonetti, A. Reali, J. Kiendl, Patch-wise quadrature of trimmed surfaces in isogeometric analysis, Computer Methods in Applied Mechanics and Engineering 415 (2023) 116279. [40] M. G. Du ff y, Quadrature over a pyramid or cube of integrands with a singularity at a vertex, SIAM Journal on Numerical Analysis 19 (6) (1982) 1260–1262. [41] S. E. Mousavi, N. Sukumar, Generalized Du ff y transformation for integrating vertex singularities, Computational Mechanics 45 (2010) 127–140. [42] A. Chernov, C. Schwab, Exponential convergence of Gauss-Jacobi quadratures for singular integrals over sim-plices in arbitrary dimension, SIAM Journal on Numerical Analysis 50 (3) (2012) 1433–1455. [43] J.-H. Lv, Y.-Y. Jiao, X.-T. Feng, P. Wriggers, X.-Y. Zhuang, T. Rabczuk, A series of Du ff y-distance transforma-tion for integrating 2D and 3D vertex singularities, International Journal for Numerical Methods in Engineering 118 (1) (2019) 38–60. [44] E. B. Chin, F. Dassi, G. Manzini, N. Sukumar, Numerical integration in the virtual element method with the scaled boundary cubature scheme, International Journal for Numerical Methods in Engineering 125 (20) (2024) e7549. [45] C. Song, J. P. Wolf, The scaled boundary finite-element method—alias consistent infinitesimal finite-element cell method—for elastodynamics, Computer Methods in Applied Mechanics and Engineering 147 (3–4) (1997) 329–355. [46] C. Arioli, A. Shamanskiy, S. Klinkel, B. Simeon, Scaled boundary parametrizations in isogeometric analysis, Computer Methods in Applied Mechanics and Engineering 349 (2019) 576–594. [47] H. Ma, N. Kamiya, Distance transformation for the numerical evaluation of near singular boundary integrals with various kernels in boundary element method, Engineering Analysis with Boundary Elements 26 (2002) 329–339. [48] E. B. Chin, J. B. Lasserre, N. Sukumar, Modeling crack discontinuities without element-partitioning in the extended finite element method, International Journal for Numerical Methods in Engineering 110 (11) (2017) 1021–1048. 27
