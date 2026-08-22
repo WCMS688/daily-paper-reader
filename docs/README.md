@@ -6,28 +6,22 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-21
-- 运行时间：2026-08-21 20:29:42 UTC
+- 最新运行日期：2026-08-22
+- 运行时间：2026-08-22 20:37:05 UTC
 - 运行状态：成功
-- 本次总论文数：1
+- 本次总论文数：0
 - 精读区：0
-- 速读区：1
+- 速读区：0
 
 ### 今日简报（AI）
-今日速读1篇，聚焦高维缩放边界求积法，覆盖多面体与曲区域积分。
-
-值得关注的是该方案对复杂几何域的数值积分适用性，评分6.0，属中等偏上参考。
-
-普通读者可先从二维/三维规则区域案例入手，逐步理解其与经典求积法的差异。
-- 详情：[/202608/21/README](/202608/21/README)
+> 今日无新推荐，系统未产出可展示论文。
+- 详情：[/202608/22/README](/202608/22/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Scaled boundary cubature scheme in higher dimensions: integration over polytopes and curved regions](/202608/21/2608.15563v1-scaled-boundary-cubature-scheme-in-higher-dimensions-integration-over-polytopes-and-curved-regions)  
-   标签：评分：6.0/10、query:bga-xtalk
-   evidence：高维求积方案可应用于PEEC封装互连建模中的积分计算
+- 本次无速读推荐。
 
 
 <div class="dpr-home-promo-card">
