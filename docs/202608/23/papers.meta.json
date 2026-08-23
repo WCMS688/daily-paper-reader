@@ -1,0 +1,39 @@
+{
+  "label": "2026-08-23",
+  "date": "2026-08-23",
+  "generated_at": "2026-08-23T20:23:16",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202608/23/2608.15563v1-scaled-boundary-cubature-scheme-in-higher-dimensions-integration-over-polytopes-and-curved-regions",
+      "section": "quick",
+      "title_en": "Scaled boundary cubature scheme in higher dimensions: integration over polytopes and curved regions",
+      "authors": "Eric B. Chin, N. Sukumar",
+      "date": "2026-08-16",
+      "pdf": "https://arxiv.org/pdf/2608.15563v1",
+      "score": "6.0",
+      "evidence": "高维多面体与曲面区域积分可用于互连寄生提取与PEEC类建模。",
+      "tldr": "针对高维区域（多面体及弯曲区域）的数值积分难题，本文提出扩展的缩放边界立方体（SBC）方法。该方法通过有向边界块参数化区域，将d维积分分解为边界参数域与径向坐标的积分；递归应用可生成单纯形扇区嵌套规则，并针对点/线奇异设计径向变换与Gauss-Jacobi求积。数值实验表明，该方法在仿射多面体（含四维超立方体）上保持多项式精确，在B样条/NURBS固体上快速收敛，且对近边界奇异鲁棒。该框架统一处理凸/非凸及曲面边界，拓展了高维积分的可行域。",
+      "tags": "query:bga-xtalk",
+      "abstract_en": "We extend the scaled boundary cubature (SBC) scheme from planar regions to higher-dimensional regions described by oriented boundary patches. The resulting parametrization transforms integrals over compact regions in $\\Re^d$ into sums of integrals over the boundary-patch parameter domains and a radial coordinate. In three dimensions, this yields a direct volume-integration rule for solids bounded by affine faces, triangular or tensor-product surface patches, B-spline patches, NURBS patches, and combinations of curved and affine boundary representations. For affine polytopes, recursive application of the scaled boundary map yields nested tensor-product rules over simplex sectors; in three dimensions, these reduce to tetrahedral-sector rules that apply equally to convex and nonconvex oriented polyhedra. We also develop transformations for weakly singular integrands. Placing the scaling center at a point singularity exposes the radial power cancelled by the Jacobian, while generalized radial scalings and Gauss--Jacobi quadrature handle fractional powers. A transverse scaled-boundary map provides the analogous construction for affine singular sets, with straight-line examples in three dimensions. Numerical examples verify polynomial exactness on affine polyhedra and a four-dimensional tesseract, rapid convergence on curved B-spline and NURBS solids, and the expected convergence improvements for point and line singularities. Near-boundary singularity tests also identify when additional patch subdivision or patch-parameter transformations are required.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/23/2608.19820v1-band-selective-microwave-cavity-optimization-using-differentiable-fdtd-gradient-guided-search-versus-structured-random-search",
+      "section": "quick",
+      "title_en": "Band-Selective Microwave Cavity Optimization Using Differentiable FDTD: Gradient-Guided Search Versus Structured Random Search",
+      "authors": "Hasan Yiğit, Kutlu Karayahşi",
+      "date": "2026-08-20",
+      "pdf": "https://arxiv.org/pdf/2608.19820v1",
+      "score": "6.0",
+      "evidence": "可微FDTD梯度电磁优化技术可用于SI/PI互连结构优化",
+      "tldr": "微波腔体逆向设计通常面临高维参数空间和昂贵仿真。本文在统一材料分数、滤波密度表示、初始化与带能目标下，用可微分FDTD求解器比较梯度引导搜索与结构化随机搜索。在四目标频带、三材料分数、六随机种子下共72组配对中，梯度法均占优，平均带内谱能占比提升0.356，95%置信区间0.339–0.374，双侧符号翻转检验p=0.03125。结果表明，在相同材料与计算预算内，梯度优化显著优于随机搜索，为腔体设计提供稳健高效的优化方法。",
+      "tags": "query:si-pi",
+      "abstract_en": "We compare gradient-based inverse design with structured random search for dielectric-loaded microwave cavities using an in-house JAX-based differentiable FDTD solver. The benchmark fixes material fraction, filtered density representation, initialization, band-energy objective, and measured selection wall time. Each selected design is evaluated in a separate 8000-step FDTD simulation. Across four target bands, three prescribed material fractions, and six seeds, gradient optimization achieves a higher in-band spectral-energy fraction in all 72 paired comparisons. The mean paired improvement is 0.356, with a 95 percent paired bootstrap interval of 0.339-0.374 and an exact two-sided sign-flip p value of 0.03125. Gradient, cavity-mode, CFL, material-fraction, and raw-output integrity checks pass before inference. Under matched material and computational budgets, the results support an advantage for gradient-based optimization in this cavity-design benchmark.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

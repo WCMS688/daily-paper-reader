@@ -1,0 +1,209 @@
+Title: Band-Selective Microwave Cavity Optimization Using Differentiable FDTD: Gradient-Guided Search Versus Structured Random Search
+
+URL Source: https://arxiv.org/pdf/2608.19820v1
+
+Published Time: Fri, 21 Aug 2026 00:39:21 GMT
+
+Number of Pages: 5
+
+Markdown Content:
+# Band-Selective Microwave Cavity Optimization Using Differentiable FDTD: Gradient-Guided Search Versus Structured Random Search 
+
+Hasan Yi˘ git ∗, Kutlu Karayahs ¸i †∗Department of Software Engineering, Mu˘ gla Sıtkı Koc ¸man University, T¨ urkiye Email: hasanyigit@mu.edu.tr 
+
+†Department of Electrical and Electronics Engineering, Mu˘ gla Sıtkı Koc ¸man University, T¨ urkiye Email: kutlukarayahsi@mu.edu.tr 
+
+Abstract —We compare gradient-based inverse design with structured random search for dielectric-loaded microwave cavi-ties using an in-house JAX-based differentiable FDTD solver. The benchmark fixes material fraction, filtered density representation, initialization, band-energy objective, and measured selection wall time. Each selected design is evaluated in a separate 8000-step FDTD simulation. Across four target bands, three prescribed material fractions, and six seeds, gradient optimization achieves a higher in-band spectral-energy fraction in all 72 paired compar-isons. The mean paired improvement is 0.356, with a 95% paired bootstrap interval of 0.339–0.374 and an exact two-sided sign-flip p value of 0.03125. Gradient, cavity-mode, CFL, material-fraction, and raw-output integrity checks pass before inference. Under matched material and computational budgets, the results support an advantage for gradient-based optimization in this cavity-design benchmark. 
+
+Index Terms —finite-difference time-domain (FDTD), differen-tiable FDTD, inverse design, microwave cavity resonators 
+
+I. I NTRODUCTION 
+
+Inverse design is useful when the relation between a material layout and an electromagnetic response has no convenient closed form. Microwave cavities are an example: their spectra depend on many coupled material variables, and every design evaluation requires a full-wave solve [1]. The engineering task here is spectral response shaping: use a fixed amount of dielectric to direct a larger share of the measured cav-ity response into a prescribed microwave band. This is a benchmark design problem for cavity-resonator filters, RF packages and enclosures, and resonant sensing structures, before port, loss, and manufacturing constraints are introduced. The bands studied here (48–104 GHz) lie in the millimeter-wave spectrum used by 5G/6G radios, radar, and short-range sensing links, where package- and cavity-level spectral control directly affects antenna efficiency, shielding, and interference. Adjoint methods offer an efficient approach to such high-dimensional problems by obtaining a full design gradient from a small number of field solves [2]. Automatic differentiation provides another route to those gradients. It differentiates the time-stepping program directly and avoids a separate, hand-derived adjoint [3]. Recent dif-ferentiable FDTD work shows that this is practical for elec-tromagnetic inverse design [4]–[6]. Differentiability alone, however, does not establish a fair or physically reliable op-timization comparison. That gap motivates this study. A credible comparison must verify the gradient, the solver, the physical material constraint, and the computational budget. If these controls are absent, an apparent gain can instead arise from extra dielectric loading, a different representation, a longer time window, or more computation. Closed cavities add a further challenge: nearby discrete modes can make a point-frequency objective reward the wrong resonance. We therefore use the fraction of spectral energy inside a target band and use the same 8000-step window for selection and validation. Our research question is direct: under matched material, rep-resentation, initialization, objective, and selection wall time, does gradient optimization achieve a higher in-band spectral-energy fraction RB than structured random search when each selected design is evaluated in a separate FDTD simulation? We test four bands, three prescribed material fractions, and six seeds with a differentiable JAX-based FDTD solver. Under these matched conditions, we hypothesize that gra-dient optimization yields a higher post-optimization RB than structured random search. The paper makes three contributions. First, it defines a material- and time-matched benchmark for gradient and structured-random cavity design. Second, it verifies the gra-dient, solver, and post-optimization metric before testing per-formance. Third, it quantifies the engineering outcome—the fraction of the measured response placed in the requested band—across all 72 paired evaluation outcomes with a pre-specified seed-level inference procedure. II. M ETHODOLOGY 
+
+The idea is to treat the entire pipeline—filtered density projection, 8000-step FDTD time stepping, and the band-energy metric—as a single differentiable program, so that one reverse-mode pass through the time stepping returns the gradient of the band fraction with respect to every design logit, without a hand-derived adjoint. Both compared methods search the same physical design space with the same objective arXiv:2608.19820v1 [eess.SP] 20 Aug 2026 and differ only in whether this gradient is used; the budget they are given is measured in wall time, not in candidate counts. 
+
+A. Cavity and FDTD Formulation 
+
+All calculations use our in-house, version-controlled differ-entiable FDTD implementation written in JAX. The domain is a 6 × 6 × 6 mm perfectly electrically conducting (PEC) cavity. It has 30 Yee-cell intervals per direction and 31 field nodes, with ∆ = 0 .2 mm. The physical distance between opposite PEC faces is therefore exactly 6 mm. The source and probe are at (1 , 1, 1) mm and (5 , 3, 3) mm, respectively (Fig. 1). The probe records Ez (t). The domain is 
+
+Ω = [0 , L ]3 ⊂ R3, L = 6 mm , ∂Ω PEC , (1) Fields obey Faraday’s and Amp` ere’s laws, 
+
+∂H
+
+∂t = − 1
+
+μ ∇ × E, ∂E
+
+∂t = 1
+
+ε ∇ × H, (2) and are advanced on a staggered Yee grid with the standard leapfrog update [7]–[9] in normalized units ( ε0 = μ0 = 1 ,impedance-scaled H), 
+
+Hn+ 12 = Hn− 12 − ∆t ∇+ 
+
+> h
+
+× En, (3) 
+
+En+1 = En + ∆tεr
+
+∇− 
+
+> h
+
+× Hn+ 12 , (4) with Etangential = 0 on PEC faces. The normalized selection model and the separate post-optimization FDTD evaluation use float64. With outward normal n, the boundary and initial conditions are explicitly 
+
+n × E|∂Ω = 0, (5) 
+
+E(r, 0) = 0, r ∈ Ω, (6) 
+
+H(r, − 12 ∆t) = 0, r ∈ Ω. (7) A broadband Gaussian pulse is then injected into Ez at the source cell. The time step is 365 .7 fs, or 0.9493 of the three-dimensional CFL limit. 
+
+B. Design Parameterization 
+
+A 15 ×31 raw-logit field parameterizes a dielectric region at one cavity wall and is extruded through ten grid planes. Both methods use the same two-cell cone filter [10]. A differentiable scalar shift is then solved so that the mean physical density equals the prescribed fraction v ∈ { 0.05 , 0.20 , 0.35 } exactly. The isotropic permittivity is 
+
+εr = 1 + 29 ρ, 0 ≤ ρ ≤ 1, (8) inside the design region and one elsewhere. Thus the com-parison matches the amount of dielectric after filtering and projection, not merely a raw-logit penalty. 0 246
+
+x (mm) 0246
+
+y (mm) 
+
+0246
+
+> z (mm)
+
+Source rs
+
+Probe rp
+
+Design region PEC boundary       
+
+> Fig. 1. Simulation domain: 6×6×6mm PEC cavity, source and probe cells, and the dielectric design region (orange) at one wall.
+
+C. Band-Selective Objective 
+
+For a target band [flo , f hi ], both selection and reporting use the Parseval rFFT band-energy fraction [11], [12] 
+
+RB =
+
+P   
+
+> k:fk∈[flo ,f hi ]
+
+ck |U [k]|2
+
+P 
+
+> k
+
+ck |U [k]|2 , U = rFFT( w ⊙ u), (9) where w is a Hann window [13] and ck is the one-sided Parseval weight ( ck = 1 at DC and, for even-length traces, at Nyquist; ck = 2 otherwise) [11], [12]. The selection loss is − log( RB + 10 −8). This objective is differentiable and 
+
+RB ∈ [0 , 1] . Selection and validation now share the same frozen 8000-step metric, so their agreement is a consistency requirement rather than independent evidence; its substance is the recomputation over production tasks. Across all 144 post-optimization tasks, the normalized selection scores and the separate SI-FDTD evaluations of RB agree with Spear-man correlation one and a maximum absolute difference of 
+
+6.1 × 10 −15 .
+
+D. Optimization 
+
+Gradient optimization uses Adam (learning rate 0.3) for 100 iterations. Each iteration uses an 8000-step normalized rollout. The final design is then evaluated by a separate 8000-step FDTD simulation; only that post-optimization value of RB
+
+enters the results. 
+
+E. Structured Random Baseline and Technical Gates 
+
+The structured-random baseline is intentionally used as a simple gradient-free reference to isolate the benefit of gradient information under the same measured computational budget. Structured random search evaluates filtered, volume-projected 5% 20% 35% 0.5 1.0 
+
+48−56 GHz   
+
+> +0.25 +0.38 +0.35
+
+5% 20% 35% 
+
+65−75 GHz   
+
+> +0.35 +0.36 +0.31
+
+5% 20% 35% 0.5 1.0 
+
+84−92 GHz   
+
+> +0.29 +0.42 +0.37
+
+5% 20% 35% 
+
+96−104 GHz   
+
+> +0.38 +0.32 +0.49
+> Post-optimization  RB
+
+Dielectric fraction v
+
+matched seed structured random gradient mean Fig. 2. Post-optimization RB for v = 5% , 20% , 35% . Lines pair seeds; circles/squares mark structured-random/gradient seed values, and diamonds mark means. Rose/teal distinguish the methods; shade darkens with v.TABLE I PRE -INFERENCE TECHNICAL CHECKS .Check Observed value 3-D CFL fraction of limit 0.9493 (limit: ≤ 0.95 )Selected empty-cavity modes max. relative error 2.41 × 10 −3
+
+Gradient finite difference coordinate 2.24 ×10 −8; directional max. 7.55 × 10 −9
+
+Material-fraction error max. 2.78 × 10 −16 (144 designs) Random/gradient selection time 1.00003 –1.00179 (allowed: 1.00 –
+
+1.01 )Raw-output audit 144/144 hashes and recomputed 
+
+RB values matched 
+
+candidates with the same loss. Its first candidate is the gradient method’s initial logit field, and its remaining candidates follow a fixed, seed-specific structured stream. It runs until the mea-sured gradient-selection wall time is reached. Consequently, candidate count is not the budget; measured selection time is. All six seeds are repeated for every band–fraction pair. Across the 144 optimized task instances, recorded task wall time totaled 106 .8 h: 97 .7 h for matched selection and 9.1
+
+h for post-optimization evaluations; fixed warm-ups and four controls added 1.0 h. Before inference, the pre-specified evaluation design checks the numerical solver, gradient, and experiment records. Table I reports the decisive checks. The final analysis also recomputes 
+
+RB from every stored post-optimization trace and verifies every output hash. III. R ESULTS 
+
+Gradient optimization exceeded structured random search in all 72 paired comparisons (Table II). The mean paired 
+
+TABLE II POST -OPTIMIZATION CAVITY RESPONSE . RB : PROBE SPECTRAL -ENERGY FRACTION IN THE TARGET BAND (HIGHER IS BETTER ); VOLUME :
+
+> PRESCRIBED DIELECTRIC FRACTION
+
+. V ALUES : SIX -SEED PAIRED MEANS ;
+
+∆: GRADIENT MINUS STRUCTURED RANDOM ; W INS : SEEDS WHERE GRADIENT IS HIGHER .                                                                
+
+> Band Volume Gradient Structured random ∆Wins 48–56 5% 0.610 0.358 +0.252 6/6 48–56 20% 0.773 0.395 +0.378 6/6 48–56 35% 0.833 0.481 +0.351 6/6 65–75 5% 0.907 0.555 +0.352 6/6 65–75 20% 0.921 0.565 +0.356 6/6 65–75 35% 0.948 0.642 +0.306 6/6 84–92 5% 0.847 0.561 +0.286 6/6 84–92 20% 0.870 0.446 +0.424 6/6 84–92 35% 0.880 0.510 +0.370 6/6 96–104 5% 0.910 0.526 +0.384 6/6 96–104 20% 0.867 0.549 +0.318 6/6 96–104 35% 0.936 0.444 +0.492 6/6
+
+difference was 0.356. In short, under identical material bud-gets and measured selection wall time, gradient-based design outperformed structured random search in every one of the 72 paired tasks. In engineering terms, under the same allowed dielectric fraction, gradient optimization directed a larger fraction of the measured cavity response into the requested frequency band. This is a band-selection (spectral-response shaping) result, not an insertion-loss or Q-factor measurement. For the primary analysis, the pre-specified unit of inference is the seed; we therefore use six seed-level averages across all 12 band–material conditions. All six were positive; the exact two-sided sign-flip test gave p = 0 .03125 , and the 95% paired bootstrap interval was [0 .339 , 0.374] . Figure 2 shows all 72 matched seed-level post-optimization values as well as the 0 2 4 6
+
+y (mm) 
+
+0123
+
+> x (mm)
+
+(a) Structured random RB = 0.538 
+
+0 2 4 6
+
+y (mm) 
+
+0123
+
+> x (mm)
+
+(b) Gradient RB = 0.890 
+
+20 40 60 80 100 120 140 
+
+f (GHz) 
+
+-120 -110 -100 -90 -80 -70 -60 -50 -40 -30 -20 -10 0
+
+> 10log 10  (E/Emax ) (dB)
+
+(c) Spectral-energy distribution 
+
+structured random ( RB = 0.538) gradient ( RB = 0.890) target band 
+
+0.0 0.2 0.4 0.6 0.8 1.0        
+
+> Dielectric density  ρFig. 3. Automatically selected median-effect matched pair from the recorded post-optimization outputs (48–56 GHz, v= 35% , seed 5). Top: physical dielectric density in the wall design region for (a) structured random search ( RB= 0 .538 ) and (b) gradient optimization ( RB= 0 .890 ). (c) Spectral-energy distributions computed from the corresponding recorded 8000-step FDTD traces, on a common 0-dB reference; the shaded interval is the target band. The pair difference is ∆RB= +0 .352 .
+
+condition means. Figure 3 makes the corresponding physical layouts and recorded spectra concrete for one automatically selected representative pair: different density layouts yield different spectral allocations, and the gradient layout has the larger target-band fraction for this median-effect pair. The twelve condition-level effects are descriptive: their individual exact tests become non-significant after Holm adjustment (pHolm = 0 .375 for each), so the inferential claim is the pre-specified global effect rather than twelve separate claims. IV. D ISCUSSION AND CONCLUSION 
+
+Under this matched experimental design, gradient optimiza-tion has a statistically supported advantage over structured ran-dom search for band-selective cavity design. This conclusion rests on separate FDTD evaluation traces, not optimization-time scores, and it remains after material amount and measured selection time are matched. This study shows that, for the present cavity-design prob-lem, access to gradients changes not merely the optimization score but the resulting electromagnetic response. When di-electric loading and selection time are held constant, gradient-based design achieves a larger RB , meaning that a greater fraction of the cavity response is placed in the requested microwave band. The central outcome is therefore a more reliable route from a spectral requirement to a physically interpretable dielectric layout. This establishes a practical computational founda-tion for gradient-based band-selective cavity optimization and raises the next question: how far can the same design logic be carried when the spectral requirement is tied to a specific microwave component or system? ACKNOWLEDGMENT 
+
+The authors directed and verified the technical decisions, simulations, and numerical claims. AI-assisted tools supported code development, visualization, and manuscript preparation under author supervision. All quantitative figures were gener-ated directly from the recorded simulation outputs; they are not AI-generated imagery. REFERENCES [1] S. Molesky, Z. Lin, A. Y. Piggott, W. Jin, J. Vuckovi´ c, and A. W. Rodriguez, “Inverse design in nanophotonics,” Nature Photonics , vol. 12, pp. 659–670, 2018, doi: 10.1038/s41566-018-0246-9. [2] N. Aage and V. E. Johansen, “Topology optimization of microwave waveguide filters,” Int. J. Numer. Methods Eng. , vol. 112, no. 3, pp. 283–300, 2017, doi: 10.1002/nme.5551. [3] J. Bradbury et al. , “JAX: composable transformations of Python+NumPy programs,” version 0.3.13, 2018. [Online]. Available: http://github.com/jax-ml/jax [4] R. J. Tang et al. , “Time reversal differentiation of FDTD for photonic inverse design,” ACS Photonics , vol. 10, no. 12, pp. 4140–4150, 2023, doi: 10.1021/acsphotonics.3c00694. [5] Y. Mahlau, F. Schubert, L. Berg, and B. Rosenhahn, “FDTDX: High-performance open-source FDTD simulation with automatic dif-ferentiation,” J. Open Source Softw. , vol. 11, no. 117, 2026, doi: 10.21105/joss.08912. [6] B. Kim, “rfx: JAX-based differentiable 3D FDTD simulator for RF en-gineering,” REMI Lab, Chungnam National University, 2026. [Online]. Available: https://github.com/bk-squared/rfx [7] K. S. Yee, “Numerical solution of initial boundary value problems involving Maxwell’s equations in isotropic media,” IEEE Trans. An-tennas Propag. , vol. AP-14, no. 3, pp. 302–307, May 1966, doi: 10.1109/TAP.1966.1138693. [8] K. F. Warnick, Numerical Methods for Engineering: An Introduction Us-ing MATLAB and Computational Electromagnetics Examples . Raleigh, NC, USA: SciTech Publishing, 2011, doi: 10.1049/SBEW049E. [9] J. E. Houle and D. M. Sullivan, Electromagnetic Simulation Using the FDTD Method with Python , 3rd ed. Piscataway, NJ, USA: IEEE Press/Wiley, 2020, doi: 10.1002/9781119565826. [10] B. Bourdin, “Filters in topology optimization,” Int. J. Numer. Methods Eng. , vol. 50, no. 9, pp. 2143–2158, 2001, doi: 10.1002/nme.116. [11] A. V. Oppenheim and R. W. Schafer, Discrete-Time Signal Processing , 3rd ed., Prentice-Hall signal processing series. Up-per Saddle River, NJ, USA: Pearson, 2010. [Online]. Available: https://books.google.com.tr/books?id=mYsoAQAAMAAJ [12] P. Virtanen et al. , “SciPy 1.0: fundamental algorithms for scientific computing in Python,” Nature Methods , vol. 17, pp. 261–272, 2020, doi: 10.1038/s41592-019-0686-2. [13] F. J. Harris, “On the use of windows for harmonic analysis with the discrete Fourier transform,” Proc. IEEE , vol. 66, no. 1, pp. 51–83, 1978, doi: 10.1109/PROC.1978.10837.
