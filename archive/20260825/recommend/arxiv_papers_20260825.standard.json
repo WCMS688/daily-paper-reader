@@ -1,0 +1,55 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-25T20:42:56.841509+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 0,
+    "quick_skim_target": 11,
+    "quick_selected": 0
+  },
+  "deep_dive": [
+    {
+      "id": "2608.19954v1",
+      "source": "arxiv",
+      "title": "Experimental Verification of Fast Voltage Droop Correction Circuits",
+      "abstract": "Due to the trend towards minimizing guard bands for energy saving purposes, voltage droops are a key limiting factor for the operational frequency of today's VLSI circuits. Adapting clock frequencies dynamically presents the challenge of metastability in the device that detects and stores the existence of voltage droops. We present an implementation of a fast all-digital circuit for adaptive response to droops using the IHP 130 nm process. The description of the design is presented in an accompanying paper. We experimentally validate the functionality of the design on a test chip.",
+      "authors": [
+        "Shreyas Srinivas",
+        "Ian W. Jones",
+        "Carsten Schulze",
+        "Milos Krstic",
+        "Christoph Lenzen"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR"
+      ],
+      "published": "2026-08-20T12:23:40+00:00",
+      "link": "https://arxiv.org/pdf/2608.19954v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "voltage droop correction, power integrity, PDN transient response",
+      "llm_evidence_cn": "电压跌落校正，电源完整性，PDN瞬态响应",
+      "llm_evidence": "电压跌落校正，电源完整性，PDN瞬态响应",
+      "canonical_evidence": "电压跌落校正，电源完整性，PDN瞬态响应",
+      "llm_tldr_en": "Voltage droops limit VLSI frequency under guardband reduction. An all-digital fast droop correction circuit in 130nm is implemented and experimentally verified, confirming functionality against metastability challenges.",
+      "llm_tldr_cn": "在现代VLSI中，为节约能耗而缩减安全裕量导致电压跌落成为限制工作频率的关键因素。针对这一问题，论文采用IHP 130nm工艺实现了一款全数字快速电压跌落校正电路，通过动态自适应时钟频率响应跌落事件，并专门解决了跌落检测与状态存储中的亚稳态难题。在测试芯片上的实验验证结果表明，该电路能够按设计正确工作，为低裕量高能效设计中的电源完整性保障提供了经过流片验证的实用方案。",
+      "llm_tldr": "在现代VLSI中，为节约能耗而缩减安全裕量导致电压跌落成为限制工作频率的关键因素。针对这一问题，论文采用IHP 130nm工艺实现了一款全数字快速电压跌落校正电路，通过动态自适应时钟频率响应跌落事件，并专门解决了跌落检测与状态存储中的亚稳态难题。在测试芯片上的实验验证结果表明，该电路能够按设计正确工作，为低裕量高能效设计中的电源完整性保障提供了经过流片验证的实用方案。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Power integrity and PDN modeling optimization",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": []
+}

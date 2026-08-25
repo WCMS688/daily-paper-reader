@@ -1,0 +1,24 @@
+{
+  "label": "2026-08-25",
+  "date": "2026-08-25",
+  "generated_at": "2026-08-25T20:44:06",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202608/25/2608.19954v1-experimental-verification-of-fast-voltage-droop-correction-circuits",
+      "section": "deep",
+      "title_en": "Experimental Verification of Fast Voltage Droop Correction Circuits",
+      "authors": "Shreyas Srinivas, Ian W. Jones, Carsten Schulze, Milos Krstic, Christoph Lenzen",
+      "date": "2026-08-20",
+      "pdf": "https://arxiv.org/pdf/2608.19954v1",
+      "score": "8.0",
+      "evidence": "电压跌落校正，电源完整性，PDN瞬态响应",
+      "tldr": "为降低能耗而缩减保护带时，电压跌落成为限制电路工作频率的关键因素。针对动态调频中检测装置存在的亚稳态问题，本文基于IHP 130nm工艺实现了一种快速全数字自适应响应电路，并在测试芯片上进行实验验证。结果表明该电路能够快速检测并响应电压跌落，功能正确，为自适应时钟调整提供了有效解决方案。",
+      "tags": "query:si-pi",
+      "abstract_en": "Due to the trend towards minimizing guard bands for energy saving purposes, voltage droops are a key limiting factor for the operational frequency of today's VLSI circuits. Adapting clock frequencies dynamically presents the challenge of metastability in the device that detects and stores the existence of voltage droops. We present an implementation of a fast all-digital circuit for adaptive response to droops using the IHP 130 nm process. The description of the design is presented in an accompanying paper. We experimentally validate the functionality of the design on a test chip.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

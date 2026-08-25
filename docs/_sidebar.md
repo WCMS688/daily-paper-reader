@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-08-25 <!--dpr-date:20260825-->
+    * 精读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202608/25/2608.19954v1-experimental-verification-of-fast-voltage-droop-correction-circuits" data-sidebar-item="{&quot;title&quot;: &quot;Experimental Verification of Fast Voltage Droop Correction Circuits&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2608.19954v1-experimental-verification-of-fast-voltage-droop-correction-circuits&quot;, &quot;score&quot;: &quot;8.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;电压跌落校正，电源完整性，PDN瞬态响应&quot;}">Experimental Verification of Fast Voltage Droop Correction Circuits</a>
   * 2026-08-23 <!--dpr-date:20260823-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202608/23/2608.15563v1-scaled-boundary-cubature-scheme-in-higher-dimensions-integration-over-polytopes-and-curved-regions" data-sidebar-item="{&quot;title&quot;: &quot;Scaled boundary cubature scheme in higher dimensions: integration over polytopes and curved regions&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2608.15563v1-scaled-boundary-cubature-scheme-in-higher-dimensions-integration-over-polytopes-and-curved-regions&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;bga-xtalk&quot;}], &quot;evidence&quot;: &quot;高维多面体与曲面区域积分可用于互连寄生提取与PEEC类建模。&quot;}">Scaled boundary cubature scheme in higher dimensions: integration over polytopes and curved regions</a>
