@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-08-29 <!--dpr-date:20260829-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202608/29/2608.25155v1-an-open-source-benchmark-suite-of-3d-ic-testcases" data-sidebar-item="{&quot;title&quot;: &quot;An Open-Source Benchmark Suite of 3D-IC Testcases&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2608.25155v1-an-open-source-benchmark-suite-of-3d-ic-testcases&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;面向Chiplet与3D封装的3D-IC基准用例，支撑SI/PI分析&quot;}">An Open-Source Benchmark Suite of 3D-IC Testcases</a>
   * 2026-08-26 <!--dpr-date:20260826-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202608/26/2608.22741v1-a-process-aware-hybrid-siigo-monolithic-3d-6t-sram-with-beol-pass-gates-for-the-2nm-node" data-sidebar-item="{&quot;title&quot;: &quot;A Process-Aware Hybrid Si/IGO Monolithic-3D 6T SRAM with BEOL Pass-Gates for the 2nm Node&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2608.22741v1-a-process-aware-hybrid-siigo-monolithic-3d-6t-sram-with-beol-pass-gates-for-the-2nm-node&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;单片3D SRAM中的3D寄生提取与埋入电源轨建模&quot;}">A Process-Aware Hybrid Si/IGO Monolithic-3D 6T SRAM with BEOL Pass-Gates for the 2nm Node</a>

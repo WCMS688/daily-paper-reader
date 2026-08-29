@@ -1,8 +1,24 @@
 {
   "label": "2026-08-29",
   "date": "2026-08-29",
-  "generated_at": "2026-08-29T03:20:31",
-  "count": 0,
-  "papers": [],
+  "generated_at": "2026-08-29T22:41:19",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202608/29/2608.25155v1-an-open-source-benchmark-suite-of-3d-ic-testcases",
+      "section": "quick",
+      "title_en": "An Open-Source Benchmark Suite of 3D-IC Testcases",
+      "authors": "Rohan Soni, Jooyeon Jeong, Alexander Graening, Anthony Foo, Richard Chen, Puneet Gupta",
+      "date": "2026-08-25",
+      "pdf": "https://arxiv.org/pdf/2608.25155v1",
+      "score": "7.0",
+      "evidence": "面向Chiplet与3D封装的3D-IC基准用例，支撑SI/PI分析",
+      "tldr": "现有2D物理设计基准推动了三十年研究，但3D异构集成（如TSV、混合键合、chiplet）带来新挑战，公共可扩展的3D基准仍然稀缺。本文从CATCH框架的chiplet案例中构建开源3D-IC测试套件，提供覆盖计算、存储、I/O、模拟与基板的可复用虚拟模型。这些用例刻画了异构Die集成、die间互连和工艺相关约束。公开基准旨在建立统一评估平台，加速3D异构集成领域的研究进展。",
+      "tags": "query:si-pi",
+      "abstract_en": "The physical design community has benefited from standardized, publicly available benchmark suites, which have enabled reproducible evaluation and driven significant advances in 2D place-and-route algorithms over the past three decades. However, the emergence of 3D heterogeneous integration technologies, including through-silicon vias (TSVs), hybrid bonding, and chiplet-based architectures, has introduced new physical design challenges that are not captured by existing planar benchmarks. Although several 3D-IC design examples have been reported, publicly accessible and scalable benchmark suites that enable reproducible evaluation across different 3D physical design problems remain limited. In this paper, we present an open-source suite of 3D-IC benchmark testcases derived from representative chiplet-based case studies in CATCH, an open-source framework for estimating the cost of heterogeneous integration architectures. The proposed benchmark suite provides reusable virtual chiplet models covering compute, memory, I/O, analog, and substrate components. Each testcase captures essential physical design characteristics of 3D systems, including heterogeneous die integration, inter-die connectivity, and technology-dependent design constraints. By publicly releasing these benchmarks, we aim to establish a common evaluation platform and accelerate community-wide research progress in 3D heterogeneous integration.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
   "errors": []
 }
