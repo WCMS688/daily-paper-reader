@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-09-02 <!--dpr-date:20260902-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202609/02/2608.25041v1-rapidly-convergent-finite-element-domain-decomposition-method-with-two-channel-transmission-conditions" data-sidebar-item="{&quot;title&quot;: &quot;Rapidly Convergent Finite-Element Domain Decomposition Method With Two-Channel Transmission Conditions&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2608.25041v1-rapidly-convergent-finite-element-domain-decomposition-method-with-two-channel-transmission-conditions&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;快速收敛的Maxwell区域分解求解方法，可用于高速互连等先进电磁建模&quot;}">Rapidly Convergent Finite-Element Domain Decomposition Method With Two-Channel Transmission Conditions</a>
   * 2026-08-29 <!--dpr-date:20260829-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202608/29/2608.25155v1-an-open-source-benchmark-suite-of-3d-ic-testcases" data-sidebar-item="{&quot;title&quot;: &quot;An Open-Source Benchmark Suite of 3D-IC Testcases&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2608.25155v1-an-open-source-benchmark-suite-of-3d-ic-testcases&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;面向Chiplet与3D封装的3D-IC基准用例，支撑SI/PI分析&quot;}">An Open-Source Benchmark Suite of 3D-IC Testcases</a>

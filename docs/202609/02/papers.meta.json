@@ -1,0 +1,24 @@
+{
+  "label": "2026-09-02",
+  "date": "2026-09-02",
+  "generated_at": "2026-09-02T23:07:16",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202609/02/2608.25041v1-rapidly-convergent-finite-element-domain-decomposition-method-with-two-channel-transmission-conditions",
+      "section": "quick",
+      "title_en": "Rapidly Convergent Finite-Element Domain Decomposition Method With Two-Channel Transmission Conditions",
+      "authors": "Furkan Şık, Fernando L. Teixeira, Balasubramaniam Shanker",
+      "date": "2026-08-25",
+      "pdf": "https://arxiv.org/pdf/2608.25041v1",
+      "score": "6.0",
+      "evidence": "快速收敛的Maxwell区域分解求解方法，可用于高速互连等先进电磁建模",
+      "tldr": "求解麦克斯韦方程的有限元域分解方法常因界面传输条件不强而收敛缓慢。本文提出一种带双通道传输条件的FETI-DP法，在子域界面同时强制切向场和法向通量连续，两个通道分别由法拉第方程和安培-麦克斯韦方程构造。该条件使界面跳跃比常用Robin条件小数个量级，全局界面迭代收敛大幅加快。不同分区、子域数、网格及几何的实验中迭代次数均急剧下降，且并行精度与可扩展性不受损。",
+      "tags": "query:si-pi",
+      "abstract_en": "A novel dual-primal finite element tearing and interconnecting (FETI-DP) domain decomposition method (DDM) is introduced for solving Maxwell's equations. The proposed method is built upon a two-channel transmission condition (TC) enforcing both tangential-field and normal-flux continuity across subdomain interfaces. Two interface channels are separately constructed from the Faraday and Ampere-Maxwell equations. Simultaneously enforcing tangential-field and normal-flux continuity reduces interface jumps by several orders of magnitude relative to the widely used Robin TC. The resulting global interface equation exhibits markedly improved iterative convergence. Numerical experiments across different partitioning strategies, subdomain counts and volumes, mesh resolutions, and geometries demonstrate drastic reductions in iteration counts, while accuracy, massive parallelism, and scalability are preserved.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

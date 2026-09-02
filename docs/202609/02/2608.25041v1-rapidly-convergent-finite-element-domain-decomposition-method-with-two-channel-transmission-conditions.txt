@@ -1,0 +1,499 @@
+Title: Rapidly Convergent Finite-Element Domain Decomposition Method With Two-Channel Transmission Conditions
+
+URL Source: https://arxiv.org/pdf/2608.25041v1
+
+Published Time: Thu, 27 Aug 2026 00:06:17 GMT
+
+Number of Pages: 9
+
+Markdown Content:
+> 1
+
+# Rapidly Convergent Finite-Element Domain Decomposition Method With Two-Channel Transmission Conditions 
+
+Furkan S ¸ ık, Graduate Student Member, IEEE, Fernando L. Teixeira, Fellow, IEEE, 
+
+and Balasubramaniam Shanker, Fellow, IEEE 
+
+Abstract 
+
+A novel dual-primal finite element tearing and interconnecting (FETI-DP) domain decomposition method (DDM) is introduced for solving Maxwell’s equations. The proposed method is built upon a two-channel transmission condition (TC) enforcing both tangential-field and normal-flux continuity across subdomain interfaces. Two interface channels are separately constructed from the Faraday and Amp` ere-Maxwell equations. Simultaneously enforcing tangential-field and normal-flux continuity reduces interface jumps by several orders of magnitude relative to the widely used Robin TC. The resulting global interface equation exhibits markedly improved iterative convergence. Numerical experiments across different partitioning strategies, subdomain counts and volumes, mesh resolutions, and geometries demonstrate drastic reductions in iteration counts, while accuracy, massive parallelism, and scalability are preserved. 
+
+Index Terms 
+
+Domain decomposition method (DDM), dual-primal finite element tearing and interconnecting (FETI-DP), finite element method (FEM), iterative solvers. 
+
+I. I NTRODUCTION 
+
+# DESPITE its inherent advantages and widespread adoption for solving electromagnetic (EM) boundary value problems governed by Maxwell’s equations, the finite element method (FEM) produces, for electrically large problems, sparse linear systems with millions or even billions of unknowns, straining both direct and iterative solvers [1]–[7]. Among non-overlapping domain decomposition methods (DDMs), the finite element tearing and interconnecting (FETI) family addresses this challenge by tearing the computational domain into independently factorized subdomains and connecting them through interface Lagrange multipliers, thereby reducing a three-dimensional (3-D) volumetric problem to a 2-D global interface equation solved iteratively by Krylov subspace methods [4]–[13]. In the dual-primal (FETI-DP) variants, corner-edge unknowns remain primal and furnish a global coarse problem [5], [9]–[11]. The transmission condition (TC) imposed at the subdomain interfaces governs both the well-posedness of the local subdomain problems and the iterative convergence of the global interface equation. Robin TC, imposed with two multipliers per interface (FETI-DP-2λ), has become the de facto standard [4], [9], [13]. However, the Robin TC damps only the propagating spectrum of the interface error modes. The evanescent modes are beyond its reach: no single Robin coefficient can damp both TE- and TM-type evanescent families simultaneously [14]–[17]. When applied to challenging problems with large subdomain 
+
+Manuscript received MM DD, YYYY; revised MM DD, YYYY. This work was supported in part by the Ohio State President’s Research Excellence Program and by the Ohio Supercomputer Center Grant PAS-0061. The authors are with the Department of Electrical and Computer Engineering and ElectroScience Laboratory, The Ohio State University, Columbus, OH 43210, USA ( Corresponding author: Furkan S ¸ık )arXiv:2608.25041v1 [physics.comp-ph] 25 Aug 2026 2
+
+counts, many corner edges, resonances, multiscale features, and deep-evanescent waves, convergence slows down and even stagnates. Second-order TCs (SOTCs) target evanescent modes with tangential-derivative augmentations, but at a price: their per-interface auxiliary currents and charges become redundant on corner edges, rendering the DDM matrix nearly singular and necessitating dedicated corner edge penalties, while for deep-evanescent waves the damping deteriorates and reverts toward Robin behavior [17]–[20]. Consequently, none of these TCs robustly guarantees convergence on large-scale EM problems. This shortfall has been driving practitioners toward direct-solver-based DDMs, which avoid convergence stagnation altogether. However, direct solvers sacrifice several defining strengths of DDM, namely massive parallelism, computational scalability, and computational efficiency [21]–[23]. The open problem, therefore, is to devise a FETI-DDM whose global interface equation remains inexpensive to solve with robust iterative solvers, exhibits rapid stagnation-free convergence across diverse problem settings, and preserves massive parallelism and computational scalability. This letter introduces such a method, built up on a two-channel TC constructed directly from the mixed E-B FE formulation [24], [25] using Whitney edge and face elements on conformal meshes. Their two-sided enforcement yields four Lagrange multipliers per interface while retaining dual-primal corner treatment. The Faraday channel pairs ˆn × E with ˆn( ˆ n · B), while the Amp` ere-Maxwell channel pairs ˆn × H with ˆn( ˆ n · D). The assignment of each evanescent family its own channel removes the single-coefficient obstruction of the Robin TC, with monotone damping that persists in the deep-evanescent regime (where the Robin TC stagnates and the SOTCs rebound [14], [17]). The proposed TC enforces tangential-field and normal-flux continuity simultaneously, reducing interface jumps of ˆn × E and ˆn · B
+
+by orders of magnitude relative to the Robin TC. The restored continuity accelerates convergence of the global interface equation and improves accuracy, particularly at relaxed solver tolerances. Extensive numerical experiments across waveguide geometries, partitionings, discretizations, and subdomain counts and sizes, including problems with multiscale features and deep-evanescent wave content, validate the proposed method. With no loss of accuracy, GMRES iteration counts drop drastically relative to the widely used Robin TC and SOTC-based approaches. II. F ORMULATION 
+
+This section derives the two-channel TC from the first-order curl equations and assembles the resulting FETI-DP-4λ system. Let Ω = SNs 
+
+> i=1
+
+Ωi be a nonoverlapping conformal partition of the domain of interest, with interfaces Γij = ∂Ωi ∩ ∂Ωj , neighbor sets N i = {j̸ = i : Γ ij ̸ = ∅}, local interfaces Γi = S  
+
+> j∈N i
+
+Γij ,and outward unit normals satisfying ˆni = − ˆnj on Γij ; edges incident in more than two subdomains form the corner edge set Ec. The fields in Ωi satisfy the Faraday and Amp` ere-Maxwell equations, 
+
+∇× Ei = −jω Bi, (1) 
+
+∇× Hi = Ji + jω Di, (2) with Di = εiEi, Hi = μ−1 
+
+> i
+
+Bi, and impressed electric current density Ji. Boldface denotes physical vector fields, an overbar a discrete coefficient vector, and a double overbar a matrix. The superscripts i and (i)
+
+index the subdomain number in continuous and discrete variables, respectively, and the superscript S
+
+denotes a Schur-reduced quantity. Rather than reducing (1)-(2) to a second-order vector wave equation, we retain Ei ∈ W 1(Ω i) ⊂
+
+H(curl; Ω i) and Bi ∈ W 2(Ω i) ⊂ H(div; Ω i), expanded in the Whitney edge and face bases W(1)  
+
+> a
+
+and 
+
+W(2)  
+
+> f
+
+[25], [26], collecting the N (i) 
+
+> e
+
+edge and N (i) 
+
+> f
+
+face coefficients in ¯e(i) and ¯b(i); the mixed subdomain unknown is ordered as ¯x(i) = ( ¯b(i),T , ¯e(i),T )T . Testing (1) against μ−1 
+
+> i
+
+W(2)  
+
+> f
+
+and (2) against W(1)  
+
+> a
+
+yields a local block system whose interface data are the two tangential pairings 
+
+⟨μ−1 
+
+> i
+
+W(2)  
+
+> f
+
+, ˆni × Ei⟩Γi , −⟨ W(1)  
+
+> a
+
+, ˆni × Hi⟩Γi , (3) 3
+
+entering the face and edge rows, respectively; here ⟨u, v⟩Ωi = R 
+
+> Ωi
+
+u · v dΩ and ⟨u, v⟩Γi = R 
+
+> Γi
+
+u · v dΓ .The proposed two-channel TC supplies these pairings by assigning one channel to each curl equation. On the side Γij ⊂ ∂Ωi, the Faraday and Amp` ere-Maxwell channel traces of Ωi, built from its own fields, are: 
+
+Λij  
+
+> 1
+
+= ˆ ni × Ei + aB,i ˆni  ˆni · Bi, (4) 
+
+Λij  
+
+> 2
+
+= ˆ ni × Hi + aD,i ˆni  ˆni · Di. (5) The tangential traces carry unit weight, while the flux coefficients aB,i and aD,i carry the local wave speed vi = 1 /√μiεi, rendering the two terms of each channel commensurate; they are set following the Fourier analysis used to design SOTCs and analyze Robin TCs [14], [17], [27]. Each side also carries two independent Lagrange multipliers (dual variables) λij  
+
+> 1
+
+, λij  
+
+> 2
+
+(coefficient vectors ¯λij  
+
+> 1
+
+, ¯λij  
+
+> 2
+
+), acting as incoming interface data through the boundary condition imposed on Ωi along Γij ,
+
+Λij q + λij q = 0, q = 1 , 2. (6) The multiplier vectors of all interfaces of Ωi are collected into ¯λ(i); with two channels per side and two sides per interface, each interface carries four Lagrange multipliers. Inserting (4)-(5) into (6) and solving for the tangential traces on each side Γij gives 
+
+ˆni × Ei = −λij  
+
+> 1
+
+− aB,i ˆni  ˆni · Bi, (7) 
+
+ˆni × Hi = −λij  
+
+> 2
+
+− aD,i ˆni  ˆni · Di, (8) and substituting them into (3), summed over j ∈ N i, yields the local problem with the TCs imposed: 
+
+¯¯A(i) ¯x(i) + ¯¯G(i) ¯λ(i) = ¯f (i), (9) 
+
+¯¯A(i) =
+
+"
+
+jω ¯¯M (i) 
+
+> B
+
+− aB,i ¯¯N (i) 
+
+> B
+
+¯¯C(i),a
+
+−  ¯¯C(i)T jω ¯¯M (i) 
+
+> E
+
++ aD,i ¯¯N (i)
+
+> D
+
+#
+
+, (10) 
+
+¯¯G(i) = blkdiag j∈N i
+
+  − ¯¯Qij  
+
+> 1
+
+, ¯¯Qij 
+
+> 2
+
+. (11) Here [ ¯¯M (i) 
+
+> B
+
+]f f ′ = ⟨μ−1 
+
+> i
+
+W(2)  
+
+> f
+
+, W(2)   
+
+> f′
+
+⟩Ωi and [ ¯¯M (i) 
+
+> E
+
+]aa ′ = ⟨εiW(1)  
+
+> a
+
+, W(1)  
+
+> a′
+
+⟩Ωi are the face and edge mass matrices; [ ¯¯C(i)]f a = ⟨μ−1 
+
+> i
+
+W(2)  
+
+> f
+
+, ∇× W(1)  
+
+> a
+
+⟩Ωi is the discrete curl coupling, and ¯¯C(i),a its adjoint block, obtained by moving the Faraday curl onto the test functions to expose the first pairing of (3) and differing from ¯¯C(i) by the interface trace of ˆni × W(1)  
+
+> a
+
+; ¯f (i) is the tested impressed current and exterior boundary data. The multiplier pairings, with λij  
+
+> 1
+
+, λij  
+
+> 2
+
+expanded in interface traces of W 2 and W 1, form interface pairing blocks ¯¯Qij  
+
+> 1
+
+(face rows) and ¯¯Qij  
+
+> 2
+
+(edge rows) of the channel load ¯¯G(i). The flux pairings assemble into the normal operators: ¯¯N (i) 
+
+> B
+
+is the Gram matrix of the W 2 normal traces, which the mixed E-B
+
+setting carries directly on Γi, ¯¯N (i) 
+
+> D
+
+realizes the electric normal flux from the tangential electric trace as a surface grad-div operator. Assembled per interface, ¯¯N (i) 
+
+> B
+
+and ¯¯N (i) 
+
+> D
+
+are identical on the two sides, and neither introduces an auxiliary interface unknown. The two sides are interconnected by the neighbor-side counterpart of (6): λij q + Λij q [Ej , Bj ] = 0 on 
+
+Γij , where Λij q [Ej , Bj ] is the trace (4)-(5) built from the fields of Ωj with normal ˆni. Together with (6) on Ωi, this enforces Λij q [Ei, Bi] = Λij q [Ej , Bj ] at convergence. Under ˆni = − ˆnj , eliminating the neighbor’s tangential trace with (6) on Ωj leaves the discrete exchange 
+
+¯λij q + ¯¯P ij q
+
+ ¯λji q + ¯¯T ji q ¯x(j) = ¯ 0, q = 1 , 2, (12) with ¯¯P ij q the signed edge/face orientation matrix expressing traces on Γji in the orientation of Γij , and 
+
+¯¯T ji q the flux pairing rows restricted to Γji .4
+
+Let ¯xr collect the non-corner (remainder) coefficients of all subdomains and ¯xc the globally assembled primal corner edge coefficients on Ec; subscripts r and c label this partition throughout. Partitioning (9) accordingly, ¯¯Krr = blkdiag i ¯¯A(i) 
+
+> rr
+
+and ¯¯Krc , ¯¯Kcr , ¯¯Kcc carry the corner couplings of ¯¯A(i), while ¯¯Gr, ¯¯Gc
+
+collect the r/c rows of the channel loads ¯¯G(i). The interconnection rows close the system: ¯¯Tr, ¯¯Tc collect the reoriented flux pairings ¯¯P ij q ¯¯T ji q of (12) and ¯¯Dλ its multiplier blocks ( ¯¯I, ¯¯P ij q ), giving 
+
+
+
+¯¯Krr ¯¯Krc ¯¯Gr
+
+¯¯Kcr ¯¯Kcc ¯¯Gc
+
+¯¯Tr ¯¯Tc ¯¯Dλ
+
+
+
+¯xr
+
+¯xc
+
+¯λ
+
+ =
+
+
+
+¯fr
+
+¯fc
+
+¯0
+
+ . (13) Eliminating ¯xr with ¯¯Z = ¯¯K−1 
+
+> rr
+
+, one sparse factorization per subdomain, condenses (13) onto (¯ xc, ¯λ) with 
+
+¯¯KScc = ¯¯Kcc − ¯¯Kcr ¯¯Z ¯¯Krc , ¯¯GSc = ¯¯Gc − ¯¯Kcr ¯¯Z ¯¯Gr,
+
+¯¯T Sc = ¯¯Tc − ¯¯Tr ¯¯Z ¯¯Krc , ¯¯DSλ = ¯¯Dλ − ¯¯Tr ¯¯Z ¯¯Gr, (14) and ¯f Sc = ¯fc − ¯¯Kcr ¯¯Z ¯fr, ¯gS = − ¯¯Tr ¯¯Z ¯fr. Eliminating the primal corner block produces the global interface equation of the proposed FETI-DP-4λ approach: 
+
+¯¯F4λ ¯λ = ¯d4λ, ¯¯F4λ = ¯¯DSλ − ¯¯T Sc ( ¯¯KScc )−1 ¯¯GSc , (15) 
+
+¯d4λ = ¯ gS − ¯¯T Sc ( ¯¯KScc )−1 ¯f Sc , (16) solved by GMRES. Its action involves only subdomain-level solves and one small corner (coarse) solve propagating residual information globally; after convergence, all field and flux coefficients follow by local back-substitution. Compared with FETI-DP formulations built on the second-order vector wave equation [5], [9], in which the electric field is the only subdomain unknown, the mixed discretization carries both fields, storing N (i) 
+
+> e
+
++ N (i) 
+
+> f
+
+rather than N (i) 
+
+> e
+
+coefficients. The second channel raises the dual trace count from 
+
+2N Γ 
+
+> e
+
+to 2( N Γ 
+
+> e
+
++ N Γ 
+
+> f
+
+). Both ratios are fixed by the mesh: the added subdomain block is a face mass matrix carrying no curl, the added interface blocks are trace Gram matrices and signed permutations. No additional subdomain solves are required. The larger local systems and longer multiplier vector raise the cost of a single iteration by a bounded factor, whereas the iteration counts fall by far larger factors. The gain widens with problem difficulty, precisely where Robin TC slows or stagnates. The proposed TC therefore keeps the global interface equation solvable by a robust iterative solver at a total solution cost well below that of the Robin FETI-DP baseline. III. N UMERICAL EXPERIMENTS 
+
+The proposed two-channel FETI-DP-4λ method is validated on a sequence of 3-D examples against the Robin TC [4], [9] and SOTCs [14], [17] using identical conformal tetrahedral meshes and solver settings. The subdomain problems are discretized in the mixed E-B variables of Section II and factorized by a sparse direct solver, while the global interface equation is solved by unpreconditioned GMRES with a restart parameter of 1200 down to 10 −10 relative residual tolerance. Accuracy is assessed against the Robin TC-based FETI-DP-2λ solution and, where available, analytical or semi-analytical references; GMRES convergence and interface field and flux jumps are also examined. All waveguide examples are excited at the input port in the dominant TE 10 mode; except for the input and output ports, all boundaries are perfect electric conductors. 50 200 400 600 800 1000 GMRES Iterations 
+
+## 10 ¡1
+
+## 10 ¡3
+
+## 10 ¡5
+
+## 10 ¡7
+
+## 10 ¡9
+
+> Relative Residual
+
+## Robin TC SOTC-Full SOTC-TE Proposed TC              
+
+> Fig. 1. GMRES convergence history of the global interface equation for the irregularly partitioned waveguide. TABLE I GMRES I TERATION COUNTS FOR THE UNIFORMLY PARTITIONED WAVEGUIDE
+> Tolerance Transmission Condition 10 −610 −10
+> Robin TC 188 301 SOTC-Full 136 213 Proposed TC 55 68
+
+A. WR-90 Waveguide: Uniform and Irregular Partitionings 
+
+We first consider a WR-90 waveguide operating at f = 8 .2 GHz, partitioned into 40 uniform slabs of width ∆x = 6 mm with 39 cross-section interfaces. Both TCs agree with the analytical solution to approximately 99 .25% . The relative L2-norm difference between the proposed and Robin TC electric-field solutions is only 3.2 × 10 −7. As shown in Table I, the proposed TC reduces the GMRES iteration count relative to the Robin TC by factors of 3.42 and 4.42 at the 10 −6 and 10 −10 residual relative tolerances, respectively. At the 10 −10 tolerance, the corresponding wall-clock time decreases from 380 .7 s to 189 .3 s, yielding a ∼ 2× speedup. To test convergence and robustness of the global interface equation across different subdivisions and subdomain volumes, the same waveguide is partitioned into 30 irregular slabs with randomly distributed widths ∆x ∈ [0 .8, 18 .8] mm; the closely spaced thin slabs couple through evanescent modes that the Robin TC leaves undamped and that degrade the SOTC damping. As seen in Fig. 1, the proposed TC converges in almost 9 times fewer iterations than the Robin TC, while the two solutions agree to a relative 
+
+L2 difference of only 0.0001% .
+
+B. Ridge-Loaded, L-Shaped, and METIS-Partitioned Waveguides 
+
+Three further examples introduce a ridge discontinuity, a right-angle bend, and an irregular METIS partitioning. The ridge-loaded waveguide constricts the cross section to half-width over a ridge section and is partitioned into 40 subdomains. The L-shaped waveguide introduces a right-angle bend and is 60 100 200 300 
+
+## GMRES Iterations 
+
+10 ¡1
+
+10 ¡3
+
+10 ¡5
+
+10 ¡7
+
+10 ¡9
+
+> Relative Residual
+
+Robin TC Proposed TC   
+
+> (a) (b) Fig. 2. GMRES convergence history of the global interface equation for ridge-loaded (a) and METIS-partitioned (b) waveguides. The inset in (b) shows the METIS mesh partition.
+
+0 100 200 300 
+
+## GMRES Iterations 
+
+10 ¡1
+
+10 ¡3
+
+10 ¡5
+
+10 ¡7
+
+10 ¡9
+
+> Relative Residual
+
+Robin TC SOTC-Full Proposed TC 
+
+> (a)
+
+0 200 400 600 
+
+## GMRES Iterations 
+
+10 ¡1
+
+10 ¡3
+
+10 ¡5
+
+10 ¡7
+
+10 ¡9
+
+> Relative Residual
+
+Robin TC SOTC-Full Proposed TC (b) Fig. 3. GMRES convergence history of the global interface equation for the L-shaped waveguide partitioned into (a) 40 and (b)  
+
+> 100 subdomains.
+
+partitioned into 40 subdomains, with an additional 100 -subdomain case to probe robustness to subdomain count. The WR-90 waveguide is also partitioned by METIS [28] into 16 irregular subdomains with 37 
+
+interfaces and multiple corner edges. At 10 −10 tolerance, the proposed TC reduces the GMRES iteration count by factors of 3.39 and 9.53 relative to the Robin TC for the ridge-loaded and METIS-partitioned examples, respectively, with no loss of accuracy; similar reductions are observed in Fig. 3 for the L-shaped waveguide with both 40 and 100 subdomains. 
+
+C. X-Band Bandpass Waveguide Filter 
+
+A further example is an X-band bandpass waveguide filter for high-power SatCom applications, simulated at 8.4 GHz. Its multiscale features, strong evanescent near-field coupling, and, once torn by METIS into 
+
+110 subdomains, numerous corner edges make this a demanding problems for the Robin TC; the advantage of the proposed TC is particularly salient on this problem. Fig. 4(a) shows the METIS-partitioned geometry using an illustrative coarse mesh, whereas Fig. 4(b) presents the corresponding GMRES convergence histories: the proposed TC reaches the 10 −10 tolerance in 180 iterations against 1020 for the Robin TC, a 7     
+
+> (a) 0200 400 600 800 1000
+
+GMRES Iterations         
+
+> 10 1
+> 10 3
+> 10 5
+> 10 7
+> 10 9
+> Relative Residual
+> Robin TC Proposed TC
+> (b) Fig. 4. X-band bandpass waveguide filter, METIS-partitioned into 110 subdomains: (a) partition geometry; (b) GMRES convergence history of the global interface equation.
+
+nearly sixfold reduction. Consistent improvement was observed across all tested METIS partitionings with subdomain counts ranging from 50 to 310 .
+
+D. Improved Interface Continuity 
+
+One of the principal advantages of the proposed two-channel FETI-DP-4λ formulation, and one of the main drivers of the observed convergence acceleration, is the improvement in interface continuity over previous FETI approaches. Since the two channels directly impose continuity of tangential fields and of normal flux densities in the mixed E-B setting, both continuities are enforced at every DDM interface. Consequently, significantly improved field and flux continuity is observed across all examples of this section. Table II reports the measured jump statistics of |∆( ˆ n × E)| and |∆( ˆ n · B)| over all interface unknowns of the METIS-partitioned waveguide at the 10 −6 stopping tolerance. At this tolerance, the worst-case normal-flux jump |∆( ˆ n · B)| falls from 9.1 × 10 −7 under the Robin TC to 2.2 × 10 −12 under the proposed TC, a reduction of nearly six orders of magnitude, while the worst-case tangential-field jump |∆( ˆ n × E)| decreases from 1.4 × 10 −8 to 1.2 × 10 −10 , a reduction of more than two orders of magnitude. As the tolerance is tightened, both continuities improve, yet at every tolerance the proposed TC maintains a normal-flux jump orders of magnitude below that of the Robin TC. Beyond the faster convergence, the enhanced interface continuity improves total solution accuracy. At relaxed tolerance levels, e.g., 10 −3, the large interface jumps of the Robin TC visibly degrade the solution, whereas the proposed TC yields a markedly more accurate solution. 8
+
+TABLE II CONVERGED INTERFACE JUMP STATISTICS ON THE METIS-P ARTITIONED WAVEGUIDE AT 10 −6 STOPPING TOLERANCE 
+
+Mean Median Max 
+
+|∆( ˆ n × E)|
+
+Robin TC 3.3 × 10 −9 3.0 × 10 −9 1.4 × 10 −8
+
+Proposed TC 1.4 × 10 −11 4.1 × 10 −12 1.2 × 10 −10 
+
+|∆( ˆ n · B)|
+
+Robin TC 7.7 × 10 −9 3.7 × 10 −10 9.1 × 10 −7
+
+Proposed TC 1.2 × 10 −13 5.4 × 10 −14 2.2 × 10 −12 
+
+IV. C ONCLUSION 
+
+In this letter, a novel two-channel transmission condition, constructed directly from the Faraday and Amp` ere-Maxwell equations in a mixed E-B setting, and the resulting FETI-DP-4λ method were introduced for the DDM solution of large-scale EM problems. Across diverse 3-D scenarios spanning varying subdomain counts and volumes, partitionings, discretizations, multiscale features, and deep-evanescent waves, the proposed TC reduces the iteration counts of the global interface equation by up to several-fold relative to the widely used FETI approaches, while preserving the solution accuracy. Moreover, since both the tangential-field and normal-flux traces are enforced directly, the interface field and flux jumps decrease by orders of magnitude. Owing to the significantly improved convergence, the proposed TC enables robust, accurate, massively parallel, and scalable iterative DDM solvers for large-scale 3-D EM problems. REFERENCES 
+
+[1] J. N. Reddy, Computational Methods in Engineering: Finite Difference, Finite Volume, Finite Element, and Dual Mesh Control Domain Methods , 1st ed. Boca Raton, FL: CRC Press, 2024. [2] A. F. Peterson, S. L. Ray, and R. Mittra, Computational Methods for Electromagnetics . New York, NY, USA: IEEE Press, 1998. [3] O. C. Zienkiewicz, R. L. Taylor, and J. Z. Zhu, The Finite Element Method: Its Basis and Fundamentals , 6th ed. Butterworth-Heinemann, 2005. [4] J.-M. Jin, The Finite Element Method in Electromagnetics . John Wiley & Sons, 2015. [5] Y. Li and J.-M. Jin, “A vector dual-primal finite element tearing and interconnecting method for solving 3-d large-scale electromagnetic problems,” IEEE Transactions on Antennas and Propagation , vol. 54, no. 10, pp. 3000–3009, 2006. [6] A. Toselli and O. B. Widlund, Domain Decomposition Methods-Algorithms and Theory , ser. Springer Series in Computational Mathematics. Berlin, Heidelberg: Springer, 2005, vol. 34. [7] K. Zhao and J.-F. Lee, A Domain Decomposition Method: A Finite Element Preconditioner for Time-Harmonic Maxwell’s Equations . VDM Verlag, 2009. [8] C. Farhat and F.-X. Roux, “A method of finite element tearing and interconnecting and its parallel solution algorithm,” 
+
+International Journal for Numerical Methods in Engineering , vol. 32, no. 6, pp. 1205–1227, Oct. 1991. [9] Y.-J. Li and J.-M. Jin, “A new dual-primal domain decomposition approach for finite element simulation of 3-d large-scale electromagnetic problems,” IEEE Transactions on Antennas and Propagation , vol. 55, no. 10, pp. 2803–2810, 2007. [10] C. Farhat, J. Li, and P. Avery, “A FETI-DP method for the parallel iterative solution of indefinite and complex-valued solid and shell vibration problems,” International Journal for Numerical Methods in Engineering , vol. 63, no. 3, pp. 398–427, May 2005. [11] C. Farhat, M. Lesoinne, P. LeTallec, K. Pierson, and D. Rixen, “FETI-DP: A dual-primal unified FETI method—part i: A faster alternative to the two-level FETI method,” International Journal for Numerical Methods in Engineering , vol. 50, no. 7, pp. 1523–1544, Mar. 2001. [12] F.-X. Roux, “A FETI-2LM method for non-matching grids,” in Domain Decomposition Methods in Science and Engineering XVIII , ser. Lecture Notes in Computational Science and Engineering, M. Bercovier, M. J. Gander, R. Kornhuber, and O. Widlund, Eds., vol. 70. Berlin, Heidelberg: Springer, 2009, pp. 121–128. [13] G. N. Paraschos, “Robust and scalable domain decomposition methods for electromagnetic computations,” Ph.D. dissertation, University of Massachusetts Amherst, Amherst, MA, USA, Sep. 2012. [14] Z. Peng, V. Rawat, and J.-F. Lee, “One way domain decomposition method with second order transmission conditions for solving electromagnetic wave problems,” Journal of Computational Physics , vol. 229, no. 4, pp. 1181–1197, 2010. 9
+
+[15] V. Dolean, M. J. Gander, S. Lanteri, J.-F. Lee, and Z. Peng, “Effective transmission conditions for domain decomposition methods applied to the time-harmonic curl-curl maxwell’s equations,” Journal of Computational Physics , vol. 280, pp. 232–247, 2015. [16] M.-F. Xue and J.-M. Jin, “A feti-dp method enhanced with second-order transmission condition for antenna array analysis,” in 2014 IEEE Antennas and Propagation Society International Symposium (APSURSI) , 2014, pp. 2238–2239. [17] Z. Peng and J.-F. Lee, “Non-conformal domain decomposition method with second-order transmission conditions for time-harmonic electromagnetics,” Journal of Computational Physics , vol. 229, no. 16, pp. 5615–5629, 2010. [18] J. Lu, “Convergence enhancement for embedded domain decomposition method through spectral radius reduction,” IEEE Transactions on Microwave Theory and Techniques , vol. 72, no. 10, pp. 5745–5758, 2024. [19] J. Lu and J.-F. Lee, “Convergence improvement for domain decomposition method through corner treatment,” IEEE Antennas and Wireless Propagation Letters , vol. 22, no. 12, pp. 2965–2969, 2023. [20] V. Rawat and J.-F. Lee, “Nonoverlapping domain decomposition with second order transmission condition for the time-harmonic maxwell’s equations,” SIAM Journal on Scientific Computing , vol. 32, no. 6, pp. 3584–3603, 2010. [21] J. Moshfegh, “A parallel direct method for finite element electromagnetic computations based on domain decomposition,” Ph.D. dissertation, University of Massachusetts Amherst, Amherst, MA, USA, 2019. [22] D. G. Makris and M. N. Vouvakis, “Non-conforming direct domain decomposition methods (d3m),” in 2022 IEEE International Symposium on Antennas and Propagation and USNC-URSI Radio Science Meeting (AP-S/URSI) , 2022, pp. 1344–1345. [23] J. Moshfegh and M. N. Vouvakis, “Direct domain decomposition method (D3M) for finite element electromagnetic computations,” in 2016 IEEE International Symposium on Antennas and Propagation (APSURSI) , 2016, pp. 1127–1128. [24] B. He and F. L. Teixeira, “Mixed E–B finite elements for solving 1-D, 2-D, and 3-D time-harmonic Maxwell curl equations,” 
+
+IEEE Microwave and Wireless Components Letters , vol. 17, no. 5, pp. 313–315, 2007. [25] ——, “Differential forms, Galerkin duality, and sparse inverse approximations in finite element solutions of Maxwell equations,” IEEE Transactions on Antennas and Propagation , vol. 55, no. 5, pp. 1359–1368, 2007. [26] Z. D. Crawford, O. H. Ramachandran, S. O’Connor, D. L. Dault, J. Luginsland, and B. Shanker, “Domain decomposition framework for maxwell finite element solvers and application to PIC,” IEEE Transactions on Plasma Science , vol. 52, no. 1, pp. 168–179, 2024. [27] S.-C. Lee, M. N. Vouvakis, and J.-F. Lee, “A non-overlapping domain decomposition method with non-matching grids for modeling large finite antenna arrays,” Journal of Computational Physics , vol. 203, no. 1, pp. 1–21, 2005. [28] G. Karypis and V. Kumar, “METIS: A software package for partitioning unstructured graphs, partitioning meshes, and computing fill-reducing orderings of sparse matrices,” University of Minnesota, Department of Computer Science, Minneapolis, MN, USA, Tech. Rep. 97-061, 1997. [Online]. Available: https://hdl.handle.net/11299/215346

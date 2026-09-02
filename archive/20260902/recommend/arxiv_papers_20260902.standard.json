@@ -1,0 +1,55 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-09-02T23:05:50.133696+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2608.25041v1",
+      "source": "arxiv",
+      "title": "Rapidly Convergent Finite-Element Domain Decomposition Method With Two-Channel Transmission Conditions",
+      "abstract": "A novel dual-primal finite element tearing and interconnecting (FETI-DP) domain decomposition method (DDM) is introduced for solving Maxwell's equations. The proposed method is built upon a two-channel transmission condition (TC) enforcing both tangential-field and normal-flux continuity across subdomain interfaces. Two interface channels are separately constructed from the Faraday and Ampere-Maxwell equations. Simultaneously enforcing tangential-field and normal-flux continuity reduces interface jumps by several orders of magnitude relative to the widely used Robin TC. The resulting global interface equation exhibits markedly improved iterative convergence. Numerical experiments across different partitioning strategies, subdomain counts and volumes, mesh resolutions, and geometries demonstrate drastic reductions in iteration counts, while accuracy, massive parallelism, and scalability are preserved.",
+      "authors": [
+        "Furkan Şık",
+        "Fernando L. Teixeira",
+        "Balasubramaniam Shanker"
+      ],
+      "primary_category": "physics.comp-ph",
+      "categories": [
+        "physics.comp-ph",
+        "math.NA"
+      ],
+      "published": "2026-08-25T18:31:35+00:00",
+      "link": "https://arxiv.org/pdf/2608.25041v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "fast domain-decomposition Maxwell solver, an advanced modeling technique relevant to high-speed interconnect electromagnetic simulation",
+      "llm_evidence_cn": "快速收敛的Maxwell区域分解求解方法，可用于高速互连等先进电磁建模",
+      "llm_evidence": "快速收敛的Maxwell区域分解求解方法，可用于高速互连等先进电磁建模",
+      "canonical_evidence": "快速收敛的Maxwell区域分解求解方法，可用于高速互连等先进电磁建模",
+      "llm_tldr_en": "A two-channel transmission condition FETI-DP method for Maxwell equations reduces interface jumps by orders of magnitude and markedly improves iterative convergence, enabling efficient large-scale EM modeling.",
+      "llm_tldr_cn": "面向大规模Maxwell方程有限元区域分解求解收敛慢的问题，提出双通道传输条件FETI-DP方法，分别由Faraday和Ampere-Maxwell方程构建切向场与法向通量连续性约束。相比Robin传输条件，数值实验显示界面跳变降低多个数量级，全局界面方程迭代收敛显著加速。该技术为高速互连与封装等电磁建模仿真提供更高效的求解途径。",
+      "llm_tldr": "面向大规模Maxwell方程有限元区域分解求解收敛慢的问题，提出双通道传输条件FETI-DP方法，分别由Faraday和Ampere-Maxwell方程构建切向场与法向通量连续性约束。相比Robin传输条件，数值实验显示界面跳变降低多个数量级，全局界面方程迭代收敛显著加速。该技术为高速互连与封装等电磁建模仿真提供更高效的求解途径。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Advanced modeling and optimization techniques for SI/PI in high speed systems",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
