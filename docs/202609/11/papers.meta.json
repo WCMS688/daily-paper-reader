@@ -1,0 +1,24 @@
+{
+  "label": "2026-09-11",
+  "date": "2026-09-11",
+  "generated_at": "2026-09-11T22:00:44",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202609/11/2609.06087v1-construction-constrained-bernstein-synthesis-of-joint-pitch-width-rdl-spiral-inductors-for-high-q-mmwave-fowlp-applications",
+      "section": "quick",
+      "title_en": "Construction-Constrained Bernstein Synthesis of Joint Pitch-Width RDL Spiral Inductors for High-Q mmWave FoWLP Applications",
+      "authors": "Shuhang Chen, Xinmeng Wang, Yuchong Sun, Qi Zhu",
+      "date": "2026-09-05",
+      "pdf": "https://arxiv.org/pdf/2609.06087v1",
+      "score": "6.0",
+      "evidence": "封装级RDL螺旋电感综合优化与全波评估",
+      "tldr": "高Q毫米波FoWLP平面螺旋电感需在有限RDL面积内联合优化匝距与线宽。本文提出构造约束Bernstein合成框架：正三次Bernstein曲线规定单调径向轨迹，独立Bernstein曲线控制导体宽度，并利用非负性、单位分解和凸包性质将端点、绕向与宽度要求转为代数约束，再嵌入差分进化，在全波评估前剔除非法个体。两匝30GHz电感仿真Q达34.85，较均匀阿基米德基线提升17.5%，铜面积减少1.53%，16–49GHz保持Q≥30。",
+      "tags": "query:si-pi",
+      "abstract_en": "We present a construction-constrained Bernstein framework for joint pitch-width synthesis of planar spiral inductors. A positive cubic Bernstein profile is integrated to prescribe a monotonic radial trajectory, while an independent Bernstein profile controls the conductor width. The nonnegativity, partition-of-unity, and convex-hull properties of the Bernstein basis convert endpoint, winding-direction, and width requirements into algebraic constraints. Embedded in differential evolution (DE), these constraints reject inadmissible candidates before full-wave evaluation, focusing expensive solver calls on geometries that satisfy the construction rules. The method is demonstrated on a two-turn mmWave inductor implemented in the redistribution layer (RDL) of fan-out wafer-level packaging (FoWLP), with the quality factor selected as the optimization objective. Searching the constrained Bernstein design space with DE yields a simulated Q of 34.85 at 30 GHz, compared with 29.66 for a uniform Archimedean baseline under the same stack, footprint, and ports. This corresponds to a 17.5% improvement while reducing planar copper area by 1.53%. The optimized response maintains Q >= 30 from 16 to 49 GHz.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
