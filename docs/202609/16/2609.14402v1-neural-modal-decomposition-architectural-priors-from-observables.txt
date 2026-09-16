@@ -1,0 +1,465 @@
+Title: Neural Modal Decomposition: Architectural Priors from Observables
+
+URL Source: https://arxiv.org/pdf/2609.14402v1
+
+Published Time: Tue, 15 Sep 2026 01:31:33 GMT
+
+Number of Pages: 17
+
+Markdown Content:
+# Neural Modal Decomposition: Architectural Priors from Observables 
+
+Juho Park, Kaushik Sengupta 
+
+Princeton University 
+
+{jp3327, kaushiks}@princeton.edu 
+
+# Abstract 
+
+Many engineering building blocks behave as multi-port linear time-invariant sys-tems. RF cavities, photonic devices, and superconducting quantum chips, despite their different underlying physics, all share a common mathematical structure for their port-level response. Each entry of the response matrix is a sum of contribu-tions from a small number of intrinsic resonant modes, the pole-residue form. A model capable of predicting such responses for arbitrary geometries and arbitrary port configurations, while simultaneously extracting the underlying eigenmode structure, would therefore establish a foundational design principle spanning all these domains. We propose a neural framework that learns this modal decom-position end-to-end, supervised only by system-level observables and without supervising the modal parameters themselves. The architecture decomposes into a port-independent pole predictor and two port-dependent coupling predictors whose outputs are combined entry-wise, separating intrinsic from port-dependent features. This factorization yields a single trained model that generalizes to port counts unseen during training, dissolving the O(N 2) scaling barrier of direct regression. Despite no modal supervision, the freely-parameterized poles converge to physi-cally meaningful eigenmodes, verified by cross-validation against the AAA rational approximation algorithm. We instantiate the framework in radio-frequency elec-tromagnetic surrogate modeling. A model trained only on 2-port data accurately predicts N -port responses unseen during training. 
+
+# 1 Introduction 
+
+A wide range of engineering building blocks share the same physical character. They are linear time-invariant (LTI) multi-port systems whose response is dominated by a few intrinsic resonant modes. RF cavities and passive components [1, 2], photonic devices such as power splitters and wavelength demultiplexers [3, 4], and the linear electromagnetic environment of superconducting quantum chips [5–7] all admit a common port-level description (Figure 1). Each entry of the multi-port response matrix can be written as 
+
+Hij (ω) = X
+
+> k
+
+lk,i rk,j 
+
+jω − pk
+
+, (1) a sum over intrinsic modes with port-independent poles pk and port-dependent coupling coefficients 
+
+lk,i , r k,j . This is the pole-residue form , the canonical solution structure of any LTI multi-port system. Within each domain it appears under different names (multi-port network theory, temporal coupled-mode theory, black-box quantization), but the algebra is the same. 
+
+Why observables, not fields. For these systems, the practical quantity of interest at design time is the system-level observable. Examples include the impedance matrix in microwave engineering, the transmission matrix in photonics, and the multi-port impedance at qubit ports in circuit quantum electrodynamics (cQED). The internal field is an intermediate representation, expensive to simulate 
+
+> Preprint. arXiv:2609.14402v1 [physics.comp-ph] 13 Sep 2026
+
+or measure and rarely the target of design itself. Field-based neural surrogates such as PINNs [8] and neural operators [9, 10] provide powerful tools when the spatial field is itself the quantity of interest. For multi-port system design, however, where the response matrix is the direct design target, observable-based modeling offers a complementary and more compact route. 
+
+Modal decomposition gives port-count generalization. A useful consequence of the pole-residue form is that its dimensionality does not depend on the number of ports observed. The poles are intrinsic to the system and shared across all port configurations, and only the per-port couplings need to be evaluated for each port. A surrogate that outputs modal parameters can therefore predict the response at any port count, including counts unseen at training time. Direct regression on the response matrix, by contrast, scales output dimensionality as O(N 2), requires a separately collected dataset for each port count, and cannot generalize to new port configurations (Figure 2). 
+
+Why this has been hard. Despite this structural appeal, learning modal decompositions with neural networks has remained difficult. Direct supervision of pole-residue parameters [11–13] requires first running rational fitting algorithms such as Vector Fitting [14] on the training data and then training a network to regress these parameters. This pipeline inherits well-known pathologies. Poles can change in number across samples, residues admit sign and phase ambiguities, and spurious modes appear when the rational fit is over-parameterized. The deeper issue is that pole-residue parameters are non-injective and non-smooth as regression targets. 
+
+Our approach. We perform modal decomposition through architectural design, supervised only by system-level observables and never supervising the modal parameters themselves. The forward computation is by construction a pole-residue sum, and the network’s three modules predict the pieces. A cavity encoder produces a structure-only latent, a pole predictor maps it to K complex poles, and a port-dependent coupling predictor is queried separately for the left and right ports of each entry to produce lk,i and rk,j . Loss is computed on observables. The factorization lk,i rk,j makes the loss invariant to a discrete sign symmetry of the residues, and an anchor-gauge term fixes the residual phase ambiguity across port queries. Despite no modal supervision, the freely-parameterized poles converge to physically meaningful eigenmodes, which we verify against the AAA rational approximation algorithm [15]. 
+
+Figure 1: A universal architectural prior across physical domains. Multi-port LTI systems in RF/microwave engineering, photonic devices, and superconducting quantum chips all admit the same pole-residue structure. Each response entry is a sum over intrinsic modes with port-independent poles pk and port-dependent couplings ( lk,i , rk,j in microwave network theory, κout 
+
+> k,i
+
+, κ in  
+
+> k,j
+
+in temporal coupled-mode theory, analogous quantities in black-box quantization). The same algebraic prior underlies all three. 
+
+Contributions. We summarize our contributions as follows. • We propose a neural framework that learns the multi-port pole-residue decomposition end-to-end from system-level observables, without supervising modal parameters. The architecture factors into a port-independent pole predictor and a port-dependent coupling predictor combined entry-wise, with an anchor-gauge term that resolves the sign degeneracy across port queries. The same architectural prior applies to multi-port LTI systems including RF, photonic, and quantum domains. 2• We instantiate the framework in radio-frequency electromagnetic surrogate modeling. A model trained only on 2-port data accurately predicts 3-, 4-, and 5-port responses unseen during training, achieving zero-shot N -port generalization. • We show that despite the absence of modal supervision, the freely-parameterized poles converge to physically meaningful eigenmodes, validated against the AAA rational approxi-mation algorithm [15]. 
+
+# 2 Related Work 
+
+Direct supervision of modal parameters. The Neuro-Transfer-Function line of work [11–13] extracts pole-residue parameters from training data using Vector Fitting [14], then supervises a network to regress these parameters. Pole-residue variants suffer from pole tracking and order-changing issues, and rational variants face severe numerical sensitivity at high orders [13]. Subsequent work has been substantially devoted to patching these issues [16, 13], but the underlying difficulty (that pole-residue parameters are non-injective and non-smooth regression targets) remains. Our framework treats poles and residues as free parameters of the forward computation, supervised only implicitly through observables. 
+
+Physics-informed neural networks (PINNs). PINNs [8] regularize predictions with PDE-residual losses, and neural operators [9, 10] learn function-to-function mappings between input and output fields. These approaches are powerful when the spatial field is the quantity of interest, but they target the high-dimensional field itself, with modal characteristics being extracted afterwards. Our framework targets a complementary problem class (system-level observables) and exploits the algebraic structure of the observable to obtain advantages in data efficiency, mesh independence, and interpretability. 
+
+Spectral learning in dynamical systems. DeepKoopman [17] and follow-ups [18–20] train archi-tectures with linear-dynamics bottlenecks to recover spectral parameters such as Koopman eigenvalues without direct supervision. They share with us the principle that spectral parameters can emerge from architectural design under observable-level losses, but operate on time-domain trajectories of single systems rather than on a parametric family of multi-port responses, target scalar observables rather than the matrix-valued multi-port observable whose submatrix structure we exploit, and rely on prediction accuracy alone as evidence of spectral correctness, without independent cross-validation against true physical modes (a check we provide via AAA). 
+
+# 3 Method 
+
+3.1 Pole-residue form as architectural prior 
+
+For an LTI multi-port physical system with N input/output channels, the matrix-valued transfer function H(ω) ∈ CN ×N admits the pole-residue decomposition 
+
+Hij (ω) = 
+
+> K
+
+X
+
+> k=1
+
+lk,i rk,j 
+
+jω − pk
+
+, (2) where {pk}Kk=1 ⊂ C are complex poles intrinsic to the system and {lk, ·, r k, ·}Kk=1 ⊂ CN are coupling vectors describing how each mode couples to each port. Reciprocal systems satisfy lk = rk as a special case. We keep the general form so the framework applies equally to non-reciprocal systems such as non-reciprocal cQED architectures. In our radio-frequency electromagnetic experiments, we adopt the impedance matrix Z(ω) ≡ H(ω)
+
+as the working representation. It is related to the scattering matrix S(ω) by the standard impedance-to-scattering transformation S = ( Z − Z0I)( Z + Z0I)−1 with reference impedance Z0 = 50 Ω . We use H(ω) in this section to emphasize that the prior itself is system-agnostic. Experiments adopt the RF-specific Z, S notation. 
+
+Submatrix consistency. A central algebraic property we exploit is that the impedance representation is consistent under port-subset restriction . For any port subset P ⊂ { 1, . . . , N }, the impedance 3matrix obtained by physically open-terminating the unselected ports equals the submatrix ZP,P (ω)
+
+of the original. The same poles {pk} describe the system regardless of how many ports are observed, and only the coupling vectors are restricted to the selected ports. This motivates an architecture in which pole prediction is decoupled from port observation. Importantly, submatrix consistency is not 
+
+universal. The scattering matrix S does not satisfy it because S is defined with every port terminated in a reference load, and those loads absorb energy and alter the field. Adding or removing a port therefore changes every entry of S, not only the entries involving that port. Choosing the impedance over the scattering representation is what makes pole prediction independent of the port set. The deeper reason is that impedance corresponds to non-invasive probing of an internal system. Adding or removing measurement ports does not alter internal dynamics, only which channels are observed. Any LTI multi-port system admits the resolvent-style representation Hij (ω) = 
+
+ϕT 
+
+> i
+
+(jωI − L)−1ψj , with L an internal operator independent of the port set and ϕi, ψ j port-specific input/output mappings [21]. Restricting attention to a port subset selects a subset of these mappings while leaving L unchanged, yielding exactly the submatrix of H. The same characterization holds across LTI domains. Examples include the impedance and admittance matrices in microwave theory [22], the receptance matrix in structural dynamics [23], multi-port acoustic impedance matrices in branched duct networks [24], and multi-channel resolvents in quantum scattering [25]. In this work we instantiate the framework in radio-frequency electromagnetics, leaving extensions to other domains for future work. 
+
+Figure 2: Direct regression versus Neural Modal Decomposition. (a) Direct regression on S-parameters, the standard RF approach, requires a separately collected dataset and a separately trained model for each port count N , and offers no path to port configurations unseen at training time. (b) NMD transforms the S training data to the impedance Z (which has the port-invariance property), trains a single model on a fixed port count to predict poles pk and per-port couplings lk,i , r k,j , and reconstructs Zij (ω) for any port subset by submatrix selection. The output is converted back to 
+
+S-parameters via the bilinear transformation for community-standard reporting. 
+
+3.2 Architecture 
+
+We instantiate Equation 2 as a neural network composed of three modules (Figure 3c). The network takes as input the cavity geometry and a pair of port locations (xi, x j ), and outputs the entries of the multi-port response. Layer-level specifications, dimensions, and training details are deferred to Appendix B. 
+
+CavityNet (structure encoder). CavityNet Φcav (g) takes the cavity geometry as a binary pixel pattern and produces a sequence of intrinsic cavity tokens, using a convolutional backbone followed by tokenization. CavityNet does not see port locations and captures only properties intrinsic to the cavity itself. 4PoleNet. PoleNet Φpole maps the cavity tokens to a set of K complex poles. We parameterize each pole as 
+
+pk = −γk + j ω k, γk > 0, (3) where ωk is the resonance frequency of mode k and γk is its damping rate. The damping rate is constrained positive (via a softplus on a raw network output) so that the pole always lies in the left half-plane and the system is stable by construction. Throughout the paper we plot poles in the complex frequency plane ωp = −jp k = ωk + jγ k, so that the horizontal axis is the resonance frequency and the vertical axis is the damping rate (Appendix B.2 gives the explicit conversion). PoleNet depends only on cavity tokens, reflecting the physical fact that poles are intrinsic to the cavity and independent of port placement. 
+
+AmpNet (left and right). AmpNet maps the cavity tokens together with the location of a queried port into per-pole coupling entries, with two independent heads producing the left coupling lk,i and the right coupling rk,j . The port location (ri, c i) is encoded with a hybrid scheme. The row index takes only two values in our setup, the top and bottom edges of the cavity. A sinusoidal encoding of a two-valued input returns nearly identical feature vectors for both values, leaving the network almost no signal to distinguish them, so we use a learned embedding with one vector per row instead. The column index spans 18 distinct values and admits a standard sinusoidal positional encoding. The row and column encodings are concatenated and projected into a single vector representing the queried port. This vector attends to the cavity tokens produced by CavityNet, so that the port representation is conditioned on the geometry, and two linear heads then output the magnitude and phase of lk,i and 
+
+rk,j for each pole. 
+
+Synthesis. For a port pair (i, j ) the impedance entry is computed entry-wise as 
+
+Zij (ω) = 
+
+> K
+
+X
+
+> k=1
+
+lk,i rk,j 
+
+jω − pk
+
+. (4) The full N ×N impedance matrix is assembled by querying all N ports through both AmpNet heads, and is then converted to scattering parameters via the bilinear transformation. Because each port is queried independently, the synthesis operates at any port count without architectural change. 
+
+3.3 Sign invariance and the gauge-fixing loss 
+
+The pole-residue form admits a discrete sign symmetry. Replacing (lk, r k) → (−lk, −rk) leaves the entry-wise product lk,i rk,j invariant, so Z and the reconstruction loss are unchanged. This gauge ambiguity is one of the reasons why direct supervision of residues is ill-posed. Any modal supervision target can be matched by 2K different network outputs, all representing the same residue. Our lk,i rk,j 
+
+factorization makes the reconstruction loss automatically invariant to this symmetry, eliminating a primary source of training instability. The reconstruction loss computed on Z and S is therefore identical for all 2K sign-equivalent solutions, which implies a practical hazard. Residues may drift along these sign-equivalent solutions during training, and nothing prevents the gauge from being chosen inconsistently across different port queries within the same sample. Such inconsistency can corrupt the assembled outer product across the N × N matrix. Empirically, the gauge-fixing term is not strictly essential. Removing it leaves zero-shot port-count generalization to 3-, 4-, and 5-port configurations essentially unchanged. It does, however, provide a modest improvement in in-band reconstruction accuracy on the 2-port training distribution, reducing S-parameter MAE by roughly 16% relative to the unanchored variant. We therefore perceive the term as a lightweight regularizer that improves in-band fidelity without affecting the framework’s main capability of port-count extension. A complete ablation over the gauge fixing term and the pole count K is provided in Appendix F. To fix a canonical gauge, we designate the bottom edge (row index ranchor = 17 ) as the anchor edge. For every queried port that lies on this edge we impose, on each predicted modal amplitude ak (drawn from either the left or right AmpNet head), the per-mode penalty 
+
+ℓgauge (ak) = 1 − Re( ak)
+
+|ak| + ε , (5) 5which is minimized when ak has phase zero on the positive real axis. The total gauge loss aggregates this penalty over both AmpNet heads and over both queried ports of a sample, and is applied only when the queried port row equals ranchor . We anchor only at ranchor rather than at every port, since the ZK 
+
+> 2
+
+ambiguity is broken once a single reference is fixed. Anchoring additional ports such as those on the top edge would over-constrain the network, because the relative amplitudes and phases between top and bottom edge couplings carry the actual mode-shape information that the network must be free to learn. The full aggregated form, including masks, is given in Appendix B.4. In our experiments Lgauge converges to roughly 3 × 10 −4, indicating near-complete gauge fixing. 
+
+3.4 Training 
+
+We instantiate the framework in the RF setting, where the relevant observables are the impedance matrix Z(ω) and the scattering matrix S(ω). The total training loss combines two observable-level reconstruction terms with the gauge-fix term, 
+
+L = ∥Spred − Sgt ∥
+
+| {z }
+
+> LS
+
++ λZ log( |Zpred | + ε) − log( |Zgt | + ε)
+
+| {z }
+
+> LZ, log
+
++ λg Lgauge . (6) We supervise on both S and Z representations because they are complementary in their conditioning. 
+
+S is well-conditioned away from resonance, while Z has a wide dynamic range near resonance that the log-magnitude form LZ, log handles stably ( ε is a small numerical stabilizer). No supervision on {pk, l k,i , r k,j } is provided. Training data consists exclusively of N = 2 channel observations. Generalization to N ≥ 3 is evaluated zero-shot at inference time. It took around 1 hour for 200 epochs to train our neural network using one H200 GPU. 
+
+# 4 Experiments 
+
+4.1 Setup Dataset. Each cavity instance is represented as an 18 × 18 binary pixel matrix corresponding to a physical area of 300 × 300 μm2 (Figure 3a,b). The interior 16 × 16 region encodes the cavity metal pattern. The left and right edges contain a single metal pixel each that serves as an AC short to ground in all cavities, while two ports are placed at the top and/or bottom edges. The two ports may sit on the same edge (Figure 3b). Port pixel locations along each edge are randomized. For each instance, we obtain the 2-port S-parameter response from full-wave electromagnetic simulation with the commercial simulator EMX, at 36 frequency points spanning 30 to 100 GHz in 
+
+2 GHz increments, retaining {S11 , S 12 , S 22 } by reciprocity. Full simulation and dataset construction details follow [1]. The training set comprises approximately 291,000 cavity samples. Test sets for zero-shot port-count extension consist of 3-, 4-, and 5-port configurations on cavity patterns never seen at any port count during training, each 1000 samples respectively. Full split sizes are reported in Appendix A. 
+
+Implementation. We train with AdamW (learning rate 3 × 10 −4, weight decay 10 −3, batch size 256) for 200 epochs. Loss weights are λZ = 0 .1 and λg = 0 .5, tuned on the validation set. The total model has approximately 14.5M parameters (CavityNet 4.11M, PoleNet 1.99M, two AmpNet heads 4.20M each). Layer specifications, hyperparameters, and the full training protocol are detailed in Appendix B. 
+
+4.2 Emergent physical pole discovery 
+
+To test whether our freely-parameterized poles correspond to physically meaningful modes, we compare them against poles extracted by the AAA rational approximation algorithm [15] applied independently to the same S-parameter data. AAA is a near-best rational approximation algorithm with provable accuracy guarantees and serves as an independent reference for the true physical poles of each system. Figure 4 shows the comparison on six representative test geometries. For each geometry, the top panel plots the Frobenius norm of the impedance matrix, ∥Z(ω)∥F =   P  
+
+> i,j
+
+|Zij (ω)|21/2, as a single 6Figure 3: Dataset, port arrangements, and architecture. (a) Cavity stack-up. A patterned 18 × 18 
+
+binary metal layer (4 μm thick) is embedded between two dielectrics ( εeff = 3 .9) over a ground plane, with 2-port S-parameters sampled at 36 frequencies from 30 to 100 GHz. (b) Two ports (red) on the top/bottom edges carry signal and two AC shorts (blue) on the left/right edges are present in all cavities. Cross-edge and same-edge port arrangements are both included in training, with port pixel locations randomized. (c) NMD pipeline. CavityNet encodes the geometry into a cavity latent, PoleNet maps the latent to K complex poles pk, and AmpNet (left/right) is queried per port to produce lk,i and rk,j . The entry-wise synthesis Zij (ω) = P 
+
+> k
+
+lk,i rk,j /(jω − pk) is converted to S
+
+and supervised. scalar curve summarizing the overall response magnitude across all entries. Resonance peaks in 
+
+∥Z(ω)∥F correspond to poles where physical modes dominate the response. The bottom panel plots the corresponding poles in the complex frequency plane, with the horizontal axis giving the resonance frequency ωk and the vertical axis the damping rate γk. Among the K = 32 network poles we display the five most dominant ones, ranked by the in-band Frobenius contribution of each mode to ∥Z(ω)∥F
+
+(Appendix C). The poles selected this way fall almost exactly on top of the AAA-extracted reference poles, despite the network never being supervised on pole locations. This emergent agreement is striking because the network receives no information about pole positions during training, only the system-level S-parameter response. The architectural prior alone, the assumption of pole-residue structure, suffices to drive the network toward the physically correct mode locations. 
+
+4.3 Zero-shot port-count extension 
+
+We evaluate zero-shot generalization to larger port counts unseen during training. The network is trained exclusively on 2-port data and tested on 3-, 4-, and 5-port configurations, none of which appear in any form during training. Figure 5 compares predicted versus ground-truth S-parameter responses across all four port counts. On the in-distribution 2-port test set, our model achieves an S-parameter MAE of 0.0281 ± 0.0267 
+
+(mean ± std). As a direct-regression reference on the same 2-port dataset, a CNN baseline following the architecture of [1] achieves an MAE of 0.010 , roughly 2.8× better in this in-distribution regime, as expected since direct regression specializes to fit 2-port dataset without the architectural constraints imposed by the pole-residue parameterization. This modest in-distribution cost is the price for a fundamentally new capability of zero-shot generalization to port counts unseen at training time, which direct regression cannot offer in principle due to its fixed output dimensionality. On the held-out 7Figure 4: Network discovers physical poles without supervision. Six representative test geometries (the cavity pattern is shown inset in each panel). For each, the top panel shows the Frobenius norm 
+
+∥Z(ω)∥F with ground truth (solid) versus prediction (dashed), and the training band shaded green. The bottom panel shows the top-5 dominant poles in the complex frequency plane, with network poles (red) overlapping AAA-extracted reference poles (black) despite no pole supervision. Agreement holds inside and outside the training band, indicating that the network has recovered the physical eigenmodes. port-count test sets ( n = 1 ,000 each), a single 2-port-trained model achieves S-parameter MAE of 
+
+0.0405 ± 0.0627 on 3-port, 0.0433 ± 0.0602 on 4-port, and 0.0445 ± 0.0570 on 5-port, without ever observing more than two simultaneously active ports during training. As we show in Appendix D, the median MAE on these held-out sets is substantially lower than the mean, with the gap driven by a long tail of difficult cavities; for the typical sample, port-count extension is essentially lossless. The submatrix consistency property exploited by our architecture, combined with AmpNet’s smooth dependence on port location, yields this generalization. Additional zero-shot port-count extension examples are provided in Appendix E. 
+
+4.4 Why does emergence happen? 
+
+The architectural prior creates a strong inductive bias toward the correct solution manifold. The dominant in-band poles of any pole-residue parameterization that fits the observable response across the training distribution must be close to the physical decomposition, because the physical decom-position is itself the canonical form of the data-generating process. The architecture narrows the solution space to a neighborhood of the truth, and observable supervision selects the correct point within. This suggests a general principle. When the data-generating process has known algebraic structure, embedding that structure architecturally can substitute for explicit supervision of the latent parameters. 8Figure 5: Zero-shot port-count extension. A single model trained only on 2-port data is evaluated on 3-, 4-, and 5-port configurations not seen at any port count during training. Each row corresponds to a port count (2p, 3p, 4p, 5p). The leftmost column shows the cavity with port locations (red, numbered) and AC shorts (blue). Remaining columns show representative S-parameter magnitudes versus frequency, with predictions (red, dashed) closely matching ground truth (black, solid). 
+
+4.5 Limitations 
+
+We learn K independent poles, which turns out to be more than the number of physical poles extracted by AAA. Beyond the in-band physical poles validated against AAA, the network allocates additional poles that absorb the frequency-independent contribution of the pole-residue form. How these distant poles continue to support accurate port-count extension to unseen configurations remains an open question. Our framework also targets LTI systems with discrete modal spectra, so continuous-spectrum or strongly nonlinear regimes lie outside its scope. Finally, the pole count K is a fixed hyperparameter rather than learned, with adaptive selection left open. 
+
+# 5 Conclusion 
+
+We presented a neural framework for modal decomposition that learns physically meaningful pole-residue representations from system-level observables alone, without supervising the modal parame-ters themselves. By embedding pole-residue structure as an architectural prior with a factorization that automatically invariantizes the loss against modal sign ambiguities, our framework avoids the central pathologies of prior modal-supervised approaches. The learned poles emergently agree with AAA-derived physical poles, and a single 2-port-trained model generalizes zero-shot to port counts unseen during training, dissolving a fundamental scaling barrier of regression-based multi-port 9surrogates. Beyond the RF domain, the same architectural prior applies to any LTI multi-port system whose response admits a pole-residue form, including photonic devices and superconducting quantum chips. More broadly, the pole-residue form does not just describe the response of a multi-port LTI system. It carries the system’s eigenmodes inside its algebraic structure. When the observable already has this kind of structure, putting it into the architecture is enough. The network learns the modes from observables, with no need for field training or PDE-residual losses. This points to a more general reading of the same construction. Nothing in the architecture requires the query to be a physical port. The coupling lk,i is the modal field evaluated at a location, and the port index is merely a discrete sampling of it. Whenever the observable is a Green’s function, 
+
+G(x, x′, ω ) = X
+
+> k
+
+ϕk(x) ϕk(x′)
+
+jω − pk
+
+, (7) that is, a resolvent sampled at pairs of spatial points rather than at ports, the same factorization applies verbatim, with the port query replaced by a continuous coordinate and the residue product by the modal field profiles ϕk. The framework is therefore not confined to port-level observables but extends to spatially resolved ones, yielding a mesh-free modal representation of the field. We leave this to future work. 
+
+# Acknowledgments and Disclosure of Funding 
+
+This work was supported by the Army Research Office under Award No. W911NF2410111 (P.I. Kaushik Sengupta). 
+
+# References 
+
+[1] E. A. Karahan, Z. Liu, A. Gupta, Z. Shao, J. Zhou, U. Khankhoje, and K. Sengupta. Deep-learning enabled generalized inverse design of multi-port radio-frequency and sub-terahertz passives and integrated circuits. Nature Communications , 15(1):10734, 2024. [2] E. A. Karahan, Z. Shao, and K. Sengupta. Deep learning aided modelling and inverse design for multi-port antennas. In 2024 IEEE International Symposium on Antennas and Propagation and INC/USNC-URSI Radio Science Meeting (AP-S/INC-USNC-URSI) , pages 799–800. IEEE, 2024. [3] M. H. Tahersima, K. Kojima, T. Koike-Akino, D. Jha, B. Wang, C. Lin, and K. Parsons. Deep neural network inverse design of integrated photonic power splitters. Scientific Reports , 9(1): 1368, 2019. [4] A. Y. Piggott, J. Lu, K. G. Lagoudakis, J. Petykiewicz, T. M. Babinec, and J. Vuˇ ckovi´ c. Inverse design and demonstration of a compact and broadband on-chip wavelength demultiplexer. 
+
+Nature Photonics , 9(6):374–377, 2015. [5] S. E. Nigg, H. Paik, B. Vlastakis, G. Kirchmair, S. Shankar, L. Frunzio, M. H. Devoret, R. J. Schoelkopf, and S. M. Girvin. Black-box superconducting circuit quantization. Physical Review Letters , 108(24):240502, 2012. [6] F. Arute, K. Arya, R. Babbush, D. Bacon, J. C. Bardin, R. Barends, R. Biswas, S. Boixo, F. G. S. L. Brandao, D. A. Buell, et al. Quantum supremacy using a programmable superconducting processor. Nature , 574(7779):505–510, 2019. [7] E. Jeffrey, D. Sank, J. Y. Mutus, T. C. White, J. Kelly, R. Barends, Y. Chen, Z. Chen, B. Chiaro, A. Dunsworth, et al. Fast accurate state measurement with superconducting qubits. Physical Review Letters , 112(19):190504, 2014. [8] Maziar Raissi, Paris Perdikaris, and George E Karniadakis. Physics-informed neural networks: A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations. Journal of Computational physics , 378:686–707, 2019. [9] Z. Li, N. Kovachki, K. Azizzadenesheli, B. Liu, K. Bhattacharya, A. Stuart, and A. Anandkumar. Fourier neural operator for parametric partial differential equations. In ICLR , 2021. 10 [10] Lu Lu, Pengzhan Jin, Guofei Pang, Zhongqiang Zhang, and George Em Karniadakis. Learning nonlinear operators via deeponet based on the universal approximation theorem of operators. 
+
+Nature machine intelligence , 3(3):218–229, 2021. [11] Feng Feng, Chao Zhang, Jianguo Ma, and Qi-Jun Zhang. Parametric modeling of em behavior of microwave components using combined neural networks and pole-residue-based transfer functions. IEEE Transactions on Microwave Theory and Techniques , 64(1):60–77, 2015. [12] Feng Feng, Chao Zhang, Jianguo Ma, Qi-Jun Zhang, et al. Parametric modeling of microwave components using adjoint neural networks and pole-residue transfer functions with em sensitivity analysis. IEEE Transactions on Microwave Theory and Techniques , 65(6):1955–1975, 2017. [13] Wei Zhang, Feng Feng, Wenyuan Liu, Shuxia Yan, Jianan Zhang, Jing Jin, and Qi-Jun Zhang. Advanced parallel space-mapping-based multiphysics optimization for high-power microwave filters. IEEE transactions on microwave theory and techniques , 69(5):2470–2484, 2021. [14] Bjorn Gustavsen and Adam Semlyen. Rational approximation of frequency domain responses by vector fitting. IEEE Transactions on power delivery , 14(3):1052–1061, 2002. [15] Yuji Nakatsukasa, Olivier Sète, and Lloyd N Trefethen. The aaa algorithm for rational approxi-mation. SIAM Journal on Scientific Computing , 40(3):A1494–A1522, 2018. [16] Jianan Zhang, Feng Feng, Wei Zhang, Jing Jin, Jianguo Ma, and Qi-Jun Zhang. A novel training approach for parametric modeling of microwave passive components using padé via lanczos and em sensitivities. IEEE Transactions on Microwave Theory and Techniques , 68(6):2215–2233, 2020. [17] Bethany Lusch, J Nathan Kutz, and Steven L Brunton. Deep learning for universal linear embeddings of nonlinear dynamics. Nature communications , 9(1):4950, 2018. [18] Naoya Takeishi, Yoshinobu Kawahara, and Takehisa Yairi. Learning koopman invariant sub-spaces for dynamic mode decomposition. Advances in neural information processing systems ,30, 2017. [19] Samuel E Otto and Clarence W Rowley. Linearly recurrent autoencoder networks for learning dynamics. SIAM Journal on Applied Dynamical Systems , 18(1):558–593, 2019. [20] Enoch Yeung, Soumya Kundu, and Nathan Hodas. Learning deep neural network representations for koopman operators of nonlinear dynamical systems. In 2019 American Control Conference (ACC) , pages 4832–4839. IEEE, 2019. [21] Thomas Kailath. Linear systems , volume 156. Prentice-Hall Englewood Cliffs, NJ, 1980. [22] David M Pozar. Microwave engineering . John wiley & sons, 2011. [23] David J Ewins. Modal testing: theory, practice and application . John Wiley & Sons, 2009. [24] Manchar Lal Munjal. Acoustics of ducts and mufflers with application to exhaust and ventilation system design . John Wiley & Sons, 1987. [25] John R Taylor. Scattering theory: the quantum theory of nonrelativistic collisions . Courier Corporation, 2012. 
+
+# A Dataset details 
+
+The cavity dataset is generated by uniformly sampling binary metal patterns over the interior 16 × 16 
+
+region of the 18 × 18 pixel array, together with port pixel locations along the top and bottom edges. The full 18 × 18 array represents a physical area of 300 × 300 μm2, simulated with the commercial electromagnetic simulator EMX. Although the simulation uses a 4-port representation in which the AC-shorted left and right edges are formally treated as ports, only the top and bottom edges carry signal and are used as observation ports. The 2-port S-parameter response is stored as 
+
+{S11 , S 12 , S 22 } at 36 frequency points, exploiting reciprocity ( S12 = S21 ). Full simulation, sampling, and post-processing details follow [1]. 11 The 2-port dataset is split into 291,435 train, 26,429 validation, and 26,430 test samples. Test sets for zero-shot port-count extension consist of 3-, 4-, and 5-port configurations on cavity patterns not seen at any port count during training, with 1000 samples each. For the dataset generation, each sample took around 10 seconds to be simulated. It took around 1.5 days to generate the whole dataset, under 50 parallel simulation instances ran in cluster equipped with Intel Ice Lake CPUs. 
+
+# B Training details 
+
+B.1 CavityNet specification 
+
+The cavity pattern g ∈ { 0, 1}1×H×W (H = 16 , W = 18 , with port rows excluded) is fed directly to the backbone. The backbone is a four-block VGG-style CNN with channel widths (64 , 128 , 256 , D t)
+
+where Dt = 384 , and two 2×2 max-pools after blocks 1 and 2. • Block 1: Conv (1 , 64) → Conv (64 , 64) → MaxPool (2) 
+
+• Block 2: Conv (64 , 128) → 2 × Conv (128 , 128) → MaxPool (2) 
+
+• Block 3: Conv (128 , 256) → 2 × Conv (256 , 256) 
+
+• Block 4: Conv (256 , D t) → Conv (Dt, D t)
+
+Each Conv denotes a 3 × 3 convolution followed by BatchNorm and GELU. After block 4, the spatial feature map of size ⌈H/ 4⌉ × ⌈ W/ 4⌉ = 4 × 5 is flattened into n = 20 tokens of dimension Dt. A LayerNorm and a learned positional embedding E ∈ Rn×Dt are then applied, 
+
+T = LN  Flatten (ϕcnn (g))  + E ∈ Rn×Dt . (8) During training, additive Gaussian pattern noise ( σpat = 0 .05 ) and stochastic token dropout ( ptok =0.10 ) regularize the representation. 
+
+B.2 PoleNet specification and pole convention 
+
+A learned set of K = 32 query embeddings Q ∈ RK×Dt , initialized with imaginary-axis spread, cross-attends to the cavity tokens T through Lpole = 2 transformer-style blocks with multi-head attention ( h = 4 heads) and position-wise feed-forward networks ( Dff = 512 ), 
+
+x ← LN (x + MHA (x, T, T )) , x ← x + FFN (x). (9) A linear head outputs K × 2 pre-activation real values (uk, v k), which we map to the parameters of Equation 3 as 
+
+γk = softplus (uk), ωk = vk, pk = −γk + j ω k. (10) The softplus on uk enforces γk > 0 and hence places the pole in the left half of the s-plane. In Figure 4 we display poles in the complex frequency plane via the substitution ωp ≡ − j p k = ωk + j γ k. The horizontal axis Re ωp then equals the resonance frequency ωk and the vertical axis Im ωp equals the damping rate γk.
+
+B.3 AmpNet specification 
+
+For a port at row r ∈ { 0, 17 } and column c ∈ { 0, . . . , 17 }, we encode the port location with a hybrid scheme. The row index is essentially binary in our setup (top edge, r = 0 , vs. bottom edge, r = 17 ), and a sinusoidal encoding on a normalized scalar r/ 17 degenerates because it returns near-identical values for the two valid rows. We therefore use a learned row embedding, 
+
+row _emb : {0, 1, . . . , 17 } → Rdrow , drow = 64 , (11) implemented as nn.Embedding(num_embeddings=18, embedding_dim=64) with weights ini-tialized from N (0 , 0.05 2). The embedding table provides 18 row slots even though only r = 0 and 
+
+r = 17 are active in our experiments, leaving headroom for future configurations with intermediate rows. 12 The column index c takes 18 distinct values along the edge and is well-resolved by a sinusoidal positional encoding, 
+
+col _pe( c) =  sin(2 lπ c/ 17) , cos(2 lπ c/ 17)  
+
+> l=0 ,...,L port −1
+
+∈ R2Lport , (12) with Lport = 12 frequency bands. The row embedding and column encoding are concatenated and projected to a single query token, 
+
+q = Win 
+
+row _emb( r) ∥ col _pe( c) ∈ RDt , (13) which cross-attends to the cavity tokens T through Lamp = 3 transformer-style blocks ( Dt = 384 ,
+
+h = 4 heads, Dff = 1024 , dropout 0.15 ). Two parallel linear heads then read out 2K real values each (magnitude and phase per pole) corresponding to the left coupling lk,i and the right coupling rk,j ,with magnitudes passed through a softplus to remain non-negative and phases unconstrained. 
+
+B.4 Loss, gauge term, and optimization 
+
+The total training loss is 
+
+L = LS + λZ LZ, log + λg Lgauge . (14) 
+
+LS is a per-entry MAE on the scattering matrix, and LZ, log is a log-magnitude error on the impedance matrix with stabilizer ε = 10 −2 to handle the wide dynamic range near resonance. Loss weights are 
+
+λZ = 0 .1 and λg = 0 .5.
+
+Gauge term in detail. Section 3 introduced the gauge-fixing strategy and the per-mode penalty (Equation 5). Here we give the explicit aggregated form. Let Panchor denote the set of queried ports lying on the anchor edge ranchor = 17 . The aggregated gauge loss for a sample is the mean of the per-mode penalty over both AmpNet heads, over the K modes, and over Panchor ,
+
+Lgauge = 12K |P anchor |
+
+X
+
+> p∈P anchor
+> K
+
+X
+
+> k=1
+
+ℓgauge (lk,p ) + ℓgauge (rk,p ), (15) with εanchor = 10 −6. We use the convention Lgauge = 0 when Panchor = ∅. Concretely, TOP–TOP samples produce |P anchor | = 0 , TOP–BOT samples |P anchor | = 1 (only the BOT port is anchored, on both heads), and BOT–BOT samples |P anchor | = 2 (both ports anchored, on both heads). 
+
+Optimization. We use AdamW with learning rate 3 × 10 −4, weight decay 10 −3, batch size 256, for 200 epochs. The total parameter count is approximately 14.5M, broken down as CavityNet 4.11 M, PoleNet 1.99 M, left-AmpNet 4.20 M, and right-AmpNet 4.20 M. 
+
+Training dynamics. Figure 6 shows the training and validation LS , the log-impedance loss LZ, log ,and the gauge-fixing loss Lgauge over 200 epochs. The training and validation LS curves track each other closely throughout, indicating no overfitting on the in-distribution 2-port data. The gauge-fixing loss Lgauge converges to roughly 3 × 10 −4, indicating near-complete gauge fixing on the anchor edge. 
+
+B.5 Hyperparameter summary 
+
+The hyperparameters used in this paper are stated in Table 1. 
+
+# C Top-5 dominance criterion for pole comparison 
+
+Figure 4 compares network poles against AAA poles using ∥Z(ω)∥F , the Frobenius norm of the impedance matrix, as a scalar summary of the response. For each mode k we therefore want a dominance score that captures its in-band contribution to ∥Z(ω)∥F , so that the top-ranked modes are precisely those that shape the curves shown in the figure. For a sample with two queried ports i and j, mode k contributes to the 2 × 2 impedance submatrix through the rank-1 residue matrix 
+
+Mk = lk rTk =
+
+lk,i 
+
+lk,j 
+
+
+
+[rk,i rk,j ] , Z(ω) = 
+
+> K
+
+X
+
+> k=1
+
+Mk
+
+jω − pk
+
+. (16) 13 Figure 6: Training dynamics over 200 epochs. Train and validation LS (S-parameter MAE), LZ, log 
+
+(log-impedance error), and Lgauge . Train and validation LS track closely with no overfitting. Lgauge 
+
+saturates near 3 × 10 −4, indicating near-complete gauge fixing. 
+
+Component Parameter Value CavityNet token dimension Dt 384 number of tokens n 4 × 5 = 20 
+
+pattern noise σpat / token dropout ptok 0.05 / 0.10 PoleNet number of poles K 32 layers / heads / FFN dim 2 / 4 / 512 Left-AmpNet row embedding dim drow 64 column PE bands Lport 12 layers / heads / FFN dim 3 / 4 / 1024 dropout 0.15 Right-AmpNet (identical architecture to Left-AmpNet) same Loss λZ 0.1 
+
+λg (anchor weight) 0.5 log-Z stabilizer ε 10 −2
+
+anchor stabilizer εanchor 10 −6
+
+anchor row ranchor 17 Optimization optimizer AdamW learning rate / weight decay 3 × 10 −4 / 10 −3
+
+batch size / epochs 256 / 200 Parameter breakdown CavityNet 4.11 MPoleNet 1.99 MLeft-AmpNet 4.20 MRight-AmpNet 4.20 MTotal parameters ∼14.5M 
+
+Table 1: Hyperparameters for the neural modal decomposition model. The two AmpNet heads share the same architecture but have independent weights, producing left coupling lk,i and right coupling 
+
+rk,j respectively. The soft reciprocity term λsym is disabled in the reported configuration so that the framework remains applicable to non-reciprocal systems. 14 The in-band L2 contribution of mode k to ∥Z(ω)∥F on the training band is then 
+
+sZ
+
+> ω∈band
+
+Mk
+
+jω − pk
+
+> 2
+> F
+
+dω = ∥Mk∥F ·
+
+sZ
+
+> ω∈band
+
+1
+
+|jω − pk|2 dω, (17) a product of the residue Frobenius norm and the in-band Cauchy-kernel gain. The rank-1 identity ∥Mk∥2 
+
+> F
+
+= ∥lk∥2 · ∥ rk∥2 lets us evaluate the residue factor directly from the network’s left and right couplings, and we replace the integral with a discrete sum over the Nf = 36 
+
+training frequencies {ωn}Nf 
+
+> n=1
+
+uniformly spaced in [30 , 100] GHz. The dominance score is 
+
+dom k =
+
+q |lk,i |2 + |lk,j |2  |rk,i |2 + |rk,j |2| {z } 
+
+> ∥Mk∥F
+
+·
+
+vuut Nf
+
+X
+
+> n=1
+
+1
+
+|jω n − pk|2
+
+| {z }
+
+> in-band kernel gain
+
+. (18) We rank modes by dom k and select the top NTOP = 5 .Either factor alone is misleading. The Frobenius norm alone selects modes with large amplitude that may sit far outside the training band and contribute little to ∥Z(ω)∥F on it. The kernel gain alone selects well-placed poles that may have negligible residue, including spurious modes. Their product is the in-band Frobenius contribution we want. 
+
+# D Error distribution across port counts 
+
+Section 4.3 summarizes zero-shot generalization through the mean S-parameter MAE on each port count. In this section we report more detailed shape of the error distribution. Table 2 reports the median, interquartile bounds (p25, p75), and upper-tail percentiles (p95, p99, max) on the 2-port in-distribution test set ( n = 26 ,430 ) and on the held-out 3-, 4-, and 5-port test sets ( n = 1 ,000 each).                                    
+
+> Port Test set size mean median std p25 p75 p95 2p 26,430 0.0281 0.0221 0.0267 0.0152 0.0328 0.0612 3p 1,000 0.0405 0.0258 0.0627 0.0184 0.0362 0.1075 4p 1,000 0.0433 0.0250 0.0602 0.0184 0.0376 0.1794 5p 1,000 0.0445 0.0245 0.0570 0.0183 0.0363 0.1925
+
+Table 2: Distribution of per-sample S-parameter MAE across port counts. The mean reported in the main text is included for reference. Across all held-out port counts the median sits substantially below the mean, indicating that the generalization error is concentrated in a small upper tail rather than spread uniformly across the test set. Overall in the error distribution, the mean is degraded by long tail. The typical sample generalizes nearly losslessly. On every held-out port count the median MAE lies well below the mean (3p: 
+
+0.0258 vs. 0.0405 ; 4p: 0.0250 vs. 0.0433 ; 5p: 0.0245 vs. 0.0445 ), and the interquartile range stays tightly clustered around it. In particular, the lower quartile p25 is essentially identical across all four port counts ( 0.0152 , 0.0184 , 0.0184 , 0.0183 ), and p75 also remains close to its 2-port value. For the easier half of the test distribution, port-count extension is therefore effectively lossless. The inflation of the mean at higher port counts is driven almost entirely by the upper tail. p95 grows from 0.0612 at 2p to 0.1925 at 5p. A small number of difficult cavities, possibly those whose poles are wrongly predicted, account for most of the gap between the in-distribution and held-out means. The standard deviation reported alongside the mean in Section 4.3 reflects this tail rather than dispersion of the typical sample. 
+
+# E Additional port-count extension examples 
+
+Figure 5 in the main text shows zero-shot port-count extension on a single representative geometry. Here we provide two additional examples in Figure 7 and 8. As before, the model is trained exclusively on 2-port data and queried at 3, 4, and 5 ports without any further adaptation. 15 Figure 7: Zero-shot port-count extension, Additional example 1. 
+
+# F Ablation studies 
+
+We ablate two key design choices, the number of poles K and the use of gauge-fixing term. All other hyperparameters and the training protocol follow Appendix B. Table 3 reports the S-parameter MAE on the in-distribution 2-port test set ( n = 26 ,429 ) and on the held-out 3-, 4-, and 5-port test sets used for zero-shot port-count extension ( n = 1000 each).                                     
+
+> Model Kλg2p 3p 4p 5p K=8 80.5 0.0752 0.0995 0.0944 0.0887 K=16 16 0.5 0.0306 0.0533 0.0533 0.0569
+> K=32 with gauge fix (main result) 32 0.5 0.0281 0.0405 0.0433 0.0445
+> K=32 without gauge fix 32 0.0 0.0333 0.0439 0.0438 0.0453
+> K=64 64 0.5 0.0279 0.0423 0.0431 0.0458
+
+Table 3: Ablation on pole count K and gauge-fixing weight λg . S-parameter MAE on the 2-port in-distribution test set and on held-out 3-, 4-, and 5-port test sets (zero-shot port-count extension). The default configuration used throughout the main paper is K=32 with gauge fix. 
+
+Pole count K. With K = 8 the model is severely underparameterized and fails on every port count (2p MAE 0.0752 ). Increasing to K = 16 already recovers competitive in-band accuracy ( 0.0306 )but still degrades on the held-out port counts ( 0.0533 –0.0569 ). At K = 32 both in-band accuracy and port-count generalization saturate, and K = 64 yields no further improvement (2p 0.0279 vs. 
+
+0.0281 ; 5p 0.0458 vs. 0.0445 ). We adopt K = 32 as the default. As discussed in Section 4.5, 16 Figure 8: Zero-shot port-count extension, Additional example 2. 
+
+this is larger than the number of in-band physical poles extracted by AAA. The extra poles absorb the frequency-independent contribution of the pole-residue form and place themselves outside the training band. 
+
+Gauge-fixing weight λg . Comparing K=32 with gauge ( λg = 0 .5) against K=32 without gauge (λg = 0 ) isolates the contribution of the anchor-gauge term. The two variants differ noticeably on in-band 2-port reconstruction ( 0.0281 vs. 0.0333 , a roughly 16% relative improvement), but are statistically indistinguishable on zero-shot port-count extension to 3-, 4-, and 5-port configurations (0.0405 vs. 0.0439 , 0.0433 vs. 0.0438 , 0.0445 vs. 0.0453 ). The gauge-fixing term is therefore not essential for the port-count generalization capability that is the core contribution of this work, but it provides a modest improvement in in-band reconstruction fidelity. We retain it as a lightweight regularizer in the default configuration. 
+
+# G Broader Impacts 
+
+This work contributes a surrogate modeling framework for multi-port linear time-invariant systems, with primary applications in radio-frequency, photonic, and superconducting quantum hardware design. Positive impacts include faster device design iteration and reduced computational cost of full-wave electromagnetic simulation. We do not foresee specific negative societal impacts beyond those generic to any hardware design tool. The framework operates on physical system observables and does not process human data. 17

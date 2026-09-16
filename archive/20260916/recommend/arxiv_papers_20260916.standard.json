@@ -1,0 +1,54 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-09-16T22:00:38.468101+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2609.14402v1",
+      "source": "arxiv",
+      "title": "Neural Modal Decomposition: Architectural Priors from Observables",
+      "abstract": "Many engineering building blocks behave as multi-port linear time-invariant systems. RF cavities, photonic devices, and superconducting quantum chips, despite their different underlying physics, all share a common mathematical structure for their port-level response. Each entry of the response matrix is a sum of contributions from a small number of intrinsic resonant modes, the pole-residue form. A model capable of predicting such responses for arbitrary geometries and arbitrary port configurations, while simultaneously extracting the underlying eigenmode structure, would therefore establish a foundational design principle spanning all these domains. We propose a neural framework that learns this modal decomposition end-to-end, supervised only by system-level observables and without supervising the modal parameters themselves. The architecture decomposes into a port-independent pole predictor and two port-dependent coupling predictors whose outputs are combined entry-wise, separating intrinsic from port-dependent features. This factorization yields a single trained model that generalizes to port counts unseen during training, dissolving the $\\mathcal{O}(N^2)$ scaling barrier of direct regression. Despite no modal supervision, the freely-parameterized poles converge to physically meaningful eigenmodes, verified by cross-validation against the AAA rational approximation algorithm. We instantiate the framework in radio-frequency electromagnetic surrogate modeling. A model trained only on 2-port data accurately predicts $N$-port responses unseen during training.",
+      "authors": [
+        "Juho Park",
+        "Kaushik Sengupta"
+      ],
+      "primary_category": "physics.comp-ph",
+      "categories": [
+        "physics.comp-ph",
+        "cs.LG"
+      ],
+      "published": "2026-09-13T10:04:00+00:00",
+      "link": "https://arxiv.org/pdf/2609.14402v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "learns pole-residue multiport response models, akin to reduced-order interconnect macromodeling",
+      "llm_evidence_cn": "学习极点-留数多端口响应模型，类似互连降阶宏建模",
+      "llm_evidence": "学习极点-留数多端口响应模型，类似互连降阶宏建模",
+      "canonical_evidence": "学习极点-留数多端口响应模型，类似互连降阶宏建模",
+      "llm_tldr_en": "Multiport LTI devices have pole-residue port responses; this work proposes a neural framework that learns this modal decomposition end-to-end from system-level observables, predicting responses for arbitrary geometries and ports while extracting eigenmode structure.",
+      "llm_tldr_cn": "许多工程器件表现为多端口线性时不变系统，其端口响应矩阵可写成少数本征谐振模的极点-留数之和，但缺少能对任意几何与端口配置预测响应并同时提取本征模态的模型。本文提出一种神经框架，仅以系统级可观测量为监督，端到端学习该模态分解。模型可为任意几何和端口配置预测响应并揭示底层本征模结构。其意义在于为RF腔体、光子器件与超导量子芯片等跨领域多端口系统建立统一的建模与降阶原理。",
+      "llm_tldr": "许多工程器件表现为多端口线性时不变系统，其端口响应矩阵可写成少数本征谐振模的极点-留数之和，但缺少能对任意几何与端口配置预测响应并同时提取本征模态的模型。本文提出一种神经框架，仅以系统级可观测量为监督，端到端学习该模态分解。模型可为任意几何和端口配置预测响应并揭示底层本征模结构。其意义在于为RF腔体、光子器件与超导量子芯片等跨领域多端口系统建立统一的建模与降阶原理。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Advanced modeling and optimization techniques for SI/PI in high speed systems",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

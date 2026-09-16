@@ -1,0 +1,24 @@
+{
+  "label": "2026-09-16",
+  "date": "2026-09-16",
+  "generated_at": "2026-09-16T22:01:37",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202609/16/2609.14402v1-neural-modal-decomposition-architectural-priors-from-observables",
+      "section": "quick",
+      "title_en": "Neural Modal Decomposition: Architectural Priors from Observables",
+      "authors": "Juho Park, Kaushik Sengupta",
+      "date": "2026-09-13",
+      "pdf": "https://arxiv.org/pdf/2609.14402v1",
+      "score": "6.0",
+      "evidence": "学习极点-留数多端口响应模型，类似互连降阶宏建模",
+      "tldr": "多端口线性时不变系统（如射频腔、光子器件和超导量子芯片）的端口响应可由少量本征谐振模式以极点-留数形式表示。本文提出神经模态分解框架，仅用系统级可观测量端到端学习该分解，无需监督模态参数。架构将端口无关极点预测器与两个端口相关耦合预测器逐项组合，分离本征与端口特征。仅用2端口数据训练的模型可预测未见N端口响应，自由极点收敛到物理本征模，并经AAA算法交叉验证。",
+      "tags": "query:si-pi",
+      "abstract_en": "Many engineering building blocks behave as multi-port linear time-invariant systems. RF cavities, photonic devices, and superconducting quantum chips, despite their different underlying physics, all share a common mathematical structure for their port-level response. Each entry of the response matrix is a sum of contributions from a small number of intrinsic resonant modes, the pole-residue form. A model capable of predicting such responses for arbitrary geometries and arbitrary port configurations, while simultaneously extracting the underlying eigenmode structure, would therefore establish a foundational design principle spanning all these domains. We propose a neural framework that learns this modal decomposition end-to-end, supervised only by system-level observables and without supervising the modal parameters themselves. The architecture decomposes into a port-independent pole predictor and two port-dependent coupling predictors whose outputs are combined entry-wise, separating intrinsic from port-dependent features. This factorization yields a single trained model that generalizes to port counts unseen during training, dissolving the $\\mathcal{O}(N^2)$ scaling barrier of direct regression. Despite no modal supervision, the freely-parameterized poles converge to physically meaningful eigenmodes, verified by cross-validation against the AAA rational approximation algorithm. We instantiate the framework in radio-frequency electromagnetic surrogate modeling. A model trained only on 2-port data accurately predicts $N$-port responses unseen during training.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

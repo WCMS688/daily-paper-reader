@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-09-16 <!--dpr-date:20260916-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202609/16/2609.14402v1-neural-modal-decomposition-architectural-priors-from-observables" data-sidebar-item="{&quot;title&quot;: &quot;Neural Modal Decomposition: Architectural Priors from Observables&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2609.14402v1-neural-modal-decomposition-architectural-priors-from-observables&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;学习极点-留数多端口响应模型，类似互连降阶宏建模&quot;}">Neural Modal Decomposition: Architectural Priors from Observables</a>
   * 2026-09-11 <!--dpr-date:20260911-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202609/11/2609.06087v1-construction-constrained-bernstein-synthesis-of-joint-pitch-width-rdl-spiral-inductors-for-high-q-mmwave-fowlp-applications" data-sidebar-item="{&quot;title&quot;: &quot;Construction-Constrained Bernstein Synthesis of Joint Pitch-Width RDL Spiral Inductors for High-Q mmWave FoWLP Applications&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2609.06087v1-construction-constrained-bernstein-synthesis-of-joint-pitch-width-rdl-spiral-inductors-for-high-q-mmwave-fowlp-applications&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;封装级RDL螺旋电感综合优化与全波评估&quot;}">Construction-Constrained Bernstein Synthesis of Joint Pitch-Width RDL Spiral Inductors for High-Q mmWave FoWLP Applications</a>
