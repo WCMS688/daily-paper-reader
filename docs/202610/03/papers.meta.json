@@ -1,0 +1,24 @@
+{
+  "label": "2026-10-03",
+  "date": "2026-10-03",
+  "generated_at": "2026-10-03T22:26:03",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202610/03/2609.36111v1-automated-pre-silicon-verification-of-high-speed-ddr5-and-lpddr56-memory-controllers-closed-loop-timing-mode-register-and-phy-synchronization-in-uvm",
+      "section": "quick",
+      "title_en": "Automated Pre-Silicon Verification of High-Speed DDR5 and LPDDR5/6 Memory Controllers: Closed-Loop Timing, Mode Register, and PHY Synchronization in UVM",
+      "authors": "Manan Patel, Anirban Majumder",
+      "date": "2026-09-28",
+      "pdf": "https://arxiv.org/pdf/2609.36111v1",
+      "score": "6.0",
+      "evidence": "高速DDR5/LPDDR5-6内存控制器的闭环时序与PHY同步验证",
+      "tldr": "现代SoC需外接DDR5/LPDDR5/6内存控制器，其硅前验证依赖第三方DRAM VIP，但配置与初始化流程繁琐且易误报协议违规。本文提出自动化闭环验证框架：从JEDEC/VIP数据库解析时序与配置参数，配置DUT寄存器，并用MR-RAL实时跟踪DRAM VIP易变状态。该框架还支持免重编译PHY初始化，在测试平台随机化接口参数、系统调用生成配置并运行时解析寄存器写序列。集成后可消除设置开销、避免假违规，并提升复杂PHY与控制器随机测试覆盖。",
+      "tags": "query:si-pi",
+      "abstract_en": "External memory interfaces (such as LPDDR5/4 and DDR5) are essential components of modern mobile, cloud, and enterprise computing systems. While memory manufacturers focus on physical DRAM die development, the vast majority of semiconductor firms design custom application ASICs that require a dedicated Memory Controller to interface with these standardized external memories. Consequently, pre-silicon design verification of the Memory Controller RTL -- acting as the Device Under Test (DUT) against a third-party DRAM Verification IP (VIP) -- is a ubiquitous and critical challenge across the global semiconductor industry. This article presents an automated, pre-silicon configuration and closed-loop initialization framework for Memory Controller verification. The proposed solution parses JEDEC timing and configuration parameters directly from the DRAM VIP's database files (such as Denali SOMA files) to configure the Memory Controller DUT's registers, while a custom Mode Register Register Abstraction Layer (MR-RAL) tracks volatile DRAM VIP states in real-time. Furthermore, a dynamic, re-compilation-free PHY initialization flow randomizes interface parameters directly in the testbench, executes on-the-fly configuration generation via system calls, and parses the resulting register write sequences at runtime. By integrating these automated methodologies into pre-silicon verification flows, engineers can eliminate setup overhead, prevent false protocol violations, and enable comprehensive randomized testing of complex PHY and Memory Controller configurations.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

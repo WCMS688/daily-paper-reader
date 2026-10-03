@@ -1,0 +1,53 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-10-03T22:25:29.850972+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2609.36111v1",
+      "source": "arxiv",
+      "title": "Automated Pre-Silicon Verification of High-Speed DDR5 and LPDDR5/6 Memory Controllers: Closed-Loop Timing, Mode Register, and PHY Synchronization in UVM",
+      "abstract": "External memory interfaces (such as LPDDR5/4 and DDR5) are essential components of modern mobile, cloud, and enterprise computing systems. While memory manufacturers focus on physical DRAM die development, the vast majority of semiconductor firms design custom application ASICs that require a dedicated Memory Controller to interface with these standardized external memories. Consequently, pre-silicon design verification of the Memory Controller RTL -- acting as the Device Under Test (DUT) against a third-party DRAM Verification IP (VIP) -- is a ubiquitous and critical challenge across the global semiconductor industry. This article presents an automated, pre-silicon configuration and closed-loop initialization framework for Memory Controller verification. The proposed solution parses JEDEC timing and configuration parameters directly from the DRAM VIP's database files (such as Denali SOMA files) to configure the Memory Controller DUT's registers, while a custom Mode Register Register Abstraction Layer (MR-RAL) tracks volatile DRAM VIP states in real-time. Furthermore, a dynamic, re-compilation-free PHY initialization flow randomizes interface parameters directly in the testbench, executes on-the-fly configuration generation via system calls, and parses the resulting register write sequences at runtime. By integrating these automated methodologies into pre-silicon verification flows, engineers can eliminate setup overhead, prevent false protocol violations, and enable comprehensive randomized testing of complex PHY and Memory Controller configurations.",
+      "authors": [
+        "Manan Patel",
+        "Anirban Majumder"
+      ],
+      "primary_category": "cs.AR",
+      "categories": [
+        "cs.AR"
+      ],
+      "published": "2026-09-28T18:48:11+00:00",
+      "link": "https://arxiv.org/pdf/2609.36111v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Pre-silicon verification of high-speed DDR5/LPDDR5-6 memory controllers with closed-loop timing and PHY synchronization",
+      "llm_evidence_cn": "高速DDR5/LPDDR5-6内存控制器的闭环时序与PHY同步验证",
+      "llm_evidence": "高速DDR5/LPDDR5-6内存控制器的闭环时序与PHY同步验证",
+      "canonical_evidence": "高速DDR5/LPDDR5-6内存控制器的闭环时序与PHY同步验证",
+      "llm_tldr_en": "This work addresses pre-silicon verification of high-speed external memory controllers for DDR5 and LPDDR5/6. It proposes an automated UVM-based configuration covering closed-loop timing, mode register and PHY synchronization against DRAM verification IP. The approach enables systematic checking of memory interface behavior before silicon, improving confidence in DDR channel and controller designs.",
+      "llm_tldr_cn": "针对现代计算系统中DDR5与LPDDR5/6等外部存储器接口，其内存控制器RTL的硅前验证普遍困难且关键。本文提出一套基于UVM的自动化验证配置，覆盖闭环时序、模式寄存器配置与PHY同步，并以第三方DRAM验证IP作为被测对象进行仿真。该方法能在流片前系统性地验证内存控制器与DRAM接口行为，提升DDR通道与控制器设计的可信度，对高速存储器接口的建模与仿真验证具有参考价值。",
+      "llm_tldr": "针对现代计算系统中DDR5与LPDDR5/6等外部存储器接口，其内存控制器RTL的硅前验证普遍困难且关键。本文提出一套基于UVM的自动化验证配置，覆盖闭环时序、模式寄存器配置与PHY同步，并以第三方DRAM验证IP作为被测对象进行仿真。该方法能在流片前系统性地验证内存控制器与DRAM接口行为，提升DDR通道与控制器设计的可信度，对高速存储器接口的建模与仿真验证具有参考价值。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "SerDes DDR and HBM channel modeling and simulation",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
