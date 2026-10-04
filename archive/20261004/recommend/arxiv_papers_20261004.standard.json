@@ -1,0 +1,57 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-10-04T22:23:48.939570+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2609.38363v1",
+      "source": "arxiv",
+      "title": "Simulator-Refined Diffusion for Radio-Frequency Inverse Design",
+      "abstract": "Diffusion models have shown potential in inverse design of printed circuit boards (PCBs), enabling the generation of layouts conditioned on target S-parameters. Despite this promise, applying diffusion models to PCB layout generation remains challenging due to their difficulty in meeting the quantitative electromagnetic specifications. A common approach is gradient-based guidance, which biases the diffusion sampling process with the gradient of an objective used for evaluation. However, full-wave electromagnetic simulators are accurate but expensive and typically non-differentiable, whereas differentiable surrogates are informative but not always reliable. To address these limitations, this paper proposes Simulator-Refined Diffusion (SRD), a novel combination of a low-fidelity differentiable surrogate and a high-fidelity non-differentiable simulator within the diffusion sampling process. Unlike standard zeroth-order optimization, which requires a great number of random perturbations, our approach uses the surrogate's gradient to propose the perturbation direction while the simulator then searches based on this direction to identify an effective design update. Experimental results across different settings show that this method consistently outperforms current state-of-the-art methods, producing layouts whose simulated S-parameters match the target specifications up to 21.2% closer for in-distribution targets and up to 19.8% for out-of-distribution targets.",
+      "authors": [
+        "Jinhao Liang",
+        "Jacob K. Christopher",
+        "Michael Frei",
+        "Tommaso Dreossi",
+        "Nando Fioretto"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-09-29T18:26:40+00:00",
+      "link": "https://arxiv.org/pdf/2609.38363v1",
+      "tags": [
+        "keyword:si-pi",
+        "query:si-pi"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "diffusion inverse design of PCB layouts conditioned on target S-parameters",
+      "llm_evidence_cn": "以目标S参数为条件的PCB布局扩散逆向设计",
+      "llm_evidence": "以目标S参数为条件的PCB布局扩散逆向设计",
+      "canonical_evidence": "以目标S参数为条件的PCB布局扩散逆向设计",
+      "llm_tldr_en": "Diffusion models for PCB inverse design struggle to meet quantitative electromagnetic specs because full-wave simulators are expensive and non-differentiable while surrogates are unreliable. The proposed Simulator-Refined Diffusion combines both to generate layouts meeting target S-parameters.",
+      "llm_tldr_cn": "扩散模型用于印刷电路板逆向设计时，难以满足定量的电磁指标，因为全波电磁仿真精确却昂贵且不可微，而可微代理模型虽可导却不够可靠。本文提出模拟器精化扩散SRD，将仿真器反馈与可微代理相结合来引导扩散采样，从而以目标S参数为条件生成PCB布局。方法在保持生成效率的同时借助模拟器精化提高电磁规格满足度，缓解了精度与可微性之间的矛盾。该工作为高速互连与SI/PI相关的电磁逆向设计提供了兼顾精度与效率的生成式建模思路。",
+      "llm_tldr": "扩散模型用于印刷电路板逆向设计时，难以满足定量的电磁指标，因为全波电磁仿真精确却昂贵且不可微，而可微代理模型虽可导却不够可靠。本文提出模拟器精化扩散SRD，将仿真器反馈与可微代理相结合来引导扩散采样，从而以目标S参数为条件生成PCB布局。方法在保持生成效率的同时借助模拟器精化提高电磁规格满足度，缓解了精度与可微性之间的矛盾。该工作为高速互连与SI/PI相关的电磁逆向设计提供了兼顾精度与效率的生成式建模思路。",
+      "llm_tags": [
+        "query:si-pi"
+      ],
+      "matched_query_tag": "query:si-pi",
+      "matched_query_text": "Machine learning methods for SI/PI analysis and optimization",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

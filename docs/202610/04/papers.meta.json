@@ -1,0 +1,24 @@
+{
+  "label": "2026-10-04",
+  "date": "2026-10-04",
+  "generated_at": "2026-10-04T22:24:38",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202610/04/2609.38363v1-simulator-refined-diffusion-for-radio-frequency-inverse-design",
+      "section": "quick",
+      "title_en": "Simulator-Refined Diffusion for Radio-Frequency Inverse Design",
+      "authors": "Jinhao Liang, Jacob K. Christopher, Michael Frei, Tommaso Dreossi, Nando Fioretto",
+      "date": "2026-09-29",
+      "pdf": "https://arxiv.org/pdf/2609.38363v1",
+      "score": "6.0",
+      "evidence": "以目标S参数为条件的PCB布局扩散逆向设计",
+      "tldr": "扩散模型可用于PCB逆设计，但难以满足定量电磁指标；梯度引导依赖昂贵且不可微的全波仿真器，或可靠但精度有限的可微代理。本文提出Simulator-Refined Diffusion（SRD），在扩散采样中结合低精度可微代理与高精度不可微仿真器，用代理梯度提出扰动方向，再由仿真器沿该方向搜索有效更新。实验表明，SRD在多种设置下持续优于现有最优方法，同分布目标S参数匹配提升至多21.2%，异分布提升至多19.8%。",
+      "tags": "query:si-pi",
+      "abstract_en": "Diffusion models have shown potential in inverse design of printed circuit boards (PCBs), enabling the generation of layouts conditioned on target S-parameters. Despite this promise, applying diffusion models to PCB layout generation remains challenging due to their difficulty in meeting the quantitative electromagnetic specifications. A common approach is gradient-based guidance, which biases the diffusion sampling process with the gradient of an objective used for evaluation. However, full-wave electromagnetic simulators are accurate but expensive and typically non-differentiable, whereas differentiable surrogates are informative but not always reliable. To address these limitations, this paper proposes Simulator-Refined Diffusion (SRD), a novel combination of a low-fidelity differentiable surrogate and a high-fidelity non-differentiable simulator within the diffusion sampling process. Unlike standard zeroth-order optimization, which requires a great number of random perturbations, our approach uses the surrogate's gradient to propose the perturbation direction while the simulator then searches based on this direction to identify an effective design update. Experimental results across different settings show that this method consistently outperforms current state-of-the-art methods, producing layouts whose simulated S-parameters match the target specifications up to 21.2% closer for in-distribution targets and up to 19.8% for out-of-distribution targets.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
