@@ -1,0 +1,225 @@
+Title: Reinforcement Learning-Based Optimization of Workload-Aware Power Delivery Networks
+
+URL Source: https://arxiv.org/pdf/2610.06148v1
+
+Published Time: Tue, 06 Oct 2026 02:48:26 GMT
+
+Number of Pages: 4
+
+Markdown Content:
+# Reinforcement Learning-Based Optimization of Workload-Aware Power Delivery Networks 
+
+Oran Hayes †, Maria Pantazi-Kypraiou ‡, Athanasios Tziouvaras ‡, George Stamoulis ‡, Anuj Pathania ¶,Shreejith Shanker †, and George Floros †
+
+> †
+
+Trinity College Dublin, Ireland, emails: {hayesor, shankers, florosg }@tcd.ie, 
+
+> ‡
+
+University of Thessaly, Greece, emails: {mpantazi-, attziouv, georges }@e-ce.uth.gr 
+
+> ¶
+
+University of Amsterdam, The Netherlands, email: a.pathania@uva.nl 
+
+Abstract —Power Delivery Networks (PDNs) are critical com-ponents of modern VLSI chips, providing stable voltage levels while satisfying electromigration (EM) and IR-drop constraints. Conventional PDN design methodologies typically rely on worst-case assumptions, often resulting in over-provisioned networks and inefficient use of resources. This paper presents a rein-forcement learning-based framework for the optimization of workload-aware PDNs. The proposed methodology first generates workload-aware PDNs using architectural power traces obtained from system-level simulations. These power traces are mapped to spatial power density distributions, enabling adaptive allocation of PDN resources according to local current demand. A rein-forcement learning agent then performs wire-width optimization to minimize PDN area while maintaining EM and voltage in-tegrity constraints. Electrical and reliability metrics are obtained using SPICE-based circuit analysis and EM lifetime estimation. Experimental evaluation is performed on a dataset of workload-aware PDNs generated from 4-, 8-, and 16-core multiprocessor floorplans using PARSEC and SPLASH-2 benchmark work-loads. Furthermore, the proposed Deep Q-Network (DQN)-based optimizer reduces the average normalized PDN area by 47% while satisfying all EM and IR-drop constraints. Compared to simulated annealing, the proposed approach achieves comparable optimization quality while providing approximately 26 × faster optimization. 
+
+Index Terms —Power Delivery Networks, Reinforcement Learning, EM/IR 
+
+I. I NTRODUCTION 
+
+The increasing integration density of modern multicore systems has significantly intensified the challenges associated with on-chip power delivery [1]. Emerging technologies such as backside power delivery networks (BS-PDNs) further high-light the importance of efficient power distribution by enabling improved routing flexibility, reduced IR drop, and better utilization of routing resources [2]. However, regardless of the underlying PDN architecture, designers must still balance competing objectives including metal area, power integrity, and reliability. Traditional PDN design methodologies are typically based on conservative worst-case assumptions, often resulting in over-provisioned networks that consume excessive routing resources and chip area [3]. At the same time, elec-tromigration (EM) and IR-drop constraints limit the ability to aggressively reduce PDN resources, creating a complex optimization problem for modern VLSI systems. To this end, several methodologies have been proposed for PDN optimization under area, reliability, and voltage integrity 
+
+*This work was funded under the COIN-3D project, which has received funding from the European Union’s Horizon Europe research and innovation program under grant agreement No. 101159667. 
+
+constraints. Early approaches relied on linear and nonlinear programming techniques to minimize routing resources while satisfying EM/IR requirements [4]. More recently, physics-based EM models have enabled more accurate reliability-aware optimization [5], leading to power-grid repair and wire-sizing methodologies based on mathematical optimization, metaheuristics such as Particle Swarm Optimization (PSO) [6], and gradient-based approaches including L-BFGS [7]. In parallel, workload-aware PDN design methodologies have emerged, exploiting architectural power traces to allocate resources according to realistic current demand distributions rather than worst-case assumptions. Despite these advances, existing approaches largely depend on predefined optimization strategies and repeated design-space exploration. The use of reinforcement learning for workload-aware PDN optimization remains largely unexplored, particularly for learning adaptive wire-sizing policies that minimize routing resources while satisfying EM and IR-drop constraints. In this paper, we present a reinforcement learning-based framework for the optimization of workload-aware PDNs. The main contributions of this work are threefold. First , we formulate workload-aware PDN optimization as a reinforce-ment learning problem, enabling an agent to automatically learn wire-sizing strategies from interaction with the design environment. Second , we integrate workload-dependent power distributions derived from architectural simulations into the optimization process, allowing PDN resources to be allocated according to realistic current demands rather than worst-case assumptions. Finally, we evaluate the proposed approach on workload-aware PDNs generated from multicore processor floorplans using representative benchmark applications and compare its performance against simulated annealing. Exper-imental results show that the proposed DQN-based optimizer achieves near-optimal solutions while requiring significantly lower computational cost than a simulated annealing approach. The remainder of this paper is organized as follows. Sec-tion II presents the background for PDN design. Section III describes the proposed reinforcement learning-based optimiza-tion framework. Experimental setup and results are presented in Section IV, followed by conclusions in Section V. II. B ACKGROUND 
+
+A. Workload-Aware PDN Design 
+
+PDNs are traditionally designed using uniform or worst-case power assumptions to guarantee reliable operation under all possible operating conditions. In this approach, routing arXiv:2610.06148v1 [cs.AR] 5 Oct 2026 2026 IEEE 33rd International Conference on Electronics, Circuits and Systems (ICECS) 
+
+resources are allocated conservatively across the entire chip, resulting in regular power grid structures that are often over-provisioned [8]. While such designs provide sufficient voltage integrity and EM robustness, they may consume excessive metal resources and reduce the routing capacity available for signal interconnects. In modern multicore systems, power consumption is highly dependent on workload behavior and varies significantly across architectural components. Workload-aware PDN design seeks to exploit this information by incorporating power estimates obtained from architectural simulations into the PDN planning process. Given a supply voltage VDD , the current demand of a region can be estimated as: 
+
+Ii = Pi
+
+VDD 
+
+, (1) where Pi denotes the power consumed within region i. If the region occupies an area Ai, the corresponding power density can be expressed as 
+
+ρi = Pi
+
+Ai
+
+, (2) where ρi represents the spatial power density. These metrics provide a representation of workload-dependent current de-mand across the floorplan and can be used to identify regions with different power requirements. Based on the estimated power distribution, PDN resources can be allocated adaptively according to local current de-mand [3]. Regions with higher power density are assigned denser power grids to support larger currents, while regions with lower activity require fewer routing resources. Com-pared to conventional worst-case methodologies, workload-aware PDNs can reduce overall metal usage while maintaining voltage integrity and reliability constraints, providing a more efficient starting point for subsequent optimization. 
+
+B. Electromigration in Power Delivery Networks 
+
+EM is a major reliability concern in modern PDNs. It is caused by the momentum transfer from conducting electrons to metal atoms, leading to gradual material transport within interconnects. Over time, this process can result in void formation, increased resistance, and ultimately open-circuit failures. As technology nodes continue to scale and current densities increase, accurate EM assessment has become an important consideration in PDN optimization. One of the earliest and most widely used EM lifetime models is Black’s equation [9], which estimates the mean time to failure (MTTF) of a conductor as: 
+
+MTTF = AJ −ne Ea kT (3) where J is the current density, T is the operating temper-ature, Ea is the activation energy, k is Boltzmann’s constant, and A and n are empirical fitting parameters. Black’s equa-tion provides a simple relationship between current density and expected lifetime, making it attractive for fast reliability estimation. However, it treats each interconnect segment inde-pendently and does not account for stress interactions between neighboring wires in a power grid. To address these limitations, a physics-based stress evolu-tion model was proposed in [10], which describes the temporal evolution of hydrostatic stress within a conductor: 
+
+∂σ ∂t = BΩ
+
+kT ∂∂x 
+
+
+
+Da
+
+ ∂σ ∂x − q∗ρ
+
+Ω J
+
+ 
+
+(4) where σ denotes hydrostatic stress, Da is the atomic diffu-sivity, B is the bulk modulus, Ω is the atomic volume, ρ is the resistivity, and q∗ is the effective charge number. Unlike Black’s equation, Korhonen’s model captures the spatial redis-tribution of stress and interactions between connected intercon-nect segments, providing a more realistic representation of EM degradation in mesh-like PDNs. The increased accuracy comes at the cost of significantly higher computational complexity, making direct use of the model challenging within iterative optimization frameworks. III. R EINFORCEMENT LEARNING -B ASED OPTIMIZATION OF WORKLOAD -A WARE PDN S
+
+A. Problem Formulation and EM-Constrained Environment 
+
+The objective of the optimization process is to minimize the routing area of a PDN while satisfying EM and voltage integrity constraints. Given a fixed PDN topology, optimization is performed by adjusting the widths of individual wires. Let 
+
+wi and Li denote the width and length of wire i, respectively. The optimization problem can be expressed as: 
+
+min 
+
+> N
+
+X
+
+> i=1
+
+wiLi (5) subject to wire-width limits, EM constraints, and allowable voltage-drop bounds [6]. A key challenge in reinforcement learning-based optimiza-tion is the repeated evaluation of candidate solutions. During training, thousands of PDN configurations may be explored, requiring fast estimation of both electrical and reliability metrics. While the Korhonen stress-evolution model provides an accurate representation of EM behavior, solving the corre-sponding partial differential equations for every RL step would introduce a prohibitive computational overhead. To enable efficient optimization, a surrogate EM model based on Black’s equation is employed during training. Black’s equation estimates the MTTF of a conductor as: 
+
+MTTF = A′J−n, (6) where J denotes the current density and A′ and n are technology-dependent fitting parameters. The parameters of Black’s model are calibrated using time-to-failure data gen-erated from the physics-based Korhonen model. Taking the logarithm of (6) yields: 
+
+log(MTTF) = −n log( J) + log( A′), (7) which enables the parameters to be obtained through linear regression. Figure 2 compares the TTF predicted by the calibrated Black model against the corresponding values obtained from 2026 IEEE 33rd International Conference on Electronics, Circuits and Systems (ICECS) RL-PDN Optimization Framework 
+
+> Map EM, Voltage
+> and Area to
+> Reward
+> Compute area
+> based on wire
+> widths
+> Calculate
+> new area
+> Construct
+> environment state
+> representation
+> Build State
+> RL Agent
+> Reward
+> Enviroment State
+> State
+> Reward
+> State
+> Analyze
+> electromigration
+> and current
+> densities
+> EM Analysis
+> Circuit
+> Simulator
+> Wire
+> MTTF
+> Current
+> Densities
+> Wire
+> Currents
+> Wire
+> Widths
+> PDN Area
+> Netlist
+> Voltage
+> Violations
+
+Stored Network 
+
+Topology 
+
+> v0 n1_0_0 0 1.4
+> v1 n1_0_42 0 1.4
+> v2 n1_19_0 0 1.4
+> v3 n1_19_42 0 1.4
+> * layer: M1,VDD net: 1
+> R_FPU_0_0 n1_0_0 n1_1_0 1.25
+> R_FPU_0_1 n1_1_0 n1_2_0 1.25
+> R_FPU_0_2 n1_2_0 n1_3_0 1.25
+> R_FPU_0_3 n1_3_0 n1_4_0 1.25
+> R_FPU_0_4 n1_4_0 n1_5_0 1.25
+> R_FPU_0_5 n1_5_0 n1_6_0 1.25
+> .....
+> Updated
+> SPICE
+> Netlist
+> Previous
+> Netlist
+> PDN
+> Database
+> New
+> Netlist
+> Modified
+> Wire
+> Widths
+> RL Environment
+> (Agent Interface)
+> EM/Reliability
+> Analysis
+> Optimization/
+> Computation
+> Data/Topology
+> Storage
+
+Fig. 1: Interaction between the RL agent and the PDN optimization environment. physics-based simulations. The observed agreement demon-strates that the calibrated model provides a sufficiently accu-rate approximation for use within the optimisation loop while reducing computational cost by several orders of magnitude. 
+
+0 10 20 30 010 20 30 
+
+Physics-based TTF Expected Black TTF Fig. 2: Comparison of physics-based TTF and Expected TTF from Black’s equation. 
+
+B. RL Optimization Framework 
+
+Figure 1 depicts the proposed optimization environment. At the beginning of each episode, a workload-aware PDN is loaded from the dataset and its SPICE netlist is parsed to extract the network topology and wire-width information. The topology remains fixed throughout the optimization process while the wire widths are modified by the agent. After an action is selected, the corresponding resistor values in the SPICE netlist are updated to reflect the new wire widths. The modified netlist is then analyzed using a circuit simulator to obtain node voltages and branch currents. These electrical quantities are used to evaluate the routing area, voltage-drop violations, and EM reliability of the current design. To enable efficient optimization, EM is estimated using the calibrated Black model described previously. The resulting area, voltage, and EM metrics are combined to construct the environment state and reward signal, which are returned to the agent for the next optimization step. This process is repeated until a termination condition is reached. 
+
+C. State, Action, and Reward Design 
+
+The state representation captures both the physical structure and electrical behavior of the PDN. At each optimization step, the state consists of the wire widths, current densities, and node voltage drops obtained from circuit simulation: 
+
+st = [ w1, . . . , w N , J 1, . . . , J N , V 1, . . . , V M ] . (8) The action space consists of discrete wire-sizing operations. For each wire, the agent may increase or decrease its width by a fixed increment ∆w,
+
+wi ← wi ± ∆w, (9) subject to technology-dependent minimum and maximum width constraints. A no-operation action is also included. The reward function is designed to minimize PDN area while enforcing EM and voltage integrity requirements. Let 
+
+An denote the normalized PDN area. A wire is considered to violate the EM constraint if its current density exceeds the maximum allowable current density Jmax obtained from the calibrated Black model. Similarly, a voltage violation occurs when a node exceeds the allowable voltage-drop limit. The reward is defined as 
+
+Rt = −An − λEM NEM − λIR NIR , (10) 2026 IEEE 33rd International Conference on Electronics, Circuits and Systems (ICECS) 
+
+TABLE I: Comparison of the baseline PDNs, DQN, and SA. Area values are normalized.                                         
+
+> PDN Method Area EM/IR Viol. Runtime (s) 4-core Baseline 0.3330 0 / 0 –DQN 0.1724 0 / 0 72.73 SA 0.1450 0 / 0 1964 8-core Baseline 0.3120 0 / 0 –DQN 0.1728 0 / 0 148.63 SA 0.1438 0 / 0 3894 16-core Baseline 0.3050 0 / 0 –DQN 0.1608 0 / 0 294.61 SA 0.1425 0 / 0 7827 Average Baseline 0.3170 0 / 0 –DQN 0.1686 0 / 0 171.99 SA 0.1438 0 / 0 4561.67
+
+where NEM and NIR denote the number of EM and voltage-drop violations, respectively, and λEM and λIR are penalty coefficients. This formulation encourages the agent to reduce routing resources while maintaining a valid PDN design. 
+
+D. Deep Q-Network 
+
+Finally, a Deep Q-Network (DQN) is used to approximate the action-value function Q(s, a ) with a neural network. This avoids explicitly storing a Q-table for the exponentially large PDN state space and enables generalization across similar wire-sizing configurations. The Q-network evaluates each wire using both local and global PDN information. For each wire, local features are concatenated with global features describing the overall PDN state. These inputs are processed by a shared multilayer perceptron consisting of two fully connected layers with 128 neurons and ReLU activations. The network then branches into two heads: a per-wire head that outputs Q-values for increasing or decreasing each wire width by ±∆w, and a global head that outputs the Q-value of the no-operation action. The network parameters are trained by minimizing the temporal-difference loss 
+
+L =
+
+
+
+rt + γ max  
+
+> a′
+
+Qtarget (st+1 , a ′) − Q(st, a t)
+
+2
+
+, (11) where rt is the reward, γ is the discount factor, and Qtarget is a target network used to stabilize training. Experience replay is used to reduce temporal correlation between updates, while an 
+
+ϵ-greedy policy balances exploration and exploitation during training. Once trained, the DQN agent rapidly predicts wire-sizing actions for new PDN states, reducing the need for repeated search-based optimization. IV. E XPERIMENTAL RESULTS 
+
+The proposed reinforcement learning framework was eval-uated on a dataset of workload-aware PDNs generated from 4-, 8-, and 16-core floorplans using PARSEC and SPLASH-2 workloads. The dataset contains both regular and irregular grid topologies under average and worst-case power scenarios. The DQN agent was trained on the generated PDNs and evaluated on unseen test instances. Performance was compared against the original workload-aware PDNs (Baseline) and a Simulated Annealing (SA) optimizer using the same objective and constraint definitions. Table I compares the proposed DQN approach against SA on the test set. Both methods satisfy all EM and voltage constraints, yielding reliability-compliant solutions. While SA achieves a slightly lower average normalized area (0.1438 ver-sus 0.1686), the difference in optimization quality is relatively small compared to the substantial difference in runtime. DQN completes optimization in an average of 171.99s, whereas SA requires 4561.67s, corresponding to an approximately 26 ×
+
+speedup. Therefore, the proposed DQN approach offers a more favorable trade-off between optimization quality and compu-tational efficiency, achieving near-optimal area reduction at a fraction of the optimization cost. V. C ONCLUSIONS 
+
+This paper presented a reinforcement learning-based frame-work for the optimization of workload-aware PDNs. The proposed methodology combines workload-dependent power distributions with a DQN agent that performs reliability-aware wire-width optimization under EM and IR-drop constraints. Experimental results on 4-, 8-, and 16-core PDNs demonstrate that the proposed approach reduces the average PDN area from 0.3170 to 0.1686, corresponding to a 47% reduction, while maintaining zero EM and voltage violations. Compared to simulated annealing, the DQN agent achieves comparable optimization quality while providing approximately 26 × faster optimization, reducing the average runtime from 4561.67s to 171.99s. These results demonstrate that reinforcement learning offers a favorable trade-off between routing-area reduction and computational cost for PDN optimization. REFERENCES [1] K. Radhakrishnan, M. Swaminathan, and B. K. Bhattacharyya, “Power delivery for high-performance microprocessors—challenges, solutions, and future trends,” IEEE Transactions on Components, Packaging and Manufacturing Technology , vol. 11, no. 4, pp. 655–671, 2021. [2] G. Sisto, R. Preston, R. Chen, G. Mirabelli, A. Farokhnejad, Y. Zhou, I. Ciofi, A. Jourdain, A. Veloso, M. Stucchi et al. , “Block-level evalua-tion and optimization of backside pdn for high-performance computing at the a14 node,” in 2023 IEEE Symposium on VLSI Technology and Circuits (VLSI Technology and Circuits) . IEEE, 2023, pp. 1–2. [3] O. Hayes, M. Pantazi-Kypraiou, A. Tziouvaras, G. Stamoulis, A. Patha-nia, S. Shanker, and G. Floros, “Workload-aware early-stage power delivery network optimization via architectural power traces,” in 2026 22nd International Conference on Synthesis, Modeling, Analysis and Simulation Methods, and Applications to Circuits Design (SMACD) ,2026, pp. 1–4. [4] X.-D. Tan, C.-J. R. Shi, D. Lungeanu, J.-C. Lee, and L.-P. Yuan, “Reliability-constrained area optimization of vlsi power/ground net-works via sequence of linear programmings,” in Proceedings of the 36th annual ACM/IEEE Design Automation Conference , 1999, pp. 78–83. [5] Z. Moudallal, V. Sukharev, and F. N. Najm, “Power grid fixing for electromigration-induced voltage failures,” in 2019 IEEE/ACM Interna-tional Conference on Computer-Aided Design (ICCAD) . IEEE, 2019, pp. 1–8. [6] O. Axelou, K. Kolomvatsos, G. Floros, N. Evmorfopoulos, G. Geor-gakos, and G. Stamoulis, “An electromigration-aware wire sizing methodology via particle swarm optimization,” in Proceedings of the Great Lakes Symposium on VLSI 2024 , 2024, pp. 403–408. [7] O. Axelou, T. Aladwani, G. Floros, and C. Anagnostopoulos, “Towards emir mitigation: Efficient wire sizing for vlsi power grids based on l-bfgs algorithm,” in 2025 IEEE 45th International Conference on Distributed Computing Systems Workshops (ICDCSW) . IEEE, 2025, pp. 474–479. [8] S. R. Nassif, “Power grid analysis benchmarks,” in 2008 Asia and South Pacific Design Automation Conference , 2008, pp. 376–381. [9] J. Black, “Electromigration—a brief survey and some recent results,”

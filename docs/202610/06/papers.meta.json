@@ -1,8 +1,54 @@
 {
   "label": "2026-10-06",
   "date": "2026-10-06",
-  "generated_at": "2026-10-06T00:30:35",
-  "count": 0,
-  "papers": [],
+  "generated_at": "2026-10-06T22:54:32",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202610/06/2610.06148v1-reinforcement-learning-based-optimization-of-workload-aware-power-delivery-networks",
+      "section": "deep",
+      "title_en": "Reinforcement Learning-Based Optimization of Workload-Aware Power Delivery Networks",
+      "authors": "Oran Hayes, Maria Pantazi-Kypraiou, Athanasios Tziouvaras, George Stamoulis, Anuj Pathania, Shreejith Shanker, George Floros",
+      "date": "2026-10-05",
+      "pdf": "https://arxiv.org/pdf/2610.06148v1",
+      "score": "9.0",
+      "evidence": "强化学习优化供电网络",
+      "tldr": "现代VLSI的供电网络PDN需满足EM与IR-drop约束，但传统设计常基于最坏情况，导致资源过供。本文提出基于强化学习的负载感知PDN优化框架：先用体系结构功耗轨迹生成空间功耗密度并自适应分配PDN资源，再以强化学习智能体优化线宽。在4/8/16核多处理器与PARSEC/SPLASH-2负载上，DQN平均降低归一化PDN面积47%，且优化速度比模拟退火快约26倍，为负载感知PDN设计提供高效方案。",
+      "tags": "query:si-pi",
+      "abstract_en": "Power Delivery Networks (PDNs) are critical components of modern VLSI chips, providing stable voltage levels while satisfying electromigration (EM) and IR-drop constraints. Conventional PDN design methodologies typically rely on worst-case assumptions, often resulting in over-provisioned networks and inefficient use of resources. This paper presents a reinforcement learning-based framework for the optimization of workload-aware PDNs. The proposed methodology first generates workload-aware PDNs using architectural power traces obtained from system-level simulations. These power traces are mapped to spatial power density distributions, enabling adaptive allocation of PDN resources according to local current demand. A reinforcement learning agent then performs wire-width optimization to minimize PDN area while maintaining EM and voltage integrity constraints. Electrical and reliability metrics are obtained using SPICE-based circuit analysis and EM lifetime estimation. Experimental evaluation is performed on a dataset of workload-aware PDNs generated from 4-, 8-, and 16-core multiprocessor floorplans using PARSEC and SPLASH-2 benchmark workloads. Furthermore, the proposed Deep Q-Network (DQN)-based optimizer reduces the average normalized PDN area by 47\\% while satisfying all EM and IR-drop constraints. Compared to simulated annealing, the proposed approach achieves comparable optimization quality while providing approximately 26$\\times$ faster optimization.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202610/06/2610.02401v1-design-space-exploration-of-backside-clock-meshes-for-2-nm-gaafet-bspdn-technology",
+      "section": "quick",
+      "title_en": "Design Space Exploration of Backside Clock Meshes for 2 nm GAAFET BSPDN Technology",
+      "authors": "Wajid Ali, Muhammad Hadir Khan, Dalton Gaddy, Matthew Guthaus",
+      "date": "2026-10-01",
+      "pdf": "https://arxiv.org/pdf/2610.02401v1",
+      "score": "6.0",
+      "evidence": "背面供电网络与时钟网格设计",
+      "tldr": "高性能VLSI用时钟网格降低偏斜，但占用昂贵正面布线资源；背面供电新增厚低阻金属层，为时钟网格提供新可能，不过触发器仍在正面，连接必须经TSV。该工作首次在OpenROAD与2nm纳米片GT2N上探索背面时钟网格，用多目标贝叶斯优化四个基准，并以晶体管级SPICE逐点验证。结果显示背面网格全面优于相同正面网格：偏斜平均降45%、sink slew降25%、功耗降4.5%、正面时钟布线减28%，万次蒙特卡洛偏斜离散仅为正面三分之一。",
+      "tags": "query:si-pi",
+      "abstract_en": "Clock meshes are used in high-performance VLSI designs to minimize skew and tolerate on-chip variation, but they spend scarce routing resources on premium metal layers. Backside power delivery creates a new option: it adds thick, low-resistance metal layers on the back of the wafer, and the power grid does not consume all of them. Flip-flops remain on the frontside; a backside mesh therefore cannot drive them directly, and every connection passes through a through-silicon via. We present the first design-space exploration of backside clock meshes, implemented in OpenROAD on GT2N, a 2 nm nanosheet technology. Four benchmarks (1,938 to 15,311 flip-flops) are explored with multi-objective Bayesian optimization, and every design point is verified by transistor-level SPICE simulation, since the cyclic mesh cannot be evaluated by static timing analysis. Across all four designs, the backside mesh consistently outperforms an identical frontside mesh, with on average 45% lower skew, 25% lower sink slew, 4.5% lower power, and 28% less frontside clock wiring, and its skew spread under 10,000-sample Monte Carlo is a third of the frontside mesh's.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202610/06/2610.02461v1-a-composable-ai-accelerated-iterative-solver-for-3d-ic-thermal-modeling",
+      "section": "quick",
+      "title_en": "A Composable AI-Accelerated Iterative Solver for 3D-IC Thermal Modeling",
+      "authors": "Yixing Li, Jiahang Zhou, Zhiyu Zeng, Xin Ai",
+      "date": "2026-10-01",
+      "pdf": "https://arxiv.org/pdf/2610.02461v1",
+      "score": "6.0",
+      "evidence": "面向2.5D/3D-IC封装建模的AI加速求解",
+      "tldr": "异构2.5D/3D-IC封装热分析对设计至关重要，但全封装FEM仿真耗时数小时，AI代理又将整个堆叠视为单体预测，拓扑或芯片数变化需重新训练。为此，本文提出DAIST，将全局封装仿真分解为块级子域问题，用神经算子替代子域求解器，并通过界面温度与热流迭代耦合，实现局部到全局的可组合求解。该方法支持块级模型跨未见封装装配直接复用，并可通过迭代预算调节精度与运行时。在多芯粒与先进封装系统上，DAIST相比传统FEM最高加速178倍，平均温度误差仅0.068%与0.323%，展现了跨拓扑复用能力。",
+      "tags": "query:si-pi",
+      "abstract_en": "Accurate thermal analysis of heterogeneous 2.5D/3D-IC packages is essential yet computationally prohibitive. A single full-package FEM simulation can take hours, while AI-based surrogates treat the entire stack as a monolithic prediction target and must be retrained whenever the die count or topology changes. To address this limitation, this work proposes Domain-Decomposed AI-Accelerated Iterative Solver for Thermal Analysis (DAIST), a composable thermal solver that decomposes the global package simulation into block-level subdomain problems, replaces subdomain solvers with neural operators, and couples them through iterative exchanges of interfacial temperature and heat flux. This local-to-global architecture eliminates the topology lock-in of monolithic models: block-level neural operators can be directly reused in unseen package assemblies without retraining. The iterative coupling strategy further provides a controllable accuracy-runtime tradeoff, where the iteration budget can be adjusted to trade accuracy for runtime. Evaluated on a multi-chiplet system and an advanced packaging system, DAIST achieves up to $178\\times$ speedup over traditional FEM solvers with mean temperature errors of 0.068% and 0.323%, respectively, while demonstrating cross-topology reuse of block-level models across structurally distinct package assemblies.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
   "errors": []
 }
