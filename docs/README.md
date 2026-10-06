@@ -6,24 +6,22 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-10-04
-- 运行时间：2026-10-04 22:24:35 UTC
+- 最新运行日期：2026-10-06
+- 运行时间：2026-10-06 00:30:35 UTC
 - 运行状态：成功
-- 本次总论文数：1
+- 本次总论文数：0
 - 精读区：0
-- 速读区：1
+- 速读区：0
 
 ### 今日简报（AI）
-今日速读 1 篇，聚焦射频逆向设计中的模拟器精修扩散方法。这篇《Simulator-Refined Diffusion for Radio-Frequency Inverse Design》（6.0/10）值得关注的是用扩散模型结合模拟器反馈来优化射频器件逆向设计的方向。普通读者可先了解扩散模型如何用于工程逆向设计，再判断是否深入其方法细节。
-- 详情：[/202610/04/README](/202610/04/README)
+> 今日无新推荐，系统未产出可展示论文。
+- 详情：[/202610/06/README](/202610/06/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Simulator-Refined Diffusion for Radio-Frequency Inverse Design](/202610/04/2609.38363v1-simulator-refined-diffusion-for-radio-frequency-inverse-design)  
-   标签：评分：6.0/10、query:si-pi
-   evidence：以目标S参数为条件的PCB布局扩散逆向设计
+- 本次无速读推荐。
 
 
 <div class="dpr-home-promo-card">
