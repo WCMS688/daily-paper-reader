@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-10-14 <!--dpr-date:20261014-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202610/14/2610.14612v1-llm-augmented-bayesian-optimization-with-adaptive-policies-for-chiplet-design-space-exploration" data-sidebar-item="{&quot;title&quot;: &quot;LLM-Augmented Bayesian Optimization with Adaptive Policies for Chiplet Design Space Exploration&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2610.14612v1-llm-augmented-bayesian-optimization-with-adaptive-policies-for-chiplet-design-space-exploration&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;2.5D/3D芯粒异构集成与自动优化&quot;}">LLM-Augmented Bayesian Optimization with Adaptive Policies for Chiplet Design Space Exploration</a>
   * 2026-10-06 <!--dpr-date:20261006-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202610/06/2610.06148v1-reinforcement-learning-based-optimization-of-workload-aware-power-delivery-networks" data-sidebar-item="{&quot;title&quot;: &quot;Reinforcement Learning-Based Optimization of Workload-Aware Power Delivery Networks&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2610.06148v1-reinforcement-learning-based-optimization-of-workload-aware-power-delivery-networks&quot;, &quot;score&quot;: &quot;9.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;si-pi&quot;}], &quot;evidence&quot;: &quot;强化学习优化供电网络&quot;}">Reinforcement Learning-Based Optimization of Workload-Aware Power Delivery Networks</a>
